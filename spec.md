@@ -434,7 +434,8 @@ Run these before feature work. Each can invalidate part of the design.
 1. ~~**Engine iframe.**~~ **RESOLVED 2026-09-11 — architecture confirmed.**
    Chrome and Firefox both reach `requestDevice()` from a Worker inside a
    `chrome-extension://` iframe injected into x.com. Harness: `spikes/webgpu-iframe/`.
-   Set `allow="webgpu"` on the injected iframe — cheap insurance, kept.
+   `allow="webgpu"` is **not** needed: Chrome logs "Unrecognized feature" and
+   ignores it, so WebGPU works without any permissions-policy attribute.
    Measured on one Apple Silicon Mac: proves the architecture, not install-base
    coverage. Firefox Android still has no WebGPU, so fail-open and the WASM
    fallback stay load-bearing.

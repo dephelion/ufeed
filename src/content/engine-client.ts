@@ -29,7 +29,6 @@ export class EngineClient {
     if (this.#frame) return;
     const frame = document.createElement('iframe');
     frame.src = browser.runtime.getURL('engine.html');
-    frame.allow = 'webgpu';
     frame.setAttribute('aria-hidden', 'true');
     frame.setAttribute('tabindex', '-1');
     frame.style.cssText =
