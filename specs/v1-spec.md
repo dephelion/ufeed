@@ -1,5 +1,14 @@
-# Lensing
-## On-Device Semantic Focus Extension — Technical Specification
+# Lensing v1 — Technical Specification
+
+> **Status: DELIVERED, superseded.** Implemented and shipped to a working
+> extension on 2026-09-11. Kept for provenance: it records how the design was
+> reasoned about before it was built, including spikes and rejected options.
+>
+> **Do not consult this document for current behaviour.** Several decisions here
+> were overturned by measurement during implementation — the model, the length
+> penalty, the hover peek, and the threshold band all changed.
+>
+> The source of truth is [`wiki-llm/`](../wiki-llm/index.md).
 
 ---
 
@@ -274,15 +283,16 @@ Two rules alongside it:
 
 ### 6.3 Peek & reveal
 
-Three tiers, escalating with intent:
+Two tiers, escalating with intent:
 
-* **Hover (desktop):** transient peek. Reverts on mouse-out.
 * **Click / tap:** reveals the post and it stays revealed. The click is consumed
   and does *not* reach the post underneath, so it never navigates.
 * **Second click / tap:** normal interaction. Links, media, and the post itself
   behave exactly as the platform intends.
 
-Both use the §6.2 transition — the reveal is eased, not instant.
+**No hover peek.** Scrolling drags the pointer across the feed, so hover exposed
+every post it passed over — the opposite of the point. Revealing costs one
+deliberate click. The reveal is eased, per the §6.2 transition.
 
 Implementation notes:
 

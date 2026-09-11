@@ -22,9 +22,30 @@
       <span class="applied" id="applied" hidden>Saved</span>
     </div>
     <p class="hint" id="topics-hint">
-      Name the subject in a few words. Short lists beat descriptions. Topics match
-      subject, not quality: a shallow take and a deep post on the same subject both match.
+      List what you want to see — a few words, one subject per line.
+      Everything else gets blurred.
     </p>
+
+    <details>
+      <summary>How to write a good topic</summary>
+      <ul class="hint">
+        <li><b>Two to five words works best.</b> One word is vague; past five,
+          each extra word dilutes the rest.</li>
+        <li><b>No sentences, no filler.</b> Every word is matched, so
+          <em>and</em>, <em>posts about</em> and <em>the</em> drag the topic
+          toward nothing in particular.</li>
+        <li><b>Commas are optional.</b> <em>software, programming</em> and
+          <em>software programming</em> score the same. Use whichever reads
+          better.</li>
+        <li><b>One topic per line.</b> Words on the same line describe one
+          subject; a new line is a separate subject, and a post matching any
+          line stays.</li>
+        <li><b>Use the words posts actually use.</b> <em>software</em> beats
+          <em>tech</em>, because people write about code, not about categories.</li>
+        <li><b>Subject, not quality.</b> A shallow take and a deep post on the
+          same subject both match. Lensing cannot tell them apart.</li>
+      </ul>
+    </details>
 
     <label class="field" for="strictness">
       Strictness <output id="strictness-value"></output>
@@ -32,10 +53,26 @@
     <input type="range" id="strictness" min="0" max="1" step="0.01" />
     <p class="hint" id="strictness-hint"></p>
 
+    <details id="advanced">
+      <summary>Advanced</summary>
+      <p class="hint">
+        The slider spans this range of match scores. Unrelated posts score around
+        0.77 with this model, so the useful range is narrow. Widen it to reach
+        settings the slider cannot.
+      </p>
+      <div class="row">
+        <label for="band-min">Loosest</label>
+        <input type="number" id="band-min" min="0" max="1" step="0.005" />
+        <label for="band-max">Strictest</label>
+        <input type="number" id="band-max" min="0" max="1" step="0.005" />
+      </div>
+    </details>
+
 
     <footer>
       <span class="dot" id="dot"></span>
       <span id="status">Checking engine…</span>
+      <button id="reset" class="ghost" type="button">Reset</button>
     </footer>
   </body>
   <script type="module" src="./popup.ts"></script>

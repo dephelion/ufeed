@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, isActiveOn, overrideFor, parseTopics, topicsEqual } from './settings';
+import {
+  DEFAULT_SETTINGS, isActiveOn, overrideFor, parseTopics, topicsEqual, usableBand,
+} from './settings';
 
 const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
 
@@ -76,5 +78,22 @@ describe('topicsEqual', () => {
 
   it('is false on different lengths', () => {
     expect(topicsEqual(['a'], ['a', 'b'])).toBe(false);
+  });
+});
+
+describe('usableBand', () => {
+  it('passes a normal band through', () => {
+    expect(usableBand({ ...DEFAULT_SETTINGS, bandMin: 0.76, bandMax: 0.83 }))
+      .toEqual({ min: 0.76, max: 0.83 });
+  });
+
+  it('rights an inverted band instead of blurring everything', () => {
+    expect(usableBand({ ...DEFAULT_SETTINGS, bandMin: 0.9, bandMax: 0.7 }))
+      .toEqual({ min: 0.7, max: 0.9 });
+  });
+
+  it('keeps a collapsed band usable, so the slider still moves', () => {
+    const band = usableBand({ ...DEFAULT_SETTINGS, bandMin: 0.8, bandMax: 0.8 });
+    expect(band.max).toBeGreaterThan(band.min);
   });
 });

@@ -3,7 +3,8 @@
 Answers one question: **does cosine similarity against a free-text topic string
 actually separate on-topic from off-topic posts in a real timeline?**
 
-Everything downstream in `spec.md` assumes it does. Nothing else gets built until
+Everything downstream assumed it did. Conclusions have since graduated to
+`wiki-llm/model.md`; this folder is the harness, not the authority. Nothing was built until
 this comes back.
 
 ## 1. Collect  (you, ~5 min)

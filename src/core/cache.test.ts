@@ -39,3 +39,22 @@ describe('ScoreCache', () => {
     expect(c.size).toBe(2);
   });
 });
+
+describe('ScoreCache.clear', () => {
+  it('drops every entry, because new topics invalidate old scores', () => {
+    const c = new ScoreCache();
+    c.set('a post about rust', 0.8);
+    c.set('another post entirely', 0.2);
+    c.clear();
+    expect(c.get('a post about rust')).toBeUndefined();
+    expect(c.size).toBe(0);
+  });
+
+  it('still works after clearing', () => {
+    const c = new ScoreCache();
+    c.set('a post', 0.5);
+    c.clear();
+    c.set('a post', 0.9);
+    expect(c.get('a post')).toBeCloseTo(0.9);
+  });
+});

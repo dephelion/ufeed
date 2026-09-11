@@ -25,7 +25,7 @@
 }
 
 .lx-blur::after {
-  content: 'Out of topic';
+  content: 'Out of topic — click to read';
   position: absolute;
   top: 8px;
   right: 8px;
@@ -41,28 +41,15 @@
   transition: opacity 0.2s ease;
 }
 
-/* Consumes the first click so a tap peeks instead of opening the post. */
+/* Consumes the click so it reveals instead of opening the post. Hover does
+   nothing: scrolling drags the pointer across the feed and would expose
+   everything it passed over. */
 .lx-blur > * {
   pointer-events: none;
 }
 
-.lx-blur:hover {
-  opacity: 1;
-}
-
-.lx-blur:hover :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
-  color: inherit !important;
-  text-shadow: none;
-}
-
-.lx-blur:hover :is(img, video, canvas, svg),
-.lx-blur:hover [style*='background-image'] {
-  filter: none;
-  opacity: 1;
-}
-
-.lx-blur:hover::after {
-  opacity: 0;
+.lx-blur {
+  cursor: pointer;
 }
 
 /* Debug only: the content script stamps this attribute when DEBUG is on. */
