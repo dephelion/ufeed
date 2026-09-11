@@ -1,0 +1,31 @@
+{
+  "name": "lensing",
+  "description": "On-device semantic focus for social feeds.",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "postinstall": "node scripts/sync-ort.mjs && wxt prepare",
+    "sync:ort": "node scripts/sync-ort.mjs"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.7.6",
+    "webextension-polyfill": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/webextension-polyfill": "^0.12.3",
+    "happy-dom": "^20.14.3",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "wxt": "^0.20.12"
+  }
+}

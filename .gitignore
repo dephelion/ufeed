@@ -1,3 +1,7 @@
 .history
 .local
 node_modules/
+.output/
+.wxt/
+public/ort/
+stats.html
