@@ -31,5 +31,5 @@ The backend self-check ([model.md](model.md)) is the runtime substitute: it catc
 ## Full check
 
 ```
-npm run compile && npm test && npm run build && npm run build:firefox
+npm run compile && npm test && npm run build
 ```

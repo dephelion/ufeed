@@ -25,8 +25,8 @@ npm run watch            # build on change -> .output/chrome-mv3
 Then load the build and hit reload in the browser after each rebuild.
 
 ```bash
-npm run build            # one-off -> .output/chrome-mv3
-npm run build:firefox    # one-off -> .output/firefox-mv3
+npm run build            # one-off -> .output/chrome-mv3 and .output/firefox-mv3
+npm run build:firefox    # one-off, Firefox only -> .output/firefox-mv3
 ```
 
 ### Why not `npm run dev`
@@ -88,7 +88,7 @@ npm run compile          # tsc --noEmit
 Full check before committing:
 
 ```bash
-npm run format:check && npm run compile && npm test && npm run build && npm run build:firefox
+npm run format:check && npm run compile && npm test && npm run build
 ```
 
 ```bash

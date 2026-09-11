@@ -31,8 +31,5 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Build (Chrome)
+      - name: Build (Chrome + Firefox)
         run: npm run build
-
-      - name: Build (Firefox)
-        run: npm run build:firefox
