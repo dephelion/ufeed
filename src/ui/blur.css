@@ -71,7 +71,7 @@
   z-index: 3;
   padding: 2px 6px;
   border-radius: 4px;
-  background: #1c1917;
+  background: color-mix(in srgb, #1c1917 55%, transparent);
   color: #fafaf9;
   font:
     600 10px/1.4 ui-monospace,
