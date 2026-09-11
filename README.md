@@ -3,16 +3,68 @@
 Pick your topics. Everything else in your feed gets blurred — still there, one
 click away. The model runs entirely on your device; no post text ever leaves it.
 
-## Quickstart
+Chrome and Firefox, MV3, no backend.
+
+## Requirements
+
+Node 20+ and npm. Nothing else — the ONNX runtime is copied out of
+`node_modules` on install, and the model downloads itself on first use.
 
 ```bash
 npm install
-npm run dev              # Chrome, live reload
-npm run dev:firefox      # Firefox
-npm run compile && npm test
 ```
 
-Load an unpacked build from `.output/chrome-mv3` or `.output/firefox-mv3`.
+## Run it
+
+```bash
+npm run dev              # Chrome, live reload
+npm run dev:firefox      # Firefox, live reload
+```
+
+`npm run dev` opens a browser with the extension already loaded. To load a build
+by hand instead:
+
+```bash
+npm run build            # -> .output/chrome-mv3
+npm run build:firefox    # -> .output/firefox-mv3
+```
+
+**Chrome** — `chrome://extensions`, turn on Developer mode, *Load unpacked*,
+pick `.output/chrome-mv3`.
+
+**Firefox** — `about:debugging#/runtime/this-firefox`, *Load Temporary Add-on*,
+pick `.output/firefox-mv3/manifest.json`.
+
+Then open the toolbar popup, add a topic (`tech, software, ai` — one per line),
+and visit x.com.
+
+### First run
+
+The model is ~23MB and downloads once, then lives in the browser's cache.
+Nothing blurs until it is loaded: a broken or slow engine always reveals rather
+than leaving you with a blurred wall. Check the popup's status dot to see where
+it is.
+
+## Test
+
+```bash
+npm test                 # unit tests, no browser, no network
+npm run test:watch
+npm run compile          # tsc --noEmit
+```
+
+Full check before committing:
+
+```bash
+npm run compile && npm test && npm run build && npm run build:firefox
+```
+
+Tests never touch the network or a live feed. Site adapters run against captured
+fixture HTML, because vendor DOM changes should fail as a red test rather than a
+silent no-op in production.
+
+What is not covered by `npm test`: model loading, WebGPU init, and real scoring.
+Those need a browser — load a build and watch the popup status.
 
 ## Layout
 
@@ -27,6 +79,9 @@ src/
 public/ort/    ONNX runtime, synced from node_modules by scripts/sync-ort.mjs
 spikes/        throwaway harnesses and captured data
 ```
+
+Inference runs in a hidden extension-origin iframe, not the page and not the
+service worker. `spec.md` §3 explains why that is the only portable option.
 
 ## Source of truth
 
