@@ -1,0 +1,7 @@
+{
+  "name": "lensing-spike-topic-viability",
+  "private": true,
+  "type": "module",
+  "scripts": { "score": "node score.mjs" },
+  "dependencies": { "@huggingface/transformers": "^3.0.0" }
+}
