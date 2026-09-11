@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, isActiveOn, overrideFor } from './settings';
+import { DEFAULT_SETTINGS, isActiveOn, overrideFor, parseTopics, topicsEqual } from './settings';
 
 const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
 
@@ -44,5 +44,37 @@ describe('overrideFor', () => {
   it('ignores blank terms rather than matching everything', () => {
     const s = { ...withTopics, alwaysBlur: ['', '   '] };
     expect(overrideFor(s, 'any text at all')).toBeUndefined();
+  });
+});
+
+describe('parseTopics', () => {
+  it('splits on lines and trims', () => {
+    expect(parseTopics(' tech \n software ')).toEqual(['tech', 'software']);
+  });
+
+  it('drops blank lines rather than storing empty topics', () => {
+    expect(parseTopics('tech\n\n   \nai')).toEqual(['tech', 'ai']);
+  });
+
+  it('drops duplicates', () => {
+    expect(parseTopics('tech\ntech')).toEqual(['tech']);
+  });
+
+  it('returns nothing for empty input, which leaves filtering off', () => {
+    expect(parseTopics('   \n  ')).toEqual([]);
+  });
+});
+
+describe('topicsEqual', () => {
+  it('is true for the same topics in the same order', () => {
+    expect(topicsEqual(['a', 'b'], ['a', 'b'])).toBe(true);
+  });
+
+  it('is false when order differs, so Apply stays enabled', () => {
+    expect(topicsEqual(['a', 'b'], ['b', 'a'])).toBe(false);
+  });
+
+  it('is false on different lengths', () => {
+    expect(topicsEqual(['a'], ['a', 'b'])).toBe(false);
   });
 });

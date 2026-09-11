@@ -37,3 +37,21 @@ export function overrideFor(settings: Settings, text: string): 'keep' | 'blur' |
   if (hit(settings.alwaysBlur)) return 'blur';
   return undefined;
 }
+
+/** One topic per line; blanks and duplicates dropped. */
+export function parseTopics(raw: string): string[] {
+  const seen = new Set<string>();
+  for (const line of raw.split('\n')) {
+    const topic = line.trim();
+    if (topic !== '') seen.add(topic);
+  }
+  return [...seen];
+}
+
+export function topicsToText(topics: readonly string[]): string {
+  return topics.join('\n');
+}
+
+export function topicsEqual(a: readonly string[], b: readonly string[]): boolean {
+  return a.length === b.length && a.every((topic, i) => topic === b[i]);
+}
