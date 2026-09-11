@@ -16,7 +16,7 @@
     </header>
 
     <label class="field" for="topics">Topics</label>
-    <textarea id="topics" rows="3" placeholder="tech, software, ai"></textarea>
+    <textarea id="topics" rows="2" placeholder="tech, software, ai"></textarea>
     <div class="actions">
       <button id="apply" type="button" disabled>Apply</button>
       <span class="applied" id="applied" hidden>Saved</span>
@@ -31,6 +31,12 @@
     </label>
     <input type="range" id="strictness" min="0" max="1" step="0.01" />
     <p class="hint">Higher shows less, and blurred posts stay one click away.</p>
+
+    <label class="field" for="short-penalty">
+      Short posts <output id="short-penalty-value"></output>
+    </label>
+    <input type="range" id="short-penalty" min="0" max="2" step="0.05" />
+    <p class="hint" id="short-penalty-hint"></p>
 
     <footer>
       <span class="dot" id="dot"></span>

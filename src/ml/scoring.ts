@@ -23,8 +23,40 @@ export function scoreAgainstTopics(post: Vector, topics: readonly Vector[]): num
   return best;
 }
 
-export function passes(score: number, strictness: number): boolean {
-  return score >= strictness;
+/**
+ * Below this, a post counts as short. Measured in spec.md §12.2: on-topic posts
+ * score 0.096 when short and 0.233 when long, so one flat threshold cannot
+ * serve both.
+ */
+export const FULL_LENGTH_CHARS = 200;
+
+/** Default extra bar for a post of no length at all. 0 disables the penalty. */
+export const DEFAULT_SHORT_PENALTY = 0.8;
+export const SHORT_PENALTY_MAX = 2;
+
+/**
+ * Short posts must clear a higher bar. Their scores are low whatever the
+ * subject, so a short post that still scores well really is on topic — and a
+ * three-word post that does not is cheap to lose.
+ */
+export function thresholdFor(
+  strictness: number,
+  chars: number,
+  penalty: number = DEFAULT_SHORT_PENALTY,
+): number {
+  if (chars >= FULL_LENGTH_CHARS) return strictness;
+  const clamped = Math.min(SHORT_PENALTY_MAX, Math.max(0, penalty));
+  const shortness = 1 - Math.max(0, chars) / FULL_LENGTH_CHARS;
+  return strictness * (1 + clamped * shortness);
+}
+
+export function passes(
+  score: number,
+  strictness: number,
+  chars: number,
+  penalty?: number,
+): boolean {
+  return score >= thresholdFor(strictness, chars, penalty);
 }
 
 /** Maps a 0..1 slider position onto the measured usable band. */

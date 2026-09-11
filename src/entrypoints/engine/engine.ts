@@ -1,4 +1,5 @@
 import EngineWorker from './engine.worker.ts?worker';
+import { logger } from '../../core/log';
 import {
   HANDSHAKE, isEngineReply, isEngineRequest,
   type EngineReply, type StatusEvent,
@@ -8,7 +9,22 @@ import {
  * Routes messages and nothing else. It exists because a content script cannot
  * spawn an extension-origin Worker, but a document on that origin can.
  */
-const worker = new EngineWorker();
+const log = logger('engine');
+log.info('engine starting', { origin: location.origin });
+
+let worker: Worker;
+try {
+  worker = new EngineWorker();
+  log.info('worker spawned');
+} catch (error) {
+  const reason = error instanceof Error ? error.message : String(error);
+  log.error('worker could not be created', { reason });
+  throw error;
+}
+
+addEventListener('unhandledrejection', (event) => {
+  log.error('unhandled rejection in engine', { reason: String(event.reason) });
+});
 
 let port: MessagePort | undefined;
 let lastStatus: StatusEvent = { type: 'STATUS', state: 'idle' };
@@ -21,6 +37,7 @@ worker.onmessage = (event: MessageEvent<unknown>) => {
 };
 
 worker.onerror = (event) => {
+  log.error('worker error', { reason: event.message });
   const status: StatusEvent = {
     type: 'STATUS',
     state: 'error',
@@ -39,4 +56,5 @@ addEventListener('message', (event: MessageEvent<unknown>) => {
     if (isEngineRequest(request.data)) worker.postMessage(request.data);
   };
   port.postMessage(lastStatus);
+  log.info('port connected');
 });

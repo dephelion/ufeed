@@ -1,21 +1,33 @@
 import { isEngineRequest, type EngineReply, type EngineRequest } from '../../core/protocol';
+import { logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { scoreAgainstTopics, type Vector } from '../../ml/scoring';
 
+const log = logger('worker');
 const embedder = new Embedder();
+
+self.addEventListener('unhandledrejection', (event) => {
+  log.error('unhandled rejection in worker', { reason: String(event.reason) });
+});
 let topicVectors: Vector[] = [];
 let loading: Promise<void> | undefined;
 
 const post = (reply: EngineReply) => self.postMessage(reply);
 
 function ensureLoaded(): Promise<void> {
+  if (!loading) log.info('loading model');
   loading ??= embedder
-    .load((p) => post({ type: 'STATUS', state: p.state, progress: p.progress }))
+    .load((p) => {
+      if (p.state === 'downloading') log.info('downloading', { percent: Math.round(p.progress ?? 0) });
+      post({ type: 'STATUS', state: p.state, progress: p.progress });
+    })
     .then((backend) => {
+      log.info('ready', { backend });
       post({ type: 'STATUS', state: 'ready', backend });
     })
     .catch((error: unknown) => {
       loading = undefined;
+      log.error('model load failed', { reason: describe(error) });
       post({ type: 'STATUS', state: 'error', message: describe(error) });
       throw error;
     });
@@ -33,16 +45,25 @@ async function handle(request: EngineRequest): Promise<void> {
     await ensureLoaded();
     if (request.type === 'SET_TOPICS') {
       topicVectors = await embedder.embed(request.topics);
+      log.info('topics embedded', {
+        count: topicVectors.length,
+        topics: JSON.stringify(request.topics),
+      });
       post({ id: request.id, type: 'ACK' });
       return;
     }
+    const started = Date.now();
     const vectors = await embedder.embed(request.texts);
-    post({
-      id: request.id,
-      type: 'SCORES',
-      scores: vectors.map((v) => scoreAgainstTopics(v, topicVectors)),
+    const scores = vectors.map((v) => scoreAgainstTopics(v, topicVectors));
+    const elapsed = Date.now() - started;
+    log.info('scored', {
+      posts: scores.length,
+      msPerPost: scores.length ? Math.round(elapsed / scores.length) : 0,
+      max: scores.length ? Math.max(...scores).toFixed(3) : undefined,
     });
+    post({ id: request.id, type: 'SCORES', scores });
   } catch (error: unknown) {
+    log.error('scoring failed', { reason: describe(error) });
     post({ id: request.id, type: 'ERROR', message: describe(error) });
   }
 }

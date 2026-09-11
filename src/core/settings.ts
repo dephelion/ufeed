@@ -1,9 +1,10 @@
-import { DEFAULT_STRICTNESS } from '../ml/scoring';
+import { DEFAULT_SHORT_PENALTY, DEFAULT_STRICTNESS } from '../ml/scoring';
 
 export interface Settings {
   enabled: boolean;
   topics: string[];
   strictness: number;
+  shortPenalty: number;
   disabledHosts: string[];
   alwaysKeep: string[];
   alwaysBlur: string[];
@@ -13,6 +14,7 @@ export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
   strictness: DEFAULT_STRICTNESS,
+  shortPenalty: DEFAULT_SHORT_PENALTY,
   disabledHosts: [],
   alwaysKeep: [],
   alwaysBlur: [],
