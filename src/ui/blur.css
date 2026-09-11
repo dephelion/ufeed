@@ -1,0 +1,35 @@
+/* Blurs the text subtree, never the container: filter: blur() on a feed item
+   creates a containing block and breaks position:fixed descendants. */
+.lx-blur {
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+}
+
+.lx-blur :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
+  color: transparent !important;
+  text-shadow: 0 0 10px currentColor;
+  transition: text-shadow 0.2s ease;
+}
+
+.lx-blur :is(img, video, canvas) {
+  opacity: 0.25;
+  transition: opacity 0.2s ease;
+}
+
+/* Consumes the first click so a tap peeks instead of opening the post. */
+.lx-blur > * {
+  pointer-events: none;
+}
+
+.lx-blur:hover {
+  opacity: 1;
+}
+
+.lx-blur:hover :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
+  color: inherit !important;
+  text-shadow: none;
+}
+
+.lx-blur:hover :is(img, video, canvas) {
+  opacity: 1;
+}
