@@ -1,5 +1,7 @@
-import { strictnessFromPosition } from '../../ml/scoring';
-import { parseTopics, topicsToText, topicsEqual, type Settings } from '../../core/settings';
+import { estimateFeedShown, strictnessFromPosition } from '../../ml/scoring';
+import {
+  DEFAULT_SETTINGS, parseTopics, topicsEqual, topicsToText, usableBand, type Settings,
+} from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
 
 const el = <T extends HTMLElement>(id: string): T => {
@@ -15,22 +17,31 @@ const applied = el<HTMLSpanElement>('applied');
 const strictness = el<HTMLInputElement>('strictness');
 const strictnessValue = el<HTMLOutputElement>('strictness-value');
 const strictnessHint = el<HTMLParagraphElement>('strictness-hint');
+const bandMin = el<HTMLInputElement>('band-min');
+const bandMax = el<HTMLInputElement>('band-max');
+const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
 
 let saved: Settings = await loadSettings();
 
 /** Speaks in what the user sees, not in cosine values. */
-const describeStrictness = (position: number): string =>
-  `Posts must score ${strictnessFromPosition(position).toFixed(2)} to stay. `
-  + 'Higher shows less, and blurred posts stay one click away.';
+function describeStrictness(position: number, settings: Settings): string {
+  const band = usableBand(settings);
+  const threshold = strictnessFromPosition(position, band);
+  const shown = Math.round(estimateFeedShown(threshold) * 100);
+  return `Shows roughly ${shown}% of a feed (score ${threshold.toFixed(3)} and up). `
+    + 'Blurred posts stay one click away.';
+}
 
 function render(settings: Settings): void {
   enabled.checked = settings.enabled;
   topics.value = topicsToText(settings.topics);
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = `${Math.round(settings.strictness * 100)}%`;
-  strictnessHint.textContent = describeStrictness(settings.strictness);
+  strictnessHint.textContent = describeStrictness(settings.strictness, settings);
+  bandMin.value = settings.bandMin.toFixed(3);
+  bandMax.value = settings.bandMax.toFixed(3);
   refreshApply();
 }
 
@@ -80,11 +91,24 @@ apply.addEventListener('click', () => {
 strictness.addEventListener('input', () => {
   const next = Number(strictness.value);
   strictnessValue.textContent = `${Math.round(next * 100)}%`;
-  strictnessHint.textContent = describeStrictness(next);
+  strictnessHint.textContent = describeStrictness(next, saved);
 });
 
 strictness.addEventListener('change', () => {
   void update({ strictness: Number(strictness.value) });
 });
 
+const commitBand = (): void => {
+  void update({ bandMin: Number(bandMin.value), bandMax: Number(bandMax.value) })
+    .then(() => render(saved));
+};
 
+bandMin.addEventListener('change', commitBand);
+bandMax.addEventListener('change', commitBand);
+
+reset.addEventListener('click', () => {
+  void update({ ...DEFAULT_SETTINGS, topics: saved.topics }).then(() => {
+    render(saved);
+    applied.hidden = true;
+  });
+});

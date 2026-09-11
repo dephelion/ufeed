@@ -33,6 +33,11 @@ export class ScoreCache {
     }
   }
 
+  /** Scores are relative to the topic vectors; new topics invalidate all of them. */
+  clear(): void {
+    this.#entries.clear();
+  }
+
   get size(): number {
     return this.#entries.size;
   }

@@ -5,6 +5,9 @@ export interface Settings {
   topics: string[];
   /** Slider position 0..1, not a score: scores differ per model. */
   strictness: number;
+  /** Score the slider maps onto at 0% and 100%. */
+  bandMin: number;
+  bandMax: number;
   disabledHosts: string[];
   alwaysKeep: string[];
   alwaysBlur: string[];
@@ -14,6 +17,8 @@ export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
   strictness: MODEL.defaultPosition,
+  bandMin: MODEL.bandMin,
+  bandMax: MODEL.bandMax,
   disabledHosts: [],
   alwaysKeep: [],
   alwaysBlur: [],
@@ -55,4 +60,11 @@ export function topicsToText(topics: readonly string[]): string {
 
 export function topicsEqual(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((topic, i) => topic === b[i]);
+}
+
+/** Guards against an inverted or collapsed band from the advanced inputs. */
+export function usableBand(settings: Settings): { min: number; max: number } {
+  const min = Math.min(settings.bandMin, settings.bandMax);
+  const max = Math.max(settings.bandMin, settings.bandMax);
+  return max - min < 0.01 ? { min, max: min + 0.01 } : { min, max };
 }

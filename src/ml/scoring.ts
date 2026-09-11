@@ -36,15 +36,40 @@ const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
  * with this model and 0.00 with a symmetric one, so a stored score would mean
  * something different the moment the model changes.
  */
-export function strictnessFromPosition(position: number): number {
-  return MODEL.bandMin + clamp01(position) * (MODEL.bandMax - MODEL.bandMin);
+export interface Band {
+  min: number;
+  max: number;
 }
 
-export function positionFromStrictness(strictness: number): number {
-  const span = MODEL.bandMax - MODEL.bandMin;
-  return span === 0 ? 0 : clamp01((strictness - MODEL.bandMin) / span);
+export const DEFAULT_BAND: Band = { min: MODEL.bandMin, max: MODEL.bandMax };
+
+export function strictnessFromPosition(position: number, band: Band = DEFAULT_BAND): number {
+  return band.min + clamp01(position) * (band.max - band.min);
 }
 
-export function passes(score: number, position: number): boolean {
-  return score >= strictnessFromPosition(position);
+export function positionFromStrictness(strictness: number, band: Band = DEFAULT_BAND): number {
+  const span = band.max - band.min;
+  return span === 0 ? 0 : clamp01((strictness - band.min) / span);
+}
+
+export function passes(score: number, position: number, band: Band = DEFAULT_BAND): boolean {
+  return score >= strictnessFromPosition(position, band);
+}
+
+/**
+ * Roughly how much of a feed survives a threshold, from the 205 labelled posts
+ * in wiki-llm/model.md. One sample, one topic: a hint, not a promise.
+ */
+export function estimateFeedShown(threshold: number): number {
+  const curve: readonly (readonly [number, number])[] = [
+    [0.760, 0.65], [0.768, 0.58], [0.782, 0.40], [0.796, 0.25],
+    [0.800, 0.20], [0.810, 0.14], [0.817, 0.07], [0.824, 0.04], [0.838, 0.0],
+  ];
+  if (threshold <= curve[0]![0]) return curve[0]![1];
+  for (let i = 1; i < curve.length; i++) {
+    const [x1, y1] = curve[i]!;
+    const [x0, y0] = curve[i - 1]!;
+    if (threshold <= x1) return y0 + ((threshold - x0) / (x1 - x0)) * (y1 - y0);
+  }
+  return 0;
 }

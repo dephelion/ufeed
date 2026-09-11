@@ -70,7 +70,7 @@ any store submission.
 
 ### First run
 
-The model is ~23MB and downloads once, then lives in the browser's cache.
+The model is ~33MB and downloads once, then lives in the browser's cache.
 Nothing blurs until it is loaded: a broken or slow engine always reveals rather
 than leaving you with a blurred wall. Check the popup's status dot to see where
 it is.
@@ -89,31 +89,41 @@ Full check before committing:
 npm run compile && npm test && npm run build && npm run build:firefox
 ```
 
+```bash
+npm run test:model       # the real model on real feed text, ~3s
+```
+
 Tests never touch the network or a live feed. Site adapters run against captured
 fixture HTML, because vendor DOM changes should fail as a red test rather than a
 silent no-op in production.
 
-What is not covered by `npm test`: model loading, WebGPU init, and real scoring.
-Those need a browser — load a build and watch the popup status.
+What no test covers: model loading, WebGPU init, and real scoring in a browser.
+A green suite is not a working extension — load a build and watch the popup
+status. See [`wiki-llm/testing.md`](wiki-llm/testing.md).
 
 ## Layout
 
 ```
 src/
-  ml/          scoring (pure) and the embedder — the only transformers.js import
-  core/        message protocol, score cache, settings
+  ml/          the model, scoring (pure), and the only transformers.js import
+  core/        message protocol, score cache, settings, logging
   adapters/    per-site DOM knowledge; X today
   content/     host-page logic: blur controller, engine client
   entrypoints/ content script, engine iframe + worker, background, popup
   ui/          blur stylesheet
 public/ort/    ONNX runtime, synced from node_modules by scripts/sync-ort.mjs
+wiki-llm/      source of truth
+specs/         superseded design docs, provenance only
 spikes/        throwaway harnesses and captured data
 ```
 
-Inference runs in a hidden extension-origin iframe, not the page and not the
-service worker. `spec.md` §3 explains why that is the only portable option.
+Inference runs in a hidden extension-origin iframe — not the page, not the
+service worker. `wiki-llm/architecture.md` explains why that is the only
+portable option.
 
 ## Source of truth
 
-[`spec.md`](spec.md) is authoritative until v1, then migrates to `wiki-llm/`.
-Agent rules are in [`AGENTS.md`](AGENTS.md).
+[`wiki-llm/`](wiki-llm/index.md) — start at the index, which routes to the page
+that answers your question. Agent rules are in [`AGENTS.md`](AGENTS.md).
+[`specs/v1-spec.md`](specs/v1-spec.md) is the superseded design doc, kept for
+provenance; several of its decisions were overturned by measurement.

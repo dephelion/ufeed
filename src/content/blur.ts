@@ -2,7 +2,7 @@ const BLUR_CLASS = 'lx-blur';
 
 /**
  * Node-level, deliberately: a reveal lost to virtualized recycling is an
- * accepted tradeoff (spec.md §6.3), not a bug to fix with a persistence layer.
+ * accepted tradeoff (wiki-llm/ui.md), not a bug to fix with a persistence layer.
  */
 const revealed = new WeakSet<HTMLElement>();
 
@@ -26,7 +26,11 @@ export function isRevealed(element: HTMLElement): boolean {
   return revealed.has(element);
 }
 
-/** First click reveals and goes no further; a second behaves normally. */
+/**
+ * First click reveals and goes no further; a second behaves normally. Click is
+ * the only way in — hover would expose every post the pointer crossed while
+ * scrolling.
+ */
 export function listenForReveal(root: Document = document): () => void {
   const onClick = (event: MouseEvent) => {
     const target = event.target as Element | null;
