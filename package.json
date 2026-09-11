@@ -15,7 +15,12 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "postinstall": "node scripts/sync-ort.mjs && wxt prepare",
-    "sync:ort": "node scripts/sync-ort.mjs"
+    "sync:ort": "node scripts/sync-ort.mjs",
+    "watch": "node scripts/watch-build.mjs",
+    "test:model": "vitest run --config vitest.model.config.ts",
+    "build:debug": "VITE_LENSING_DEBUG=1 wxt build",
+    "build:debug:firefox": "VITE_LENSING_DEBUG=1 wxt build -b firefox",
+    "build:wasm": "VITE_LENSING_DEBUG=1 VITE_LENSING_BACKEND=wasm wxt build"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.7.6",

@@ -17,17 +17,25 @@ npm install
 ## Run it
 
 ```bash
-npm run dev              # Chrome, live reload
-npm run dev:firefox      # Firefox, live reload
+npm run watch            # build on change -> .output/chrome-mv3
 ```
 
-`npm run dev` opens a browser with the extension already loaded. To load a build
-by hand instead:
+Then load the build and hit reload in the browser after each rebuild.
 
 ```bash
-npm run build            # -> .output/chrome-mv3
-npm run build:firefox    # -> .output/firefox-mv3
+npm run build            # one-off -> .output/chrome-mv3
+npm run build:firefox    # one-off -> .output/firefox-mv3
 ```
+
+### Why not `npm run dev`
+
+WXT's dev server serves entrypoint modules from `http://localhost:3001`. The
+engine page then creates its worker from that origin, which is **cross-origin to
+the extension**, so `new Worker()` throws and the engine never starts — silently,
+because nothing else fails. `npm run watch` produces a real production build on
+every change instead. Slower by about a second, and it actually runs.
+
+`npm run dev` is still useful for popup-only work, where no worker is involved.
 
 **Chrome** — `chrome://extensions`, turn on Developer mode, *Load unpacked*,
 pick `.output/chrome-mv3`.
@@ -37,6 +45,28 @@ pick `.output/firefox-mv3/manifest.json`.
 
 Then open the toolbar popup, add a topic (`tech, software, ai` — one per line),
 and visit x.com.
+
+### Watching it work
+
+Every layer logs to the console, prefixed `[lensing:*]`. Post text is never
+logged — counts, scores, states and errors only.
+
+```
+[lensing:content] content script started host=x.com adapter=x topics=1 active=true
+[lensing:client]  injecting engine iframe src=chrome-extension://.../engine.html
+[lensing:engine]  engine page loaded origin=chrome-extension://...
+[lensing:worker]  loading model
+[lensing:worker]  ready backend=webgpu
+[lensing:worker]  scored posts=16 msPerPost=12 max=0.244
+[lensing:content] batch applied posts=16 blurred=13 strictness=0.06
+```
+
+The first missing line locates the failure. `content` and `client` lines appear in
+the page console; `engine` and `worker` lines come from the iframe, so pick the
+`engine.html` context in the devtools frame selector to see them.
+
+Logging is on while `VITE_LENSING_DEBUG=1` is set in `.env`. Turn it off before
+any store submission.
 
 ### First run
 

@@ -1,12 +1,38 @@
 import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers';
 import type { Backend } from '../core/protocol';
-import { normalize, type Vector } from './scoring';
+import { logger } from '../core/log';
+import { cosine, normalize, type Vector } from './scoring';
 
 export const MODEL_ID = 'Xenova/all-MiniLM-L6-v2';
+
+const log = logger('embedder');
+
+/**
+ * A backend can load, report ready, and still return wrong vectors — q8 on
+ * WebGPU does exactly that. Reference values measured on CPU: near 0.58,
+ * far -0.00. Bounds are loose enough for quantisation noise, tight enough to
+ * catch a backend that is quietly computing nonsense.
+ */
+const PROBE = {
+  anchor: 'software engineering',
+  near: 'writing code and building software systems',
+  far: 'a recipe for chocolate cake with butter and eggs',
+} as const;
+
+const PROBE_MIN_NEAR = 0.4;
+const PROBE_MAX_FAR = 0.2;
 
 /** Model weights come from the CDN; the runtime itself ships with the extension. */
 env.allowLocalModels = false;
 if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
+
+export type Device = 'webgpu' | 'wasm' | 'cpu';
+
+const FORCED = import.meta.env.VITE_LENSING_BACKEND as Device | undefined;
+
+/** Browser order. Node offers only cpu, which is why this is a parameter. */
+export const BROWSER_DEVICES: readonly Device[] =
+  FORCED ? [FORCED] : ['webgpu', 'wasm'];
 
 export interface EmbedderProgress {
   state: 'downloading' | 'warming' | 'ready';
@@ -21,7 +47,10 @@ export class Embedder {
     return this.#backend;
   }
 
-  async load(onProgress?: (p: EmbedderProgress) => void): Promise<Backend> {
+  async load(
+    onProgress?: (p: EmbedderProgress) => void,
+    devices: readonly Device[] = BROWSER_DEVICES,
+  ): Promise<Backend> {
     if (this.#pipe) return this.#backend!;
 
     const report = (item: { status?: string; progress?: number }) => {
@@ -30,24 +59,62 @@ export class Embedder {
       }
     };
 
-    for (const device of ['webgpu', 'wasm'] as const) {
+    const started = Date.now();
+    const failures: string[] = [];
+
+    for (const device of devices) {
       try {
+        log.info('trying backend', { device, model: MODEL_ID });
         this.#pipe = await pipeline<'feature-extraction'>('feature-extraction', MODEL_ID, {
           device,
           dtype: 'q8',
           progress_callback: report,
         });
-        this.#backend = device;
-        break;
+
+        onProgress?.({ state: 'warming' });
+        const probe = await this.selfCheck();
+        if (!probe.ok) {
+          failures.push(`${device}: wrong vectors (near=${probe.near.toFixed(3)} far=${probe.far.toFixed(3)})`);
+          log.warn('backend returns wrong vectors, rejecting', {
+            device,
+            near: probe.near.toFixed(3),
+            far: probe.far.toFixed(3),
+          });
+          this.#pipe = undefined;
+          continue;
+        }
+
+        this.#backend = device === 'webgpu' ? 'webgpu' : 'wasm';
+        log.info('model loaded', {
+          backend: this.#backend,
+          ms: Date.now() - started,
+          near: probe.near.toFixed(3),
+          far: probe.far.toFixed(3),
+        });
+        onProgress?.({ state: 'ready' });
+        return this.#backend;
       } catch (error) {
-        if (device === 'wasm') throw error;
+        const reason = error instanceof Error ? error.message : String(error);
+        failures.push(`${device}: ${reason}`);
+        log.warn('backend unavailable', { device, reason });
+        this.#pipe = undefined;
       }
     }
 
-    onProgress?.({ state: 'warming' });
-    await this.embed(['warm']);
-    onProgress?.({ state: 'ready' });
-    return this.#backend!;
+    throw new Error(`no usable backend (${failures.join(' | ')})`);
+  }
+
+  /** Verifies the loaded backend actually computes meaning, not just numbers. */
+  async selfCheck(): Promise<{ ok: boolean; near: number; far: number }> {
+    const [anchor, near, far] = await this.embed([PROBE.anchor, PROBE.near, PROBE.far]);
+    if (!anchor || !near || !far) return { ok: false, near: NaN, far: NaN };
+    const nearScore = cosine(anchor, near);
+    const farScore = cosine(anchor, far);
+    return {
+      ok: nearScore >= PROBE_MIN_NEAR && farScore <= PROBE_MAX_FAR,
+      near: nearScore,
+      far: farScore,
+    };
   }
 
   async embed(texts: readonly string[]): Promise<Vector[]> {

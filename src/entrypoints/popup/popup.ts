@@ -1,4 +1,6 @@
-import { sliderFromStrictness, strictnessFromSlider } from '../../ml/scoring';
+import {
+  SHORT_PENALTY_MAX, sliderFromStrictness, strictnessFromSlider, thresholdFor,
+} from '../../ml/scoring';
 import { parseTopics, topicsToText, topicsEqual, type Settings } from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
 
@@ -14,6 +16,9 @@ const apply = el<HTMLButtonElement>('apply');
 const applied = el<HTMLSpanElement>('applied');
 const strictness = el<HTMLInputElement>('strictness');
 const strictnessValue = el<HTMLOutputElement>('strictness-value');
+const shortPenalty = el<HTMLInputElement>('short-penalty');
+const shortPenaltyValue = el<HTMLOutputElement>('short-penalty-value');
+const shortPenaltyHint = el<HTMLParagraphElement>('short-penalty-hint');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
 
@@ -24,6 +29,8 @@ function render(settings: Settings): void {
   topics.value = topicsToText(settings.topics);
   strictness.value = String(sliderFromStrictness(settings.strictness));
   strictnessValue.textContent = settings.strictness.toFixed(2);
+  shortPenalty.value = String(settings.shortPenalty);
+  describeShortPenalty(settings.strictness, settings.shortPenalty);
   refreshApply();
 }
 
@@ -49,6 +56,20 @@ function describeStatus(settings: Settings): void {
     + (settings.topics.length === 1 ? '' : 's');
 }
 
+/** Says what the setting does in posts, not in multipliers. */
+function describeShortPenalty(strictnessValueNow: number, penalty: number): void {
+  shortPenaltyValue.textContent = penalty === 0 ? 'off' : `${penalty.toFixed(2)}x`;
+  if (penalty === 0) {
+    shortPenaltyHint.textContent = 'Short posts judged the same as long ones.';
+    return;
+  }
+  const needed = thresholdFor(strictnessValueNow, 30, penalty);
+  shortPenaltyHint.textContent =
+    `A very short post must score ${needed.toFixed(2)} to stay, against `
+    + `${strictnessValueNow.toFixed(2)} for a full one. Short posts score low whatever `
+    + 'the subject, so a higher bar hides most of them.';
+}
+
 async function update(patch: Partial<Settings>): Promise<void> {
   saved = await saveSettings(patch);
   describeStatus(saved);
@@ -71,9 +92,19 @@ apply.addEventListener('click', () => {
 });
 
 strictness.addEventListener('input', () => {
-  strictnessValue.textContent = strictnessFromSlider(Number(strictness.value)).toFixed(2);
+  const next = strictnessFromSlider(Number(strictness.value));
+  strictnessValue.textContent = next.toFixed(2);
+  describeShortPenalty(next, Number(shortPenalty.value));
 });
 
 strictness.addEventListener('change', () => {
   void update({ strictness: strictnessFromSlider(Number(strictness.value)) });
+});
+
+shortPenalty.addEventListener('input', () => {
+  describeShortPenalty(saved.strictness, Number(shortPenalty.value));
+});
+
+shortPenalty.addEventListener('change', () => {
+  void update({ shortPenalty: Math.min(SHORT_PENALTY_MAX, Number(shortPenalty.value)) });
 });

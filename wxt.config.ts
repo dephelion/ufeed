@@ -6,6 +6,7 @@ const OPTIONAL_HOSTS = ['*://reddit.com/*', '*://*.reddit.com/*'];
 export default defineConfig({
   srcDir: 'src',
   manifestVersion: 3,
+  webExt: { disabled: true },
   manifest: {
     name: 'Lensing',
     description: 'Blur what you did not come here to read. Runs entirely on your device.',

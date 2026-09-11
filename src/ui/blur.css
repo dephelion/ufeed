@@ -1,7 +1,8 @@
 /* Blurs the text subtree, never the container: filter: blur() on a feed item
    creates a containing block and breaks position:fixed descendants. */
 .lx-blur {
-  opacity: 0.45;
+  position: relative;
+  opacity: 0.55;
   transition: opacity 0.2s ease;
 }
 
@@ -11,8 +12,32 @@
   transition: text-shadow 0.2s ease;
 }
 
-.lx-blur :is(img, video, canvas) {
-  opacity: 0.25;
+/* Media carries as much of the message as the text, so it gets blurred too.
+   Safe on leaf elements: no fixed-position descendants to break. */
+.lx-blur :is(img, video, canvas, svg) {
+  filter: blur(18px) saturate(0.4);
+  opacity: 0.5;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.lx-blur [style*='background-image'] {
+  filter: blur(18px) saturate(0.4);
+}
+
+.lx-blur::after {
+  content: 'Out of topic';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #dc2626 22%, transparent);
+  color: #f87171;
+  border: 1px solid color-mix(in srgb, #dc2626 45%, transparent);
+  font: 600 11px/1.4 system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  pointer-events: none;
   transition: opacity 0.2s ease;
 }
 
@@ -30,6 +55,33 @@
   text-shadow: none;
 }
 
-.lx-blur:hover :is(img, video, canvas) {
+.lx-blur:hover :is(img, video, canvas, svg),
+.lx-blur:hover [style*='background-image'] {
+  filter: none;
   opacity: 1;
+}
+
+.lx-blur:hover::after {
+  opacity: 0;
+}
+
+/* Debug only: the content script stamps this attribute when DEBUG is on. */
+[data-lx-score] {
+  position: relative;
+  outline: 1px dashed rgba(120, 113, 108, 0.35);
+}
+
+[data-lx-score]::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs)
+    ' · ' attr(data-lx-chars) ' chars';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  z-index: 3;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #1c1917;
+  color: #fafaf9;
+  font: 600 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  pointer-events: none;
 }

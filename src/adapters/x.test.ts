@@ -60,13 +60,24 @@ describe('xAdapter.findPosts', () => {
     expect(xAdapter.findPosts(mount(cell('lol')))).toHaveLength(0);
   });
 
-  it('joins a multi-part tweet body into one string', () => {
+  it('scores only the outer tweet, never blending a quoted tweet into it', () => {
     const html = `<div data-testid="cellInnerDiv">
-      <div data-testid="tweetText"><span>Shipping the new</span></div>
-      <div data-testid="tweetText"><span>inference pipeline today for real</span></div>
+      <div data-testid="tweetText"><span>Left-wing Bundestag member ejected during the speech</span></div>
+      <div role="link">
+        <div data-testid="tweetText"><span>Our new inference pipeline ships today</span></div>
+      </div>
     </div>`;
     expect(xAdapter.findPosts(mount(html))[0]!.text)
-      .toBe('Shipping the new inference pipeline today for real');
+      .toBe('Left-wing Bundestag member ejected during the speech');
+  });
+
+  it('ignores surrounding chrome: handle, timestamp and engagement counts', () => {
+    const html = `<div data-testid="cellInnerDiv">
+      <span>Some Account</span><span>@someaccount</span><time>Sep 10</time>
+      <div data-testid="tweetText"><span>${LONG}</span></div>
+      <div><span>312</span><span>378</span><span>66K</span></div>
+    </div>`;
+    expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(LONG);
   });
 
   it('collapses whitespace so a re-render hashes the same', () => {

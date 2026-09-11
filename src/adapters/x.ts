@@ -28,12 +28,12 @@ export const xAdapter: SiteAdapter = {
   },
 };
 
-/** textContent, not innerText: innerText forces a reflow on every post. */
+/**
+ * First tweetText only. A cell can hold a quoted tweet or a thread, and joining
+ * them scores one blob of unrelated subjects. textContent, not innerText:
+ * innerText forces a reflow on every post.
+ */
 function extractText(container: HTMLElement): string {
-  const parts: string[] = [];
-  for (const node of container.querySelectorAll(TEXT)) {
-    const t = node.textContent;
-    if (t) parts.push(t);
-  }
-  return parts.join(' ').replace(/\s+/g, ' ').trim();
+  const node = container.querySelector(TEXT);
+  return node?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
 }
