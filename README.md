@@ -37,10 +37,10 @@ every change instead. Slower by about a second, and it actually runs.
 
 `npm run dev` is still useful for popup-only work, where no worker is involved.
 
-**Chrome** — `chrome://extensions`, turn on Developer mode, *Load unpacked*,
+**Chrome** — `chrome://extensions`, turn on Developer mode, _Load unpacked_,
 pick `.output/chrome-mv3`.
 
-**Firefox** — `about:debugging#/runtime/this-firefox`, *Load Temporary Add-on*,
+**Firefox** — `about:debugging#/runtime/this-firefox`, _Load Temporary Add-on_,
 pick `.output/firefox-mv3/manifest.json`.
 
 Then open the toolbar popup, add a topic (`tech, software, ai` — one per line),
@@ -86,7 +86,7 @@ npm run compile          # tsc --noEmit
 Full check before committing:
 
 ```bash
-npm run compile && npm test && npm run build && npm run build:firefox
+npm run format:check && npm run compile && npm test && npm run build && npm run build:firefox
 ```
 
 ```bash

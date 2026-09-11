@@ -59,8 +59,8 @@
    - [ ] Automated tests pass cleanly (zero network I/O; adapters tested against captured fixture HTML).
    - [ ] No new test asserts blur radius, timing, color, or vendor DOM shape where the decision behind it would do.
    - [ ] Verified on Chrome AND Firefox when the change touches manifest, messaging, or the engine host.
-   - [ ] Full verification command runs clean (`npm run compile && npm test`).
+   - [ ] Full verification command runs clean (`npm run format:check && npm run compile && npm test`).
    - [ ] Zero raw `console.*`; never log post text under any condition.
    - [ ] No new comment except a true edge-case WHY; none over 2 lines; zero measurements or dated findings inline.
    - [ ] Owning `wiki-llm/` page updated in the same commit if architecture, contract, model, thresholds, selectors, permissions, or budgets moved.
-   - [ ] Formatter run before commit.
+   - [ ] Formatter run before commit (`npm run format`).
