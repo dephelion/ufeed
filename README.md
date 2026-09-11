@@ -1,5 +1,7 @@
 # Lensing
 
+[![CI](https://github.com/juliomatcom/lensing/actions/workflows/ci.yml/badge.svg)](https://github.com/juliomatcom/lensing/actions/workflows/ci.yml)
+
 Pick your topics. Everything else in your feed gets blurred — still there, one
 click away. The model runs entirely on your device; no post text ever leaves it.
 
