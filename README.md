@@ -75,42 +75,6 @@ Nothing blurs until it is loaded: a broken or slow engine always reveals rather
 than leaving you with a blurred wall. Check the popup's status dot to see where
 it is.
 
-## How it works
-
-```mermaid
-flowchart TB
-  subgraph host["Host page — https://x.com"]
-    dom["feed DOM"]
-    cs["content script<br/>finds posts, applies the blur"]
-    dom -- "post text" --> cs
-    cs -- ".lx-blur" --> dom
-  end
-
-  subgraph ext["Extension origin — chrome-extension://"]
-    frame["hidden iframe<br/>routes messages"]
-    subgraph thr["worker thread"]
-      wk["e5-small-v2<br/>embed, then cosine vs topics"]
-    end
-    frame -- "texts" --> wk
-    wk -- "scores" --> frame
-  end
-
-  cs == "texts" ==> frame
-  frame == "scores" ==> cs
-```
-
-Three layers, each for one reason. The **content script** lives inside the page,
-so it is the only part that can read the feed or blur anything. The **iframe**
-exists because a content script cannot spawn an extension-origin worker, but a
-document already on that origin can. The **worker** is a separate thread, so
-scoring never blocks scrolling.
-
-The iframe never sees the page: strings go in, scores come out. That boundary is
-what keeps post text on your device, and it is why the model layer knows nothing
-about X.
-
-Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md).
-
 ## Test
 
 ```bash
@@ -155,6 +119,42 @@ specs/         superseded design docs, provenance only
 Inference runs in a hidden extension-origin iframe — not the page, not the
 service worker. `wiki-llm/architecture.md` explains why that is the only
 portable option.
+
+## How it works
+
+```mermaid
+flowchart TB
+  subgraph host["Host page — https://x.com"]
+    dom["feed DOM"]
+    cs["content script<br/>finds posts, applies the blur"]
+    dom -- "post text" --> cs
+    cs -- ".lx-blur" --> dom
+  end
+
+  subgraph ext["Extension origin — chrome-extension://"]
+    frame["hidden iframe<br/>routes messages"]
+    subgraph thr["worker thread"]
+      wk["e5-small-v2<br/>embed, then cosine vs topics"]
+    end
+    frame -- "texts" --> wk
+    wk -- "scores" --> frame
+  end
+
+  cs == "texts" ==> frame
+  frame == "scores" ==> cs
+```
+
+Three layers, each for one reason. The **content script** lives inside the page,
+so it is the only part that can read the feed or blur anything. The **iframe**
+exists because a content script cannot spawn an extension-origin worker, but a
+document already on that origin can. The **worker** is a separate thread, so
+scoring never blocks scrolling.
+
+The iframe never sees the page: strings go in, scores come out. That boundary is
+what keeps post text on your device, and it is why the model layer knows nothing
+about X.
+
+Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md).
 
 ## Source of truth
 
