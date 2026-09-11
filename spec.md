@@ -57,31 +57,43 @@ injects a hidden iframe pointing at a `web_accessible_resources` page. That page
 carries our own CSP, has a full DOM, can reach `navigator.gpu`, and can spawn a
 module Worker.
 
-```
-┌─────────────────────────── Host page (x.com / reddit.com) ────────────────────┐
-│                                                                               │
-│  content script                                                               │
-│    ├─ per-site adapter: find post nodes (incl. shadow roots)                   │
-│    ├─ IntersectionObserver: only score what's near the viewport                │
-│    ├─ verdict cache: hash(text) → score                                        │
-│    └─ applies/removes .lx-blur                                                 │
-│                                                                               │
-│  <iframe hidden src="chrome-extension://…/engine.html">  ← extension origin    │
-│                          │ MessageChannel port                                 │
-└──────────────────────────┼────────────────────────────────────────────────────┘
-                           ▼
-            ┌──────────────────────────────────────────┐
-            │ engine.html  (extension page)            │
-            │   └─ new Worker('engine-worker.js')      │
-            │        • Transformers.js v3              │
-            │        • WebGPU, WASM fallback           │
-            │        • all-MiniLM-L6-v2 (~23MB int8)   │
-            │        • embed(post) → cosine vs topics  │
-            └──────────────────────────────────────────┘
+```mermaid
+flowchart TB
+  subgraph host["Host page world — https://x.com"]
+    dom["Feed DOM<br/>posts, text nodes"]
+    cs["content script<br/>site adapter · observers · blur"]
+    dom -- "read post text" --> cs
+    cs -- "toggle .lx-blur + aria-hidden" --> dom
+  end
 
-Background service worker: settings broadcast and download progress only.
-No inference. Never on the hot path.
+  subgraph ext["Extension world — chrome-extension://"]
+    frame["engine.html — hidden iframe<br/>owns status, routes messages<br/>does no work itself"]
+    subgraph thr["separate thread"]
+      wk["engine.worker.ts<br/>transformers.js · WebGPU<br/>embed then cosine"]
+    end
+    frame -- "postMessage: texts" --> wk
+    wk -- "postMessage: scores" --> frame
+  end
+
+  cs == "MessageChannel port: texts" ==> frame
+  frame == "scores" ==> cs
+  bg["background<br/>settings broadcast only<br/>never on the hot path"] -. "settings" .-> cs
 ```
+
+Three layers, each for one reason:
+
+* **Content script** — lives inside the host page, so it is the only layer with DOM
+  access. Reads text, applies blur. Knows nothing about models.
+* **Iframe** — exists solely to be an address on the extension origin. A content
+  script cannot spawn an extension-origin Worker; a document already on that
+  origin can. It routes messages and owns engine status. Deliberately thin.
+* **Worker** — a separate thread, so inference never blocks anything that paints.
+
+The two hops use the same `postMessage` API for different reasons: content script
+to iframe crosses the **origin wall** (they cannot touch each other's DOM, only
+copies of data pass); iframe to worker crosses a **thread boundary**. The iframe
+never sees the host DOM — strings in, floats out — which is what keeps the ML
+module genuinely site-agnostic.
 
 **Chrome optimisation (post-v1).** `chrome.offscreen` gives a single
 browser-wide engine instead of one per tab, saving roughly 60–100MB per
