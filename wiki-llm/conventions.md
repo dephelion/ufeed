@@ -27,8 +27,11 @@ src/
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
 specs/          superseded design docs, provenance only
-spikes/         throwaway harnesses and captured data
 ```
+
+`.local/` is gitignored and holds the measurement harnesses and the captured
+timeline data they ran against. The harnesses are reproducible from
+[model.md](model.md); the data is personal and never ships.
 
 **`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension.
 

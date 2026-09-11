@@ -20,6 +20,8 @@ post  → "passage: <text>"
 
 Measured on 205 labelled posts from a real timeline, 26 on topic (13% base rate). Topic `tech, software, ai`.
 
+**Method, to reproduce:** scrape a feed's visible post text, label each post keep/skip by hand against one topic, then embed both and rank. Report AUC (ranking), d-prime (separation against noise), and the share of the feed surviving the threshold that keeps 80% of the labelled keeps. Harness and data are gitignored under `.local/`; the data is personal.
+
 | Model                  | AUC       | d-prime  | Feed shown at 80% recall |
 | :--------------------- | :-------- | :------- | :----------------------- |
 | **e5-small-v2**        | **0.881** | **1.61** | **20%**                  |

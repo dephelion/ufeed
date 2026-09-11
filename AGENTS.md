@@ -36,7 +36,7 @@
 - **Measurements Live in `wiki-llm/`:** AUC, precision/recall, latency, thresholds, dated findings and negative results NEVER go inline. A constant in code cites its page and nothing more.
 - **`specs/` is provenance, not authority.** `specs/v1-spec.md` records how v1 was reasoned about before it was built. Several of its decisions were overturned by measurement. Never cite it as current behaviour.
 - **README Scope:** `README.md` carries ONLY what the project is, quickstart, repo layout, and the wiki pointer. Prohibit runbooks, design prose, or measured numbers in `README.md`.
-- **Spikes:** `spikes/` holds throwaway harnesses and captured data. Conclusions graduate to the wiki; the harness stays where it is. Never cite a spike folder as authority.
+- **Spikes:** measurement harnesses and captured personal data live in gitignored `.local/`. Conclusions graduate to `wiki-llm/` with the method written beside the number. Never commit captured feed data, and never cite `.local/` as authority.
 
 ---
 
