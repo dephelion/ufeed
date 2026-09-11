@@ -36,6 +36,7 @@
 - **Measurements Live in `wiki-llm/`:** AUC, precision/recall, latency, thresholds, dated findings and negative results NEVER go inline. A constant in code cites its page and nothing more.
 - **`specs/` is provenance, not authority.** `specs/v1-spec.md` records how v1 was reasoned about before it was built. Several of its decisions were overturned by measurement. Never cite it as current behaviour.
 - **README Scope:** `README.md` carries ONLY what the project is, quickstart, repo layout, and the wiki pointer. Prohibit runbooks, design prose, or measured numbers in `README.md`.
+- **`docs/` is human-only, never `wiki-llm/`.** Human procedural runbooks (device setup, environment quirks, click-through UI steps) belong in `docs/`, never in `wiki-llm/`. `wiki-llm/` holds only what makes an agent faster or cheaper at implementing — decisions, invariants, architecture, measurements. A page with no bearing on how an agent should write or reason about code is not a wiki page, regardless of how useful it is to a human. README may link to `docs/` pages the same way it links to `wiki-llm/` pages; the two trees stay separate.
 - **Spikes:** measurement harnesses and captured personal data live in gitignored `.local/`. Conclusions graduate to `wiki-llm/` with the method written beside the number. Never commit captured feed data, and never cite `.local/` as authority.
 
 ---

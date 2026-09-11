@@ -16,7 +16,6 @@ Chrome and Firefox, MV3, built with WXT. v1 targets X.
 | [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                      |
 | [privacy.md](privacy.md)           | What Lensing reads, what it stores, what leaves the device, store policy, legal posture.                             |
 | [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                         |
-| [android.md](android.md)           | How to load a temporary build on Firefox for Android — channel, adb, `web-ext run`.                                  |
 | [conventions.md](conventions.md)   | Repo layout, toolchain, hard invariants, definition of done, debug builds.                                           |
 
 ## Status
