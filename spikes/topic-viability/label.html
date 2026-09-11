@@ -1,0 +1,135 @@
+<title>Lensing — Labeler</title>
+<style>
+  :root { --bg:#fafaf9; --fg:#1c1917; --mut:#78716c; --card:#fff; --line:#e7e5e4;
+          --keep:#15803d; --skip:#b91c1c; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme=light]) {
+    --bg:#1c1917; --fg:#fafaf9; --mut:#a8a29e; --card:#292524; --line:#44403c;
+    --keep:#4ade80; --skip:#f87171; } }
+  body { background:var(--bg); color:var(--fg); font:15px/1.6 system-ui,sans-serif;
+         margin:0; padding:24px; display:flex; justify-content:center; }
+  main { width:100%; max-width:640px; }
+  h1 { font-size:18px; margin:0 0 4px; }
+  .mut { color:var(--mut); font-size:13px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px;
+          padding:20px; margin:20px 0; }
+  .post { font-size:16px; white-space:pre-wrap; min-height:120px; }
+  input { width:100%; box-sizing:border-box; padding:10px 12px; font:inherit;
+          background:var(--card); color:var(--fg); border:1px solid var(--line);
+          border-radius:8px; }
+  button { font:600 14px system-ui; padding:10px 18px; border-radius:8px;
+           border:1px solid var(--line); background:var(--card); color:var(--fg);
+           cursor:pointer; }
+  button.primary { background:var(--fg); color:var(--bg); border-color:var(--fg); }
+  .bar { height:4px; background:var(--line); border-radius:2px; overflow:hidden; }
+  .bar > i { display:block; height:100%; background:var(--keep); transition:width .2s; }
+  .keys { display:flex; gap:24px; margin-top:16px; flex-wrap:wrap; }
+  .keys b { display:inline-block; min-width:22px; text-align:center; padding:2px 6px;
+            border:1px solid var(--line); border-radius:5px; font:600 12px ui-monospace,monospace; }
+  .row { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  [hidden] { display:none !important; }
+</style>
+
+<main>
+<h1>Lensing — topic labeler</h1>
+<p class="mut">Spike §12.2. Builds the answer key the model gets scored against.</p>
+
+<section id="setup">
+  <div class="card">
+    <div class="row"><input type="file" id="file" accept="application/json"></div>
+    <p class="mut" id="loaded">Load the <code>posts.json</code> from the collector.</p>
+    <p style="margin:16px 0 6px"><label for="topic"><b>Your topic</b></label></p>
+    <input id="topic" placeholder="e.g. software engineering, programming, AI">
+    <p class="mut">Phrase it how you'd type it into the extension. This exact string
+      becomes the topic vector, so it's part of what's being tested.</p>
+    <p><button class="primary" id="start" disabled>Start labeling</button></p>
+  </div>
+</section>
+
+<section id="work" hidden>
+  <div class="bar"><i id="prog" style="width:0"></i></div>
+  <p class="mut" id="count"></p>
+  <div class="card"><div class="post" id="post"></div></div>
+  <div class="row">
+    <button id="keep" style="color:var(--keep)">Keep — on topic</button>
+    <button id="skip" style="color:var(--skip)">Skip — off topic</button>
+    <button id="undo">Undo</button>
+  </div>
+  <div class="keys mut">
+    <span><b>J</b> keep</span><span><b>K</b> skip</span><span><b>U</b> undo</span>
+  </div>
+</section>
+
+<section id="done" hidden>
+  <div class="card">
+    <p><b>Done.</b> <span id="summary"></span></p>
+    <p><button class="primary" id="save">Download labels.json</button></p>
+    <p class="mut">Put it next to <code>posts.json</code>, then run the scorer.</p>
+  </div>
+</section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let posts = [], topic = '', i = 0, labels = [];
+
+$('file').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    posts = JSON.parse(await f.text());
+    if (!Array.isArray(posts) || !posts.length) throw new Error('empty');
+    $('loaded').textContent = `Loaded ${posts.length} posts.`;
+    gate();
+  } catch (err) { $('loaded').textContent = 'Could not read that file: ' + err.message; }
+};
+$('topic').oninput = gate;
+function gate() { $('start').disabled = !(posts.length && $('topic').value.trim()); }
+
+$('start').onclick = () => {
+  topic = $('topic').value.trim();
+  $('setup').hidden = true; $('work').hidden = false;
+  draw();
+};
+
+function draw() {
+  if (i >= posts.length) return finish();
+  $('post').textContent = posts[i].text;
+  $('count').textContent = `${i + 1} of ${posts.length}`;
+  $('prog').style.width = (i / posts.length * 100) + '%';
+}
+
+function mark(keep) {
+  if (i >= posts.length) return;
+  labels[i] = { id: posts[i].id ?? i, text: posts[i].text, keep };
+  i++; draw();
+}
+function undo() { if (i > 0) { i--; labels[i] = undefined; draw(); } }
+
+function finish() {
+  const kept = labels.filter(l => l && l.keep).length;
+  $('work').hidden = true; $('done').hidden = false;
+  $('summary').textContent =
+    `${labels.length} labelled — ${kept} on topic, ${labels.length - kept} off topic.`;
+  if (kept < 15 || labels.length - kept < 15)
+    $('summary').textContent += ' Warning: very lopsided — precision/recall will be noisy.';
+}
+
+$('keep').onclick = () => mark(true);
+$('skip').onclick = () => mark(false);
+$('undo').onclick = undo;
+
+addEventListener('keydown', e => {
+  if ($('work').hidden) return;
+  const k = e.key.toLowerCase();
+  if (k === 'j') mark(true);
+  else if (k === 'k') mark(false);
+  else if (k === 'u') undo();
+});
+
+$('save').onclick = () => {
+  const blob = new Blob([JSON.stringify({ topic, labels: labels.filter(Boolean) }, null, 2)],
+    { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'labels.json'; a.click();
+  URL.revokeObjectURL(a.href);
+};
+</script>
