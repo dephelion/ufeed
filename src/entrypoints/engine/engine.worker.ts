@@ -1,6 +1,7 @@
 import { isEngineRequest, type EngineReply, type EngineRequest } from '../../core/protocol';
 import { logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
+import { MODEL, formatPost, formatTopic } from '../../ml/models';
 import { scoreAgainstTopics, type Vector } from '../../ml/scoring';
 
 const log = logger('worker');
@@ -44,8 +45,11 @@ async function handle(request: EngineRequest): Promise<void> {
   try {
     await ensureLoaded();
     if (request.type === 'SET_TOPICS') {
-      topicVectors = await embedder.embed(request.topics);
+      topicVectors = await embedder.embed(
+        request.topics.map(formatTopic),
+      );
       log.info('topics embedded', {
+        model: MODEL.label,
         count: topicVectors.length,
         topics: JSON.stringify(request.topics),
       });
@@ -53,7 +57,9 @@ async function handle(request: EngineRequest): Promise<void> {
       return;
     }
     const started = Date.now();
-    const vectors = await embedder.embed(request.texts);
+    const vectors = await embedder.embed(
+      request.texts.map(formatPost),
+    );
     const scores = vectors.map((v) => scoreAgainstTopics(v, topicVectors));
     const elapsed = Date.now() - started;
     log.info('scored', {

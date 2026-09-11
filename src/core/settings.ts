@@ -1,10 +1,10 @@
-import { DEFAULT_SHORT_PENALTY, DEFAULT_STRICTNESS } from '../ml/scoring';
+import { MODEL } from '../ml/models';
 
 export interface Settings {
   enabled: boolean;
   topics: string[];
+  /** Slider position 0..1, not a score: scores differ per model. */
   strictness: number;
-  shortPenalty: number;
   disabledHosts: string[];
   alwaysKeep: string[];
   alwaysBlur: string[];
@@ -13,8 +13,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
-  strictness: DEFAULT_STRICTNESS,
-  shortPenalty: DEFAULT_SHORT_PENALTY,
+  strictness: MODEL.defaultPosition,
   disabledHosts: [],
   alwaysKeep: [],
   alwaysBlur: [],
