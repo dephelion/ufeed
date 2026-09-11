@@ -45,6 +45,9 @@ pick `.output/chrome-mv3`.
 **Firefox** — `about:debugging#/runtime/this-firefox`, _Load Temporary Add-on_,
 pick `.output/firefox-mv3/manifest.json`.
 
+**Firefox for Android** — see [`wiki-llm/android.md`](wiki-llm/android.md); it
+needs Nightly on both ends and a different loading path.
+
 Then open the toolbar popup, add a topic (`tech, software, ai` — one per line),
 and visit x.com.
 
