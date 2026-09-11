@@ -17,6 +17,16 @@ const FORCED = import.meta.env.VITE_LENSING_BACKEND as Device | undefined;
 /** Browser order. Node offers only cpu, which is why this is a parameter. */
 export const BROWSER_DEVICES: readonly Device[] = FORCED ? [FORCED] : ['webgpu', 'wasm'];
 
+async function hasGpuAdapter(): Promise<boolean> {
+  const gpu = (navigator as { gpu?: { requestAdapter(): Promise<unknown> } }).gpu;
+  if (!gpu) return false;
+  try {
+    return (await gpu.requestAdapter()) !== null;
+  } catch {
+    return false;
+  }
+}
+
 export interface EmbedderProgress {
   state: 'downloading' | 'warming' | 'ready';
   progress?: number;
@@ -46,6 +56,13 @@ export class Embedder {
     const failures: string[] = [];
 
     for (const device of devices) {
+      // transformers.js memoizes the first session promise; a rejected WebGPU create
+      // poisons every later device, so the missing adapter must be caught before it.
+      if (device === 'webgpu' && !(await hasGpuAdapter())) {
+        failures.push('webgpu: no adapter');
+        log.warn('backend unavailable', { device, reason: 'no adapter' });
+        continue;
+      }
       try {
         log.info('trying backend', { device, model: MODEL.id });
         this.#pipe = await pipeline<'feature-extraction'>(
