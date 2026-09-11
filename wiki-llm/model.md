@@ -22,18 +22,18 @@ Measured on 205 labelled posts from a real timeline, 26 on topic (13% base rate)
 
 **Method, to reproduce:** scrape a feed's visible post text, label each post keep/skip by hand against one topic, then embed both and rank. Report AUC (ranking), d-prime (separation against noise), and the share of the feed surviving the threshold that keeps 80% of the labelled keeps. Harness and data are gitignored under `.local/`; the data is personal.
 
-| Model                  | AUC       | d-prime  | Feed shown at 80% recall |
-| :--------------------- | :-------- | :------- | :----------------------- |
-| **e5-small-v2**        | **0.881** | **1.61** | **20%**                  |
-| all-MiniLM-L6-v2       | 0.826     | 1.29     | 33%                      |
-| bge-small-en-v1.5      | 0.817     | 1.25     | 34%                      |
+| Model             | AUC       | d-prime  | Feed shown at 80% recall |
+| :---------------- | :-------- | :------- | :----------------------- |
+| **e5-small-v2**   | **0.881** | **1.61** | **20%**                  |
+| all-MiniLM-L6-v2  | 0.826     | 1.29     | 33%                      |
+| bge-small-en-v1.5 | 0.817     | 1.25     | 34%                      |
 
 MiniLM is trained sentence-to-sentence; it compressed every score toward zero and failed both real cases:
 
-| Post                                        | MiniLM | e5    |
-| :------------------------------------------ | :----- | :---- |
-| Multi-computer copy/paste (tech)            | 0.005  | 0.826 |
-| "Almeida destrozando a TelePedro." (politics)| 0.133  | 0.742 |
+| Post                                          | MiniLM | e5    |
+| :-------------------------------------------- | :----- | :---- |
+| Multi-computer copy/paste (tech)              | 0.005  | 0.826 |
+| "Almeida destrozando a TelePedro." (politics) | 0.133  | 0.742 |
 
 ## Score semantics
 
@@ -47,14 +47,14 @@ Measured distribution, topic `tech, software, ai`: on-topic mean **0.806**, off-
 
 Slider position `0..1` maps onto a band; the band is a user setting, defaulting to the model's.
 
-| Slider | Threshold | Recall | Feed shown |
-| -----: | --------: | -----: | ---------: |
-| 0%     | 0.760     | ~97%   | ~65%       |
-| 25%    | 0.777     | 92%    | 40%        |
-| **35%**| **0.784** | **~90%**| **~35%**  |
-| 50%    | 0.795     | 88%    | 25%        |
-| 75%    | 0.813     | ~45%   | 12%        |
-| 100%   | 0.830     | ~10%   | 3%         |
+|  Slider | Threshold |   Recall | Feed shown |
+| ------: | --------: | -------: | ---------: |
+|      0% |     0.760 |     ~97% |       ~65% |
+|     25% |     0.777 |      92% |        40% |
+| **35%** | **0.784** | **~90%** |   **~35%** |
+|     50% |     0.795 |      88% |        25% |
+|     75% |     0.813 |     ~45% |        12% |
+|    100% |     0.830 |     ~10% |         3% |
 
 Default **0.35**, deliberately forgiving: a false blur costs a click on something wanted; a false pass costs one scroll past something unwanted. Not symmetric.
 
@@ -68,14 +68,14 @@ Measured, same 205 posts:
 
 | AUC   | Topic                                                        |
 | :---- | :----------------------------------------------------------- |
-| 0.848 | `software`                                                    |
-| 0.876 | `software, programming`                                       |
-| 0.869 | `software programming engineering` (no commas)                |
-| 0.850 | `software, programming, engineering`                          |
-| 0.882 | `software, programming, engineering, AI, hardware`            |
-| 0.853 | 8 words                                                       |
-| 0.834 | `software and programming and engineering`                    |
-| 0.815 | `posts about software engineering, programming languages...`  |
+| 0.848 | `software`                                                   |
+| 0.876 | `software, programming`                                      |
+| 0.869 | `software programming engineering` (no commas)               |
+| 0.850 | `software, programming, engineering`                         |
+| 0.882 | `software, programming, engineering, AI, hardware`           |
+| 0.853 | 8 words                                                      |
+| 0.834 | `software and programming and engineering`                   |
+| 0.815 | `posts about software engineering, programming languages...` |
 
 Rules that hold: two to five words beats one; sentences and `and` cost 0.05-0.07 because filler is matched too; commas make no measurable difference. Differences under ~0.03 are noise on this sample — **which** words matter more than how many.
 

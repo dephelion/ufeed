@@ -1,8 +1,11 @@
 import EngineWorker from './engine.worker.ts?worker';
 import { logger } from '../../core/log';
 import {
-  HANDSHAKE, isEngineReply, isEngineRequest,
-  type EngineReply, type StatusEvent,
+  HANDSHAKE,
+  isEngineReply,
+  isEngineRequest,
+  type EngineReply,
+  type StatusEvent,
 } from '../../core/protocol';
 
 /**

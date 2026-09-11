@@ -20,13 +20,13 @@ const vectorsFor = async (texts: string[]) => {
 };
 
 const POLITICS =
-  '"Fascist!" "Racist!" "Bullshit!" Left-wing Bundestag member Cansin Köktürk '
-  + 'receives several calls to order during the speech by René Springer (AfD) '
-  + 'and is ejected from the Bundestag.';
+  '"Fascist!" "Racist!" "Bullshit!" Left-wing Bundestag member Cansin Köktürk ' +
+  'receives several calls to order during the speech by René Springer (AfD) ' +
+  'and is ejected from the Bundestag.';
 
 const HOUSING =
-  'Esta es la legislatura de la vivienda. 3.000 nuevas viviendas de alquiler '
-  + 'asequible, 600 para los más vulnerables; hasta 30.000 viviendas a rehabilitar.';
+  'Esta es la legislatura de la vivienda. 3.000 nuevas viviendas de alquiler ' +
+  'asequible, 600 para los más vulnerables; hasta 30.000 viviendas a rehabilitar.';
 
 const TECH = 'JavaScript natively supports shared-memory multithreading';
 
@@ -42,31 +42,43 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
   });
 
   it('ranks a tech post above a political one for the same topic', async () => {
-    const [topic, tech, politics] =
-      await vectorsFor([q('tech, software, ai'), d(TECH), d(POLITICS)]);
+    const [topic, tech, politics] = await vectorsFor([
+      q('tech, software, ai'),
+      d(TECH),
+      d(POLITICS),
+    ]);
     expect(cosine(topic!, tech!)).toBeGreaterThan(cosine(topic!, politics!));
   });
 
   it('separates better with a richer topic string than a single word', async () => {
-    const [single, rich, tech, politics] =
-      await vectorsFor([q('tech'), q('tech, software, ai'), d(TECH), d(POLITICS)]);
+    const [single, rich, tech, politics] = await vectorsFor([
+      q('tech'),
+      q('tech, software, ai'),
+      d(TECH),
+      d(POLITICS),
+    ]);
     const singleGap = cosine(single!, tech!) - cosine(single!, politics!);
     const richGap = cosine(rich!, tech!) - cosine(rich!, politics!);
     expect(richGap).toBeGreaterThan(singleGap);
   });
 
   it('takes the closest topic when several are set', async () => {
-    const [cooking, tech, post] = await vectorsFor([q('cooking recipes'), q('tech'), d(TECH)]);
+    const [cooking, tech, post] = await vectorsFor([
+      q('cooking recipes'),
+      q('tech'),
+      d(TECH),
+    ]);
     const score = scoreAgainstTopics(post!, [cooking!, tech!]);
-    expect(score).toBeCloseTo(
-      Math.max(cosine(cooking!, post!), cosine(tech!, post!)),
-      5,
-    );
+    expect(score).toBeCloseTo(Math.max(cosine(cooking!, post!), cosine(tech!, post!)), 5);
   });
 
   it('separates tech from politics under either phrasing, which is what matters', async () => {
-    const [single, rich, tech, politics] =
-      await vectorsFor([q('tech'), q('tech, software, ai'), d(TECH), d(POLITICS)]);
+    const [single, rich, tech, politics] = await vectorsFor([
+      q('tech'),
+      q('tech, software, ai'),
+      d(TECH),
+      d(POLITICS),
+    ]);
     expect(cosine(single!, tech!) - cosine(single!, politics!)).toBeGreaterThan(0);
     expect(cosine(rich!, tech!) - cosine(rich!, politics!)).toBeGreaterThan(0);
   });
@@ -78,7 +90,7 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
     expect(probe.near).toBeGreaterThan(probe.far);
   });
 
-  it('self-check clears this model\'s gap by a real margin', async () => {
+  it("self-check clears this model's gap by a real margin", async () => {
     await embedder.load(undefined, ['cpu']);
     const probe = await embedder.selfCheck();
     // Absolute scores differ per model; the gap is what a broken backend collapses.

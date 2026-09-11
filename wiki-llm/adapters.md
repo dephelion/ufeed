@@ -9,7 +9,7 @@
 interface SiteAdapter {
   id: string;
   matches(hostname: string): boolean;
-  findPosts(root: ParentNode): Post[];   // { container, text }
+  findPosts(root: ParentNode): Post[]; // { container, text }
 }
 ```
 
@@ -19,10 +19,10 @@ interface SiteAdapter {
 
 ## X
 
-| Concern   | Selector                          |
-| :-------- | :-------------------------------- |
-| Container | `[data-testid="cellInnerDiv"]`     |
-| Text      | `[data-testid="tweetText"]`        |
+| Concern   | Selector                       |
+| :-------- | :----------------------------- |
+| Container | `[data-testid="cellInnerDiv"]` |
+| Text      | `[data-testid="tweetText"]`    |
 
 **Not `article`.** It leaves separators and padding sharp.
 

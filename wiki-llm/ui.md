@@ -7,12 +7,12 @@
 
 `.lx-blur`, applied to the post container. `src/ui/blur.css`, shipped via `content_scripts[].css` so it applies before first paint.
 
-| Target      | Treatment                                            |
-| :---------- | :--------------------------------------------------- |
-| Container   | `opacity: .55`, `position: relative`                 |
-| Text        | `color: transparent` + `text-shadow: 0 0 10px currentColor` |
-| Media       | `filter: blur(18px) saturate(.4)`, `opacity: .5`     |
-| Label       | `::after` — "Out of topic — click to read"           |
+| Target    | Treatment                                                   |
+| :-------- | :---------------------------------------------------------- |
+| Container | `opacity: .55`, `position: relative`                        |
+| Text      | `color: transparent` + `text-shadow: 0 0 10px currentColor` |
+| Media     | `filter: blur(18px) saturate(.4)`, `opacity: .5`            |
+| Label     | `::after` — "Out of topic — click to read"                  |
 
 **Never `filter: blur()` on the container.** It creates a stacking context **and a containing block**, breaking `position: fixed` descendants and vendor overlays, and it is expensive across a long feed. Media is a leaf with no fixed descendants, so blurring it directly is safe.
 
@@ -35,16 +35,16 @@
 
 ## Popup
 
-| Control          | Effect                                                                 |
-| :--------------- | :--------------------------------------------------------------------- |
-| On               | Global switch. Off reveals everything.                                 |
-| Topics + Apply   | Takes effect only on Apply, so a half-typed edit never filters a feed.  |
-| Strictness       | Slider position 0..1 onto the band. Re-applies from cache, no inference.|
-| Advanced band    | Loosest / strictest score the slider spans.                            |
-| Reset            | Restores defaults, keeps topics.                                       |
-| Status dot       | Engine state and backend.                                              |
+| Control        | Effect                                                                   |
+| :------------- | :----------------------------------------------------------------------- |
+| On             | Global switch. Off reveals everything.                                   |
+| Topics + Apply | Takes effect only on Apply, so a half-typed edit never filters a feed.   |
+| Strictness     | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
+| Advanced band  | Loosest / strictest score the slider spans.                              |
+| Reset          | Restores defaults, keeps topics.                                         |
+| Status dot     | Engine state and backend.                                                |
 
-Hints speak in outcomes, not cosines: *"Shows roughly 35% of a feed (score 0.784 and up)."* Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
+Hints speak in outcomes, not cosines: _"Shows roughly 35% of a feed (score 0.784 and up)."_ Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
 Apply is disabled until the textarea differs from what is saved.
 

@@ -1,6 +1,11 @@
 import { estimateFeedShown, strictnessFromPosition } from '../../ml/scoring';
 import {
-  DEFAULT_SETTINGS, parseTopics, topicsEqual, topicsToText, usableBand, type Settings,
+  DEFAULT_SETTINGS,
+  parseTopics,
+  topicsEqual,
+  topicsToText,
+  usableBand,
+  type Settings,
 } from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
 
@@ -30,8 +35,10 @@ function describeStrictness(position: number, settings: Settings): string {
   const band = usableBand(settings);
   const threshold = strictnessFromPosition(position, band);
   const shown = Math.round(estimateFeedShown(threshold) * 100);
-  return `Shows roughly ${shown}% of a feed (score ${threshold.toFixed(3)} and up). `
-    + 'Blurred posts stay one click away.';
+  return (
+    `Shows roughly ${shown}% of a feed (score ${threshold.toFixed(3)} and up). ` +
+    'Blurred posts stay one click away.'
+  );
 }
 
 function render(settings: Settings): void {
@@ -63,8 +70,9 @@ function describeStatus(settings: Settings): void {
     return;
   }
   dot.dataset.state = 'ready';
-  statusText.textContent = `Active on supported feeds · ${settings.topics.length} topic`
-    + (settings.topics.length === 1 ? '' : 's');
+  statusText.textContent =
+    `Active on supported feeds · ${settings.topics.length} topic` +
+    (settings.topics.length === 1 ? '' : 's');
 }
 
 async function update(patch: Partial<Settings>): Promise<void> {
@@ -99,8 +107,9 @@ strictness.addEventListener('change', () => {
 });
 
 const commitBand = (): void => {
-  void update({ bandMin: Number(bandMin.value), bandMax: Number(bandMax.value) })
-    .then(() => render(saved));
+  void update({ bandMin: Number(bandMin.value), bandMax: Number(bandMax.value) }).then(
+    () => render(saved),
+  );
 };
 
 bandMin.addEventListener('change', commitBand);

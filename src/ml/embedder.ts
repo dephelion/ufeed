@@ -6,7 +6,6 @@ import { cosine, normalize, type Vector } from './scoring';
 
 const log = logger('embedder');
 
-
 /** Model weights come from the CDN; the runtime itself ships with the extension. */
 env.allowLocalModels = false;
 if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
@@ -16,8 +15,7 @@ export type Device = 'webgpu' | 'wasm' | 'cpu';
 const FORCED = import.meta.env.VITE_LENSING_BACKEND as Device | undefined;
 
 /** Browser order. Node offers only cpu, which is why this is a parameter. */
-export const BROWSER_DEVICES: readonly Device[] =
-  FORCED ? [FORCED] : ['webgpu', 'wasm'];
+export const BROWSER_DEVICES: readonly Device[] = FORCED ? [FORCED] : ['webgpu', 'wasm'];
 
 export interface EmbedderProgress {
   state: 'downloading' | 'warming' | 'ready';
@@ -50,16 +48,22 @@ export class Embedder {
     for (const device of devices) {
       try {
         log.info('trying backend', { device, model: MODEL.id });
-        this.#pipe = await pipeline<'feature-extraction'>('feature-extraction', MODEL.id, {
-          device,
-          dtype: 'q8',
-          progress_callback: report,
-        });
+        this.#pipe = await pipeline<'feature-extraction'>(
+          'feature-extraction',
+          MODEL.id,
+          {
+            device,
+            dtype: 'q8',
+            progress_callback: report,
+          },
+        );
 
         onProgress?.({ state: 'warming' });
         const probe = await this.selfCheck();
         if (!probe.ok) {
-          failures.push(`${device}: wrong vectors (near=${probe.near.toFixed(3)} far=${probe.far.toFixed(3)})`);
+          failures.push(
+            `${device}: wrong vectors (near=${probe.near.toFixed(3)} far=${probe.far.toFixed(3)})`,
+          );
           log.warn('backend returns wrong vectors, rejecting', {
             device,
             near: probe.near.toFixed(3),
@@ -105,8 +109,7 @@ export class Embedder {
     const nearScore = cosine(anchor, near);
     const farScore = cosine(anchor, far);
     return {
-      ok: nearScore >= MODEL.probeMinNear
-        && nearScore - farScore >= MODEL.probeMinGap,
+      ok: nearScore >= MODEL.probeMinNear && nearScore - farScore >= MODEL.probeMinGap,
       near: nearScore,
       far: farScore,
     };
@@ -115,7 +118,10 @@ export class Embedder {
   async embed(texts: readonly string[]): Promise<Vector[]> {
     if (!this.#pipe) throw new Error('embedder used before load()');
     if (texts.length === 0) return [];
-    const output = await this.#pipe(texts as string[], { pooling: 'mean', normalize: true });
+    const output = await this.#pipe(texts as string[], {
+      pooling: 'mean',
+      normalize: true,
+    });
     const [rows, dims] = output.dims as [number, number];
     const flat = output.data as Float32Array;
     const vectors: Vector[] = [];

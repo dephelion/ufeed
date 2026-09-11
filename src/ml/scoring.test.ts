@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { MODEL } from './models';
 import {
-  cosine, normalize, passes, positionFromStrictness,
-  scoreAgainstTopics, strictnessFromPosition,
+  cosine,
+  normalize,
+  passes,
+  positionFromStrictness,
+  scoreAgainstTopics,
+  strictnessFromPosition,
 } from './scoring';
 
 const v = (...xs: number[]) => new Float32Array(xs);
@@ -31,7 +35,6 @@ describe('scoreAgainstTopics', () => {
     expect(passes(scoreAgainstTopics(v(1, 0), []), 0)).toBe(false);
   });
 });
-
 
 describe('normalize', () => {
   it('produces a unit vector', () => {

@@ -5,14 +5,14 @@
 
 ## Toolchain
 
-| Concern    | Choice                                                                 |
-| :--------- | :--------------------------------------------------------------------- |
-| Runtime    | Node 20+                                                               |
-| Language   | TypeScript, `strict`, `noUncheckedIndexedAccess`, ESM                   |
-| Framework  | **WXT** — generates both manifests, owns entrypoint discovery           |
-| Tests      | **Vitest**, `happy-dom` for DOM tiers                                   |
-| Browser API| `webextension-polyfill`, **promise style only**                         |
-| Inference  | `@huggingface/transformers` v3 over ONNX Runtime Web                    |
+| Concern     | Choice                                                        |
+| :---------- | :------------------------------------------------------------ |
+| Runtime     | Node 20+                                                      |
+| Language    | TypeScript, `strict`, `noUncheckedIndexedAccess`, ESM         |
+| Framework   | **WXT** — generates both manifests, owns entrypoint discovery |
+| Tests       | **Vitest**, `happy-dom` for DOM tiers                         |
+| Browser API | `webextension-polyfill`, **promise style only**               |
+| Inference   | `@huggingface/transformers` v3 over ONNX Runtime Web          |
 
 ## Layout
 
@@ -45,12 +45,12 @@ timeline data they ran against. The harnesses are reproducible from
 
 ## Build modes
 
-| Command                 | Output                  | Logs | Badges |
-| :---------------------- | :---------------------- | :--- | :----- |
-| `npm run watch`         | `.output/chrome-mv3`    | on   | on     |
-| `npm run build:debug`   | `.output/chrome-mv3`    | on   | on     |
-| `npm run build`         | `.output/chrome-mv3`    | off  | off    |
-| `npm run build:firefox` | `.output/firefox-mv3`   | off  | off    |
+| Command                 | Output                | Logs | Badges |
+| :---------------------- | :-------------------- | :--- | :----- |
+| `npm run watch`         | `.output/chrome-mv3`  | on   | on     |
+| `npm run build:debug`   | `.output/chrome-mv3`  | on   | on     |
+| `npm run build`         | `.output/chrome-mv3`  | off  | off    |
+| `npm run build:firefox` | `.output/firefox-mv3` | off  | off    |
 
 **`npm run dev` does not work for engine changes.** WXT serves entrypoint modules from `localhost`, which makes `new Worker()` cross-origin; it throws and the engine never starts, silently. Use `npm run watch`. `dev` is fine for popup-only work.
 

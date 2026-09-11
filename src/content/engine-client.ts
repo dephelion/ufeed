@@ -1,8 +1,11 @@
 import browser from 'webextension-polyfill';
 import { logger } from '../core/log';
 import {
-  HANDSHAKE, isEngineReply, nextRequestId,
-  type EngineRequest, type StatusEvent,
+  HANDSHAKE,
+  isEngineReply,
+  nextRequestId,
+  type EngineRequest,
+  type StatusEvent,
 } from '../core/protocol';
 
 const REQUEST_TIMEOUT_MS = 8000;
@@ -10,7 +13,10 @@ const CONNECT_WATCHDOG_MS = 15000;
 
 const log = logger('client');
 
-type Pending = { resolve: (scores: number[]) => void; timer: ReturnType<typeof setTimeout> };
+type Pending = {
+  resolve: (scores: number[]) => void;
+  timer: ReturnType<typeof setTimeout>;
+};
 
 /** Owns the hidden extension-origin iframe and the private port into it. */
 export class EngineClient {
@@ -69,7 +75,11 @@ export class EngineClient {
     if (!isEngineReply(data)) return;
     if (data.type === 'STATUS') {
       if (data.state !== this.#status.state) {
-        log.info('engine status', { state: data.state, backend: data.backend, reason: data.message });
+        log.info('engine status', {
+          state: data.state,
+          backend: data.backend,
+          reason: data.message,
+        });
       }
       this.#status = data;
       this.onStatus(data);

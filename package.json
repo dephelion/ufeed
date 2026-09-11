@@ -12,6 +12,8 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
     "postinstall": "node scripts/sync-ort.mjs && wxt prepare",
@@ -29,6 +31,7 @@
   "devDependencies": {
     "@types/webextension-polyfill": "^0.12.3",
     "happy-dom": "^20.14.3",
+    "prettier": "^3.9.6",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4",
     "wxt": "^0.20.12"

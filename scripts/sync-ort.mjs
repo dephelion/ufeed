@@ -3,10 +3,7 @@ import { copyFileSync, mkdirSync } from 'node:fs';
 
 /* jsep only: it serves both WebGPU and the CPU fallback. Threads are unusable
    anyway (no cross-origin isolation, wiki-llm/manifest.md). */
-const FILES = [
-  'ort-wasm-simd-threaded.jsep.wasm',
-  'ort-wasm-simd-threaded.jsep.mjs',
-];
+const FILES = ['ort-wasm-simd-threaded.jsep.wasm', 'ort-wasm-simd-threaded.jsep.mjs'];
 
 mkdirSync('public/ort', { recursive: true });
 for (const file of FILES) {

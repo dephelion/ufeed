@@ -1,4 +1,8 @@
-import { isEngineRequest, type EngineReply, type EngineRequest } from '../../core/protocol';
+import {
+  isEngineRequest,
+  type EngineReply,
+  type EngineRequest,
+} from '../../core/protocol';
 import { logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { MODEL, formatPost, formatTopic } from '../../ml/models';
@@ -19,7 +23,8 @@ function ensureLoaded(): Promise<void> {
   if (!loading) log.info('loading model');
   loading ??= embedder
     .load((p) => {
-      if (p.state === 'downloading') log.info('downloading', { percent: Math.round(p.progress ?? 0) });
+      if (p.state === 'downloading')
+        log.info('downloading', { percent: Math.round(p.progress ?? 0) });
       post({ type: 'STATUS', state: p.state, progress: p.progress });
     })
     .then((backend) => {
@@ -45,9 +50,7 @@ async function handle(request: EngineRequest): Promise<void> {
   try {
     await ensureLoaded();
     if (request.type === 'SET_TOPICS') {
-      topicVectors = await embedder.embed(
-        request.topics.map(formatTopic),
-      );
+      topicVectors = await embedder.embed(request.topics.map(formatTopic));
       log.info('topics embedded', {
         model: MODEL.label,
         count: topicVectors.length,
@@ -57,9 +60,7 @@ async function handle(request: EngineRequest): Promise<void> {
       return;
     }
     const started = Date.now();
-    const vectors = await embedder.embed(
-      request.texts.map(formatPost),
-    );
+    const vectors = await embedder.embed(request.texts.map(formatPost));
     const scores = vectors.map((v) => scoreAgainstTopics(v, topicVectors));
     const elapsed = Date.now() - started;
     log.info('scored', {

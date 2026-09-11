@@ -5,12 +5,12 @@
 
 ## Tiers
 
-| Tier        | Command              | Runtime | Covers                                                        |
-| :---------- | :------------------- | :------ | :------------------------------------------------------------ |
-| Unit        | `npm test`           | <1s     | Pure logic, protocol guards, cache, settings, blur DOM.       |
-| Adapter     | `npm test`           | <1s     | Selectors against captured fixture HTML, happy-dom.           |
-| Model       | `npm run test:model` | ~3s     | The real model on real feed text. Separate config, node env.  |
-| Typecheck   | `npm run compile`    | ~2s     | `tsc --noEmit`.                                               |
+| Tier      | Command              | Runtime | Covers                                                       |
+| :-------- | :------------------- | :------ | :----------------------------------------------------------- |
+| Unit      | `npm test`           | <1s     | Pure logic, protocol guards, cache, settings, blur DOM.      |
+| Adapter   | `npm test`           | <1s     | Selectors against captured fixture HTML, happy-dom.          |
+| Model     | `npm run test:model` | ~3s     | The real model on real feed text. Separate config, node env. |
+| Typecheck | `npm run compile`    | ~2s     | `tsc --noEmit`.                                              |
 
 `npm test` excludes `*.model.test.ts` — it loads weights. Both suites are offline once the model is cached.
 
