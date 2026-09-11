@@ -1,26 +1,11 @@
 import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers';
 import type { Backend } from '../core/protocol';
 import { logger } from '../core/log';
+import { MODEL, PROBE, formatPost, formatTopic } from './models';
 import { cosine, normalize, type Vector } from './scoring';
-
-export const MODEL_ID = 'Xenova/all-MiniLM-L6-v2';
 
 const log = logger('embedder');
 
-/**
- * A backend can load, report ready, and still return wrong vectors — q8 on
- * WebGPU does exactly that. Reference values measured on CPU: near 0.58,
- * far -0.00. Bounds are loose enough for quantisation noise, tight enough to
- * catch a backend that is quietly computing nonsense.
- */
-const PROBE = {
-  anchor: 'software engineering',
-  near: 'writing code and building software systems',
-  far: 'a recipe for chocolate cake with butter and eggs',
-} as const;
-
-const PROBE_MIN_NEAR = 0.4;
-const PROBE_MAX_FAR = 0.2;
 
 /** Model weights come from the CDN; the runtime itself ships with the extension. */
 env.allowLocalModels = false;
@@ -64,8 +49,8 @@ export class Embedder {
 
     for (const device of devices) {
       try {
-        log.info('trying backend', { device, model: MODEL_ID });
-        this.#pipe = await pipeline<'feature-extraction'>('feature-extraction', MODEL_ID, {
+        log.info('trying backend', { device, model: MODEL.id });
+        this.#pipe = await pipeline<'feature-extraction'>('feature-extraction', MODEL.id, {
           device,
           dtype: 'q8',
           progress_callback: report,
@@ -104,14 +89,24 @@ export class Embedder {
     throw new Error(`no usable backend (${failures.join(' | ')})`);
   }
 
-  /** Verifies the loaded backend actually computes meaning, not just numbers. */
+  /**
+   * A backend can load, report ready, and return confident nonsense — q8 on
+   * WebGPU does. The gap between a related and an unrelated pair is what
+   * collapses when it happens, and unlike absolute scores it is comparable
+   * across models.
+   */
   async selfCheck(): Promise<{ ok: boolean; near: number; far: number }> {
-    const [anchor, near, far] = await this.embed([PROBE.anchor, PROBE.near, PROBE.far]);
+    const [anchor, near, far] = await this.embed([
+      formatTopic(PROBE.anchor),
+      formatPost(PROBE.near),
+      formatPost(PROBE.far),
+    ]);
     if (!anchor || !near || !far) return { ok: false, near: NaN, far: NaN };
     const nearScore = cosine(anchor, near);
     const farScore = cosine(anchor, far);
     return {
-      ok: nearScore >= PROBE_MIN_NEAR && farScore <= PROBE_MAX_FAR,
+      ok: nearScore >= MODEL.probeMinNear
+        && nearScore - farScore >= MODEL.probeMinGap,
       near: nearScore,
       far: farScore,
     };
