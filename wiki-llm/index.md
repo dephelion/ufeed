@@ -27,3 +27,5 @@ Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both b
 Not built: Reddit adapter, Chrome offscreen singleton, multilingual, mobile.
 
 Superseded design doc: [specs/v1-spec.md](../specs/v1-spec.md), kept for provenance only. This wiki is authoritative.
+
+Every number in these pages came from a measurement harness run against a captured timeline. Both live in gitignored `.local/`: the data is personal, and the method is described where the number is used.

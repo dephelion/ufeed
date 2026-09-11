@@ -114,7 +114,6 @@ src/
 public/ort/    ONNX runtime, synced from node_modules by scripts/sync-ort.mjs
 wiki-llm/      source of truth
 specs/         superseded design docs, provenance only
-spikes/        throwaway harnesses and captured data
 ```
 
 Inference runs in a hidden extension-origin iframe — not the page, not the
