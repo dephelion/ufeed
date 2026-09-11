@@ -15,7 +15,10 @@ export async function saveSettings(patch: Partial<Settings>): Promise<Settings> 
 }
 
 export function onSettingsChanged(fn: (settings: Settings) => void): () => void {
-  const listener = (changes: Record<string, browser.Storage.StorageChange>, area: string) => {
+  const listener = (
+    changes: Record<string, browser.Storage.StorageChange>,
+    area: string,
+  ) => {
     if (area !== 'local' || !changes[KEY]) return;
     fn(withDefaults(changes[KEY].newValue as Partial<Settings> | undefined));
   };

@@ -7,23 +7,23 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 
 ## Keys
 
-| Key                          | Value                                            | Why                                                     |
-| :--------------------------- | :----------------------------------------------- | :------------------------------------------------------ |
-| `permissions`                | `storage`                                        | Settings only.                                          |
-| `host_permissions`           | `*://x.com/*`, `*://twitter.com/*`               | Minimal at install.                                     |
-| `optional_host_permissions`  | `*://reddit.com/*`, `*://*.reddit.com/*`         | Granted on request. Both patterns: `*.reddit.com` misses the bare domain. |
-| `web_accessible_resources`   | `engine.html`                                    | The iframe the content script injects.                  |
-| `content_security_policy`    | `script-src 'self' 'wasm-unsafe-eval'`           | **Mandatory** or ONNX Runtime will not instantiate.     |
-| `browser_specific_settings`  | `gecko.id`, `strict_min_version: 115.0`          | Required to install on Firefox.                         |
-| `content_scripts[].css`      | `blur.css`                                       | Declared CSS applies before first paint; injected does not. |
-| `content_scripts[].run_at`   | `document_start`                                 | Same reason.                                            |
+| Key                         | Value                                    | Why                                                                       |
+| :-------------------------- | :--------------------------------------- | :------------------------------------------------------------------------ |
+| `permissions`               | `storage`                                | Settings only.                                                            |
+| `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`       | Minimal at install.                                                       |
+| `optional_host_permissions` | `*://reddit.com/*`, `*://*.reddit.com/*` | Granted on request. Both patterns: `*.reddit.com` misses the bare domain. |
+| `web_accessible_resources`  | `engine.html`                            | The iframe the content script injects.                                    |
+| `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`   | **Mandatory** or ONNX Runtime will not instantiate.                       |
+| `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`  | Required to install on Firefox.                                           |
+| `content_scripts[].css`     | `blur.css`                               | Declared CSS applies before first paint; injected does not.               |
+| `content_scripts[].run_at`  | `document_start`                         | Same reason.                                                              |
 
 ## Per-browser
 
-| | Chrome / Edge | Firefox |
-| :-- | :-- | :-- |
+|            | Chrome / Edge                    | Firefox                               |
+| :--------- | :------------------------------- | :------------------------------------ |
 | Background | `service_worker`, `type: module` | `scripts` (non-persistent event page) |
-| Output | `.output/chrome-mv3` | `.output/firefox-mv3` |
+| Output     | `.output/chrome-mv3`             | `.output/firefox-mv3`                 |
 
 Both reach `requestDevice()` from a Worker inside the injected iframe (measured, macOS). `allow="webgpu"` is **not** needed: Chrome logs "Unrecognized feature" and ignores it.
 

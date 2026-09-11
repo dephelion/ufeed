@@ -29,13 +29,18 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
 }
 
 export function isActiveOn(settings: Settings, hostname: string): boolean {
-  return settings.enabled
-    && settings.topics.length > 0
-    && !settings.disabledHosts.includes(hostname);
+  return (
+    settings.enabled &&
+    settings.topics.length > 0 &&
+    !settings.disabledHosts.includes(hostname)
+  );
 }
 
 /** Overrides win over the model; empty terms never match. */
-export function overrideFor(settings: Settings, text: string): 'keep' | 'blur' | undefined {
+export function overrideFor(
+  settings: Settings,
+  text: string,
+): 'keep' | 'blur' | undefined {
   const haystack = text.toLowerCase();
   const hit = (terms: string[]) =>
     terms.some((t) => t.trim() !== '' && haystack.includes(t.toLowerCase()));

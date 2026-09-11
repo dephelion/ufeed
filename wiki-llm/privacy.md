@@ -5,12 +5,12 @@
 
 ## Data
 
-| Data          | Where it goes                                                        |
-| :------------ | :------------------------------------------------------------------- |
+| Data          | Where it goes                                                                                           |
+| :------------ | :------------------------------------------------------------------------------------------------------ |
 | Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged. |
-| Scores        | In-memory LRU keyed by text hash, cleared on reload.                 |
-| Settings      | `storage.local`. Topics, slider position, band, per-host toggles.    |
-| Model weights | Fetched once from the CDN, cached by the browser.                    |
+| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                    |
+| Settings      | `storage.local`. Topics, slider position, band, per-host toggles.                                       |
+| Model weights | Fetched once from the CDN, cached by the browser.                                                       |
 
 **One class of network request exists: model weights.** Nothing else. No analytics in v1 — a hard constraint, and what makes the "does not collect user data" declaration truthful.
 

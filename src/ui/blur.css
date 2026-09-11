@@ -17,7 +17,9 @@
 .lx-blur :is(img, video, canvas, svg) {
   filter: blur(18px) saturate(0.4);
   opacity: 0.5;
-  transition: filter 0.2s ease, opacity 0.2s ease;
+  transition:
+    filter 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .lx-blur [style*='background-image'] {
@@ -35,7 +37,9 @@
   background: color-mix(in srgb, #dc2626 22%, transparent);
   color: #f87171;
   border: 1px solid color-mix(in srgb, #dc2626 45%, transparent);
-  font: 600 11px/1.4 system-ui, sans-serif;
+  font:
+    600 11px/1.4 system-ui,
+    sans-serif;
   letter-spacing: 0.01em;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -59,8 +63,8 @@
 }
 
 [data-lx-score]::before {
-  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs)
-    ' · ' attr(data-lx-chars) ' chars';
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars';
   position: absolute;
   top: 2px;
   left: 2px;
@@ -69,6 +73,10 @@
   border-radius: 4px;
   background: #1c1917;
   color: #fafaf9;
-  font: 600 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font:
+    600 10px/1.4 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
   pointer-events: none;
 }

@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { blur, isRevealed, listenForReveal, reveal, revealAll, revealPermanently } from './blur';
+import {
+  blur,
+  isRevealed,
+  listenForReveal,
+  reveal,
+  revealAll,
+  revealPermanently,
+} from './blur';
 
 const post = () => {
   document.body.innerHTML = '<div id="p"><span>text</span></div>';
@@ -7,7 +14,9 @@ const post = () => {
 };
 
 describe('blur', () => {
-  beforeEach(() => { document.body.innerHTML = ''; });
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
 
   it('hides the post from assistive tech as well as sight', () => {
     const el = post();
@@ -34,14 +43,18 @@ describe('blur', () => {
 });
 
 describe('listenForReveal', () => {
-  beforeEach(() => { document.body.innerHTML = ''; });
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
 
   it('reveals on click and stops the click reaching the post', () => {
     const el = post();
     blur(el);
     const stop = listenForReveal(document);
     let reachedPost = false;
-    el.addEventListener('click', () => { reachedPost = true; });
+    el.addEventListener('click', () => {
+      reachedPost = true;
+    });
 
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
@@ -57,7 +70,9 @@ describe('listenForReveal', () => {
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
     let reachedPost = false;
-    el.addEventListener('click', () => { reachedPost = true; });
+    el.addEventListener('click', () => {
+      reachedPost = true;
+    });
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
     expect(reachedPost).toBe(true);
@@ -68,7 +83,9 @@ describe('listenForReveal', () => {
     const el = post();
     const stop = listenForReveal(document);
     let reachedPost = false;
-    el.addEventListener('click', () => { reachedPost = true; });
+    el.addEventListener('click', () => {
+      reachedPost = true;
+    });
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     expect(reachedPost).toBe(true);
     stop();

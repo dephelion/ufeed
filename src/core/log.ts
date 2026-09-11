@@ -8,7 +8,12 @@ type Fields = Record<string, string | number | boolean | undefined>;
 
 const PREFIX = 'lensing';
 
-function emit(level: 'log' | 'warn' | 'error', scope: string, message: string, fields?: Fields) {
+function emit(
+  level: 'log' | 'warn' | 'error',
+  scope: string,
+  message: string,
+  fields?: Fields,
+) {
   if (!DEBUG && level === 'log') return;
   const parts = fields
     ? Object.entries(fields)

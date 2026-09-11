@@ -43,16 +43,26 @@ export interface Band {
 
 export const DEFAULT_BAND: Band = { min: MODEL.bandMin, max: MODEL.bandMax };
 
-export function strictnessFromPosition(position: number, band: Band = DEFAULT_BAND): number {
+export function strictnessFromPosition(
+  position: number,
+  band: Band = DEFAULT_BAND,
+): number {
   return band.min + clamp01(position) * (band.max - band.min);
 }
 
-export function positionFromStrictness(strictness: number, band: Band = DEFAULT_BAND): number {
+export function positionFromStrictness(
+  strictness: number,
+  band: Band = DEFAULT_BAND,
+): number {
   const span = band.max - band.min;
   return span === 0 ? 0 : clamp01((strictness - band.min) / span);
 }
 
-export function passes(score: number, position: number, band: Band = DEFAULT_BAND): boolean {
+export function passes(
+  score: number,
+  position: number,
+  band: Band = DEFAULT_BAND,
+): boolean {
   return score >= strictnessFromPosition(position, band);
 }
 
@@ -62,8 +72,15 @@ export function passes(score: number, position: number, band: Band = DEFAULT_BAN
  */
 export function estimateFeedShown(threshold: number): number {
   const curve: readonly (readonly [number, number])[] = [
-    [0.760, 0.65], [0.768, 0.58], [0.782, 0.40], [0.796, 0.25],
-    [0.800, 0.20], [0.810, 0.14], [0.817, 0.07], [0.824, 0.04], [0.838, 0.0],
+    [0.76, 0.65],
+    [0.768, 0.58],
+    [0.782, 0.4],
+    [0.796, 0.25],
+    [0.8, 0.2],
+    [0.81, 0.14],
+    [0.817, 0.07],
+    [0.824, 0.04],
+    [0.838, 0.0],
   ];
   if (threshold <= curve[0]![0]) return curve[0]![1];
   for (let i = 1; i < curve.length; i++) {

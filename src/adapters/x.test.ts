@@ -52,8 +52,11 @@ describe('xAdapter.findPosts', () => {
   });
 
   it('skips cells with no tweet text, such as ads and follow prompts', () => {
-    expect(xAdapter.findPosts(mount('<div data-testid="cellInnerDiv"><span>Promoted</span></div>')))
-      .toHaveLength(0);
+    expect(
+      xAdapter.findPosts(
+        mount('<div data-testid="cellInnerDiv"><span>Promoted</span></div>'),
+      ),
+    ).toHaveLength(0);
   });
 
   it('skips posts too short to classify', () => {
@@ -67,8 +70,9 @@ describe('xAdapter.findPosts', () => {
         <div data-testid="tweetText"><span>Our new inference pipeline ships today</span></div>
       </div>
     </div>`;
-    expect(xAdapter.findPosts(mount(html))[0]!.text)
-      .toBe('Left-wing Bundestag member ejected during the speech');
+    expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(
+      'Left-wing Bundestag member ejected during the speech',
+    );
   });
 
   it('ignores surrounding chrome: handle, timestamp and engagement counts', () => {
@@ -82,7 +86,8 @@ describe('xAdapter.findPosts', () => {
 
   it('collapses whitespace so a re-render hashes the same', () => {
     const html = cell('Distributed   systems\n\n  fail in  practice always');
-    expect(xAdapter.findPosts(mount(html))[0]!.text)
-      .toBe('Distributed systems fail in practice always');
+    expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(
+      'Distributed systems fail in practice always',
+    );
   });
 });

@@ -7,16 +7,16 @@ Lensing is a browser extension that blurs off-topic posts in social feeds. The u
 
 Chrome and Firefox, MV3, built with WXT. v1 targets X.
 
-| Page                               | Answers                                                                                                                                  |
-| :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
-| [architecture.md](architecture.md) | What are the three layers, why does the iframe exist, how does a post become a blur, what crosses each boundary?                          |
-| [model.md](model.md)               | Which model, why that one, what do the scores mean, how is the threshold set, why does a backend get rejected?                            |
-| [adapters.md](adapters.md)         | How is a post found in a vendor DOM? X selectors, virtualized recycling, what breaks when the vendor ships a change.                      |
-| [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                                          |
-| [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                                           |
-| [privacy.md](privacy.md)           | What Lensing reads, what it stores, what leaves the device, store policy, legal posture.                                                  |
-| [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                                              |
-| [conventions.md](conventions.md)   | Repo layout, toolchain, hard invariants, definition of done, debug builds.                                                                |
+| Page                               | Answers                                                                                                              |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| [architecture.md](architecture.md) | What are the three layers, why does the iframe exist, how does a post become a blur, what crosses each boundary?     |
+| [model.md](model.md)               | Which model, why that one, what do the scores mean, how is the threshold set, why does a backend get rejected?       |
+| [adapters.md](adapters.md)         | How is a post found in a vendor DOM? X selectors, virtualized recycling, what breaks when the vendor ships a change. |
+| [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                     |
+| [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                      |
+| [privacy.md](privacy.md)           | What Lensing reads, what it stores, what leaves the device, store policy, legal posture.                             |
+| [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                         |
+| [conventions.md](conventions.md)   | Repo layout, toolchain, hard invariants, definition of done, debug builds.                                           |
 
 ## Status
 

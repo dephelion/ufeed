@@ -64,8 +64,11 @@ export function isEngineReply(data: unknown): data is EngineReply {
   if (!isRecord(data)) return false;
   switch (data.type) {
     case 'SCORES':
-      return typeof data.id === 'string' && Array.isArray(data.scores)
-        && data.scores.every((n) => typeof n === 'number');
+      return (
+        typeof data.id === 'string' &&
+        Array.isArray(data.scores) &&
+        data.scores.every((n) => typeof n === 'number')
+      );
     case 'ACK':
       return typeof data.id === 'string';
     case 'ERROR':

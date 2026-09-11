@@ -8,7 +8,10 @@ let running = false;
 let queued = false;
 
 function build() {
-  if (running) { queued = true; return; }
+  if (running) {
+    queued = true;
+    return;
+  }
   running = true;
   const started = Date.now();
   spawn('npx', ['wxt', 'build'], {
@@ -16,10 +19,15 @@ function build() {
     env: { ...process.env, VITE_LENSING_DEBUG: '1' },
   }).on('close', (code) => {
     running = false;
-    console.log(code === 0
-      ? `\n  rebuilt in ${Date.now() - started}ms — reload the extension\n`
-      : `\n  build failed (${code})\n`);
-    if (queued) { queued = false; build(); }
+    console.log(
+      code === 0
+        ? `\n  rebuilt in ${Date.now() - started}ms — reload the extension\n`
+        : `\n  build failed (${code})\n`,
+    );
+    if (queued) {
+      queued = false;
+      build();
+    }
   });
 }
 
@@ -29,7 +37,10 @@ for (const dir of ['src', 'public']) {
     timer = setTimeout(build, 250);
   });
 }
-watch('wxt.config.ts', () => { clearTimeout(timer); timer = setTimeout(build, 250); });
+watch('wxt.config.ts', () => {
+  clearTimeout(timer);
+  timer = setTimeout(build, 250);
+});
 
 console.log('watching src/ — debug build on change');
 build();

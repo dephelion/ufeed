@@ -9,8 +9,12 @@ export const xAdapter: SiteAdapter = {
   id: 'x',
 
   matches(hostname) {
-    return hostname === 'x.com' || hostname === 'twitter.com'
-      || hostname.endsWith('.x.com') || hostname.endsWith('.twitter.com');
+    return (
+      hostname === 'x.com' ||
+      hostname === 'twitter.com' ||
+      hostname.endsWith('.x.com') ||
+      hostname.endsWith('.twitter.com')
+    );
   },
 
   findPosts(root) {
