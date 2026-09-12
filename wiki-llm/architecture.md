@@ -47,6 +47,7 @@ Background service worker: nothing on the hot path. Settings propagate through `
 content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
 content → engine   { id, type: 'FEEDBACK',   text, liked }
+                   SET_TOPICS also carries liked/disliked vectors
 engine  → content  { id, type: 'SCORES',     scores }   raw cosine, never booleans
 engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design

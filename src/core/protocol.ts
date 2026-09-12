@@ -11,6 +11,9 @@ export interface SetTopicsRequest {
   id: string;
   type: 'SET_TOPICS';
   topics: string[];
+  /** Corrections for exactly these topics; the worker re-derives its query from them. */
+  liked?: number[][];
+  disliked?: number[][];
 }
 
 /** The user corrected a verdict. The worker owns vectors, so it does the embedding. */
@@ -71,7 +74,10 @@ export function isHandshake(data: unknown): data is Handshake {
 export function isEngineRequest(data: unknown): data is EngineRequest {
   if (!isRecord(data) || typeof data.id !== 'string') return false;
   if (data.type === 'SCORE') return isStringArray(data.texts);
-  if (data.type === 'SET_TOPICS') return isStringArray(data.topics);
+  if (data.type === 'SET_TOPICS')
+    return (
+      isStringArray(data.topics) && isVectors(data.liked) && isVectors(data.disliked)
+    );
   if (data.type === 'FEEDBACK')
     return typeof data.text === 'string' && typeof data.liked === 'boolean';
   return false;
@@ -111,6 +117,14 @@ export function nextRequestId(): string {
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null;
+}
+
+function isVectors(v: unknown): v is number[][] | undefined {
+  return (
+    v === undefined ||
+    (Array.isArray(v) &&
+      v.every((row) => Array.isArray(row) && row.every((n) => typeof n === 'number')))
+  );
 }
 
 function isStringArray(v: unknown): v is string[] {
