@@ -6,10 +6,20 @@ import { adapterFor, type Post } from '../adapters';
 import { ScoreCache } from '../core/cache';
 import { isActiveOn, overrideFor, topicsEqual, type Settings } from '../core/settings';
 import { loadSettings, onSettingsChanged } from '../core/settings-storage';
-import { blur, isRevealed, listenForReveal, peek, reveal, revealAll } from '../feed/blur';
+import {
+  blur,
+  clearPending,
+  isRevealed,
+  listenForReveal,
+  markPending,
+  peek,
+  reveal,
+  revealAll,
+} from '../feed/blur';
 import { clearAllScores, clearScore, stampScore } from '../feed/score-badge';
 import { hasMedia } from '../feed/media';
-import { decide as decideAction, type Action } from '../feed/policy';
+import { LanguageCache } from '../feed/language-detector';
+import { decide as decideAction, decideWithoutScore, type Action } from '../feed/policy';
 import { ScoreWindow } from '../feed/threshold';
 import { FeedScanner } from '../feed/scanner';
 import { ScoreQueue } from '../feed/queue';
@@ -47,6 +57,7 @@ async function start(): Promise<void> {
   let settings = await loadSettings();
   const tuner = await Tuning.load();
   const cache = new ScoreCache();
+  const languages = new LanguageCache();
   const scoreWindow = new ScoreWindow();
 
   const engine = new EngineClient((next) => {
@@ -70,22 +81,26 @@ async function start(): Promise<void> {
     if (settings.showScores) stampScore(post.container, score, cut, post.text.length);
     else clearScore(post.container);
     if (isRevealed(post.container)) return undefined;
-    return apply(
-      post,
-      decideAction({
-        settings,
-        text: post.text,
-        score,
-        threshold: cut,
-        hasMedia: hasMedia(post.container, adapter),
-      }),
-    );
+    return apply(post, decideAction({ ...grounds(post), score, threshold: cut }));
   };
+
+  const grounds = (post: Post) => ({
+    settings,
+    text: post.text,
+    hasMedia: hasMedia(post.container, adapter),
+    language: languages.get(post.text),
+  });
+
+  const REASONS = {
+    'blur-media': 'media',
+    'blur-language': 'language',
+    blur: 'topic',
+  } as const;
 
   const apply = (post: Post, action: Action): Action => {
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, post.text);
-    else blur(post.container, action === 'blur-media' ? 'media' : 'topic');
+    else blur(post.container, REASONS[action]);
     return action;
   };
 
@@ -118,7 +133,35 @@ async function start(): Promise<void> {
       decide(post, cached);
       return;
     }
-    queue.add(post);
+    if (!settings.blurOtherLanguages) {
+      hold(post);
+      queue.add(post);
+      return;
+    }
+    void detectThenQueue(post);
+  };
+
+  /**
+   * Detection runs first because it can settle the post outright, and a post it
+   * claims costs no inference. Held rather than revealed in the meantime: a
+   * reveal now would flash the text a moment before the blur lands on it.
+   */
+  const detectThenQueue = async (post: Post): Promise<void> => {
+    hold(post);
+    await languages.detect(post.text);
+    if (!post.container.isConnected || isRevealed(post.container)) return;
+    const settled = decideWithoutScore(grounds(post));
+    if (settled === undefined) {
+      queue.add(post);
+      return;
+    }
+    clearPending(post.container);
+    apply(post, settled);
+  };
+
+  /** Nothing is softened while the engine is still warming — that is a download. */
+  const hold = (post: Post): void => {
+    if (engine.ready) markPending(post.container);
   };
 
   const scanner = new FeedScanner({

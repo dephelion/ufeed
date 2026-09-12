@@ -22,37 +22,36 @@
       <span class="applied" id="applied" hidden>Saved</span>
     </div>
     <p class="hint" id="topics-hint">
-      List what you want to see — a few words, one subject per line. Everything else gets
-      blurred.
+      Write what you want to see, a few words per line. Posts about anything else get
+      blurred out. You can always click a blurred post to read it.
     </p>
 
     <details>
       <summary>How to write a good topic</summary>
       <ul class="hint">
         <li>
-          <b>Two to five words works best.</b> One word is vague; past five, each extra
-          word dilutes the rest.
+          <b>Two to five words.</b> One word is too vague. More than five and each one
+          counts for less.
         </li>
         <li>
-          <b>No sentences, no filler.</b> Every word is matched, so <em>and</em>,
-          <em>posts about</em> and <em>the</em> drag the topic toward nothing in
-          particular.
+          <b>Keywords, not sentences.</b> Every word counts, so small words like
+          <em>and</em> or <em>posts about</em> only blur what you're asking for.
         </li>
         <li>
-          <b>Commas are optional.</b> <em>software, programming</em> and
-          <em>software programming</em> score the same. Use whichever reads better.
+          <b>Commas don't matter.</b> <em>software, programming</em> and
+          <em>software programming</em> work the same. Use whichever you prefer.
         </li>
         <li>
-          <b>One topic per line.</b> Words on the same line describe one subject; a new
-          line is a separate subject, and a post matching any line stays.
+          <b>One subject per line.</b> Put a separate subject on its own line. A post that
+          matches any line stays visible.
         </li>
         <li>
-          <b>Use the words posts actually use.</b> <em>software</em> beats <em>tech</em>,
-          because people write about code, not about categories.
+          <b>Use the words posts use.</b> <em>software</em> works better than
+          <em>tech</em>, because people write about the thing, not the category.
         </li>
         <li>
-          <b>Subject, not quality.</b> A shallow take and a deep post on the same subject
-          both match. Lensing cannot tell them apart.
+          <b>It matches subjects, not quality.</b> A great post and a poor one about the
+          same thing both stay. Lensing can't tell them apart.
         </li>
       </ul>
     </details>
@@ -68,16 +67,31 @@
       Blur images and videos with no text
     </label>
     <p class="hint">
-      A photo or clip captioned with a word or two cannot be matched against your topics.
-      Off, those posts stay visible.
+      Lensing reads words, not pictures. When a photo or video has only a word or two with
+      it, there is nothing to compare against your topics. Turn this on to blur those
+      posts instead of letting them through.
+    </p>
+
+    <label class="check" for="blur-other-languages">
+      <input type="checkbox" id="blur-other-languages" />
+      Blur posts that aren't in English
+    </label>
+    <p class="hint">
+      Lensing only understands English. It can't tell whether a post in another language
+      is about your topics or not, so it lets some through and blurs others at random.
+      Turn this on to blur them all — including ones that are on topic.
+      <br />
+      Posts already on screen stay as they are. Scroll on, or reload the page, to see the
+      change.
     </p>
 
     <details id="advanced">
       <summary>Advanced</summary>
       <p class="hint">
-        The slider spans this range of match scores. Unrelated posts score around 0.77
-        with this model, so the useful range is narrow. Widen it to reach settings the
-        slider cannot.
+        Every post gets a match score. The slider moves between these two scores, and
+        anything below the current one is blurred. Unrelated posts usually score around
+        0.77, so the range worth using is narrow. Widen it only if the slider alone can't
+        get you where you want.
       </p>
       <div class="row">
         <label for="band-min">Loosest</label>
@@ -91,11 +105,12 @@
           Learn from my thumbs
         </label>
         <p class="hint block-hint">
-          Hover a post to rate it. A rating adjusts the topic it matched, on this device
-          only. Scoring only reads text, so skip posts where the real content is in an
-          image or video and the caption is neutral — rating those teaches the topic from
-          words that aren't the point. Off, the buttons are hidden and scoring is
-          untouched.
+          Hover over a post to give it a thumb up or down, and Lensing learns what you
+          meant by that topic. Your ratings stay on this device.
+          <br />
+          One catch: it only learns from the words in a post. If the real content is in
+          the image or video and the words are forgettable, skip it — rating it teaches
+          Lensing the wrong thing. Leave this off and the buttons stay hidden.
         </p>
         <dl class="stats">
           <div>
@@ -122,8 +137,9 @@
         Show each post's score
       </label>
       <p class="hint">
-        Stamps every scored post with the score it got, the score it needed, and its
-        length.
+        Adds a small label to every post showing the score it got, the score it needed to
+        stay visible, and how long it is. Useful for working out why something was
+        blurred.
       </p>
     </details>
 

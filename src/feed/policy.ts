@@ -1,17 +1,39 @@
 import { overrideFor, type Settings } from '../core/settings';
 import { verdictAt } from '../ml/scoring';
+import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
 
 /** What to do with a post. No DOM: applying it is the caller's job. */
-export type Action = 'reveal' | 'blur' | 'blur-media' | 'peek';
+export type Action = 'reveal' | 'blur' | 'blur-media' | 'blur-language' | 'peek';
 
-export interface Judgement {
+/** Everything the tiers that need no score can read. */
+export interface Grounds {
   settings: Settings;
   text: string;
+  hasMedia: boolean;
+  /** Undefined means undetected — not run, not available, or not yet back. */
+  language: Language | undefined;
+}
+
+export interface Judgement extends Grounds {
   /** Undefined means unscored — pending, failed, or nothing to score. */
   score: number | undefined;
   threshold: number;
-  hasMedia: boolean;
+}
+
+/**
+ * The tiers that settle a post without the engine. Split out so the caller can
+ * ask before it spends an inference, and so a post it claims is never revealed
+ * first and blurred a moment later.
+ */
+export function decideWithoutScore(grounds: Grounds): Action | undefined {
+  const { settings, text, hasMedia, language } = grounds;
+  const override = overrideFor(settings, text);
+  if (override === 'keep') return 'reveal';
+  if (override === 'blur') return 'blur';
+  if (blursAsThinMedia(settings, text, hasMedia, language)) return 'blur-media';
+  if (blursAsOtherLanguage(settings, language)) return 'blur-language';
+  return undefined;
 }
 
 /**
@@ -19,17 +41,10 @@ export interface Judgement {
  * an unknown score reveals rather than holding the blur, whatever went wrong
  * upstream.
  */
-export function decide({
-  settings,
-  text,
-  score,
-  threshold,
-  hasMedia,
-}: Judgement): Action {
-  const override = overrideFor(settings, text);
-  if (override === 'keep') return 'reveal';
-  if (override === 'blur') return 'blur';
-  if (blursAsThinMedia(settings, text, hasMedia)) return 'blur-media';
+export function decide(judgement: Judgement): Action {
+  const settled = decideWithoutScore(judgement);
+  if (settled !== undefined) return settled;
+  const { score, threshold } = judgement;
   if (score === undefined) return 'reveal';
   const verdict = verdictAt(score, threshold);
   if (verdict === 'show') return 'reveal';

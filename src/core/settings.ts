@@ -16,6 +16,8 @@ export interface Settings {
   blurThinMedia: boolean;
   /** Apply thumbed corrections to the topic vectors. Off leaves scoring untouched. */
   tuneFromFeedback: boolean;
+  /** Blur posts the model cannot read. Off skips detection entirely. */
+  blurOtherLanguages: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -30,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showScores: false,
   blurThinMedia: false,
   tuneFromFeedback: false,
+  blurOtherLanguages: false,
 };
 
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {

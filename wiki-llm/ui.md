@@ -43,21 +43,48 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 `data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`.
 
-| Reason  | Label                              | Set when                                               |
-| :------ | :--------------------------------- | :----------------------------------------------------- |
-| `topic` | "Out of topic — click to read"     | The score fell below the threshold, or `alwaysBlur`.   |
-| `media` | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars. |
-| `peek`  | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.               |
+| Reason     | Label                              | Set when                                                                                 |
+| :--------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
+| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or `alwaysBlur`.                                     |
+| `media`    | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
+| `language` | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
+| `peek`     | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
 
 **The peek never touches host DOM.** The opening words ride on `data-lx-peek` and render in our own overlay. Un-blurring them in place means splitting the host's text node — Invariant 3, and dead on the next vendor re-render. `reveal()` clears the attribute, so a recycled node never shows another post's words.
+
+**Dim the children, never the container.** `opacity` on `.lx-blur` makes a group, and a group's own `::after` cannot exceed it — the label faded to 55% along with the post it labels. The dim lives on `.lx-blur > *`, which also carries `pointer-events: none`.
+
+**Labels are translucent over a dark fill, never a light tint.** The first pass tinted 22% of the reason's colour and coloured the text to match — picked against X's dark feed, invisible on LinkedIn's white one. A **78%** fill of the deep shade with near-white text reads on either background and still lets the feed through, which is what keeps the label part of the page rather than pasted onto it. Each reason keeps its own colour: red for topic, indigo for language, stone for media, amber for the peek.
+
+**Solid was tried and rejected.** It is the most legible and the most foreign — the pill stops belonging to the feed. Legibility here comes from the fill being dark and the text near-white, not from removing the transparency.
+
+**The score badge stays translucent**, alone among them. It is a debug affordance sitting over the post's own first line, and it is meant to be read through — a solid pill there hides content the badge exists to explain.
 
 **The peek shares `::after` with the label, deliberately.** An element has two pseudo-elements and the score badge owns `::before`; putting the peek there would hide the badge on exactly the borderline posts worth debugging.
 
 **The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
 
-**The media rule is engine-independent.** It reads the DOM and the settings, never a score, so it costs no inference and cannot be reached by a scoring failure. It sits with `alwaysBlur` as user policy, not as a model verdict — that is what keeps it clear of the fail-open invariant.
+**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They sit with `alwaysBlur` as user policy, not as a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them plus the overrides, asked before an inference is spent: a post they claim never reaches the engine.
+
+**The language label carries its own colour**, indigo against the topic label's red. It is not a verdict about the subject and must not read as one — [model.md](model.md) has why the score behind it would have been noise.
+
+**Turning the language checkbox on does not re-filter what is already on screen**, and the popup hint says so. Those posts were scanned while the setting was off, so no detection ran for them, and their scores are cached — `rescore()` re-decides them with no language to decide on. Scrolling and reloading both work; new posts are filtered normally. Accepted over the machinery to fix it: detection would have to run ahead of the score cache and the visible posts be re-offered, for one toggle a user flips once.
+
+**An unplaceable post is labelled `media`, not `language`.** CLD returning unreliable says the text is too thin to read, not that it is foreign. That is the same claim `MIN_BACKING_CHARS` makes by counting characters, so it lands in the same rule and the same label, and like that rule it needs media present and `blurThinMedia` on.
 
 `position: relative` on the container is the one accepted layout side effect — it anchors the label. Verified on X without shifting.
+
+## While a post is being judged
+
+`.lx-pending`, set by `markPending()` when a post is handed to the detector or the engine, cleared by `blur()`, `reveal()` and `revealAll()`.
+
+Detection and inference take milliseconds, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
+
+Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with text at `6px` and media at `20px`, a slow pulse, and **clicks still reach the post**. It reads as working, not as hidden.
+
+**It clears itself after 1500ms**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed dimmed — Invariant 2 applies to this state exactly as it applies to a blur.
+
+**Nothing is held while the engine is warming.** That wait is a model download, not milliseconds, and dimming a feed through it would be the bug this state exists to prevent.
 
 ## Reveal
 
@@ -90,20 +117,25 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 ## Popup
 
-| Control           | Effect                                                                   |
-| :---------------- | :----------------------------------------------------------------------- |
-| On                | Global switch. Off reveals everything.                                   |
-| Topics + Apply    | Takes effect only on Apply, so a half-typed edit never filters a feed.   |
-| Strictness        | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
-| Advanced band     | Loosest / strictest score the slider spans.                              |
-| Blur media        | Default off. Blurs media posts under 30 chars of text.                   |
-| Learn from thumbs | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.   |
-| Clear tuning      | In that section. Deletes every correction; Reset does too.               |
-| Show scores       | Advanced, default off. The only gate on the score badge, in any build.   |
-| Reset             | Restores defaults, keeps topics.                                         |
-| Status dot        | Engine state and backend.                                                |
+| Control                           | Effect                                                                      |
+| :-------------------------------- | :-------------------------------------------------------------------------- |
+| On                                | Global switch. Off reveals everything.                                      |
+| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed.      |
+| Strictness                        | Slider position 0..1 onto the band. Re-applies from cache, no inference.    |
+| Advanced band                     | Loosest / strictest score the slider spans.                                 |
+| Blur media                        | Default off. Blurs media posts under 30 chars of text.                      |
+| Blur posts that aren't in English | Default off. Blurs posts outside the model's language; off skips detection. |
+| Learn from thumbs                 | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.      |
+| Clear tuning                      | In that section. Deletes every correction; Reset does too.                  |
+| Show scores                       | Advanced, default off. The only gate on the score badge, in any build.      |
+| Reset                             | Restores defaults, keeps topics.                                            |
+| Status dot                        | Engine state and backend.                                                   |
 
-Hints speak in outcomes, not cosines: _"Shows roughly 35% of a feed (score 0.784 and up)."_ Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
+**Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Keeps about 35% of a typical feed visible. The rest is blurred, one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. The cut score is appended only while `showScores` is on, which is the one place a reader has asked for numbers.
+
+Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — Lensing reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
+
+Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
 Apply is disabled until the textarea differs from what is saved.
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS, type Settings } from '../core/settings';
 import { PEEK_BAND } from '../ml/scoring';
-import { decide, type Judgement } from './policy';
+import { decide, decideWithoutScore, type Judgement } from './policy';
 
 const THR = 0.784;
 const base = (over: Partial<Judgement> = {}): Judgement => ({
@@ -10,6 +10,7 @@ const base = (over: Partial<Judgement> = {}): Judgement => ({
   score: 0.9,
   threshold: THR,
   hasMedia: false,
+  language: undefined,
   ...over,
 });
 
@@ -59,6 +60,74 @@ describe('overrides win over the model', () => {
       { text: 'systems', hasMedia: true },
     );
     expect(decide(j)).toBe('reveal');
+  });
+});
+
+describe('the language rule', () => {
+  const on = { blurOtherLanguages: true };
+
+  it('blurs a post the model cannot read, however well it scored', () => {
+    const j = withSettings(on, { language: 'other', score: 0.99 });
+    expect(decide(j)).toBe('blur-language');
+  });
+
+  it('leaves a post the model can read to the score', () => {
+    expect(decide(withSettings(on, { language: 'match' }))).toBe('reveal');
+  });
+
+  it('does nothing while the setting is off, which is the default', () => {
+    expect(decide(base({ language: 'other' }))).toBe('reveal');
+  });
+
+  it('never blurs on an undetected post — nothing ran, nothing is known', () => {
+    expect(decide(withSettings(on, { language: undefined, score: 0.99 }))).toBe('reveal');
+  });
+
+  it('loses to alwaysKeep like every other tier', () => {
+    const j = withSettings(
+      { ...on, alwaysKeep: ['systems'] },
+      { language: 'other', score: 0.1 },
+    );
+    expect(decide(j)).toBe('reveal');
+  });
+
+  it('blurs an unreadable post the engine never scored', () => {
+    const j = withSettings(on, { language: 'other', score: undefined });
+    expect(decide(j)).toBe('blur-language');
+  });
+});
+
+describe('an unplaceable post counts as too little text', () => {
+  it('blurs as media, not as another language', () => {
+    const j = withSettings(
+      { blurThinMedia: true, blurOtherLanguages: true },
+      {
+        text: '🔥🔥🔥 @someone @someone',
+        hasMedia: true,
+        language: 'unclear',
+        score: 0.9,
+      },
+    );
+    expect(decide(j)).toBe('blur-media');
+  });
+
+  it('leaves it alone without media, whatever its length', () => {
+    const j = withSettings(
+      { blurThinMedia: true, blurOtherLanguages: true },
+      { language: 'unclear', score: 0.9 },
+    );
+    expect(decide(j)).toBe('reveal');
+  });
+});
+
+describe('decideWithoutScore', () => {
+  it('returns nothing when only the engine can settle it', () => {
+    expect(decideWithoutScore(base())).toBeUndefined();
+  });
+
+  it('claims a post it can settle, so it never reaches the engine', () => {
+    const j = withSettings({ blurOtherLanguages: true }, { language: 'other' });
+    expect(decideWithoutScore(j)).toBe('blur-language');
   });
 });
 

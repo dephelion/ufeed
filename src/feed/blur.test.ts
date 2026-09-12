@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   blur,
+  clearPending,
+  markPending,
   peek,
   isRevealed,
   listenForReveal,
@@ -40,6 +42,46 @@ describe('blur', () => {
     blur(el);
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(isRevealed(el)).toBe(true);
+  });
+});
+
+describe('markPending', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('softens a post while it is being judged, without claiming a verdict', () => {
+    const el = post();
+    markPending(el);
+    expect(el.classList.contains('lx-pending')).toBe(true);
+    expect(el.hasAttribute('aria-hidden')).toBe(false);
+    expect(el.dataset.lxReason).toBeUndefined();
+  });
+
+  it('clears itself when the blur lands, so the two never stack', () => {
+    const el = post();
+    markPending(el);
+    blur(el);
+    expect(el.classList.contains('lx-pending')).toBe(false);
+  });
+
+  it('clears itself on a reveal too', () => {
+    const el = post();
+    markPending(el);
+    reveal(el);
+    expect(el.classList.contains('lx-pending')).toBe(false);
+  });
+
+  it('leaves a permanently revealed post alone', () => {
+    const el = post();
+    revealPermanently(el);
+    markPending(el);
+    expect(el.classList.contains('lx-pending')).toBe(false);
+  });
+
+  it('clearPending is safe on a post that was never held', () => {
+    const el = post();
+    expect(() => clearPending(el)).not.toThrow();
   });
 });
 
@@ -94,6 +136,14 @@ describe('listenForReveal', () => {
 });
 
 describe('revealAll', () => {
+  it('clears a post left holding, which would otherwise dim forever', () => {
+    document.body.innerHTML = '<div id="a"><span>x</span></div>';
+    const el = document.getElementById('a') as HTMLElement;
+    markPending(el);
+    revealAll(document);
+    expect(el.classList.contains('lx-pending')).toBe(false);
+  });
+
   it('clears every blur, which is the fail-open escape hatch', () => {
     document.body.innerHTML = '<div class="lx-blur"></div><div class="lx-blur"></div>';
     revealAll(document);
