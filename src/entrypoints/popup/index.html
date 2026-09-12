@@ -85,18 +85,34 @@
         <label for="band-max">Strictest</label>
         <input type="number" id="band-max" min="0" max="1" step="0.005" />
       </div>
-      <label class="check" for="tune-feedback">
-        <input type="checkbox" id="tune-feedback" />
-        Learn from my thumbs
-      </label>
-      <p class="hint">
-        Hover a post to rate it. A rating adjusts the topic it matched, on this device
-        only. Off, the buttons are hidden and scoring is untouched.
-      </p>
-      <div class="row">
-        <button id="clear-tuning" class="ghost" type="button">Clear tuning</button>
-        <span class="applied" id="tuning-count"></span>
-      </div>
+      <section class="block">
+        <label class="check block-head" for="tune-feedback">
+          <input type="checkbox" id="tune-feedback" />
+          Learn from my thumbs
+        </label>
+        <p class="hint block-hint">
+          Hover a post to rate it. A rating adjusts the topic it matched, on this device
+          only. Off, the buttons are hidden and scoring is untouched.
+        </p>
+        <dl class="stats">
+          <div>
+            <dt>&#128077; Kept</dt>
+            <dd id="stat-up">0</dd>
+          </div>
+          <div>
+            <dt>&#128078; Blurred</dt>
+            <dd id="stat-down">0</dd>
+          </div>
+          <div>
+            <dt>Rated</dt>
+            <dd id="stat-total">0</dd>
+          </div>
+        </dl>
+        <div class="row block-foot">
+          <span class="hint block-note" id="tuning-note"></span>
+          <button id="clear-tuning" class="ghost" type="button">Clear tuning</button>
+        </div>
+      </section>
 
       <label class="check" for="show-scores">
         <input type="checkbox" id="show-scores" />

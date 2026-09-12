@@ -208,3 +208,53 @@ footer {
 .dot[data-state='error'] {
   background: #dc2626;
 }
+
+.block {
+  margin-top: 14px;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.block-head {
+  margin-top: 0;
+  color: var(--fg);
+  font-weight: 600;
+  font-size: 12.5px;
+}
+
+.block-hint {
+  margin: 6px 0 10px;
+}
+
+.stats {
+  display: flex;
+  gap: 14px;
+  margin: 0;
+}
+
+.stats div {
+  flex: 1;
+}
+
+.stats dt {
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.stats dd {
+  margin: 2px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.block-foot {
+  margin-top: 12px;
+}
+
+.block-note {
+  margin: 0;
+}

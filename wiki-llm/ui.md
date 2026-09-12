@@ -95,8 +95,8 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Strictness        | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
 | Advanced band     | Loosest / strictest score the slider spans.                              |
 | Blur media        | Default off. Blurs media posts under 30 chars of text.                   |
-| Learn from thumbs | Advanced, default off. Applies ratings to the line they matched.         |
-| Clear tuning      | Advanced. Deletes every stored correction; Reset does too.               |
+| Learn from thumbs | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.   |
+| Clear tuning      | In that section. Deletes every correction; Reset does too.               |
 | Show scores       | Advanced, default off. The only gate on the score badge, in any build.   |
 | Reset             | Restores defaults, keeps topics.                                         |
 | Status dot        | Engine state and backend.                                                |
