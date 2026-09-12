@@ -2,7 +2,16 @@
    creates a containing block and breaks position:fixed descendants. */
 .lx-blur {
   position: relative;
+}
+
+/* Dims the children, never the container. Opacity on the container makes a group
+   its own ::after cannot escape, and the label faded out with the post it labels.
+   Consumes the click so it reveals instead of opening the post. Hover does
+   nothing: scrolling drags the pointer across the feed and would expose
+   everything it passed over. */
+.lx-blur > * {
   opacity: 0.55;
+  pointer-events: none;
   transition: opacity 0.2s ease;
 }
 
@@ -41,9 +50,9 @@
   z-index: 2;
   padding: 3px 8px;
   border-radius: 999px;
-  background: color-mix(in srgb, #dc2626 22%, transparent);
-  color: #f87171;
-  border: 1px solid color-mix(in srgb, #dc2626 45%, transparent);
+  background: color-mix(in srgb, #b91c1c 78%, transparent);
+  color: #fff5f5;
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
   font:
     600 11px/1.4 system-ui,
     sans-serif;
@@ -54,6 +63,13 @@
 
 .lx-blur[data-lx-reason='media']::after {
   content: 'No text to check — click to view';
+  background: color-mix(in srgb, #57534e 78%, transparent);
+}
+
+.lx-blur[data-lx-reason='language']::after {
+  content: 'Another language — click to read';
+  background: color-mix(in srgb, #4338ca 78%, transparent);
+  color: #f2f2ff;
 }
 
 /* Borderline: the opening words stay legible so the call can be judged without
@@ -68,9 +84,8 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  background: color-mix(in srgb, #d97706 20%, transparent);
-  color: #fbbf24;
-  border-color: color-mix(in srgb, #d97706 45%, transparent);
+  background: color-mix(in srgb, #b45309 78%, transparent);
+  color: #fffaf0;
   font:
     500 12px/1.5 system-ui,
     sans-serif;
@@ -87,11 +102,37 @@
   text-shadow: 0 0 7px currentColor;
 }
 
-/* Consumes the click so it reveals instead of opening the post. Hover does
-   nothing: scrolling drags the pointer across the feed and would expose
-   everything it passed over. */
-.lx-blur > * {
-  pointer-events: none;
+/* Held while the detector and the engine answer. Deliberately unlike a blur:
+   no label, no verdict colour, and clicks still reach the post — nothing has
+   been decided yet. Soft enough that the eye passes over rather than settling,
+   which is the whole point of showing it at all. */
+.lx-pending {
+  opacity: 0.72;
+  transition: opacity 0.2s ease;
+}
+
+.lx-pending :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
+  color: transparent !important;
+  text-shadow: 0 0 6px currentColor;
+}
+
+.lx-pending :is(img, canvas, svg, video),
+.lx-pending [style*='background-image'] {
+  filter: blur(20px) saturate(0.5);
+  opacity: 0.6;
+}
+
+/* Reduced motion gets the same state without the breathing. */
+@media (prefers-reduced-motion: no-preference) {
+  .lx-pending {
+    animation: lx-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes lx-pulse {
+  50% {
+    opacity: 0.55;
+  }
 }
 
 .lx-blur {

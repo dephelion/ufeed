@@ -27,7 +27,8 @@ src/
                   queue.ts     batches to the engine, discards stale replies
                   threshold.ts recent scores, absolute vs relative cut
                   tuning.ts    corrections and their persistence
-                  blur.ts · media.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
+                  language.ts  the model's language gate, pure
+                  blur.ts · media.ts · language-detector.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
   entrypoints/  content.ts · engine/ · background.ts · popup/
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
@@ -48,9 +49,9 @@ timeline data they ran against. The harnesses are reproducible from
 
 **`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `scanner` what it has seen, `queue` what is in flight, `threshold` the recent scores, `tuning` the corrections. Logic that grows there belongs in `feed/`.
 
-**The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media from settings, text, score and threshold — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
+**The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold and a detected language — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 
-**`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension.
+**`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension. `language.ts` is split from `language-detector.ts` on the same line, and for the same reason.
 
 ## Hard invariants
 

@@ -1,4 +1,5 @@
 const BLUR_CLASS = 'lx-blur';
+const PENDING_CLASS = 'lx-pending';
 
 /**
  * Node-level, deliberately: a reveal lost to virtualized recycling is an
@@ -6,14 +7,33 @@ const BLUR_CLASS = 'lx-blur';
  */
 const revealed = new WeakSet<HTMLElement>();
 
-/** Drives the label: neither a thin-media nor a borderline post was judged off topic. */
-export type BlurReason = 'topic' | 'media' | 'peek';
+/** Drives the label: only 'topic' means the model actually judged the post. */
+export type BlurReason = 'topic' | 'media' | 'language' | 'peek';
+
+/**
+ * Judging a post costs a language detection and an inference. Softened until
+ * the answer lands, so the few milliseconds cannot catch the eye and then blur
+ * under it. Self-clearing: a held batch or a dead engine must never leave the
+ * feed dimmed, so the timeout reveals without waiting for a verdict.
+ */
+const PENDING_MS = 1500;
+
+export function markPending(element: HTMLElement): void {
+  if (revealed.has(element) || element.classList.contains(BLUR_CLASS)) return;
+  element.classList.add(PENDING_CLASS);
+  setTimeout(() => clearPending(element), PENDING_MS);
+}
+
+export function clearPending(element: HTMLElement): void {
+  element.classList.remove(PENDING_CLASS);
+}
 
 /** Enough to judge the subject, short enough not to become the distraction. */
 const PEEK_CHARS = 50;
 
 export function blur(element: HTMLElement, reason: BlurReason = 'topic'): void {
   if (revealed.has(element)) return;
+  clearPending(element);
   element.classList.add(BLUR_CLASS);
   element.dataset.lxReason = reason;
   element.setAttribute('aria-hidden', 'true');
@@ -31,6 +51,7 @@ export function peek(element: HTMLElement, text: string): void {
 }
 
 export function reveal(element: HTMLElement): void {
+  clearPending(element);
   element.classList.remove(BLUR_CLASS);
   delete element.dataset.lxReason;
   delete element.dataset.lxPeek;
@@ -65,5 +86,6 @@ export function listenForReveal(root: Document = document): () => void {
 }
 
 export function revealAll(root: ParentNode = document): void {
-  for (const el of root.querySelectorAll<HTMLElement>(`.${BLUR_CLASS}`)) reveal(el);
+  const stuck = `.${BLUR_CLASS}, .${PENDING_CLASS}`;
+  for (const el of root.querySelectorAll<HTMLElement>(stuck)) reveal(el);
 }

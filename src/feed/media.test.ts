@@ -50,4 +50,12 @@ describe('blursAsThinMedia', () => {
   it('treats whitespace as no caption at all', () => {
     expect(blursAsThinMedia(on, '   \n  ', true)).toBe(true);
   });
+
+  it('counts a caption no detector could place as no caption, however long', () => {
+    expect(blursAsThinMedia(on, LONG, true, 'unclear')).toBe(true);
+  });
+
+  it('leaves a placeable caption to the model', () => {
+    expect(blursAsThinMedia(on, LONG, true, 'other')).toBe(false);
+  });
 });

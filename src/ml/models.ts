@@ -10,6 +10,11 @@ export const MODEL = {
   id: 'Xenova/e5-small-v2',
   label: 'e5-small-v2',
   /**
+   * The only language it reads. Text in any other scores somewhere in the band
+   * at random, so the language gate compares against this, not a literal 'en'.
+   */
+  language: 'en',
+  /**
    * Usable threshold band. Unrelated text sits near 0.74 with this model, not
    * near zero, and everything above 0.83 blurs the whole feed — so the slider
    * spans only the range where moving it changes something.
