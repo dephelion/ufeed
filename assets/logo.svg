@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Intense Yellow / Gold Gradient -->
+    <linearGradient id="yellow-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDE7"/>
+      <stop offset="25%" stop-color="#FFEB3B"/>
+      <stop offset="65%" stop-color="#FFC107"/>
+      <stop offset="100%" stop-color="#FF8F00"/>
+    </linearGradient>
+
+    <!-- Glass Reflection Arc -->
+    <linearGradient id="lens-glare" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.45"/>
+      <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#FFC107" stop-opacity="0.15"/>
+    </linearGradient>
+
+    <!-- High-Density Neon Glow Filter -->
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Clip Path for Inside Lens Content -->
+    <clipPath id="lens-aperture">
+      <circle cx="256" cy="256" r="215"/>
+    </clipPath>
+  </defs>
+
+  <!-- 1. FADED UNREFRACTED TEXT IN CORNERS (Transparent Outer Canvas) -->
+  <g fill="#FFFFFF" opacity="0.18">
+    <!-- Top Left Corner -->
+    <rect x="15" y="30" width="140" height="12" rx="6"/>
+    <rect x="15" y="60" width="90" height="12" rx="6"/>
+    <!-- Top Right Corner -->
+    <rect x="360" y="30" width="135" height="12" rx="6"/>
+    <rect x="410" y="60" width="85" height="12" rx="6"/>
+    <!-- Bottom Left Corner -->
+    <rect x="15" y="440" width="110" height="12" rx="6"/>
+    <rect x="15" y="470" width="150" height="12" rx="6"/>
+    <!-- Bottom Right Corner -->
+    <rect x="380" y="440" width="117" height="12" rx="6"/>
+    <rect x="340" y="470" width="157" height="12" rx="6"/>
+  </g>
+
+  <!-- 2. LENS APERTURE (Magnified Focus Zone) -->
+  <g clip-path="url(#lens-aperture)">
+    <!-- Dark Glass Contrast Core -->
+    <circle cx="256" cy="256" r="215" fill="#080914"/>
+
+    <!-- Thick, Bold Glowing Yellow Text Lines (Readable at 16x16) -->
+    <g fill="url(#yellow-gold)" filter="url(#neon-glow)">
+      <!-- Line 1 -->
+      <rect x="110" y="115" width="292" height="34" rx="17"/>
+      <!-- Line 2 -->
+      <rect x="75" y="175" width="180" height="34" rx="17"/>
+      <rect x="275" y="175" width="160" height="34" rx="17"/>
+      <!-- Line 3 (Center Anchor) -->
+      <rect x="95" y="235" width="322" height="36" rx="18"/>
+      <!-- Line 4 -->
+      <rect x="75" y="297" width="150" height="34" rx="17"/>
+      <rect x="245" y="297" width="190" height="34" rx="17"/>
+      <!-- Line 5 -->
+      <rect x="125" y="357" width="262" height="34" rx="17"/>
+    </g>
+
+    <!-- Internal Lens Depth Shadow -->
+    <circle cx="256" cy="256" r="215" fill="none" stroke="#000000" stroke-opacity="0.6" stroke-width="12"/>
+  </g>
+
+  <!-- 3. MAXIMUM-SIZE LENS FRAME & OPTICS TICKS -->
+  <!-- Outer Glowing Yellow Ring Rim (Edge-to-Edge) -->
+  <circle cx="256" cy="256" r="222" fill="none" stroke="url(#yellow-gold)" stroke-width="20" filter="url(#neon-glow)"/>
+  <circle cx="256" cy="256" r="233" fill="none" stroke="#FFFDE7" stroke-width="3" stroke-opacity="0.9"/>
+  <circle cx="256" cy="256" r="211" fill="none" stroke="#FF8F00" stroke-width="3"/>
+
+  <!-- Curved Glass Reflection Highlight -->
+  <path d="M 120 100 A 215 215 0 0 1 392 100 A 200 200 0 0 0 120 100 Z" fill="url(#lens-glare)"/>
+
+  <!-- Optical Precision Tick Marks (Top/Bottom/Sides) -->
+  <path d="M 256 12 V 26 M 256 486 V 500 M 12 256 H 26 M 486 256 H 500" stroke="#FFFDE7" stroke-width="4" stroke-linecap="round"/>
+</svg>
