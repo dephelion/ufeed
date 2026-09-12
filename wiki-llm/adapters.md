@@ -45,6 +45,45 @@ interface SiteAdapter {
 
 **Never a generic selector.** Bare `p` matched navigation, sidebars, our own UI, and text inside already-claimed posts.
 
+## LinkedIn
+
+| Concern   | Selector                                                                                              |
+| :-------- | :---------------------------------------------------------------------------------------------------- |
+| Container | `[componentkey^="update-card-focus"]`                                                                 |
+| Post gate | An `<h2>` descendant with text exactly `Feed post`                                                    |
+| Text      | First `[data-testid="expandable-text-box"]`, minus its `[data-testid="expandable-text-button"]` child |
+| Media     | `img[src*="feedshare-image"]`, `video`                                                                |
+
+**Classes are atomic/hashed and unusable.** Every class regenerates per build
+(`_62ae7714`, `bde1bb6e`, …). Selectors anchor on ARIA, `data-testid`, and
+`componentkey` instead — none of them a styling class.
+
+**Post gate mirrors X's `article` check, for module exclusion.** A
+screen-reader-only `<h2>Feed post</h2>` is present on every real post; a card
+without it (job ad, poll, suggested-for-you) is never scored. Allowlist, not a
+blocklist: an unrecognized module type is excluded by construction.
+
+**`expandable-text-box` is reused for comment bodies, not just post text.**
+LinkedIn renders at least one comment inline under the post by default.
+Taking the **first** `expandable-text-box` in a container is what keeps the
+post's own text and discards the comment — same _shape_ of rule as X's first-
+`tweetText`-only, for an unrelated reason.
+
+**The "…more" toggle button is nested inside the text node.** Truncated posts
+already carry their full text in the DOM (no lazy-load), but
+`[data-testid="expandable-text-button"]` sits inside the text node itself, so
+a raw `textContent` read appends "… more". Extraction clones the node and
+removes that button before reading it.
+
+**Media matches by CDN asset-type naming, not size or wrapper.** Avatars
+resolve to `profile-displayphoto-*`; post-body images resolve to
+`feedshare-image-*`, both on `media.licdn.com`. More durable than any class.
+
+**Not seen live, documented as gaps, see [v3-spec.md](../specs/v3-spec.md):** a
+quote-repost carrying the resharer's own added commentary (only a bare
+reshare was captured); any non-post module's heading text; whether the feed
+recycles DOM nodes on scroll the way X's does.
+
 ## Reddit — not built
 
 New Reddit renders `shreddit-post` as web components. `querySelectorAll` does not pierce shadow roots and a `<style>` in `document.head` does not apply inside them, so a naive adapter silently matches nothing. Needs recursive shadow-root traversal plus per-root `adoptedStyleSheets`. Host permission is already declared optional in [manifest.md](manifest.md).

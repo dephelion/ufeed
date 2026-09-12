@@ -5,7 +5,7 @@
 
 Lensing is a browser extension that blurs off-topic posts in social feeds. The user names topics; an embedding model scores each post on-device; anything below the threshold is blurred, never removed, and one click reveals it. No backend, no account, no post text leaves the device.
 
-Chrome and Firefox, MV3, built with WXT. v1 targets X.
+Chrome and Firefox, MV3, built with WXT. v1 targets X; v3 adds LinkedIn.
 
 | Page                               | Answers                                                                                                              |
 | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
@@ -28,6 +28,8 @@ Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both b
 Not built: Reddit adapter, Chrome offscreen singleton, multilingual, mobile.
 
 **In flight: [specs/v2-spec.md](../specs/v2-spec.md)** — graded blur, thumbs feedback, relevance feedback, relative strictness. All three tasks implemented on `feat/v2` and documented in the pages above; **not yet verified on a live feed**. Amends Hard Invariant 1 (on-device persistence), authorised for the testing phase.
+
+**In flight: [specs/v3-spec.md](../specs/v3-spec.md)** — LinkedIn adapter, second production site. Implemented, fixture-tested; **not yet verified on a live feed**. Known gaps: quote-repost with the resharer's own commentary, non-post module exclusion, and feed node recycling are all unconfirmed against a real sample — see the spec and [adapters.md](adapters.md#linkedin).
 
 Superseded design doc: [specs/v1-spec.md](../specs/v1-spec.md), kept for provenance only. This wiki is authoritative.
 

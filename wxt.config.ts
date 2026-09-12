@@ -1,6 +1,11 @@
 import { defineConfig } from 'wxt';
 
-const FEED_HOSTS = ['*://x.com/*', '*://twitter.com/*'];
+const FEED_HOSTS = [
+  '*://x.com/*',
+  '*://twitter.com/*',
+  '*://linkedin.com/*',
+  '*://*.linkedin.com/*',
+];
 const OPTIONAL_HOSTS = ['*://reddit.com/*', '*://*.reddit.com/*'];
 
 /** Same flag that turns on logging; a build you read is a build you can debug. */
