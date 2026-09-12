@@ -6,6 +6,7 @@ import {
   nextRequestId,
   type EngineRequest,
   type StatusEvent,
+  type TopicCorrections,
 } from '../core/protocol';
 
 const REQUEST_TIMEOUT_MS = 8000;
@@ -13,8 +14,21 @@ const CONNECT_WATCHDOG_MS = 15000;
 
 const log = logger('client');
 
+/** A correction with the topic line it belongs to; topic -1 means nowhere to file it. */
+export interface Correction {
+  vector: number[];
+  topic: number;
+}
+
+/** What a reply can carry. Each caller maps it to its own shape. */
+interface Payload {
+  scores?: number[];
+  vector?: number[];
+  topic?: number;
+}
+
 type Pending = {
-  resolve: (scores: number[]) => void;
+  resolve: (value: Payload) => void;
   timer: ReturnType<typeof setTimeout>;
 };
 
@@ -95,15 +109,16 @@ export class EngineClient {
     clearTimeout(pending.timer);
     if (data.type === 'ERROR') {
       log.error('engine returned an error, revealing batch', { reason: data.message });
-      pending.resolve([]);
+      pending.resolve({});
       return;
     }
-    if (data.type === 'VECTOR') return pending.resolve(data.vector);
-    pending.resolve(data.type === 'SCORES' ? data.scores : []);
+    if (data.type === 'VECTOR')
+      return pending.resolve({ vector: data.vector, topic: data.topic });
+    pending.resolve({ scores: data.type === 'SCORES' ? data.scores : [] });
   }
 
-  setTopics(topics: string[], liked: number[][] = [], disliked: number[][] = []): void {
-    this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, liked, disliked });
+  setTopics(topics: string[], corrections: TopicCorrections[] = []): void {
+    this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, corrections });
   }
 
   /** Resolves empty on timeout or error, so callers fail open. */
@@ -116,21 +131,24 @@ export class EngineClient {
         log.warn('score request timed out, revealing', { posts: texts.length });
         resolve([]);
       }, REQUEST_TIMEOUT_MS);
-      this.#pending.set(id, { resolve, timer });
+      this.#pending.set(id, { resolve: (p) => resolve(p.scores ?? []), timer });
       this.#send({ id, type: 'SCORE', texts });
     });
   }
 
   /** Resolves empty when the engine cannot answer, so feedback is dropped, never guessed. */
-  feedback(text: string, liked: boolean): Promise<number[]> {
+  feedback(text: string, liked: boolean): Promise<Correction> {
     const id = nextRequestId();
-    return new Promise<number[]>((resolve) => {
+    return new Promise<Correction>((resolve) => {
       const timer = setTimeout(() => {
         this.#pending.delete(id);
         log.warn('feedback request timed out');
-        resolve([]);
+        resolve({ vector: [], topic: -1 });
       }, REQUEST_TIMEOUT_MS);
-      this.#pending.set(id, { resolve, timer });
+      this.#pending.set(id, {
+        resolve: (p) => resolve({ vector: p.vector ?? [], topic: p.topic ?? -1 }),
+        timer,
+      });
       this.#send({ id, type: 'FEEDBACK', text, liked });
     });
   }

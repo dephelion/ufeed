@@ -6,7 +6,7 @@ import {
 import { logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { MODEL, formatPost, formatTopic } from '../../ml/models';
-import { applyFeedback, scoreAgainstTopics, type Vector } from '../../ml/scoring';
+import { applyFeedback, cosine, scoreAgainstTopics, type Vector } from '../../ml/scoring';
 
 const log = logger('worker');
 const embedder = new Embedder();
@@ -51,23 +51,26 @@ async function handle(request: EngineRequest): Promise<void> {
     await ensureLoaded();
     if (request.type === 'SET_TOPICS') {
       const base = await embedder.embed(request.topics.map(formatTopic));
-      const liked = toVectors(request.liked);
-      const disliked = toVectors(request.disliked);
-      topicVectors = base.map((v) => applyFeedback(v, liked, disliked));
+      topicVectors = base.map((v, i) => {
+        const c = request.corrections?.[i];
+        return c ? applyFeedback(v, toVectors(c.liked), toVectors(c.disliked)) : v;
+      });
       log.info('topics embedded', {
         model: MODEL.label,
         count: topicVectors.length,
         topics: JSON.stringify(request.topics),
-        liked: liked.length,
-        disliked: disliked.length,
+        corrected: (request.corrections ?? []).filter(
+          (c) => c.liked.length + c.disliked.length > 0,
+        ).length,
       });
       post({ id: request.id, type: 'ACK' });
       return;
     }
     if (request.type === 'FEEDBACK') {
       const [vector] = await embedder.embed([formatPost(request.text)]);
-      log.info('feedback embedded', { liked: request.liked });
-      post({ id: request.id, type: 'VECTOR', vector: [...(vector ?? [])] });
+      const topic = vector ? bestTopic(vector) : -1;
+      log.info('feedback embedded', { liked: request.liked, topic });
+      post({ id: request.id, type: 'VECTOR', vector: [...(vector ?? [])], topic });
       return;
     }
     const started = Date.now();
@@ -88,6 +91,20 @@ async function handle(request: EngineRequest): Promise<void> {
 
 function toVectors(rows: number[][] | undefined): Vector[] {
   return (rows ?? []).map((row) => Float32Array.from(row));
+}
+
+/** The line that came closest to claiming the post is the one being corrected. */
+function bestTopic(vector: Vector): number {
+  let best = -1;
+  let bestScore = -Infinity;
+  topicVectors.forEach((topic, i) => {
+    const score = cosine(topic, vector);
+    if (score > bestScore) {
+      bestScore = score;
+      best = i;
+    }
+  });
+  return best;
 }
 
 function describe(error: unknown): string {

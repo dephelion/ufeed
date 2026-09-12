@@ -11,9 +11,13 @@ export interface SetTopicsRequest {
   id: string;
   type: 'SET_TOPICS';
   topics: string[];
-  /** Corrections for exactly these topics; the worker re-derives its query from them. */
-  liked?: number[][];
-  disliked?: number[][];
+  /** Corrections per topic, aligned with `topics`; the worker re-derives each query. */
+  corrections?: TopicCorrections[];
+}
+
+export interface TopicCorrections {
+  liked: number[][];
+  disliked: number[][];
 }
 
 /** The user corrected a verdict. The worker owns vectors, so it does the embedding. */
@@ -33,11 +37,16 @@ export interface ScoresReply {
   scores: number[];
 }
 
-/** The embedding of a corrected post, handed back so the content script can persist it. */
+/**
+ * The embedding of a corrected post, plus the line it belongs to: scoring takes
+ * the max, so a correction attaches to the line that came closest to claiming the
+ * post. `topic` is -1 when there is no line to attach it to.
+ */
 export interface VectorReply {
   id: string;
   type: 'VECTOR';
   vector: number[];
+  topic: number;
 }
 
 export interface AckReply {
@@ -75,9 +84,7 @@ export function isEngineRequest(data: unknown): data is EngineRequest {
   if (!isRecord(data) || typeof data.id !== 'string') return false;
   if (data.type === 'SCORE') return isStringArray(data.texts);
   if (data.type === 'SET_TOPICS')
-    return (
-      isStringArray(data.topics) && isVectors(data.liked) && isVectors(data.disliked)
-    );
+    return isStringArray(data.topics) && isCorrections(data.corrections);
   if (data.type === 'FEEDBACK')
     return typeof data.text === 'string' && typeof data.liked === 'boolean';
   return false;
@@ -95,6 +102,7 @@ export function isEngineReply(data: unknown): data is EngineReply {
     case 'VECTOR':
       return (
         typeof data.id === 'string' &&
+        typeof data.topic === 'number' &&
         Array.isArray(data.vector) &&
         data.vector.every((n) => typeof n === 'number')
       );
@@ -119,11 +127,18 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null;
 }
 
-function isVectors(v: unknown): v is number[][] | undefined {
+function isVectors(v: unknown): v is number[][] {
+  return (
+    Array.isArray(v) &&
+    v.every((row) => Array.isArray(row) && row.every((n) => typeof n === 'number'))
+  );
+}
+
+function isCorrections(v: unknown): v is TopicCorrections[] | undefined {
   return (
     v === undefined ||
     (Array.isArray(v) &&
-      v.every((row) => Array.isArray(row) && row.every((n) => typeof n === 'number')))
+      v.every((c) => isRecord(c) && isVectors(c.liked) && isVectors(c.disliked)))
   );
 }
 
