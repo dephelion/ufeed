@@ -10,6 +10,7 @@ interface SiteAdapter {
   id: string;
   matches(hostname: string): boolean;
   findPosts(root: ParentNode): Post[]; // { container, text }
+  mediaSelector: string; // post-body media, never avatars
 }
 ```
 
@@ -19,10 +20,12 @@ interface SiteAdapter {
 
 ## X
 
-| Concern   | Selector                       |
-| :-------- | :----------------------------- |
-| Container | `[data-testid="cellInnerDiv"]` |
-| Text      | `[data-testid="tweetText"]`    |
+| Concern   | Selector                                               |
+| :-------- | :----------------------------------------------------- |
+| Container | `[data-testid="cellInnerDiv"]`                         |
+| Post      | `article`                                              |
+| Text      | `[data-testid="tweetText"]`                            |
+| Media     | `tweetPhoto`, `videoPlayer`, `videoComponent`, `video` |
 
 **Not `article`.** It leaves separators and padding sharp.
 
@@ -30,7 +33,13 @@ interface SiteAdapter {
 
 **`textContent`, not `innerText`.** `innerText` forces a layout reflow per post, which a scrolling feed cannot afford. Whitespace is collapsed, so a re-render hashes identically.
 
-**Minimum 30 chars.** Below that a cell is an ad, a follow prompt, or has no body.
+**`article` is the post signal, not text.** A caption-less media post has NO `tweetText` node — identical to a follow or trend module. Requiring `article` keeps the media post and drops the module. Promoted tweets are real articles: they get scored like any post.
+
+**No length floor.** Every post reaches the engine. The old 30-char drop was a MiniLM-era workaround; e5 does not shift with length ([model.md](model.md)), and a dropped post could never be blurred by any rule.
+
+**Empty text never reaches the engine.** An embedding of nothing is not a score. Empty means unscorable, which reveals unless the media rule claims it ([ui.md](ui.md)).
+
+**Media selector excludes avatars.** `[data-testid="Tweet-User-Avatar"]` is on every post; matching it would make every post a media post.
 
 **The feed is virtualized.** Nodes are recycled with new content, so a `data-checked` flag on the node produces stale verdicts. The score cache is keyed on a hash of the **text** (`hashText`, FNV-1a over whitespace-collapsed lowercase), never on the node.
 

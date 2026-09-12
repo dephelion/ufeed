@@ -13,17 +13,24 @@
 }
 
 /* Media carries as much of the message as the text, so it gets blurred too.
-   Safe on leaf elements: no fixed-position descendants to break. */
-.lx-blur :is(img, video, canvas, svg) {
-  filter: blur(18px) saturate(0.4);
-  opacity: 0.5;
+   Safe on leaf elements: no fixed-position descendants to break.
+   A photo needs far more than text does: 18px left shapes and watermarks legible. */
+.lx-blur :is(img, canvas, svg),
+.lx-blur [style*='background-image'] {
+  filter: blur(64px) saturate(0.25);
+  opacity: 0.45;
   transition:
     filter 0.2s ease,
     opacity 0.2s ease;
 }
 
-.lx-blur [style*='background-image'] {
-  filter: blur(18px) saturate(0.4);
+/* Motion hides what a still frame gives the eye time to resolve. */
+.lx-blur video {
+  filter: blur(40px) saturate(0.25);
+  opacity: 0.45;
+  transition:
+    filter 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .lx-blur::after {
@@ -43,6 +50,10 @@
   letter-spacing: 0.01em;
   pointer-events: none;
   transition: opacity 0.2s ease;
+}
+
+.lx-blur[data-lx-reason='media']::after {
+  content: 'No text to check — click to view';
 }
 
 /* Consumes the click so it reveals instead of opening the post. Hover does
