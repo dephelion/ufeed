@@ -24,6 +24,7 @@ const strictnessValue = el<HTMLOutputElement>('strictness-value');
 const strictnessHint = el<HTMLParagraphElement>('strictness-hint');
 const bandMin = el<HTMLInputElement>('band-min');
 const bandMax = el<HTMLInputElement>('band-max');
+const showScores = el<HTMLInputElement>('show-scores');
 const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
@@ -49,6 +50,7 @@ function render(settings: Settings): void {
   strictnessHint.textContent = describeStrictness(settings.strictness, settings);
   bandMin.value = settings.bandMin.toFixed(3);
   bandMax.value = settings.bandMax.toFixed(3);
+  showScores.checked = settings.showScores;
   refreshApply();
 }
 
@@ -114,6 +116,11 @@ const commitBand = (): void => {
 
 bandMin.addEventListener('change', commitBand);
 bandMax.addEventListener('change', commitBand);
+
+showScores.addEventListener(
+  'change',
+  () => void update({ showScores: showScores.checked }),
+);
 
 reset.addEventListener('click', () => {
   void update({ ...DEFAULT_SETTINGS, topics: saved.topics }).then(() => {

@@ -128,6 +128,16 @@ summary {
   font-size: 11.5px;
 }
 
+.check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+
 ul.hint {
   margin: 8px 0 4px;
   padding-left: 16px;

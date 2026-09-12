@@ -56,7 +56,7 @@
   cursor: pointer;
 }
 
-/* Debug only: the content script stamps this attribute when DEBUG is on. */
+/* The content script stamps this attribute while the Show scores setting is on. */
 [data-lx-score] {
   position: relative;
   outline: 1px dashed rgba(120, 113, 108, 0.35);

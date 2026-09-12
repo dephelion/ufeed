@@ -11,6 +11,7 @@ export interface Settings {
   disabledHosts: string[];
   alwaysKeep: string[];
   alwaysBlur: string[];
+  showScores: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -22,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   disabledHosts: [],
   alwaysKeep: [],
   alwaysBlur: [],
+  showScores: false,
 };
 
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {
