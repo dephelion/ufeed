@@ -43,6 +43,24 @@ Measured distribution, topic `tech, software, ai`: on-topic mean **0.806**, off-
 
 **Length does not shift e5.** On-topic mean by post length: 0.804 / 0.800 / 0.814 / 0.810 across 0-80 / 80-150 / 150-250 / 250+ chars. MiniLM ran 0.096 → 0.233 over the same buckets and needed a length penalty; e5 does not. The penalty was deleted.
 
+## The uncertain strip
+
+Calibration over 615 observations (205 labelled posts x 3 topic phrasings): what share of each score band was genuinely wanted.
+
+| Score       | Posts | Genuinely wanted | Verdict                |
+| :---------- | ----: | ---------------: | :--------------------- |
+| 0.760-0.775 |   125 |               0% | settled, blur outright |
+| 0.775-0.784 |    71 |               7% | uncertain              |
+| 0.784-0.790 |    46 |               2% | shown                  |
+| 0.790-0.810 |   116 |           26-40% | uncertain, shown       |
+| 0.830+      |     8 |              88% | settled, keep          |
+
+**`PEEK_BAND = 0.01`** is the strip below the threshold that earns a peek instead of a full blur. Below 0.775 nothing was wanted across 125 observations; inside the strip, 7% was.
+
+**In score space, never a fraction of the slider.** The strip is a property of the model; the threshold moves with strictness. Tying one to the other makes it correct only at the default.
+
+**Uncertainty straddles the threshold and is worse above it.** Posts at 0.790-0.810 are 26-40% wanted and are shown today with nothing marking them as doubtful. The tiers fix the half below the line; relevance feedback is aimed at the half above it.
+
 ## Threshold
 
 Slider position `0..1` maps onto a band; the band is a user setting, defaulting to the model's.
