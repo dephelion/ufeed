@@ -18,7 +18,12 @@ import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
 import { EngineClient } from '../feed/engine-client';
 
 export default defineContentScript({
-  matches: ['*://x.com/*', '*://twitter.com/*'],
+  matches: [
+    '*://x.com/*',
+    '*://twitter.com/*',
+    '*://linkedin.com/*',
+    '*://*.linkedin.com/*',
+  ],
   runAt: 'document_start',
   cssInjectionMode: 'manifest',
   main: () => {

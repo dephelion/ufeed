@@ -7,17 +7,17 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 
 ## Keys
 
-| Key                         | Value                                    | Why                                                                       |
-| :-------------------------- | :--------------------------------------- | :------------------------------------------------------------------------ |
-| `permissions`               | `storage`                                | Settings only.                                                            |
-| `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`       | Minimal at install.                                                       |
-| `optional_host_permissions` | `*://reddit.com/*`, `*://*.reddit.com/*` | Granted on request. Both patterns: `*.reddit.com` misses the bare domain. |
-| `web_accessible_resources`  | `engine.html`                            | The iframe the content script injects.                                    |
-| `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`   | **Mandatory** or ONNX Runtime will not instantiate.                       |
-| `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`  | Required to install on Firefox.                                           |
-| `content_scripts[].css`     | `blur.css`                               | Declared CSS applies before first paint; injected does not.               |
-| `content_scripts[].run_at`  | `document_start`                         | Same reason.                                                              |
-| `icons`                     | 16→512                                   | **Never written by hand** — WXT discovers `public/icon/<size>.png`.       |
+| Key                         | Value                                                                            | Why                                                                                 |
+| :-------------------------- | :------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `permissions`               | `storage`                                                                        | Settings only.                                                                      |
+| `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`, `*://linkedin.com/*`, `*://*.linkedin.com/*` | Default, not optional — installing Lensing implies wanting it on the sites you use. |
+| `optional_host_permissions` | `*://reddit.com/*`, `*://*.reddit.com/*`                                         | Granted on request. Both patterns: `*.reddit.com` misses the bare domain.           |
+| `web_accessible_resources`  | `engine.html`                                                                    | The iframe the content script injects.                                              |
+| `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`                                           | **Mandatory** or ONNX Runtime will not instantiate.                                 |
+| `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`                                          | Required to install on Firefox.                                                     |
+| `content_scripts[].css`     | `blur.css`                                                                       | Declared CSS applies before first paint; injected does not.                         |
+| `content_scripts[].run_at`  | `document_start`                                                                 | Same reason.                                                                        |
+| `icons`                     | 16→512                                                                           | **Never written by hand** — WXT discovers `public/icon/<size>.png`.                 |
 
 ## Per-browser
 
