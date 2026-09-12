@@ -3,7 +3,7 @@ import '../feed/blur.css';
 import { logger } from '../core/log';
 
 import { adapterFor, type Post } from '../adapters';
-import { ScoreCache, hashText } from '../core/cache';
+import { ScoreCache } from '../core/cache';
 import { isActiveOn, overrideFor, topicsEqual, type Settings } from '../core/settings';
 import { loadSettings, onSettingsChanged } from '../core/settings-storage';
 import { blur, isRevealed, listenForReveal, peek, reveal, revealAll } from '../feed/blur';
@@ -11,23 +11,11 @@ import { clearAllScores, clearScore, stampScore } from '../feed/score-badge';
 import { hasMedia } from '../feed/media';
 import { decide as decideAction, type Action } from '../feed/policy';
 import { ScoreWindow } from '../feed/threshold';
+import { FeedScanner } from '../feed/scanner';
+import { ScoreQueue } from '../feed/queue';
+import { Tuning } from '../feed/tuning';
 import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
-import {
-  EMPTY_FEEDBACK,
-  correctionsFor,
-  count,
-  findRating,
-  forTopics,
-  rate,
-  type Feedback,
-} from '../core/feedback';
-import { loadFeedback, saveFeedback } from '../core/feedback-storage';
 import { EngineClient } from '../feed/engine-client';
-
-const BATCH_SIZE = 16;
-const FLUSH_MS = 100;
-const VIEWPORT_MARGIN = '150% 0px';
-const MAX_CHARS = 1200;
 
 export default defineContentScript({
   matches: ['*://x.com/*', '*://twitter.com/*'],
@@ -52,33 +40,24 @@ async function start(): Promise<void> {
   }
 
   let settings = await loadSettings();
-  let feedback: Feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
+  const tuner = await Tuning.load();
   const cache = new ScoreCache();
-  const window = new ScoreWindow();
-  const queue = new Map<HTMLElement, string>();
-  let seen = new WeakSet<HTMLElement>();
-  let flushTimer: ReturnType<typeof setTimeout> | undefined;
-  /** Bumped when topics change, so replies for the old topics are discarded. */
-  let epoch = 0;
+  const scoreWindow = new ScoreWindow();
 
   const engine = new EngineClient((next) => {
     if (next.state === 'ready') {
-      sweep(document);
-      void flush();
+      scanner.sweep(document);
+      void queue.flush();
     }
     if (next.state === 'error') revealAll(document);
   });
 
   const active = () => isActiveOn(settings, location.hostname);
-  const tuning = () => settings.tuneFromFeedback && count(feedback) > 0;
-
-  /** Aligned with settings.topics, so the worker corrects each line with its own. */
+  const tuning = () => settings.tuneFromFeedback && tuner.count > 0;
   const corrections = () =>
-    settings.tuneFromFeedback
-      ? settings.topics.map((t) => correctionsFor(feedback, t))
-      : [];
+    settings.tuneFromFeedback ? tuner.corrections(settings.topics) : [];
 
-  const threshold = () => window.cut(settings, tuning());
+  const threshold = () => scoreWindow.cut(settings, tuning());
 
   /** Returns what it did, so callers need not re-derive the verdict to count it. */
   const decide = (post: Post, score: number | undefined): Action | undefined => {
@@ -105,93 +84,42 @@ async function start(): Promise<void> {
     return action;
   };
 
-  const enqueue = (post: Post): void => {
-    if (post.text.trim() === '') {
-      decide(post, undefined);
-      return;
+  const queue = new ScoreQueue(engine, (results) => {
+    scoreWindow.add(results.map((r) => r.score));
+    const cut = threshold();
+    let blurred = 0;
+    for (const { post, score } of results) {
+      if (score !== undefined) cache.set(post.text, score);
+      if (!post.container.isConnected) continue;
+      const action = decide(post, score);
+      if (action !== undefined && action !== 'reveal') blurred += 1;
     }
+    log.info('batch applied', {
+      posts: results.length,
+      blurred,
+      threshold: cut.toFixed(3),
+      adapted: tuning(),
+    });
+  });
+
+  /** Cached or overridden posts are decided here and never reach the engine. */
+  const enqueue = (post: Post): void => {
     const cached = cache.get(post.text);
-    if (cached !== undefined || overrideFor(settings, post.text)) {
+    if (
+      post.text.trim() === '' ||
+      cached !== undefined ||
+      overrideFor(settings, post.text)
+    ) {
       decide(post, cached);
       return;
     }
-    queue.set(post.container, post.text.slice(0, MAX_CHARS));
-    if (queue.size >= BATCH_SIZE) void flush();
-    else scheduleFlush();
+    queue.add(post);
   };
 
-  const scheduleFlush = (): void => {
-    clearTimeout(flushTimer);
-    flushTimer = setTimeout(() => void flush(), FLUSH_MS);
-  };
-
-  const flush = async (): Promise<void> => {
-    clearTimeout(flushTimer);
-    const issuedAt = epoch;
-    if (queue.size === 0) return;
-    if (!engine.ready) {
-      log.info('engine not ready, holding batch', {
-        queued: queue.size,
-        state: engine.status.state,
-      });
-      return;
-    }
-    const batch = [...queue.entries()].slice(0, BATCH_SIZE);
-    for (const [element] of batch) queue.delete(element);
-
-    const scores = await engine.score(batch.map(([, text]) => text));
-    if (issuedAt !== epoch) {
-      log.info('discarding scores for previous topics', { posts: batch.length });
-      return;
-    }
-    let blurred = 0;
-    window.add(scores);
-    const cut = threshold();
-    batch.forEach(([container, text], i) => {
-      const score = scores[i];
-      if (score !== undefined) cache.set(text, score);
-      if (!container.isConnected) return;
-      const action = decide({ container, text }, score);
-      if (action !== undefined && action !== 'reveal') blurred += 1;
-    });
-    log.info('batch applied', {
-      posts: batch.length,
-      blurred,
-      threshold: cut.toFixed(3),
-      relative: count(feedback) > 0,
-    });
-    if (queue.size > 0) scheduleFlush();
-  };
-
-  const viewport = new IntersectionObserver(
-    (entries) => {
-      if (!active()) return;
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const container = entry.target as HTMLElement;
-        viewport.unobserve(container);
-        const post = adapter.findPosts(container)[0];
-        if (post) enqueue(post);
-      }
-    },
-    { rootMargin: VIEWPORT_MARGIN },
-  );
-
-  const sweep = (root: ParentNode): void => {
-    if (!active()) return;
-    for (const post of adapter.findPosts(root)) {
-      if (seen.has(post.container)) continue;
-      seen.add(post.container);
-      viewport.observe(post.container);
-    }
-  };
-
-  const mutations = new MutationObserver((records) => {
-    for (const record of records) {
-      for (const node of record.addedNodes) {
-        if (node instanceof HTMLElement) sweep(node);
-      }
-    }
+  const scanner = new FeedScanner({
+    adapter,
+    isActive: active,
+    onEnterView: enqueue,
   });
 
   /** Threshold changes re-apply from cache: raw scores mean no re-inference. */
@@ -202,10 +130,9 @@ async function start(): Promise<void> {
   /** Topics and corrections both change the query, so both force a re-embed. */
   const requery = (): void => {
     engine.setTopics(settings.topics, corrections());
-    epoch += 1;
+    queue.invalidate();
     cache.clear();
-    seen = new WeakSet();
-    sweep(document);
+    scanner.reset();
   };
 
   const applySettings = (next: Settings): void => {
@@ -218,35 +145,28 @@ async function start(): Promise<void> {
       return;
     }
     engine.connect();
-    if (topicsChanged) {
-      feedback = forTopics(feedback, next.topics);
-      void saveFeedback(feedback);
-    }
+    if (topicsChanged) void tuner.keepOnly(next.topics);
     if (topicsChanged || tuningChanged) requery();
     else rescore();
   };
 
-  /** Vectors, never text: the correction persists, the post does not. */
   const takeFeedback = (post: PostRef, liked: boolean): void => {
-    const key = hashText(post.text);
-    const apply = async (next: Feedback): Promise<void> => {
-      feedback = next;
-      await saveFeedback(feedback);
-      log.info('feedback stored', { corrections: count(feedback) });
+    const store = async (topic: string, vector: number[]): Promise<void> => {
+      await tuner.record(topic, post.text, vector, liked);
+      log.info('feedback stored', { corrections: tuner.count });
       if (settings.tuneFromFeedback) requery();
     };
 
     /** Already rated: re-clicking toggles or flips it, and we hold the vector. */
-    const existing = findRating(feedback, key);
+    const existing = tuner.ratingOf(post.text);
     if (existing) {
-      void apply(rate(feedback, existing.topic, key, [], liked));
+      void store(existing.topic, []);
       return;
     }
 
     void engine.feedback(post.text, liked).then(({ vector, topic }) => {
       const line = settings.topics[topic];
-      if (vector.length === 0 || line === undefined) return;
-      void apply(rate(feedback, line, key, vector, liked));
+      if (vector.length > 0 && line !== undefined) void store(line, vector);
     });
   };
 
@@ -255,15 +175,15 @@ async function start(): Promise<void> {
       if (!settings.tuneFromFeedback) return undefined;
       const container = target.closest<HTMLElement>(adapter.containerSelector);
       const found = container ? adapter.findPosts(container)[0] : undefined;
-      if (!found || !seen.has(found.container)) return undefined;
-      return { ...found, rating: findRating(feedback, hashText(found.text))?.liked };
+      if (!found || !scanner.knows(found.container)) return undefined;
+      return { ...found, rating: tuner.ratingOf(found.text)?.liked };
     },
     onFeedback: takeFeedback,
   });
 
   listenForReveal(document);
   onSettingsChanged(applySettings);
-  mutations.observe(document.documentElement, { childList: true, subtree: true });
+  scanner.start();
 
   log.info('content script started', {
     host: location.hostname,
@@ -274,7 +194,7 @@ async function start(): Promise<void> {
 
   if (active()) {
     engine.connect();
-    feedback = forTopics(feedback, settings.topics);
+    void tuner.keepOnly(settings.topics);
     engine.setTopics(settings.topics, corrections());
   }
 }
