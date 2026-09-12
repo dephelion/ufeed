@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS } from '../core/settings';
-import { MIN_SAMPLE, strictnessFromPosition } from '../ml/scoring';
+import { MIN_SAMPLE, thresholdForStrictness } from '../ml/scoring';
 import { ScoreWindow } from './threshold';
 
-const absolute = strictnessFromPosition(DEFAULT_SETTINGS.strictness, {
-  min: DEFAULT_SETTINGS.bandMin,
-  max: DEFAULT_SETTINGS.bandMax,
-});
+const absolute = thresholdForStrictness(DEFAULT_SETTINGS.strictness);
 
 const fill = (n: number, value = 0.5) => {
   const w = new ScoreWindow();

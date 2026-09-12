@@ -1,10 +1,9 @@
-import { estimateFeedShown, strictnessFromPosition } from '../../ml/scoring';
+import { feedShownAt, junkShownAt } from '../../ml/scoring';
 import {
   DEFAULT_SETTINGS,
   parseTopics,
   topicsEqual,
   topicsToText,
-  usableBand,
   type Settings,
 } from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
@@ -24,8 +23,6 @@ const applied = el<HTMLSpanElement>('applied');
 const strictness = el<HTMLInputElement>('strictness');
 const strictnessValue = el<HTMLOutputElement>('strictness-value');
 const strictnessHint = el<HTMLParagraphElement>('strictness-hint');
-const bandMin = el<HTMLInputElement>('band-min');
-const bandMax = el<HTMLInputElement>('band-max');
 const showScores = el<HTMLInputElement>('show-scores');
 const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
 const blurOtherLanguages = el<HTMLInputElement>('blur-other-languages');
@@ -41,15 +38,19 @@ const dot = el<HTMLSpanElement>('dot');
 
 let saved: Settings = await loadSettings();
 
-/** Speaks in what the user sees. The score only appears once they asked for scores. */
-function describeStrictness(position: number, settings: Settings): string {
-  const band = usableBand(settings);
-  const threshold = strictnessFromPosition(position, band);
-  const shown = Math.round(estimateFeedShown(threshold) * 100);
-  const cut = settings.showScores ? ` Posts need ${threshold.toFixed(3)} to stay.` : '';
+/**
+ * Speaks only in what the reader sees, and admits what still gets through — a
+ * hint that promised only the good half would be lying at every step. The cut
+ * score belongs on the badge, not here.
+ */
+function describeStrictness(step: number): string {
+  const shown = Math.round(feedShownAt(step) * 100);
+  if (shown >= 100) return 'Blurs nothing — every post stays visible.';
+  const hits = Math.round((1 - junkShownAt(step)) * 10);
   return (
-    `Keeps about ${shown}% of a typical feed visible. ` +
-    `The rest is blurred, one click away.${cut}`
+    `Shows about ${shown}% of a typical feed. Even then, only about ${hits} in 10 ` +
+    'of the posts you see will really match your topics. ' +
+    'Blurred posts stay one click away.'
   );
 }
 
@@ -57,10 +58,8 @@ function render(settings: Settings): void {
   enabled.checked = settings.enabled;
   topics.value = topicsToText(settings.topics);
   strictness.value = String(settings.strictness);
-  strictnessValue.textContent = `${Math.round(settings.strictness * 100)}%`;
-  strictnessHint.textContent = describeStrictness(settings.strictness, settings);
-  bandMin.value = settings.bandMin.toFixed(3);
-  bandMax.value = settings.bandMax.toFixed(3);
+  strictnessValue.textContent = String(settings.strictness);
+  strictnessHint.textContent = describeStrictness(settings.strictness);
   showScores.checked = settings.showScores;
   blurThinMedia.checked = settings.blurThinMedia;
   blurOtherLanguages.checked = settings.blurOtherLanguages;
@@ -114,22 +113,13 @@ apply.addEventListener('click', () => {
 
 strictness.addEventListener('input', () => {
   const next = Number(strictness.value);
-  strictnessValue.textContent = `${Math.round(next * 100)}%`;
-  strictnessHint.textContent = describeStrictness(next, saved);
+  strictnessValue.textContent = String(next);
+  strictnessHint.textContent = describeStrictness(next);
 });
 
 strictness.addEventListener('change', () => {
   void update({ strictness: Number(strictness.value) });
 });
-
-const commitBand = (): void => {
-  void update({ bandMin: Number(bandMin.value), bandMax: Number(bandMax.value) }).then(
-    () => render(saved),
-  );
-};
-
-bandMin.addEventListener('change', commitBand);
-bandMax.addEventListener('change', commitBand);
 
 async function renderTuning(): Promise<void> {
   const stored = await loadFeedback().catch(() => undefined);
@@ -162,12 +152,10 @@ blurOtherLanguages.addEventListener(
   () => void update({ blurOtherLanguages: blurOtherLanguages.checked }),
 );
 
-/** The strictness hint names the cut score only while scores are on show. */
-showScores.addEventListener('change', () => {
-  void update({ showScores: showScores.checked }).then(() => {
-    strictnessHint.textContent = describeStrictness(saved.strictness, saved);
-  });
-});
+showScores.addEventListener(
+  'change',
+  () => void update({ showScores: showScores.checked }),
+);
 
 reset.addEventListener('click', () => {
   void Promise.all([

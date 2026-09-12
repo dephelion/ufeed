@@ -5,7 +5,7 @@ import {
   overrideFor,
   parseTopics,
   topicsEqual,
-  usableBand,
+  withDefaults,
 } from './settings';
 
 const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
@@ -86,23 +86,29 @@ describe('topicsEqual', () => {
   });
 });
 
-describe('usableBand', () => {
-  it('passes a normal band through', () => {
-    expect(usableBand({ ...DEFAULT_SETTINGS, bandMin: 0.76, bandMax: 0.83 })).toEqual({
-      min: 0.76,
-      max: 0.83,
-    });
+describe('strictness read back from storage', () => {
+  it('keeps a value that is a step on the scale', () => {
+    expect(withDefaults({ strictness: 8 }).strictness).toBe(8);
   });
 
-  it('rights an inverted band instead of blurring everything', () => {
-    expect(usableBand({ ...DEFAULT_SETTINGS, bandMin: 0.9, bandMax: 0.7 })).toEqual({
-      min: 0.7,
-      max: 0.9,
-    });
+  it('falls back rather than trusting a 0..1 position from the old slider', () => {
+    expect(withDefaults({ strictness: 0.35 }).strictness).toBe(
+      DEFAULT_SETTINGS.strictness,
+    );
   });
 
-  it('keeps a collapsed band usable, so the slider still moves', () => {
-    const band = usableBand({ ...DEFAULT_SETTINGS, bandMin: 0.8, bandMax: 0.8 });
-    expect(band.max).toBeGreaterThan(band.min);
+  it('pulls an off-scale step onto the scale', () => {
+    expect(withDefaults({ strictness: 99 }).strictness).toBe(10);
+    expect(withDefaults({ strictness: -4 }).strictness).toBe(0);
+  });
+
+  it('falls back on a value that is not a number at all', () => {
+    expect(withDefaults({ strictness: 'loose' as unknown as number }).strictness).toBe(
+      DEFAULT_SETTINGS.strictness,
+    );
+  });
+
+  it('keeps zero, which is a real setting and not a missing one', () => {
+    expect(withDefaults({ strictness: 0 }).strictness).toBe(0);
   });
 });

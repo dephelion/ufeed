@@ -21,7 +21,7 @@ Chrome and Firefox, MV3, built with WXT. v1 targets X; v3 adds LinkedIn.
 
 ## Status
 
-**Working end to end on X.** Content script finds posts, scores them through an in-page extension iframe hosting a worker, blurs what falls below the threshold. Popup sets topics, strictness, the advanced score band, and reset.
+**Working end to end on X, LinkedIn and Reddit.** Content script finds posts, scores them through an in-page extension iframe hosting a worker, blurs what falls below the threshold. Popup sets topics, strictness, and reset.
 
 Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both browsers; e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model and is rejected at load.
 

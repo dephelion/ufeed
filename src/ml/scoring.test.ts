@@ -1,15 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { MODEL } from './models';
+import { DEFAULT_STRICTNESS, STRICTNESS_STEPS } from './models';
 import {
+  MAX_STRICTNESS,
   MIN_SAMPLE,
   PEEK_BAND,
   applyFeedback,
+  clampStrictness,
   cosine,
+  feedShownAt,
+  junkShownAt,
   normalize,
-  positionFromStrictness,
   scoreAgainstTopics,
-  strictnessFromPosition,
   thresholdForFraction,
+  thresholdForStrictness,
   verdictAt,
 } from './scoring';
 
@@ -36,7 +39,7 @@ describe('scoreAgainstTopics', () => {
   });
 
   it('scores below any threshold when there are no topics', () => {
-    expect(verdictAt(scoreAgainstTopics(v(1, 0), []), strictnessFromPosition(0))).toBe(
+    expect(verdictAt(scoreAgainstTopics(v(1, 0), []), thresholdForStrictness(0))).toBe(
       'blur',
     );
   });
@@ -52,24 +55,50 @@ describe('normalize', () => {
   });
 });
 
-describe('strictness position', () => {
-  it('maps the slider onto the model band', () => {
-    expect(strictnessFromPosition(0)).toBeCloseTo(MODEL.bandMin);
-    expect(strictnessFromPosition(1)).toBeCloseTo(MODEL.bandMax);
+describe('the strictness scale', () => {
+  it('runs 0 to 10', () => {
+    expect(MAX_STRICTNESS).toBe(10);
+    expect(STRICTNESS_STEPS).toHaveLength(11);
   });
 
-  it('clamps out-of-range positions', () => {
-    expect(strictnessFromPosition(-3)).toBeCloseTo(MODEL.bandMin);
-    expect(strictnessFromPosition(9)).toBeCloseTo(MODEL.bandMax);
+  it('blurs nothing at 0, which is the point of starting at the feed floor', () => {
+    expect(feedShownAt(0)).toBe(1);
   });
 
-  it('round-trips', () => {
-    expect(positionFromStrictness(strictnessFromPosition(0.43))).toBeCloseTo(0.43);
+  it('every step is stricter than the one before it', () => {
+    for (let i = 1; i <= MAX_STRICTNESS; i++) {
+      expect(thresholdForStrictness(i)).toBeGreaterThan(thresholdForStrictness(i - 1));
+      expect(feedShownAt(i)).toBeLessThan(feedShownAt(i - 1));
+    }
+  });
+
+  it('every step changes what the reader sees, which the old band did not', () => {
+    for (let i = 1; i <= MAX_STRICTNESS; i++) {
+      expect(feedShownAt(i - 1) - feedShownAt(i)).toBeGreaterThanOrEqual(0.05);
+    }
+  });
+
+  it('defaults where the junk is halved, not where the recall reads best', () => {
+    expect(DEFAULT_STRICTNESS).toBe(7);
+    expect(junkShownAt(DEFAULT_STRICTNESS)).toBeLessThan(junkShownAt(5) - 0.1);
+  });
+
+  it('lets less junk through as it tightens, up to the point the sample thins', () => {
+    for (let i = 1; i <= 9; i++) {
+      expect(junkShownAt(i)).toBeLessThanOrEqual(junkShownAt(i - 1));
+    }
+  });
+
+  it('clamps off-scale values onto the nearest step', () => {
+    expect(clampStrictness(-3)).toBe(0);
+    expect(clampStrictness(99)).toBe(MAX_STRICTNESS);
+    expect(clampStrictness(3.4)).toBe(3);
+    expect(clampStrictness(NaN)).toBe(0);
   });
 });
 
 describe('the three tiers', () => {
-  const thr = strictnessFromPosition(0.5);
+  const thr = thresholdForStrictness(5);
 
   it('shows a post at or above the threshold', () => {
     expect(verdictAt(thr, thr)).toBe('show');
@@ -84,14 +113,14 @@ describe('the three tiers', () => {
     expect(verdictAt(thr - PEEK_BAND - 0.001, thr)).toBe('blur');
   });
 
-  it('keeps everything at position zero, the loosest setting', () => {
-    expect(verdictAt(MODEL.bandMin, strictnessFromPosition(0))).toBe('show');
+  it('keeps a post scoring below every real feed post at strictness 0', () => {
+    expect(verdictAt(0.7, thresholdForStrictness(0))).toBe('show');
   });
 
   it('measures the strip from the threshold, so it moves with strictness', () => {
-    const loose = strictnessFromPosition(0.2);
+    const loose = thresholdForStrictness(2);
     expect(verdictAt(loose - 0.005, loose)).toBe('peek');
-    expect(verdictAt(loose - 0.005, strictnessFromPosition(0.9))).toBe('blur');
+    expect(verdictAt(loose - 0.005, thresholdForStrictness(9))).toBe('blur');
   });
 });
 

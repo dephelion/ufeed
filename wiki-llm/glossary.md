@@ -40,9 +40,9 @@ A signal-detection number for how _separated_ the two score distributions are (o
 
 Of everything that _should_ have been kept (labelled on-topic), the fraction the threshold actually lets through. High recall = few false blurs of things the user wanted; says nothing about how much junk also gets through (that's the "feed shown" number alongside it).
 
-## Threshold / band
+## Threshold / strictness
 
-**Threshold**: the score cutoff — above it, a post is shown; below it, blurred. **Band**: the usable range of thresholds (too low = nothing blurred, too high = nothing shown); the strictness slider maps 0–100% onto this range, not onto 0–1 directly.
+**Threshold**: the score cutoff — above it, a post is shown; below it, blurred. **Strictness**: a 0–10 scale where each step is a measured threshold, spaced so a step spends about a tenth of the feed. Step 0 sits at the feed floor and blurs nothing. The scale is even in what the reader sees, not in cosine — see [model.md](model.md).
 
 ## Zero-shot classification
 

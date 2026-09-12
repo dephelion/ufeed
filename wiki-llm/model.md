@@ -14,7 +14,7 @@ topic → "query: software, programming"
 post  → "passage: <text>"
 ```
 
-`src/ml/models.ts` is the single source for the id, the prefixes, the band and the probe bounds. One constant, no registry, no runtime branching.
+`src/ml/models.ts` is the single source for the id, the prefixes, the strictness scale and the probe bounds. One constant, no registry, no runtime branching.
 
 ## Why this model
 
@@ -47,7 +47,7 @@ Measured distribution, topic `tech, software, ai`: on-topic mean **0.806**, off-
 
 **e5-small-v2 reads English only.** Text in another language still gets a score, and that score is noise — drawn from across the usable band with no relation to the topic. No threshold fixes it.
 
-Measured on the same 205 posts, topic `tech, software, ai`: **68 of them are Spanish, and every one is labelled off topic.** Their scores run **0.727 – 0.825**, mean **0.769** — the band is 0.76 – 0.83, so the model places Spanish posts on both sides of every threshold the slider can reach. **18 of the 54 posts above the default threshold are Spanish**: a third of all leaks, none of them judged.
+Measured on the same 205 posts, topic `tech, software, ai`: **68 of them are Spanish, and every one is labelled off topic.** Their scores run **0.727 – 0.825**, mean **0.769** — the scale spans 0.69 – 0.82, so the model places Spanish posts on both sides of every threshold the slider can reach. **18 of the 54 posts above the default threshold are Spanish**: a third of all leaks, none of them judged.
 
 Reproduce with the harness in `.local/`: classify each post's language, then compare the score distribution against the English posts'.
 
@@ -75,28 +75,53 @@ Calibration over 615 observations (205 labelled posts x 3 topic phrasings): what
 
 **`PEEK_BAND = 0.01`** is the strip below the threshold that earns a peek instead of a full blur. Below 0.775 nothing was wanted across 125 observations; inside the strip, 7% was.
 
-**In score space, never a fraction of the slider.** The strip is a property of the model; the threshold moves with strictness. Tying one to the other makes it correct only at the default.
+**In score space, never a fraction of the scale.** The strip is a property of the model; the threshold moves with strictness. Tying one to the other makes it correct only at the default.
 
 **Uncertainty straddles the threshold and is worse above it.** Posts at 0.790-0.810 are 26-40% wanted and are shown today with nothing marking them as doubtful. The tiers fix the half below the line; relevance feedback is aimed at the half above it.
 
 ## Threshold
 
-Slider position `0..1` maps onto a band; the band is a user setting, defaulting to the model's.
+**Strictness is a 0-10 scale, and each step is a measured threshold.** Settings store the step, never the score.
 
-|  Slider | Threshold |   Recall | Feed shown |
-| ------: | --------: | -------: | ---------: |
-|      0% |     0.760 |     ~97% |       ~65% |
-|     25% |     0.777 |      92% |        40% |
-| **35%** | **0.784** | **~90%** |   **~35%** |
-|     50% |     0.795 |      88% |        25% |
-|     75% |     0.813 |     ~45% |        12% |
-|    100% |     0.830 |     ~10% |         3% |
+Measured over 615 observations (205 labelled posts x 3 topic phrasings), topic family `software / tech / ai`:
 
-Default **0.35**, deliberately forgiving: a false blur costs a click on something wanted; a false pass costs one scroll past something unwanted. Not symmetric.
+|  Step | Threshold | Feed shown |  Recall | Precision | Junk per 10 wanted |
+| ----: | --------: | ---------: | ------: | --------: | -----------------: |
+|     0 |     0.690 |       100% |    100% |       13% |               68.7 |
+|     1 |     0.740 |        90% |     97% |       14% |               62.8 |
+|     2 |     0.750 |        82% |     96% |       15% |               57.3 |
+|     3 |     0.760 |        68% |     96% |       18% |               46.0 |
+|     4 |     0.765 |        61% |     96% |       20% |               40.1 |
+|     5 |     0.775 |        46% |     96% |       27% |               27.6 |
+|     6 |     0.780 |        39% |     91% |       29% |               23.9 |
+| **7** | **0.790** |    **28%** | **87%** |   **40%** |           **15.0** |
+|     8 |     0.800 |        18% |     67% |       46% |               11.7 |
+|     9 |     0.810 |        11% |     42% |       51% |                9.7 |
+|    10 |     0.820 |         4% |     15% |       48% |               10.8 |
 
-Band default `0.76 – 0.83`. Outside it the slider does nothing useful in either direction. `usableBand()` rights an inverted or collapsed band from the advanced inputs.
+Base rate 13%: that is the precision a filter has to beat to be worth anything.
 
-`estimateFeedShown()` interpolates the table above for the popup hint. One sample, one topic — a guide, not a promise.
+**The scale is even in what the reader sees, not in cosine.** Each step spends about a tenth of the feed. Cosine is not evenly spaced — 0.76 to 0.795 costs 45% of a feed and 0.795 to 0.83 costs 22% — so a slider linear in score has a dead half. This one does not.
+
+**Step 0 is the feed floor, not a band edge.** The lowest score a real feed post reached is **0.696**; 1st percentile 0.702, 5th 0.730. At 0 nothing is blurred, which is what the loosest setting must mean.
+
+**This replaced a 0.76 - 0.83 linear band**, whose floor blurred **30% of a feed at slider 0%** and whose documented rationale — "the range where moving it changes something" — did not survive measurement: 0.72 to 0.76 moves 28% of a feed and the band could not reach it.
+
+Default **step 7**: best F1 (0.55) on the labelled set.
+
+**Recall alone is not a reason to pick a step, and picking on it once shipped a bad default.** Step 5 reads well — 96% of what was wanted survives — and hides that **73% of what survives is junk**, 27.6 unwanted posts per 10 wanted. Recall is nearly free at a loose threshold, because a loose threshold shows everything: step 0 keeps 100% by showing 100%. Only precision says whether the filter did anything.
+
+**The asymmetry runs toward strictness, not away from it.** The earlier default argued that a false blur costs a click and a false pass costs a scroll, so be forgiving. That undercounts twice. A false blur is **labelled and recoverable** — it announces itself, the peek tier shows the opening words, one click undoes it. A false pass is **invisible**: nothing marks it, there is nothing to recover, the reader simply reads it. And at step 5 false passes outnumber hits 27 to 10. The cheap error is the one the reader can see.
+
+Step 5 to 7 costs 9 points of recall and takes junk from 27.6 to 15.0 per 10 wanted — about half the noise for about a tenth of the signal.
+
+**Step 10 is noisy.** At 4% of a feed it rests on ~25 observations, which is why its junk share reads above step 9's. Treat the last step as "as strict as this goes", not as a measurement.
+
+**Recall falls off a cliff after step 7.** Steps 8-10 keep 67%, 42% and 15%. The scale stays even in feed volume there on purpose — the reader asked for less feed, and that is what less feed costs. Precision still climbs to step 9, so a reader whose topic phrasing is sharper than the calibration topic can sit at 8 or 9 and keep what they want.
+
+`feedShownAt()` and `junkShownAt()` read the table for the popup hint, which names both — a hint quoting only the good half would be lying at every step. One sample, one feed — a guide, not a promise.
+
+**`strictness` is validated on read-back, not merged.** It outlived a scale change: a stored `0.35` from the old 0..1 slider is step 0 here, which would silently unblur a whole feed. `withDefaults()` takes only an integer and clamps it; anything else falls back to the default.
 
 ## Topic phrasing
 
@@ -158,6 +183,8 @@ Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; 
 
 - **Zero-shot NLI classification.** One forward pass per label per text, scales with topic count, scores normalized over the candidate set.
 - **Length-scaled threshold.** Needed by MiniLM, unnecessary with e5. Also multiplicative scaling overshoots any band that starts above zero.
+- **A slider linear in cosine.** The original design, a 0.76-0.83 band. Half its travel did nothing and its floor could not reach the feed floor, so "loosest" still blurred a third of a feed. Replaced by the step table above, which is linear in feed shown.
+- **A slider linear in feed shown via a live quantile** (blur the bottom N% of recent scores). Guarantees the scale is even, and blurs a fixed share even when the whole feed is on topic — the same reason relative strictness is not the default. The step table buys the even scale while the threshold stays an absolute score.
 - **Relative "blur the bottom N%" as the default.** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic. **Revived conditionally in v2**, never as the default: relative only once relevance feedback has moved the query and an absolute cosine has stopped meaning anything.
 - **Multi-anchor topic averaging.** Lost to a plain short list on AUC.
 - **`multilingual-e5-small` to fix the language problem.** Scores other languages correctly, and that is the wrong outcome twice: ~33MB q8 becomes ~120MB (250k vocab), and every measured number on this page — band, `PEEK_BAND`, the `estimateFeedShown` curve, the probe bounds — is calibrated to e5-small-v2 and would have to be re-measured. It would also correctly surface on-topic posts in languages the reader does not want, which is the opposite of what the gate is for.

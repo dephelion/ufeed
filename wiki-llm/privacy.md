@@ -9,7 +9,7 @@
 | :------------ | :---------------------------------------------------------------------------------------------------------- |
 | Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.     |
 | Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                        |
-| Settings      | `storage.local`. Topics, slider position, band, per-host toggles.                                           |
+| Settings      | `storage.local`. Topics, strictness step, per-host toggles.                                                 |
 | Model weights | Fetched once from the CDN, cached by the browser.                                                           |
 | Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by topic line and post hash. Vectors only, 50 each way. |
 

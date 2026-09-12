@@ -1,4 +1,4 @@
-import { MODEL } from './models';
+import { STRICTNESS_STEPS } from './models';
 
 export type Vector = Float32Array;
 
@@ -32,30 +32,33 @@ export function normalize(v: Vector): Vector {
 const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
 
 /**
- * Settings store the slider position, not the score: unrelated text scores 0.74
- * with this model and 0.00 with a symmetric one, so a stored score would mean
- * something different the moment the model changes.
+ * Settings store the step, not the score: unrelated text scores 0.74 with this
+ * model and 0.00 with a symmetric one, so a stored score would mean something
+ * different the moment the model changes.
  */
-export interface Band {
-  min: number;
-  max: number;
+export const MAX_STRICTNESS = STRICTNESS_STEPS.length - 1;
+
+/** Anything that is not a step on the scale lands on the nearest one. */
+export function clampStrictness(step: number): number {
+  if (!Number.isFinite(step)) return 0;
+  return Math.min(MAX_STRICTNESS, Math.max(0, Math.round(step)));
 }
 
-export const DEFAULT_BAND: Band = { min: MODEL.bandMin, max: MODEL.bandMax };
-
-export function strictnessFromPosition(
-  position: number,
-  band: Band = DEFAULT_BAND,
-): number {
-  return band.min + clamp01(position) * (band.max - band.min);
+export function thresholdForStrictness(step: number): number {
+  return STRICTNESS_STEPS[clampStrictness(step)]!.threshold;
 }
 
-export function positionFromStrictness(
-  strictness: number,
-  band: Band = DEFAULT_BAND,
-): number {
-  const span = band.max - band.min;
-  return span === 0 ? 0 : clamp01((strictness - band.min) / span);
+/**
+ * Roughly how much of a feed this step leaves visible, from the 205 labelled
+ * posts in wiki-llm/model.md. One sample, one feed: a hint, not a promise.
+ */
+export function feedShownAt(step: number): number {
+  return STRICTNESS_STEPS[clampStrictness(step)]!.shown;
+}
+
+/** Share of what survives this step that was not wanted after all. */
+export function junkShownAt(step: number): number {
+  return STRICTNESS_STEPS[clampStrictness(step)]!.junk;
 }
 
 /**
@@ -118,30 +121,4 @@ export function thresholdForFraction(
   const sorted = [...scores].sort((a, b) => a - b);
   const index = Math.floor(sorted.length * (1 - clamp01(fraction)));
   return sorted[Math.min(sorted.length - 1, Math.max(0, index))]!;
-}
-
-/** Model-relative, never a fraction of the slider: the strip is a property of e5. */
-/**
- * Roughly how much of a feed survives a threshold, from the 205 labelled posts
- * in wiki-llm/model.md. One sample, one topic: a hint, not a promise.
- */
-export function estimateFeedShown(threshold: number): number {
-  const curve: readonly (readonly [number, number])[] = [
-    [0.76, 0.65],
-    [0.768, 0.58],
-    [0.782, 0.4],
-    [0.796, 0.25],
-    [0.8, 0.2],
-    [0.81, 0.14],
-    [0.817, 0.07],
-    [0.824, 0.04],
-    [0.838, 0.0],
-  ];
-  if (threshold <= curve[0]![0]) return curve[0]![1];
-  for (let i = 1; i < curve.length; i++) {
-    const [x1, y1] = curve[i]!;
-    const [x0, y0] = curve[i - 1]!;
-    if (threshold <= x1) return y0 + ((threshold - x0) / (x1 - x0)) * (y1 - y0);
-  }
-  return 0;
 }

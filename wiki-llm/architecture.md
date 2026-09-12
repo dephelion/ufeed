@@ -65,11 +65,11 @@ engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
 
 ## Invalidation
 
-| Change            | Effect                                                                     |
-| :---------------- | :------------------------------------------------------------------------- |
-| Strictness / band | Re-apply threshold from cache. No inference.                               |
-| Topics            | `epoch += 1`, clear cache and queue, new `seen` set, reveal all, re-sweep. |
-| Host disabled     | Reveal all, stop.                                                          |
+| Change        | Effect                                                                     |
+| :------------ | :------------------------------------------------------------------------- |
+| Strictness    | Re-apply threshold from cache. No inference.                               |
+| Topics        | `epoch += 1`, clear cache and queue, new `seen` set, reveal all, re-sweep. |
+| Host disabled | Reveal all, stop.                                                          |
 
 **Epoch guards the race.** A batch in flight when topics change returns scores measured against the old vectors; replies from a previous epoch are discarded.
 

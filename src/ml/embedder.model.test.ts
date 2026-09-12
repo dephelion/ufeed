@@ -6,12 +6,12 @@
  */
 import { describe, expect, it } from 'vitest';
 import { Embedder } from './embedder';
-import { MODEL, formatPost, formatTopic } from './models';
-import { cosine, scoreAgainstTopics, strictnessFromPosition } from './scoring';
+import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from './models';
+import { cosine, scoreAgainstTopics, thresholdForStrictness } from './scoring';
 
 const q = formatTopic;
 const d = formatPost;
-const THRESHOLD = strictnessFromPosition(MODEL.defaultPosition);
+const THRESHOLD = thresholdForStrictness(DEFAULT_STRICTNESS);
 
 const embedder = new Embedder();
 const vectorsFor = async (texts: string[]) => {

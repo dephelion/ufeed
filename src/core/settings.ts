@@ -1,13 +1,11 @@
-import { MODEL } from '../ml/models';
+import { DEFAULT_STRICTNESS } from '../ml/models';
+import { clampStrictness } from '../ml/scoring';
 
 export interface Settings {
   enabled: boolean;
   topics: string[];
-  /** Slider position 0..1, not a score: scores differ per model. */
+  /** Step 0..10, not a score: scores differ per model. */
   strictness: number;
-  /** Score the slider maps onto at 0% and 100%. */
-  bandMin: number;
-  bandMax: number;
   disabledHosts: string[];
   alwaysKeep: string[];
   alwaysBlur: string[];
@@ -23,9 +21,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
-  strictness: MODEL.defaultPosition,
-  bandMin: MODEL.bandMin,
-  bandMax: MODEL.bandMax,
+  strictness: DEFAULT_STRICTNESS,
   disabledHosts: [],
   alwaysKeep: [],
   alwaysBlur: [],
@@ -35,8 +31,19 @@ export const DEFAULT_SETTINGS: Settings = {
   blurOtherLanguages: false,
 };
 
+/**
+ * Spreading defaults over stored JSON checks nothing, and `strictness` outlived
+ * a scale change: a stored 0.35 from the old 0..1 slider is step 0 here, which
+ * would silently unblur a feed. Anything off the scale lands on the nearest step.
+ */
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {
-  return { ...DEFAULT_SETTINGS, ...partial };
+  const merged = { ...DEFAULT_SETTINGS, ...partial };
+  const stored = partial?.strictness;
+  merged.strictness =
+    typeof stored === 'number' && Number.isInteger(stored)
+      ? clampStrictness(stored)
+      : DEFAULT_STRICTNESS;
+  return merged;
 }
 
 export function isActiveOn(settings: Settings, hostname: string): boolean {
@@ -76,11 +83,4 @@ export function topicsToText(topics: readonly string[]): string {
 
 export function topicsEqual(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((topic, i) => topic === b[i]);
-}
-
-/** Guards against an inverted or collapsed band from the advanced inputs. */
-export function usableBand(settings: Settings): { min: number; max: number } {
-  const min = Math.min(settings.bandMin, settings.bandMax);
-  const max = Math.max(settings.bandMin, settings.bandMax);
-  return max - min < 0.01 ? { min, max: min + 0.01 } : { min, max };
 }

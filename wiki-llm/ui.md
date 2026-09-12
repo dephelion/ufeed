@@ -117,23 +117,22 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 ## Popup
 
-| Control                           | Effect                                                                      |
-| :-------------------------------- | :-------------------------------------------------------------------------- |
-| On                                | Global switch. Off reveals everything.                                      |
-| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed.      |
-| Strictness                        | Slider position 0..1 onto the band. Re-applies from cache, no inference.    |
-| Advanced band                     | Loosest / strictest score the slider spans.                                 |
-| Blur media                        | Default off. Blurs media posts under 30 chars of text.                      |
-| Blur posts that aren't in English | Default off. Blurs posts outside the model's language; off skips detection. |
-| Learn from thumbs                 | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.      |
-| Clear tuning                      | In that section. Deletes every correction; Reset does too.                  |
-| Show scores                       | Advanced, default off. The only gate on the score badge, in any build.      |
-| Reset                             | Restores defaults, keeps topics.                                            |
-| Status dot                        | Engine state and backend.                                                   |
+| Control                           | Effect                                                                                                           |
+| :-------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| On                                | Global switch. Off reveals everything.                                                                           |
+| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed.                                           |
+| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing. |
+| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                           |
+| Blur posts that aren't in English | Default off. Blurs posts outside the model's language; off skips detection.                                      |
+| Learn from thumbs                 | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.                                           |
+| Clear tuning                      | In that section. Deletes every correction; Reset does too.                                                       |
+| Show scores                       | Advanced, default off. The only gate on the score badge, in any build.                                           |
+| Reset                             | Restores defaults, keeps topics.                                                                                 |
+| Status dot                        | Engine state and backend.                                                                                        |
 
-**Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Keeps about 35% of a typical feed visible. The rest is blurred, one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. The cut score is appended only while `showScores` is on, which is the one place a reader has asked for numbers.
+**Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Keeps about 35% of a typical feed visible. The rest is blurred, one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
-Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — Lensing reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
+**Admit what still gets through.** The strictness hint names how much of a feed survives _and_ how much of that is actually wanted — _"about 4 in 10 of the posts you see will really match your topics"_ — because at every step most or much of what survives is unwanted, and quoting only the good half is a lie the first scroll exposes. As a ratio of **what the reader sees**, never a bare percentage: "60% junk" leaves 60% of what unanswered. Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — Lensing reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
 
 Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 

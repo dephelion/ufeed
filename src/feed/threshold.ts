@@ -1,9 +1,5 @@
-import { type Settings, usableBand } from '../core/settings';
-import {
-  estimateFeedShown,
-  strictnessFromPosition,
-  thresholdForFraction,
-} from '../ml/scoring';
+import type { Settings } from '../core/settings';
+import { feedShownAt, thresholdForFraction, thresholdForStrictness } from '../ml/scoring';
 
 /** Enough recent scores for a stable quantile, short enough to follow the feed. */
 const WINDOW = 300;
@@ -28,9 +24,9 @@ export class ScoreWindow {
    * calibrated until then, and never blurs a feed that is entirely on topic.
    */
   cut(settings: Settings, adapted: boolean): number {
-    const absolute = strictnessFromPosition(settings.strictness, usableBand(settings));
+    const absolute = thresholdForStrictness(settings.strictness);
     if (!adapted) return absolute;
-    return thresholdForFraction(this.#recent, estimateFeedShown(absolute), absolute);
+    return thresholdForFraction(this.#recent, feedShownAt(settings.strictness), absolute);
   }
 
   get size(): number {
