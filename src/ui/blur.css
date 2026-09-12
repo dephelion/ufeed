@@ -120,8 +120,8 @@
 /* Thumbs. One floating element over the hovered post, never injected into it. */
 .lx-fb {
   position: absolute;
-  /* Anchored on the post's centre point, so the bar's own size never matters. */
-  transform: translate(-50%, -50%);
+  /* Anchored on the post's top-centre point, so the bar's own width never matters. */
+  transform: translate(-50%, 0);
   z-index: 2147483000;
   display: none;
   gap: 4px;
