@@ -115,6 +115,8 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 
 **Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — the worker returns that index with the embedding. Editing one line discards only that line's corrections; the rest survive, including a reorder.
 
+**One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place. A duplicate would weight one post's vector twice in the centroid.
+
 **Off by default**, behind `tuneFromFeedback` in Advanced. An uncorrected query needs no relative threshold and is better calibrated, so the mechanism stays inert until asked for.
 
 ## Relative strictness

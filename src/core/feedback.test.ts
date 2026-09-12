@@ -5,45 +5,80 @@ import {
   correctionsFor,
   count,
   countFor,
+  findRating,
   forTopics,
-  record,
+  rate,
 } from './feedback';
 
 const v = (n: number) => [n, n, n];
+const up = (f = EMPTY_FEEDBACK, topic = 'software', key = 'a') =>
+  rate(f, topic, key, v(1), true);
 
-describe('record', () => {
-  it('keeps a liked and a disliked correction apart', () => {
-    let f = record(EMPTY_FEEDBACK, 'software', v(1), true);
-    f = record(f, 'software', v(2), false);
-    expect(correctionsFor(f, 'software').liked).toEqual([v(1)]);
-    expect(correctionsFor(f, 'software').disliked).toEqual([v(2)]);
-  });
-
-  it('files corrections under the line they were given against', () => {
-    let f = record(EMPTY_FEEDBACK, 'software', v(1), true);
-    f = record(f, 'video games', v(2), true);
+describe('rate', () => {
+  it('files a correction under the line it was given against', () => {
+    const f = up();
     expect(countFor(f, 'software')).toBe(1);
-    expect(countFor(f, 'video games')).toBe(1);
+    expect(findRating(f, 'a')).toEqual({ topic: 'software', liked: true });
   });
 
-  it('drops the oldest past the cap, so the query follows current taste', () => {
+  it('un-rates on the same thumb twice, rather than stacking a duplicate', () => {
+    const f = rate(up(), 'software', 'a', v(1), true);
+    expect(count(f)).toBe(0);
+  });
+
+  it('flips rather than holding a post on both sides at once', () => {
+    const f = rate(up(), 'software', 'a', v(1), false);
+    expect(count(f)).toBe(1);
+    expect(findRating(f, 'a')?.liked).toBe(false);
+    expect(correctionsFor(f, 'software').liked).toHaveLength(0);
+    expect(correctionsFor(f, 'software').disliked).toHaveLength(1);
+  });
+
+  it('flips in place, keeping the line it was already filed under', () => {
+    const f = rate(up(EMPTY_FEEDBACK, 'software'), 'video games', 'a', v(1), false);
+    expect(countFor(f, 'software')).toBe(1);
+    expect(countFor(f, 'video games')).toBe(0);
+  });
+
+  it('counts a repeat click as one post however many times it is clicked', () => {
     let f = EMPTY_FEEDBACK;
-    for (let i = 0; i < MAX_PER_CLASS + 5; i++) f = record(f, 'software', v(i), true);
+    for (let i = 0; i < 5; i++) f = rate(f, 'software', 'a', v(1), true);
+    expect(count(f)).toBe(1);
+  });
+
+  it('keeps distinct posts apart', () => {
+    const f = rate(up(), 'software', 'b', v(2), true);
+    expect(countFor(f, 'software')).toBe(2);
+  });
+
+  it('drops the oldest of that side past the cap', () => {
+    let f = EMPTY_FEEDBACK;
+    for (let i = 0; i < MAX_PER_CLASS + 5; i++) {
+      f = rate(f, 'software', `k${i}`, v(i), true);
+    }
     expect(correctionsFor(f, 'software').liked).toHaveLength(MAX_PER_CLASS);
-    expect(correctionsFor(f, 'software').liked[0]).toEqual(v(5));
+    expect(findRating(f, 'k0')).toBeUndefined();
+    expect(findRating(f, `k${MAX_PER_CLASS + 4}`)).toBeDefined();
   });
 
-  it('ignores an empty vector rather than storing a hole', () => {
-    expect(count(record(EMPTY_FEEDBACK, 'software', [], true))).toBe(0);
+  it('caps each side separately, so dislikes never evict likes', () => {
+    let f = EMPTY_FEEDBACK;
+    for (let i = 0; i < MAX_PER_CLASS + 5; i++) {
+      f = rate(f, 'software', `d${i}`, v(i), false);
+    }
+    f = rate(f, 'software', 'liked-one', v(1), true);
+    expect(correctionsFor(f, 'software').liked).toHaveLength(1);
+    expect(correctionsFor(f, 'software').disliked).toHaveLength(MAX_PER_CLASS);
   });
 
-  it('ignores a correction with no topic to attach it to', () => {
-    expect(count(record(EMPTY_FEEDBACK, '', v(1), true))).toBe(0);
+  it('ignores a correction with no vector or no line to attach it to', () => {
+    expect(count(rate(EMPTY_FEEDBACK, 'software', 'a', [], true))).toBe(0);
+    expect(count(rate(EMPTY_FEEDBACK, '', 'a', v(1), true))).toBe(0);
   });
 });
 
 describe('forTopics', () => {
-  const two = record(record(EMPTY_FEEDBACK, 'software', v(1), true), 'games', v(2), true);
+  const two = rate(up(), 'games', 'b', v(2), true);
 
   it('keeps corrections for lines that still exist', () => {
     expect(count(forTopics(two, ['software', 'games']))).toBe(2);

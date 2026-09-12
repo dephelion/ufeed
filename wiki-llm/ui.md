@@ -78,6 +78,8 @@ Appears on any scored post, not only blurred ones: [model.md](model.md) puts the
 
 **Hidden unless `tuneFromFeedback` is on.** The checkbox gates the buttons and the scoring together, so a rating never has an invisible effect.
 
+**A post is rated once.** Ratings are keyed by `hashText`, so the same thumb again un-rates it and the other thumb flips it. Both re-clicks reuse the stored vector and never reach the engine. Without this a held click stacks copies of one post into the centroid, and a mind-change leaves it pulling both ways at once. The active thumb is marked, so a repeat click reads as a toggle rather than a no-op.
+
 The bar sits outside `.lx-blur`, so the reveal click handler never sees its clicks.
 
 **A reveal click is not feedback.** It cannot separate "I wanted this" from "I was checking you". Only the thumbs are a label.
