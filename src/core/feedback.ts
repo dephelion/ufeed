@@ -144,6 +144,24 @@ export function countFor(feedback: Feedback, topic: string): number {
   return ratingsFor(feedback, topic).length;
 }
 
+export interface Counts {
+  up: number;
+  down: number;
+  total: number;
+}
+
+export function counts(feedback: Feedback): Counts {
+  let up = 0;
+  let down = 0;
+  for (const ratings of Object.values(feedback.byTopic)) {
+    for (const rating of ratings) {
+      if (rating.liked) up += 1;
+      else down += 1;
+    }
+  }
+  return { up, down, total: up + down };
+}
+
 export function count(feedback: Feedback): number {
   return Object.values(feedback.byTopic).reduce((n, r) => n + r.length, 0);
 }

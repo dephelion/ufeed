@@ -8,7 +8,7 @@ import {
   type Settings,
 } from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
-import { count } from '../../core/feedback';
+import { counts } from '../../core/feedback';
 import { clearFeedback, loadFeedback } from '../../core/feedback-storage';
 
 const el = <T extends HTMLElement>(id: string): T => {
@@ -30,7 +30,10 @@ const showScores = el<HTMLInputElement>('show-scores');
 const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
 const tuneFeedback = el<HTMLInputElement>('tune-feedback');
 const clearTuning = el<HTMLButtonElement>('clear-tuning');
-const tuningCount = el<HTMLSpanElement>('tuning-count');
+const tuningNote = el<HTMLSpanElement>('tuning-note');
+const statUp = el<HTMLElement>('stat-up');
+const statDown = el<HTMLElement>('stat-down');
+const statTotal = el<HTMLElement>('stat-total');
 const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
@@ -127,9 +130,12 @@ bandMax.addEventListener('change', commitBand);
 
 async function renderTuning(): Promise<void> {
   const stored = await loadFeedback().catch(() => undefined);
-  const n = stored ? count(stored) : 0;
-  tuningCount.textContent = n === 0 ? 'nothing learned yet' : `${n} rated`;
-  clearTuning.disabled = n === 0;
+  const { up, down, total } = counts(stored ?? { byTopic: {} });
+  statUp.textContent = String(up);
+  statDown.textContent = String(down);
+  statTotal.textContent = String(total);
+  tuningNote.textContent = total === 0 ? 'Nothing rated yet.' : '';
+  clearTuning.disabled = total === 0;
 }
 
 void renderTuning();

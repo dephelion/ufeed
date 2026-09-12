@@ -5,6 +5,7 @@ import {
   correctionsFor,
   count,
   countFor,
+  counts,
   findRating,
   forTopics,
   normalizeFeedback,
@@ -130,5 +131,29 @@ describe('normalizeFeedback', () => {
     };
     expect(count(normalizeFeedback(mixed))).toBe(1);
     expect(findRating(normalizeFeedback(mixed), 'a')).toBeDefined();
+  });
+});
+
+describe('counts', () => {
+  it('splits ups from downs and totals them', () => {
+    let f = rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true);
+    f = rate(f, 'software', 'b', v(2), true);
+    f = rate(f, 'games', 'c', v(3), false);
+    expect(counts(f)).toEqual({ up: 2, down: 1, total: 3 });
+  });
+
+  it('is all zeros with nothing rated', () => {
+    expect(counts(EMPTY_FEEDBACK)).toEqual({ up: 0, down: 0, total: 0 });
+  });
+
+  it('follows a flip rather than counting the post twice', () => {
+    const f = rate(
+      rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true),
+      'software',
+      'a',
+      v(1),
+      false,
+    );
+    expect(counts(f)).toEqual({ up: 0, down: 1, total: 1 });
   });
 });
