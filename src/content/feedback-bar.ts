@@ -43,8 +43,10 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
     current = post;
     up.classList.toggle('lx-fb-active', post.rating === true);
     down.classList.toggle('lx-fb-active', post.rating === false);
-    bar.style.top = `${box.top + window.scrollY + 8}px`;
-    bar.style.left = `${box.right + window.scrollX - 76}px`;
+    // Centred: the top-right corner belongs to the vendor's own post menu, and
+    // the blur label sits there too.
+    bar.style.top = `${box.top + window.scrollY + box.height / 2}px`;
+    bar.style.left = `${box.left + window.scrollX + box.width / 2}px`;
     bar.classList.add('lx-fb-on');
   };
 

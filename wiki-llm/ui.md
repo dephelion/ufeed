@@ -72,7 +72,9 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 ## Thumbs
 
-One floating `.lx-fb` element positioned over the hovered post, appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
+One floating `.lx-fb` element centred over the hovered post, appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
+
+**Centred, not in a corner.** The top-right belongs to the vendor's post menu, and the blur label sits there too. It is anchored on the post's centre point with a `translate(-50%, -50%)`, so the bar's own size never enters the maths.
 
 Appears on any scored post, not only blurred ones: [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
 
