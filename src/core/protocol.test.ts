@@ -55,3 +55,47 @@ describe('nextRequestId', () => {
     expect(ids.size).toBe(500);
   });
 });
+
+describe('feedback messages', () => {
+  it('accepts a correction', () => {
+    expect(isEngineRequest({ id: 'r1', type: 'FEEDBACK', text: 'a', liked: true })).toBe(
+      true,
+    );
+  });
+
+  it('rejects one without a verdict, which would be stored as a guess', () => {
+    expect(isEngineRequest({ id: 'r1', type: 'FEEDBACK', text: 'a' })).toBe(false);
+  });
+
+  it('accepts topics carrying their corrections', () => {
+    expect(
+      isEngineRequest({
+        id: 'r1',
+        type: 'SET_TOPICS',
+        topics: ['software'],
+        liked: [[0.1, 0.2]],
+        disliked: [],
+      }),
+    ).toBe(true);
+  });
+
+  it('accepts topics with no corrections at all', () => {
+    expect(isEngineRequest({ id: 'r1', type: 'SET_TOPICS', topics: ['software'] })).toBe(
+      true,
+    );
+  });
+
+  it('rejects corrections that are not vectors', () => {
+    expect(
+      isEngineRequest({ id: 'r1', type: 'SET_TOPICS', topics: [], liked: ['nope'] }),
+    ).toBe(false);
+  });
+
+  it('accepts a returned vector', () => {
+    expect(isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1, 0.2] })).toBe(true);
+  });
+
+  it('rejects a vector with non-numbers, which would poison the query', () => {
+    expect(isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1, null] })).toBe(false);
+  });
+});

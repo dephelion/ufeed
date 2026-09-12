@@ -6,7 +6,7 @@ import {
 import { logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { MODEL, formatPost, formatTopic } from '../../ml/models';
-import { scoreAgainstTopics, type Vector } from '../../ml/scoring';
+import { applyFeedback, scoreAgainstTopics, type Vector } from '../../ml/scoring';
 
 const log = logger('worker');
 const embedder = new Embedder();
@@ -50,11 +50,16 @@ async function handle(request: EngineRequest): Promise<void> {
   try {
     await ensureLoaded();
     if (request.type === 'SET_TOPICS') {
-      topicVectors = await embedder.embed(request.topics.map(formatTopic));
+      const base = await embedder.embed(request.topics.map(formatTopic));
+      const liked = toVectors(request.liked);
+      const disliked = toVectors(request.disliked);
+      topicVectors = base.map((v) => applyFeedback(v, liked, disliked));
       log.info('topics embedded', {
         model: MODEL.label,
         count: topicVectors.length,
         topics: JSON.stringify(request.topics),
+        liked: liked.length,
+        disliked: disliked.length,
       });
       post({ id: request.id, type: 'ACK' });
       return;
@@ -79,6 +84,10 @@ async function handle(request: EngineRequest): Promise<void> {
     log.error('scoring failed', { reason: describe(error) });
     post({ id: request.id, type: 'ERROR', message: describe(error) });
   }
+}
+
+function toVectors(rows: number[][] | undefined): Vector[] {
+  return (rows ?? []).map((row) => Float32Array.from(row));
 }
 
 function describe(error: unknown): string {

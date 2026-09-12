@@ -99,6 +99,28 @@ Rules that hold: two to five words beats one; sentences and `and` cost 0.05-0.07
 
 Concrete beats abstract: posts write about code, not about categories. `tech` scored 0.005 on a Linux/macOS post; `software` scored 0.097.
 
+## Relevance feedback
+
+`q' = normalize(q + 0.6 * mean(liked) - 0.4 * mean(disliked))` — Rocchio, applied to every topic vector in the worker. No training: vector arithmetic over embeddings already computed.
+
+Measured on the 205 posts with feedback items **held out** of evaluation, at equal feed volume, 40 trials per row:
+
+| Corrections | Recall | Leaks | AUC       |
+| ----------: | -----: | ----: | :-------- |
+|           0 |    92% |  54.0 | 0.881     |
+|           4 |    96% |  52.3 | 0.896     |
+|           8 |    96% |  50.3 | 0.902     |
+|          16 |    96% |  47.5 | 0.908     |
+|          32 |    97% |  42.0 | **0.936** |
+
+**Corrections are scoped to the topics that produced them.** Changing topics discards them; a correction means "not this, for THAT topic".
+
+## Relative strictness
+
+**A corrected query moves the whole score scale.** Left at a fixed 0.784, recall **collapsed to 11%**. Once corrections exist the threshold becomes the quantile of the last 300 scores that keeps the same share of feed the absolute threshold would have.
+
+**Absolute until the first correction.** It is better calibrated, and it never blurs a feed that is entirely on topic. Below `MIN_SAMPLE = 30` scores the quantile is noise, so the absolute threshold stands.
+
 ## Backend self-check
 
 A backend can load, report ready, run fast, and return confident nonsense. ORT's **WebGPU backend miscomputes the q8 model**: a Spanish political post scored 0.32 against `tech` where CPU gives 0.001. Nothing errors.
@@ -114,6 +136,6 @@ Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; 
 
 - **Zero-shot NLI classification.** One forward pass per label per text, scales with topic count, scores normalized over the candidate set.
 - **Length-scaled threshold.** Needed by MiniLM, unnecessary with e5. Also multiplicative scaling overshoots any band that starts above zero.
-- **Relative "blur the bottom N%".** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic.
+- **Relative "blur the bottom N%" as the default.** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic. **Revived conditionally in v2**, never as the default: relative only once relevance feedback has moved the query and an absolute cosine has stopped meaning anything.
 - **Multi-anchor topic averaging.** Lost to a plain short list on AUC.
 - **A model registry.** One model, chosen by measurement. The comparison is the reason for the choice, not a runtime branch.

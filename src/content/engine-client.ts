@@ -102,8 +102,8 @@ export class EngineClient {
     pending.resolve(data.type === 'SCORES' ? data.scores : []);
   }
 
-  setTopics(topics: string[]): void {
-    this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics });
+  setTopics(topics: string[], liked: number[][] = [], disliked: number[][] = []): void {
+    this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, liked, disliked });
   }
 
   /** Resolves empty on timeout or error, so callers fail open. */

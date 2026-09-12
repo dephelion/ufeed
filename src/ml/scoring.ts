@@ -66,17 +66,61 @@ export const PEEK_BAND = 0.01;
 
 export type Verdict = 'show' | 'peek' | 'blur';
 
-/** Model-relative, never a fraction of the slider: the strip is a property of e5. */
-export function verdictFor(
-  score: number,
-  position: number,
-  band: Band = DEFAULT_BAND,
-): Verdict {
-  const threshold = strictnessFromPosition(position, band);
+/**
+ * Rocchio relevance feedback. Measured on 205 posts with the feedback held out:
+ * AUC 0.881 -> 0.936 at 32 corrections. See wiki-llm/model.md.
+ */
+export const ROCCHIO = { beta: 0.6, gamma: 0.4 } as const;
+
+export function applyFeedback(
+  topic: Vector,
+  liked: readonly Vector[],
+  disliked: readonly Vector[],
+): Vector {
+  if (liked.length === 0 && disliked.length === 0) return topic;
+  const out = new Float32Array(topic.length);
+  const add = centroid(liked, topic.length);
+  const sub = centroid(disliked, topic.length);
+  for (let i = 0; i < topic.length; i++) {
+    out[i] = topic[i]! + ROCCHIO.beta * add[i]! - ROCCHIO.gamma * sub[i]!;
+  }
+  return normalize(out);
+}
+
+function centroid(vectors: readonly Vector[], dims: number): Vector {
+  const out = new Float32Array(dims);
+  if (vectors.length === 0) return out;
+  for (const v of vectors)
+    for (let i = 0; i < dims; i++) out[i]! += v[i]! / vectors.length;
+  return out;
+}
+
+/** Verdict from an already-resolved threshold, which may be absolute or relative. */
+export function verdictAt(score: number, threshold: number): Verdict {
   if (score >= threshold) return 'show';
   return score >= threshold - PEEK_BAND ? 'peek' : 'blur';
 }
 
+/**
+ * Feedback moves the query vector, which moves the whole score scale with it —
+ * a fixed cosine stops meaning anything. Measured: recall fell to 11% when the
+ * threshold was left absolute. Below MIN_SAMPLE the quantile is noise, so the
+ * absolute threshold stands.
+ */
+export const MIN_SAMPLE = 30;
+
+export function thresholdForFraction(
+  scores: readonly number[],
+  fraction: number,
+  fallback: number,
+): number {
+  if (scores.length < MIN_SAMPLE) return fallback;
+  const sorted = [...scores].sort((a, b) => a - b);
+  const index = Math.floor(sorted.length * (1 - clamp01(fraction)));
+  return sorted[Math.min(sorted.length - 1, Math.max(0, index))]!;
+}
+
+/** Model-relative, never a fraction of the slider: the strip is a property of e5. */
 /**
  * Roughly how much of a feed survives a threshold, from the 205 labelled posts
  * in wiki-llm/model.md. One sample, one topic: a hint, not a promise.
