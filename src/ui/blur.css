@@ -116,3 +116,44 @@
     monospace;
   pointer-events: none;
 }
+
+/* Thumbs. One floating element over the hovered post, never injected into it. */
+.lx-fb {
+  position: absolute;
+  z-index: 2147483000;
+  display: none;
+  gap: 4px;
+  padding: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #1c1917 82%, transparent);
+  border: 1px solid color-mix(in srgb, #78716c 40%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+.lx-fb-on {
+  display: flex;
+}
+
+.lx-fb button {
+  all: unset;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 26px;
+  font-size: 13px;
+  opacity: 0.75;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
+}
+
+.lx-fb button:hover {
+  opacity: 1;
+  background: color-mix(in srgb, #fafaf9 18%, transparent);
+}
+
+.lx-fb-done {
+  border-color: color-mix(in srgb, #4ade80 60%, transparent);
+}

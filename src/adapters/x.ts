@@ -17,6 +17,8 @@ export const xAdapter: SiteAdapter = {
     );
   },
 
+  containerSelector: CONTAINER,
+
   mediaSelector:
     '[data-testid="tweetPhoto"], [data-testid="videoPlayer"], ' +
     '[data-testid="videoComponent"], video',

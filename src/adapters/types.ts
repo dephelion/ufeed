@@ -11,4 +11,6 @@ export interface SiteAdapter {
   findPosts(root: ParentNode): Post[];
   /** Post-body media only. Must not match avatars, emoji or badges. */
   readonly mediaSelector: string;
+  /** Matches a post container, for walking up from an arbitrary node. */
+  readonly containerSelector: string;
 }

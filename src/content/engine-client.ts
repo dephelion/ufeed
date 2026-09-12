@@ -98,6 +98,7 @@ export class EngineClient {
       pending.resolve([]);
       return;
     }
+    if (data.type === 'VECTOR') return pending.resolve(data.vector);
     pending.resolve(data.type === 'SCORES' ? data.scores : []);
   }
 
@@ -117,6 +118,20 @@ export class EngineClient {
       }, REQUEST_TIMEOUT_MS);
       this.#pending.set(id, { resolve, timer });
       this.#send({ id, type: 'SCORE', texts });
+    });
+  }
+
+  /** Resolves empty when the engine cannot answer, so feedback is dropped, never guessed. */
+  feedback(text: string, liked: boolean): Promise<number[]> {
+    const id = nextRequestId();
+    return new Promise<number[]>((resolve) => {
+      const timer = setTimeout(() => {
+        this.#pending.delete(id);
+        log.warn('feedback request timed out');
+        resolve([]);
+      }, REQUEST_TIMEOUT_MS);
+      this.#pending.set(id, { resolve, timer });
+      this.#send({ id, type: 'FEEDBACK', text, liked });
     });
   }
 
