@@ -43,7 +43,7 @@ timeline data they ran against. The harnesses are reproducible from
 
 ## Hard invariants
 
-1. **Privacy.** Post text never leaves the device, never reaches a log, never persists beyond the session cache. Zero analytics. Only model weights are fetched.
+1. **Privacy.** Post text never leaves the device, never reaches a log, never persists at all. Zero analytics. Only model weights are fetched. **Amended in v2:** embeddings of posts the user explicitly corrected persist in `storage.local`. Vectors only, never text, never transmitted. See [privacy.md](privacy.md).
 2. **Fail-open.** Every error, timeout and unready state reveals. No path may leave a post blurred because something broke.
 3. **Host page integrity.** All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative`. Never mutate host DOM beyond class and `aria-hidden` toggles.
 4. **Cross-browser floor.** Every API must work on Chrome MV3 **and** Firefox MV3. Promise-style polyfill only — never callbacks, never an aliased `browser ?? chrome`. Chrome-only paths are optimisations behind a fallback.

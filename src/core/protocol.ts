@@ -13,13 +13,28 @@ export interface SetTopicsRequest {
   topics: string[];
 }
 
-export type EngineRequest = ScoreRequest | SetTopicsRequest;
+/** The user corrected a verdict. The worker owns vectors, so it does the embedding. */
+export interface FeedbackRequest {
+  id: string;
+  type: 'FEEDBACK';
+  text: string;
+  liked: boolean;
+}
+
+export type EngineRequest = ScoreRequest | SetTopicsRequest | FeedbackRequest;
 
 /** Raw cosine scores, never booleans: the threshold is re-applied without inference. */
 export interface ScoresReply {
   id: string;
   type: 'SCORES';
   scores: number[];
+}
+
+/** The embedding of a corrected post, handed back so the content script can persist it. */
+export interface VectorReply {
+  id: string;
+  type: 'VECTOR';
+  vector: number[];
 }
 
 export interface AckReply {
@@ -41,7 +56,7 @@ export interface StatusEvent {
   message?: string;
 }
 
-export type EngineReply = ScoresReply | AckReply | ErrorReply | StatusEvent;
+export type EngineReply = ScoresReply | VectorReply | AckReply | ErrorReply | StatusEvent;
 
 export const HANDSHAKE = 'lensing:port';
 
@@ -57,6 +72,8 @@ export function isEngineRequest(data: unknown): data is EngineRequest {
   if (!isRecord(data) || typeof data.id !== 'string') return false;
   if (data.type === 'SCORE') return isStringArray(data.texts);
   if (data.type === 'SET_TOPICS') return isStringArray(data.topics);
+  if (data.type === 'FEEDBACK')
+    return typeof data.text === 'string' && typeof data.liked === 'boolean';
   return false;
 }
 
@@ -68,6 +85,12 @@ export function isEngineReply(data: unknown): data is EngineReply {
         typeof data.id === 'string' &&
         Array.isArray(data.scores) &&
         data.scores.every((n) => typeof n === 'number')
+      );
+    case 'VECTOR':
+      return (
+        typeof data.id === 'string' &&
+        Array.isArray(data.vector) &&
+        data.vector.every((n) => typeof n === 'number')
       );
     case 'ACK':
       return typeof data.id === 'string';

@@ -59,6 +59,12 @@ async function handle(request: EngineRequest): Promise<void> {
       post({ id: request.id, type: 'ACK' });
       return;
     }
+    if (request.type === 'FEEDBACK') {
+      const [vector] = await embedder.embed([formatPost(request.text)]);
+      log.info('feedback embedded', { liked: request.liked });
+      post({ id: request.id, type: 'VECTOR', vector: [...(vector ?? [])] });
+      return;
+    }
     const started = Date.now();
     const vectors = await embedder.embed(request.texts.map(formatPost));
     const scores = vectors.map((v) => scoreAgainstTopics(v, topicVectors));

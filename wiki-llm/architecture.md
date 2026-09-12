@@ -46,11 +46,15 @@ Background service worker: nothing on the hot path. Settings propagate through `
 ```
 content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
+content → engine   { id, type: 'FEEDBACK',   text, liked }
 engine  → content  { id, type: 'SCORES',     scores }   raw cosine, never booleans
+engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design
 engine  → content  { id, type: 'ERROR',      message }
 engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
 ```
+
+**The worker embeds a correction, the content script stores it.** Vectors live where the model lives; persistence lives where `storage.local` is reachable. The content script never embeds and the worker never persists.
 
 **Raw scores, never booleans.** Moving the strictness slider re-applies the threshold over the cache with zero inference.
 

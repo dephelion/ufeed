@@ -70,6 +70,16 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **Node-level is sufficient.** A reveal lost to virtualized recycling is an accepted tradeoff, not a bug. Do not add a persistence layer for it.
 
+## Thumbs
+
+One floating `.lx-fb` element positioned over the hovered post, appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
+
+Appears on any scored post, not only blurred ones: [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
+
+The bar sits outside `.lx-blur`, so the reveal click handler never sees its clicks.
+
+**A reveal click is not feedback.** It cannot separate "I wanted this" from "I was checking you". Only the thumbs are a label.
+
 ## Popup
 
 | Control        | Effect                                                                   |
