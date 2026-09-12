@@ -28,6 +28,7 @@ const bandMin = el<HTMLInputElement>('band-min');
 const bandMax = el<HTMLInputElement>('band-max');
 const showScores = el<HTMLInputElement>('show-scores');
 const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
+const blurOtherLanguages = el<HTMLInputElement>('blur-other-languages');
 const tuneFeedback = el<HTMLInputElement>('tune-feedback');
 const clearTuning = el<HTMLButtonElement>('clear-tuning');
 const tuningNote = el<HTMLSpanElement>('tuning-note');
@@ -40,14 +41,15 @@ const dot = el<HTMLSpanElement>('dot');
 
 let saved: Settings = await loadSettings();
 
-/** Speaks in what the user sees, not in cosine values. */
+/** Speaks in what the user sees. The score only appears once they asked for scores. */
 function describeStrictness(position: number, settings: Settings): string {
   const band = usableBand(settings);
   const threshold = strictnessFromPosition(position, band);
   const shown = Math.round(estimateFeedShown(threshold) * 100);
+  const cut = settings.showScores ? ` Posts need ${threshold.toFixed(3)} to stay.` : '';
   return (
-    `Shows roughly ${shown}% of a feed (score ${threshold.toFixed(3)} and up). ` +
-    'Blurred posts stay one click away.'
+    `Keeps about ${shown}% of a typical feed visible. ` +
+    `The rest is blurred, one click away.${cut}`
   );
 }
 
@@ -61,6 +63,7 @@ function render(settings: Settings): void {
   bandMax.value = settings.bandMax.toFixed(3);
   showScores.checked = settings.showScores;
   blurThinMedia.checked = settings.blurThinMedia;
+  blurOtherLanguages.checked = settings.blurOtherLanguages;
   tuneFeedback.checked = settings.tuneFromFeedback;
   refreshApply();
 }
@@ -79,12 +82,12 @@ function describeStatus(settings: Settings): void {
   }
   if (settings.topics.length === 0) {
     dot.dataset.state = 'idle';
-    statusText.textContent = 'Add a topic to start filtering';
+    statusText.textContent = 'Add a topic above to start';
     return;
   }
   dot.dataset.state = 'ready';
   statusText.textContent =
-    `Active on supported feeds · ${settings.topics.length} topic` +
+    `Filtering with ${settings.topics.length} topic` +
     (settings.topics.length === 1 ? '' : 's');
 }
 
@@ -134,7 +137,7 @@ async function renderTuning(): Promise<void> {
   statUp.textContent = String(up);
   statDown.textContent = String(down);
   statTotal.textContent = String(total);
-  tuningNote.textContent = total === 0 ? 'Nothing rated yet.' : '';
+  tuningNote.textContent = total === 0 ? 'You have not rated any posts yet.' : '';
   clearTuning.disabled = total === 0;
 }
 
@@ -154,10 +157,17 @@ blurThinMedia.addEventListener(
   () => void update({ blurThinMedia: blurThinMedia.checked }),
 );
 
-showScores.addEventListener(
+blurOtherLanguages.addEventListener(
   'change',
-  () => void update({ showScores: showScores.checked }),
+  () => void update({ blurOtherLanguages: blurOtherLanguages.checked }),
 );
+
+/** The strictness hint names the cut score only while scores are on show. */
+showScores.addEventListener('change', () => {
+  void update({ showScores: showScores.checked }).then(() => {
+    strictnessHint.textContent = describeStrictness(saved.strictness, saved);
+  });
+});
 
 reset.addEventListener('click', () => {
   void Promise.all([

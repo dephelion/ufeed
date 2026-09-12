@@ -43,6 +43,24 @@ Measured distribution, topic `tech, software, ai`: on-topic mean **0.806**, off-
 
 **Length does not shift e5.** On-topic mean by post length: 0.804 / 0.800 / 0.814 / 0.810 across 0-80 / 80-150 / 150-250 / 250+ chars. MiniLM ran 0.096 → 0.233 over the same buckets and needed a length penalty; e5 does not. The penalty was deleted.
 
+## Language
+
+**e5-small-v2 reads English only.** Text in another language still gets a score, and that score is noise — drawn from across the usable band with no relation to the topic. No threshold fixes it.
+
+Measured on the same 205 posts, topic `tech, software, ai`: **68 of them are Spanish, and every one is labelled off topic.** Their scores run **0.727 – 0.825**, mean **0.769** — the band is 0.76 – 0.83, so the model places Spanish posts on both sides of every threshold the slider can reach. **18 of the 54 posts above the default threshold are Spanish**: a third of all leaks, none of them judged.
+
+Reproduce with the harness in `.local/`: classify each post's language, then compare the score distribution against the English posts'.
+
+`MODEL.language` is the single source. The gate compares against it, never a literal `en`, so a model swap moves it.
+
+**Detection is `browser.i18n.detectLanguage()`** — Chrome's CLD, shipped in Chrome 47+ and Firefox 47+, no permission, available to content scripts. Nothing to bundle, nothing to keep trained. Rejected: `languagedetect` (npm, unmaintained, bundled trigram tables) and a hand-rolled English function-word rate — measured at **67 of 68 Spanish posts flagged with 0 false positives**, good enough to ship and still worse than CLD for free.
+
+**Reliable but split does not count as placed.** CLD returns a share per language; below `MIN_SHARE = 60` for the top one the post is mixed, the model reads at most half of it, and the verdict is `unclear`.
+
+**`unclear` is not `other`.** CLD read the text and could not place it — that is a statement about how much text there is, not about which language. It feeds the thin-media rule, which already owns that claim. Only a reliable foreign placement blurs as a language.
+
+**Off by default**, behind `blurOtherLanguages`. A monolingual English feed pays nothing for it, and the gate is a user policy about what to read, not a correction to the model.
+
 ## The uncertain strip
 
 Calibration over 615 observations (205 labelled posts x 3 topic phrasings): what share of each score band was genuinely wanted.
@@ -142,4 +160,5 @@ Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; 
 - **Length-scaled threshold.** Needed by MiniLM, unnecessary with e5. Also multiplicative scaling overshoots any band that starts above zero.
 - **Relative "blur the bottom N%" as the default.** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic. **Revived conditionally in v2**, never as the default: relative only once relevance feedback has moved the query and an absolute cosine has stopped meaning anything.
 - **Multi-anchor topic averaging.** Lost to a plain short list on AUC.
+- **`multilingual-e5-small` to fix the language problem.** Scores other languages correctly, and that is the wrong outcome twice: ~33MB q8 becomes ~120MB (250k vocab), and every measured number on this page — band, `PEEK_BAND`, the `estimateFeedShown` curve, the probe bounds — is calibrated to e5-small-v2 and would have to be re-measured. It would also correctly surface on-topic posts in languages the reader does not want, which is the opposite of what the gate is for.
 - **A model registry.** One model, chosen by measurement. The comparison is the reason for the choice, not a runtime branch.
