@@ -21,7 +21,7 @@ src/
   ml/           models.ts (the one model) · scoring.ts (pure) · embedder.ts (only transformers.js import)
   core/         protocol.ts · cache.ts · settings.ts (pure) · settings-storage.ts · log.ts · debug.ts
   adapters/     types.ts · x.ts · index.ts
-  feed/         everything that runs inside the host feed, styles included
+  feed/         policy.ts (pure) · threshold.ts · blur.ts · media.ts · engine-client.ts · blur.css
   entrypoints/  content.ts · engine/ · background.ts · popup/
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
@@ -39,6 +39,8 @@ timeline data they ran against. The harnesses are reproducible from
 [model.md](model.md); the data is personal and never ships.
 
 **Validate anything read back from `storage.local`.** It outlives the shape that wrote it. `normalizeFeedback()` drops what no longer parses instead of trusting it — a stale correction shape reached `.filter` and took the whole content script down before it could blur anything. Spreading defaults over stored JSON (`{ ...DEFAULTS, ...stored }`) checks nothing.
+
+**The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media from settings, text, score and threshold — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 
 **`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension.
 
