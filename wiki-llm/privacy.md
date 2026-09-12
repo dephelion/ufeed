@@ -11,11 +11,13 @@
 | Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                    |
 | Settings      | `storage.local`. Topics, slider position, band, per-host toggles.                                       |
 | Model weights | Fetched once from the CDN, cached by the browser.                                                       |
-| Corrections   | Embeddings of thumbed posts, `storage.local`. Vectors only, capped at 50 each way.                      |
+| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by topic line. Vectors only, 50 each way.           |
 
 **Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs. Authorised for the testing phase with no real users; before any public release decide what is stored, how it is cleared, and whether Reset removes it.
 
-**Corrections are scoped to the topics that produced them.** Changing topics discards them rather than applying a correction to a query it was never about.
+**Corrections are scoped to the topic line that produced them.** Editing a line discards its corrections rather than applying them to a query they were never about.
+
+**Nothing is stored until the user opts in.** `tuneFromFeedback` is off by default; with it off the thumbs are hidden and no vector is written. "Clear tuning" in Advanced deletes every correction, and Reset does the same.
 
 **One class of network request exists: model weights.** Nothing else. No analytics in v1 — a hard constraint, and what makes the "does not collect user data" declaration truthful.
 
