@@ -27,7 +27,7 @@ Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both b
 
 Not built: Reddit adapter, Chrome offscreen singleton, multilingual, mobile.
 
-**In flight: [specs/v2-spec.md](../specs/v2-spec.md)** — graded blur, thumbs feedback, relevance feedback, relative strictness. A plan, not authority: each task updates the owning page here as it lands. Amends Hard Invariant 1 (on-device persistence), authorised for the testing phase.
+**In flight: [specs/v2-spec.md](../specs/v2-spec.md)** — graded blur, thumbs feedback, relevance feedback, relative strictness. All three tasks implemented on `feat/v2` and documented in the pages above; **not yet verified on a live feed**. Amends Hard Invariant 1 (on-device persistence), authorised for the testing phase.
 
 Superseded design doc: [specs/v1-spec.md](../specs/v1-spec.md), kept for provenance only. This wiki is authoritative.
 

@@ -1,7 +1,12 @@
 # Lensing v2 — Graded Blur & Relevance Feedback
 
-> **Status: ACTIVE PLAN.** This document is the task plan for work in flight. It
-> is not authority on current behaviour — [`wiki-llm/`](../wiki-llm/index.md) is.
+> **Status: IMPLEMENTED on `feat/v2`, NOT yet verified on a live feed.** All three
+> tasks have landed with their wiki pages updated. What remains is running it
+> against a real timeline: the thumbs bar positioning, the peek legibility, and
+> whether a correction visibly moves the feed. Mark this superseded once that is
+> done, not before.
+>
+> It is not authority on current behaviour — [`wiki-llm/`](../wiki-llm/index.md) is.
 >
 > **Each task updates its owning wiki page in the same commit.** When every task
 > here is delivered, this document is marked superseded like
@@ -161,11 +166,11 @@ Owning pages: [privacy.md](../wiki-llm/privacy.md),
 
 Each lands with its wiki page updated and tests green.
 
-1. **Peek tier** — 2.1 + 2.2. Self-contained, no invariant change, and it makes
-   the blur judgeable, which is worth having on its own.
-2. **Thumbs UI + feedback store** — 2.3 + 2.6. Amends Invariant 1.
-3. **Rocchio + relative strictness** — 2.4 + 2.5. Must ship together; neither
-   works alone.
+1. ~~**Peek tier** — 2.1 + 2.2.~~ Landed. `verdictAt`, `peek()`, `data-lx-peek`.
+2. ~~**Thumbs UI + feedback store** — 2.3 + 2.6.~~ Landed. `.lx-fb`,
+   `core/feedback.ts`, `FEEDBACK`/`VECTOR` messages. Invariant 1 amended.
+3. ~~**Rocchio + relative strictness** — 2.4 + 2.5.~~ Landed together, as required.
+   `applyFeedback()`, `thresholdForFraction()`.
 
 ---
 
