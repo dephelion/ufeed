@@ -39,6 +39,8 @@ Every other file in `specs/` is provenance.
 timeline data they ran against. The harnesses are reproducible from
 [model.md](model.md); the data is personal and never ships.
 
+**Validate anything read back from `storage.local`.** It outlives the shape that wrote it. `normalizeFeedback()` drops what no longer parses instead of trusting it — a stale correction shape reached `.filter` and took the whole content script down before it could blur anything. Spreading defaults over stored JSON (`{ ...DEFAULTS, ...stored }`) checks nothing.
+
 **`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension.
 
 ## Hard invariants

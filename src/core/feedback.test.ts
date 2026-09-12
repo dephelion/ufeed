@@ -7,6 +7,7 @@ import {
   countFor,
   findRating,
   forTopics,
+  normalizeFeedback,
   rate,
 } from './feedback';
 
@@ -92,5 +93,42 @@ describe('forTopics', () => {
 
   it('survives reordering, since corrections are keyed by the line itself', () => {
     expect(count(forTopics(two, ['games', 'software']))).toBe(2);
+  });
+});
+
+describe('normalizeFeedback', () => {
+  it('reads back what it wrote', () => {
+    const f = rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true);
+    expect(normalizeFeedback(JSON.parse(JSON.stringify(f)))).toEqual(f);
+  });
+
+  it('drops the previous per-topic shape instead of crashing on it', () => {
+    const old = { byTopic: { software: { liked: [v(1)], disliked: [] } } };
+    expect(count(normalizeFeedback(old))).toBe(0);
+  });
+
+  it('drops the original flat shape too', () => {
+    const oldest = { topics: ['software'], liked: [v(1)], disliked: [] };
+    expect(count(normalizeFeedback(oldest))).toBe(0);
+  });
+
+  it('survives nothing stored at all', () => {
+    expect(normalizeFeedback(undefined)).toEqual(EMPTY_FEEDBACK);
+    expect(normalizeFeedback(null)).toEqual(EMPTY_FEEDBACK);
+    expect(normalizeFeedback('garbage')).toEqual(EMPTY_FEEDBACK);
+  });
+
+  it('keeps the good ratings and drops only the malformed ones', () => {
+    const mixed = {
+      byTopic: {
+        software: [
+          { key: 'a', vector: v(1), liked: true },
+          { key: 'b', vector: 'not a vector', liked: true },
+          { key: 'c', vector: [1, null], liked: false },
+        ],
+      },
+    };
+    expect(count(normalizeFeedback(mixed))).toBe(1);
+    expect(findRating(normalizeFeedback(mixed), 'a')).toBeDefined();
   });
 });

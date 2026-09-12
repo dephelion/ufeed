@@ -27,6 +27,37 @@ export const EMPTY_FEEDBACK: Feedback = { byTopic: {} };
 /** Oldest corrections fall off first; the query should follow current taste. */
 export const MAX_PER_CLASS = 50;
 
+/**
+ * Storage outlives the shape that wrote it. Anything that is not a Rating is
+ * dropped rather than trusted: corrections are cheap to give again, and a stale
+ * shape took the whole content script down with it.
+ */
+export function normalizeFeedback(value: unknown): Feedback {
+  const raw = isRecord(value) ? value['byTopic'] : undefined;
+  if (!isRecord(raw)) return EMPTY_FEEDBACK;
+  const byTopic: Record<string, Rating[]> = {};
+  for (const [topic, list] of Object.entries(raw)) {
+    if (!Array.isArray(list)) continue;
+    const ratings = list.filter(isRating);
+    if (ratings.length > 0) byTopic[topic] = ratings;
+  }
+  return { byTopic };
+}
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null;
+}
+
+function isRating(v: unknown): v is Rating {
+  return (
+    isRecord(v) &&
+    typeof v['key'] === 'string' &&
+    typeof v['liked'] === 'boolean' &&
+    Array.isArray(v['vector']) &&
+    v['vector'].every((n) => typeof n === 'number')
+  );
+}
+
 export function ratingsFor(feedback: Feedback, topic: string): readonly Rating[] {
   return feedback.byTopic[topic] ?? [];
 }
