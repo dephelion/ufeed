@@ -53,12 +53,16 @@ timeline data they ran against. The harnesses are reproducible from
 
 ## Build modes
 
-| Command                 | Output                | Logs | Badges |
-| :---------------------- | :-------------------- | :--- | :----- |
-| `npm run watch`         | `.output/chrome-mv3`  | on   | on     |
-| `npm run build:debug`   | `.output/chrome-mv3`  | on   | on     |
-| `npm run build`         | `.output/chrome-mv3`  | off  | off    |
-| `npm run build:firefox` | `.output/firefox-mv3` | off  | off    |
+| Command                 | Output                | Logs | Readable source       |
+| :---------------------- | :-------------------- | :--- | :-------------------- |
+| `npm run watch`         | `.output/chrome-mv3`  | on   | yes, inline sourcemap |
+| `npm run build:debug`   | `.output/chrome-mv3`  | on   | yes, inline sourcemap |
+| `npm run build`         | `.output/chrome-mv3`  | off  | no, minified          |
+| `npm run build:firefox` | `.output/firefox-mv3` | off  | no, minified          |
+
+**`VITE_LENSING_DEBUG` turns off minification too**, in `wxt.config.ts`. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
+
+**The score badge is a setting, not a build flag.** It ships in every build behind `showScores`; only console logs are compiled out. See [ui.md](ui.md).
 
 **`npm run dev` does not work for engine changes.** WXT serves entrypoint modules from `localhost`, which makes `new Worker()` cross-origin; it throws and the engine never starts, silently. Use `npm run watch`. `dev` is fine for popup-only work.
 

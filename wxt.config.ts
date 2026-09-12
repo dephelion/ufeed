@@ -3,8 +3,19 @@ import { defineConfig } from 'wxt';
 const FEED_HOSTS = ['*://x.com/*', '*://twitter.com/*'];
 const OPTIONAL_HOSTS = ['*://reddit.com/*', '*://*.reddit.com/*'];
 
+/** Same flag that turns on logging; a build you read is a build you can debug. */
+const DEBUG = process.env.VITE_LENSING_DEBUG === '1';
+
 export default defineConfig({
   srcDir: 'src',
+  vite: () => ({
+    build: {
+      // Production shape is what makes `npm run watch` usable for the worker,
+      // but minified output turns every stack trace into `content.js:1`.
+      minify: !DEBUG,
+      sourcemap: DEBUG ? 'inline' : false,
+    },
+  }),
   manifestVersion: 3,
   webExt: { disabled: true },
   manifest: {
