@@ -7,17 +7,16 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 
 ## Keys
 
-| Key                         | Value                                                                            | Why                                                                                 |
-| :-------------------------- | :------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `permissions`               | `storage`                                                                        | Settings only.                                                                      |
-| `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`, `*://linkedin.com/*`, `*://*.linkedin.com/*` | Default, not optional — installing Lensing implies wanting it on the sites you use. |
-| `optional_host_permissions` | `*://reddit.com/*`, `*://*.reddit.com/*`                                         | Granted on request. Both patterns: `*.reddit.com` misses the bare domain.           |
-| `web_accessible_resources`  | `engine.html`                                                                    | The iframe the content script injects.                                              |
-| `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`                                           | **Mandatory** or ONNX Runtime will not instantiate.                                 |
-| `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`                                          | Required to install on Firefox.                                                     |
-| `content_scripts[].css`     | `blur.css`                                                                       | Declared CSS applies before first paint; injected does not.                         |
-| `content_scripts[].run_at`  | `document_start`                                                                 | Same reason.                                                                        |
-| `icons`                     | 16→512                                                                           | **Never written by hand** — WXT discovers `public/icon/<size>.png`.                 |
+| Key                         | Value                                                                                                                      | Why                                                                                                                                                |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `permissions`               | `storage`                                                                                                                  | Settings only.                                                                                                                                     |
+| `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`, `*://linkedin.com/*`, `*://*.linkedin.com/*`, `*://reddit.com/*`, `*://*.reddit.com/*` | Default, not optional — installing Lensing implies wanting it on the sites you use. Both patterns per site: `*.reddit.com` misses the bare domain. |
+| `web_accessible_resources`  | `engine.html`                                                                                                              | The iframe the content script injects.                                                                                                             |
+| `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`                                                                                     | **Mandatory** or ONNX Runtime will not instantiate.                                                                                                |
+| `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`                                                                                    | Required to install on Firefox.                                                                                                                    |
+| `content_scripts[].css`     | `blur.css`                                                                                                                 | Declared CSS applies before first paint; injected does not.                                                                                        |
+| `content_scripts[].run_at`  | `document_start`                                                                                                           | Same reason.                                                                                                                                       |
+| `icons`                     | 16→512                                                                                                                     | **Never written by hand** — WXT discovers `public/icon/<size>.png`.                                                                                |
 
 ## Per-browser
 
@@ -63,3 +62,5 @@ Package size ~22.5MB, almost entirely that binary.
 ## No WASM threads
 
 An iframe injected into a host page cannot be cross-origin isolated: the host does not send COEP. `crossOriginIsolated` is false on both browsers, so `SharedArrayBuffer` is unusable and ORT runs single-threaded. Chrome exposes the `SharedArrayBuffer` constructor anyway — existence is not usability.
+
+**`optional_host_permissions` is gone.** Reddit was its only entry and is now a default host, so the concept left with it — see [adapters.md](adapters.md). An optional host is not a config flag: it needs a request button in the popup, `permissions.request()` from a user gesture, runtime content-script registration, and a second path through `isActiveOn()`.

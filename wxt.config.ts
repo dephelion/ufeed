@@ -5,8 +5,9 @@ const FEED_HOSTS = [
   '*://twitter.com/*',
   '*://linkedin.com/*',
   '*://*.linkedin.com/*',
+  '*://reddit.com/*',
+  '*://*.reddit.com/*',
 ];
-const OPTIONAL_HOSTS = ['*://reddit.com/*', '*://*.reddit.com/*'];
 
 /** Same flag that turns on logging; a build you read is a build you can debug. */
 const DEBUG = process.env.VITE_LENSING_DEBUG === '1';
@@ -28,10 +29,7 @@ export default defineConfig({
     description: 'Blur what you did not come here to read. Runs entirely on your device.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
-    optional_host_permissions: OPTIONAL_HOSTS,
-    web_accessible_resources: [
-      { resources: ['engine.html'], matches: [...FEED_HOSTS, ...OPTIONAL_HOSTS] },
-    ],
+    web_accessible_resources: [{ resources: ['engine.html'], matches: FEED_HOSTS }],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
     },

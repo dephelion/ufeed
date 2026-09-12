@@ -33,6 +33,8 @@ export default defineContentScript({
     '*://twitter.com/*',
     '*://linkedin.com/*',
     '*://*.linkedin.com/*',
+    '*://reddit.com/*',
+    '*://*.reddit.com/*',
   ],
   runAt: 'document_start',
   cssInjectionMode: 'manifest',

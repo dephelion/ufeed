@@ -84,9 +84,33 @@ quote-repost carrying the resharer's own added commentary (only a bare
 reshare was captured); any non-post module's heading text; whether the feed
 recycles DOM nodes on scroll the way X's does.
 
-## Reddit — not built
+## Reddit
 
-New Reddit renders `shreddit-post` as web components. `querySelectorAll` does not pierce shadow roots and a `<style>` in `document.head` does not apply inside them, so a naive adapter silently matches nothing. Needs recursive shadow-root traversal plus per-root `adoptedStyleSheets`. Host permission is already declared optional in [manifest.md](manifest.md).
+| Concern   | Selector                                                                                                |
+| :-------- | :------------------------------------------------------------------------------------------------------ |
+| Container | `article[data-post-id]`                                                                                 |
+| Post gate | `data-post-id` plus a `shreddit-post` child                                                             |
+| Title     | `post-title` attribute on that child                                                                    |
+| Body      | `shreddit-post-text-body` descendant, plain `textContent`                                               |
+| Media     | `img[src*="preview.redd.it"]`, `img[src*="i.redd.it"]`, `img[src*="external-preview.redd.it"]`, `video` |
+
+**Shadow DOM was the expected blocker and is not one.** This page previously said a naive adapter would match nothing and would need recursive shadow-root traversal plus per-root `adoptedStyleSheets`. Measured against a real logged-in capture: **`shreddit-post` is a custom element, but its content is slotted, so it is all light DOM.** Titles, bodies and media are reachable by ordinary `querySelectorAll`, and `blur.css` applies normally. No traversal, no per-root stylesheets.
+
+**The ad and module gate falls out of the markup**, where X's and LinkedIn's had to be reverse-engineered. In a 25-post capture: all **4 ads** render as `<shreddit-ad-post>` **outside any `<article>`**, and the **6 recommendation carousel cards** are `<article slot="content">` with **no `data-post-id`**. Requiring `data-post-id` excludes both by construction.
+
+**Blur the `<article>`, not the `<shreddit-post>`.** The article bounds the card and the `<hr>` separators sit outside it, so they stay sharp — the same lesson as X's cell-not-article rule.
+
+**The title is an attribute, so there is no node to clean.** No clone, no "… more" toggle to strip; LinkedIn needs both. Body truncation is CSS (`max-h-*` + `overflow-hidden`), so the full text is always in the DOM.
+
+**Media splits by host, not by wrapper or size.** Post bodies resolve to `preview.redd.it`, `i.redd.it`, `external-preview.redd.it`, `v.redd.it`; avatars, community icons and awards resolve to `styles.redditmedia.com`, `emoji.redditmedia.com`, `b.thumbs.redditmedia.com`. Nothing overlaps — the same asset-taxonomy trick as LinkedIn's `feedshare-image`.
+
+**It stands down on comment threads.** `isFeedPath()` rejects any path containing `/comments/`; every other listing (home, `r/<sub>`, `r/all`, search, a multireddit) shares the card shape and filters. A thread the reader opened deliberately is not a feed. This is the only adapter that reads the path, and it does so in `findPosts()` so `SiteAdapter` stays as it is.
+
+**`old.reddit.com` is not matched**, deliberately — a different DOM entirely, and failing to match is the documented answer rather than an oversight.
+
+**Reddit also labels the post's language** (`post-language` on `shreddit-post`). Not used: the language gate calls CLD like every other site, so Reddit does not get a second detection path with its own failure modes. See [model.md](model.md).
+
+**Text is the title plus the body, and the subreddit is deliberately left out.** Measured on the capture, prepending the subreddit compressed the score spread from 0.111 to 0.087 and lifted the wrong posts most — `r/fitness30plus` gained 0.066 against a software topic. Sub names are not words, so e5 matches them weakly against everything. See [model.md](model.md).
 
 ## Vendor drift
 
