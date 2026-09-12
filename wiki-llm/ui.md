@@ -41,6 +41,7 @@
 | Topics + Apply | Takes effect only on Apply, so a half-typed edit never filters a feed.   |
 | Strictness     | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
 | Advanced band  | Loosest / strictest score the slider spans.                              |
+| Show scores    | Advanced, default off. The only gate on the score badge, in any build.   |
 | Reset          | Restores defaults, keeps topics.                                         |
 | Status dot     | Engine state and backend.                                                |
 
@@ -53,6 +54,13 @@ Apply is disabled until the textarea differs from what is saved.
 On in `npm run watch` and `npm run build:debug`, **compiled out of `npm run build`**. Single gate: `src/core/debug.ts`.
 
 - Per-layer console logs, prefixed `[lensing:<scope>]`.
-- A badge on every scored post: `score 0.793 / needs 0.795 · 105 chars`, red when blurred, from `data-lx-*` attributes.
+
+Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 **Never log post text.** Counts, scores, states, errors and topic strings only — topics are user config, post text is not. See [privacy.md](privacy.md).
+
+## Score badge
+
+`score 0.793 / needs 0.795 · 105 chars` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/content/score-badge.ts`).
+
+**Gated solely on `settings.showScores`** (Advanced, default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.
