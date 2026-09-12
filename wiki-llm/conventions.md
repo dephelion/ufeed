@@ -21,9 +21,8 @@ src/
   ml/           models.ts (the one model) · scoring.ts (pure) · embedder.ts (only transformers.js import)
   core/         protocol.ts · cache.ts · settings.ts (pure) · settings-storage.ts · log.ts · debug.ts
   adapters/     types.ts · x.ts · index.ts
-  content/      blur.ts · engine-client.ts          host-page side
+  feed/         everything that runs inside the host feed, styles included
   entrypoints/  content.ts · engine/ · background.ts · popup/
-  ui/           blur.css
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
 specs/          design docs: one ACTIVE PLAN at most, the rest provenance
