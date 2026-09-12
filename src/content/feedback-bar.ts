@@ -5,6 +5,8 @@ const log = logger('feedback');
 export interface PostRef {
   container: HTMLElement;
   text: string;
+  /** The rating already given, so a repeat click reads as a toggle, not a no-op. */
+  rating?: boolean;
 }
 
 export interface FeedbackBarOptions {
@@ -32,10 +34,15 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
     current = undefined;
   };
 
+  const up = bar.querySelector('.lx-fb-up')!;
+  const down = bar.querySelector('.lx-fb-down')!;
+
   const show = (post: PostRef) => {
     const box = post.container.getBoundingClientRect();
     if (box.height < 40) return hide();
     current = post;
+    up.classList.toggle('lx-fb-active', post.rating === true);
+    down.classList.toggle('lx-fb-active', post.rating === false);
     bar.style.top = `${box.top + window.scrollY + 8}px`;
     bar.style.left = `${box.right + window.scrollX - 76}px`;
     bar.classList.add('lx-fb-on');
@@ -47,7 +54,9 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
     if (target.closest('.lx-fb')) return;
     const post = options.postAt(target);
     if (!post) return hide();
-    if (post.container !== current?.container) show(post);
+    if (post.container !== current?.container || post.rating !== current.rating) {
+      show(post);
+    }
   };
 
   const onClick = (event: MouseEvent) => {
@@ -56,8 +65,12 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
     event.preventDefault();
     event.stopPropagation();
     const liked = button.classList.contains('lx-fb-up');
-    log.info('feedback given', { liked, chars: current.text.length });
+    const cleared = current.rating === liked;
+    log.info('feedback given', { liked, cleared, chars: current.text.length });
     options.onFeedback(current, liked);
+    current = { ...current, rating: cleared ? undefined : liked };
+    up.classList.toggle('lx-fb-active', current.rating === true);
+    down.classList.toggle('lx-fb-active', current.rating === false);
     bar.classList.add('lx-fb-done');
     setTimeout(() => bar.classList.remove('lx-fb-done'), 600);
   };
