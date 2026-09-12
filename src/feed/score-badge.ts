@@ -1,4 +1,4 @@
-const ATTRS = ['lxScore', 'lxNeeds', 'lxChars'] as const;
+const ATTRS = ['lxScore', 'lxNeeds', 'lxChars', 'lxPass'] as const;
 
 export function stampScore(
   container: HTMLElement,
@@ -9,6 +9,7 @@ export function stampScore(
   container.dataset.lxScore = score === undefined ? 'none' : score.toFixed(3);
   container.dataset.lxNeeds = needs.toFixed(3);
   container.dataset.lxChars = String(chars);
+  container.dataset.lxPass = String(score !== undefined && score >= needs);
 }
 
 export function clearScore(container: HTMLElement): void {

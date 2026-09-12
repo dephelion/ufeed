@@ -76,6 +76,12 @@
     sans-serif;
 }
 
+/* The score badge sits over the same top-left corner — drop the peek text
+   below it so the two don't overlap. */
+.lx-blur[data-lx-reason='peek'][data-lx-score]::after {
+  top: 26px;
+}
+
 /* Borderline text is dimmed, not erased: the peek is the point. */
 .lx-blur[data-lx-reason='peek'] :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
   text-shadow: 0 0 7px currentColor;
@@ -107,7 +113,6 @@
   z-index: 3;
   padding: 2px 6px;
   border-radius: 4px;
-  background: color-mix(in srgb, #1c1917 55%, transparent);
   color: #fafaf9;
   font:
     600 10px/1.4 ui-monospace,
@@ -115,6 +120,15 @@
     Menlo,
     monospace;
   pointer-events: none;
+}
+
+/* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */
+[data-lx-score][data-lx-pass='true']::before {
+  background: color-mix(in srgb, #14532d 50%, transparent);
+}
+
+[data-lx-score][data-lx-pass='false']::before {
+  background: color-mix(in srgb, #7f1d1d 50%, transparent);
 }
 
 /* Thumbs. One floating element over the hovered post, never injected into it. */
