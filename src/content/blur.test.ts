@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   blur,
+  peek,
   isRevealed,
   listenForReveal,
   reveal,
@@ -97,5 +98,51 @@ describe('revealAll', () => {
     document.body.innerHTML = '<div class="lx-blur"></div><div class="lx-blur"></div>';
     revealAll(document);
     expect(document.querySelectorAll('.lx-blur')).toHaveLength(0);
+  });
+});
+
+describe('peek', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('blurs the post but carries its opening words', () => {
+    const el = post();
+    const text =
+      'Los circuitos de test son artificiales, creados por la mano del hombre.';
+    peek(el, text);
+    expect(el.classList.contains('lx-blur')).toBe(true);
+    expect(el.dataset.lxReason).toBe('peek');
+    expect(text.startsWith(el.dataset.lxPeek!)).toBe(true);
+    expect(el.dataset.lxPeek!.length).toBeLessThan(text.length);
+  });
+
+  it('passes a short post through whole rather than truncating nothing', () => {
+    const el = post();
+    peek(el, 'short one');
+    expect(el.dataset.lxPeek).toBe('short one');
+  });
+
+  it('never touches the host DOM, only attributes', () => {
+    const el = post();
+    const before = el.innerHTML;
+    peek(el, 'some borderline post text that is long enough to be cut');
+    expect(el.innerHTML).toBe(before);
+  });
+
+  it('clears the peek on reveal, so a recycled node never shows stale words', () => {
+    const el = post();
+    peek(el, 'borderline text');
+    reveal(el);
+    expect(el.dataset.lxPeek).toBeUndefined();
+    expect(el.dataset.lxReason).toBeUndefined();
+  });
+
+  it('leaves a permanently revealed post alone', () => {
+    const el = post();
+    revealPermanently(el);
+    peek(el, 'borderline text');
+    expect(el.classList.contains('lx-blur')).toBe(false);
+    expect(el.dataset.lxPeek).toBeUndefined();
   });
 });

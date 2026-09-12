@@ -6,8 +6,11 @@ const BLUR_CLASS = 'lx-blur';
  */
 const revealed = new WeakSet<HTMLElement>();
 
-/** Drives the label: a thin-media post was never judged off topic. */
-export type BlurReason = 'topic' | 'media';
+/** Drives the label: neither a thin-media nor a borderline post was judged off topic. */
+export type BlurReason = 'topic' | 'media' | 'peek';
+
+/** Enough to judge the subject, short enough not to become the distraction. */
+const PEEK_CHARS = 50;
 
 export function blur(element: HTMLElement, reason: BlurReason = 'topic'): void {
   if (revealed.has(element)) return;
@@ -16,9 +19,21 @@ export function blur(element: HTMLElement, reason: BlurReason = 'topic'): void {
   element.setAttribute('aria-hidden', 'true');
 }
 
+/**
+ * The opening words ride on an attribute and render in our own overlay. Splitting
+ * the host's text node to un-blur them in place would mutate the feed's DOM and
+ * die on the next re-render.
+ */
+export function peek(element: HTMLElement, text: string): void {
+  if (revealed.has(element)) return;
+  blur(element, 'peek');
+  element.dataset.lxPeek = text.slice(0, PEEK_CHARS).trim();
+}
+
 export function reveal(element: HTMLElement): void {
   element.classList.remove(BLUR_CLASS);
   delete element.dataset.lxReason;
+  delete element.dataset.lxPeek;
   element.removeAttribute('aria-hidden');
 }
 

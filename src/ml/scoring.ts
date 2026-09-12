@@ -58,12 +58,23 @@ export function positionFromStrictness(
   return span === 0 ? 0 : clamp01((strictness - band.min) / span);
 }
 
-export function passes(
+/**
+ * Width of the uncertain strip below the threshold. Below it nothing was wanted
+ * across 125 observations; inside it, 7% was. See wiki-llm/model.md.
+ */
+export const PEEK_BAND = 0.01;
+
+export type Verdict = 'show' | 'peek' | 'blur';
+
+/** Model-relative, never a fraction of the slider: the strip is a property of e5. */
+export function verdictFor(
   score: number,
   position: number,
   band: Band = DEFAULT_BAND,
-): boolean {
-  return score >= strictnessFromPosition(position, band);
+): Verdict {
+  const threshold = strictnessFromPosition(position, band);
+  if (score >= threshold) return 'show';
+  return score >= threshold - PEEK_BAND ? 'peek' : 'blur';
 }
 
 /**

@@ -27,6 +27,18 @@
 
 **Never nest.** Blur the outermost claimed container; effects must not stack.
 
+## Three tiers
+
+A score does not decide blur-or-not; it picks one of three treatments ([model.md](model.md) for the band).
+
+| Verdict | Condition                               | Treatment                           |
+| :------ | :-------------------------------------- | :---------------------------------- |
+| `show`  | `score >= threshold`                    | Untouched.                          |
+| `peek`  | `threshold - 0.01 <= score < threshold` | Blurred, opening ~50 chars legible. |
+| `blur`  | `score < threshold - 0.01`              | Blurred whole.                      |
+
+**The peek exists so a blur can be judged without destroying it.** Clicking to check reveals the post, which is why a reveal click is worthless as a relevance signal: it cannot separate "I wanted this" from "I was checking you".
+
 ## Why a post is blurred
 
 `data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`.
@@ -35,6 +47,11 @@
 | :------ | :--------------------------------- | :----------------------------------------------------- |
 | `topic` | "Out of topic — click to read"     | The score fell below the threshold, or `alwaysBlur`.   |
 | `media` | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars. |
+| `peek`  | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.               |
+
+**The peek never touches host DOM.** The opening words ride on `data-lx-peek` and render in our own overlay. Un-blurring them in place means splitting the host's text node — Invariant 3, and dead on the next vendor re-render. `reveal()` clears the attribute, so a recycled node never shows another post's words.
+
+**The peek shares `::after` with the label, deliberately.** An element has two pseudo-elements and the score badge owns `::before`; putting the peek there would hide the badge on exactly the borderline posts worth debugging.
 
 **The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
 

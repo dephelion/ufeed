@@ -56,6 +56,31 @@
   content: 'No text to check — click to view';
 }
 
+/* Borderline: the opening words stay legible so the call can be judged without
+   destroying the blur. Shares ::after with the label so ::before stays free for
+   the score badge — otherwise the badge would vanish on exactly these posts. */
+.lx-blur[data-lx-reason='peek']::after {
+  content: attr(data-lx-peek) '… — click to read';
+  left: 8px;
+  right: 8px;
+  max-width: none;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: color-mix(in srgb, #d97706 20%, transparent);
+  color: #fbbf24;
+  border-color: color-mix(in srgb, #d97706 45%, transparent);
+  font:
+    500 12px/1.5 system-ui,
+    sans-serif;
+}
+
+/* Borderline text is dimmed, not erased: the peek is the point. */
+.lx-blur[data-lx-reason='peek'] :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
+  text-shadow: 0 0 7px currentColor;
+}
+
 /* Consumes the click so it reveals instead of opening the post. Hover does
    nothing: scrolling drags the pointer across the feed and would expose
    everything it passed over. */

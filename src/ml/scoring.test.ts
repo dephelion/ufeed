@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { MODEL } from './models';
 import {
+  PEEK_BAND,
   cosine,
   normalize,
-  passes,
+  verdictFor,
   positionFromStrictness,
   scoreAgainstTopics,
   strictnessFromPosition,
@@ -32,7 +33,7 @@ describe('scoreAgainstTopics', () => {
   });
 
   it('scores below any threshold when there are no topics', () => {
-    expect(passes(scoreAgainstTopics(v(1, 0), []), 0)).toBe(false);
+    expect(verdictFor(scoreAgainstTopics(v(1, 0), []), 0)).toBe('blur');
   });
 });
 
@@ -62,16 +63,29 @@ describe('strictness position', () => {
   });
 });
 
-describe('passes', () => {
-  it('keeps a post at or above the threshold', () => {
-    expect(passes(strictnessFromPosition(0.5), 0.5)).toBe(true);
+describe('verdictFor', () => {
+  const thr = strictnessFromPosition(0.5);
+
+  it('shows a post at or above the threshold', () => {
+    expect(verdictFor(thr, 0.5)).toBe('show');
   });
 
-  it('blurs a post below it, whatever its length', () => {
-    expect(passes(MODEL.bandMin - 0.01, 0.5)).toBe(false);
+  it('peeks just below it, where the model is least sure', () => {
+    expect(verdictFor(thr - 0.001, 0.5)).toBe('peek');
+    expect(verdictFor(thr - PEEK_BAND, 0.5)).toBe('peek');
+  });
+
+  it('blurs outright once past the uncertain strip', () => {
+    expect(verdictFor(thr - PEEK_BAND - 0.001, 0.5)).toBe('blur');
   });
 
   it('keeps everything at position zero, the loosest setting', () => {
-    expect(passes(MODEL.bandMin, 0)).toBe(true);
+    expect(verdictFor(MODEL.bandMin, 0)).toBe('show');
+  });
+
+  it('measures the strip from the threshold, so it moves with strictness', () => {
+    const loose = strictnessFromPosition(0.2);
+    expect(verdictFor(loose - 0.005, 0.2)).toBe('peek');
+    expect(verdictFor(loose - 0.005, 0.9)).toBe('blur');
   });
 });
