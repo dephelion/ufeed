@@ -25,6 +25,7 @@ const strictnessHint = el<HTMLParagraphElement>('strictness-hint');
 const bandMin = el<HTMLInputElement>('band-min');
 const bandMax = el<HTMLInputElement>('band-max');
 const showScores = el<HTMLInputElement>('show-scores');
+const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
 const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
@@ -51,6 +52,7 @@ function render(settings: Settings): void {
   bandMin.value = settings.bandMin.toFixed(3);
   bandMax.value = settings.bandMax.toFixed(3);
   showScores.checked = settings.showScores;
+  blurThinMedia.checked = settings.blurThinMedia;
   refreshApply();
 }
 
@@ -116,6 +118,11 @@ const commitBand = (): void => {
 
 bandMin.addEventListener('change', commitBand);
 bandMax.addEventListener('change', commitBand);
+
+blurThinMedia.addEventListener(
+  'change',
+  () => void update({ blurThinMedia: blurThinMedia.checked }),
+);
 
 showScores.addEventListener(
   'change',

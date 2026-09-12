@@ -6,14 +6,19 @@ const BLUR_CLASS = 'lx-blur';
  */
 const revealed = new WeakSet<HTMLElement>();
 
-export function blur(element: HTMLElement): void {
+/** Drives the label: a thin-media post was never judged off topic. */
+export type BlurReason = 'topic' | 'media';
+
+export function blur(element: HTMLElement, reason: BlurReason = 'topic'): void {
   if (revealed.has(element)) return;
   element.classList.add(BLUR_CLASS);
+  element.dataset.lxReason = reason;
   element.setAttribute('aria-hidden', 'true');
 }
 
 export function reveal(element: HTMLElement): void {
   element.classList.remove(BLUR_CLASS);
+  delete element.dataset.lxReason;
   element.removeAttribute('aria-hidden');
 }
 

@@ -9,4 +9,6 @@ export interface SiteAdapter {
   matches(hostname: string): boolean;
   /** Every post currently in `root`, including `root` itself when it is one. */
   findPosts(root: ParentNode): Post[];
+  /** Post-body media only. Must not match avatars, emoji or badges. */
+  readonly mediaSelector: string;
 }

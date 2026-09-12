@@ -51,7 +51,7 @@ describe('xAdapter.findPosts', () => {
     expect(xAdapter.findPosts(root)).toHaveLength(1);
   });
 
-  it('skips cells with no tweet text, such as ads and follow prompts', () => {
+  it('skips cells with no article, such as trend and follow modules', () => {
     expect(
       xAdapter.findPosts(
         mount('<div data-testid="cellInnerDiv"><span>Promoted</span></div>'),
@@ -59,28 +59,44 @@ describe('xAdapter.findPosts', () => {
     ).toHaveLength(0);
   });
 
-  it('skips posts too short to classify', () => {
-    expect(xAdapter.findPosts(mount(cell('lol')))).toHaveLength(0);
+  it('keeps a post too short to score, so the media rule can still see it', () => {
+    expect(xAdapter.findPosts(mount(cell('lol')))).toHaveLength(1);
+  });
+
+  it('keeps a caption-less media post, which has no tweetText node at all', () => {
+    const html = `<div data-testid="cellInnerDiv"><article>
+      <div data-testid="tweetPhoto"><img src="x.jpg" /></div>
+    </article></div>`;
+    const posts = xAdapter.findPosts(mount(html));
+    expect(posts).toHaveLength(1);
+    expect(posts[0]!.text).toBe('');
+  });
+
+  it('skips feed chrome, which carries no article', () => {
+    const html = `<div data-testid="cellInnerDiv">
+      <span>Who to follow</span><button>Follow</button>
+    </div>`;
+    expect(xAdapter.findPosts(mount(html))).toHaveLength(0);
   });
 
   it('scores only the outer tweet, never blending a quoted tweet into it', () => {
-    const html = `<div data-testid="cellInnerDiv">
+    const html = `<div data-testid="cellInnerDiv"><article>
       <div data-testid="tweetText"><span>Left-wing Bundestag member ejected during the speech</span></div>
       <div role="link">
         <div data-testid="tweetText"><span>Our new inference pipeline ships today</span></div>
       </div>
-    </div>`;
+    </article></div>`;
     expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(
       'Left-wing Bundestag member ejected during the speech',
     );
   });
 
   it('ignores surrounding chrome: handle, timestamp and engagement counts', () => {
-    const html = `<div data-testid="cellInnerDiv">
+    const html = `<div data-testid="cellInnerDiv"><article>
       <span>Some Account</span><span>@someaccount</span><time>Sep 10</time>
       <div data-testid="tweetText"><span>${LONG}</span></div>
       <div><span>312</span><span>378</span><span>66K</span></div>
-    </div>`;
+    </article></div>`;
     expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(LONG);
   });
 

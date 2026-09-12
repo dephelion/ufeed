@@ -11,14 +11,34 @@
 | :-------- | :---------------------------------------------------------- |
 | Container | `opacity: .55`, `position: relative`                        |
 | Text      | `color: transparent` + `text-shadow: 0 0 10px currentColor` |
-| Media     | `filter: blur(18px) saturate(.4)`, `opacity: .5`            |
+| Image     | `filter: blur(64px) saturate(.25)`, `opacity: .45`          |
+| Video     | `filter: blur(40px) saturate(.25)`, `opacity: .45`          |
 | Label     | `::after` — "Out of topic — click to read"                  |
+
+**Media is blurred far harder than text.** At `blur(18px)` a bright, high-contrast photo kept its shapes and its watermark readable, while a dim one looked fully hidden — same rule, different source material. That asymmetry reads as a bug and is not one.
+
+**A still needs more radius than video.** Measured by eye on a real feed: at `blur(40px)` video was unreadable while photos still resolved. Motion denies the eye the fixation a still frame allows, so images get `64px` and video `40px`.
+
+**Radius hides, opacity dims — never swap the two.** `opacity` multiplies with the container's `.55`, so `.32` landed media near 18% alpha and the feed went black. Recognisability is the radius' job. **No `brightness()`**: darkening is theme-hostile, hiding media on a dark feed and raising its contrast on a light one, where `opacity` blends toward whatever is behind it.
 
 **Never `filter: blur()` on the container.** It creates a stacking context **and a containing block**, breaking `position: fixed` descendants and vendor overlays, and it is expensive across a long feed. Media is a leaf with no fixed descendants, so blurring it directly is safe.
 
 **`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose.
 
 **Never nest.** Blur the outermost claimed container; effects must not stack.
+
+## Why a post is blurred
+
+`data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`.
+
+| Reason  | Label                              | Set when                                               |
+| :------ | :--------------------------------- | :----------------------------------------------------- |
+| `topic` | "Out of topic — click to read"     | The score fell below the threshold, or `alwaysBlur`.   |
+| `media` | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars. |
+
+**The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
+
+**The media rule is engine-independent.** It reads the DOM and the settings, never a score, so it costs no inference and cannot be reached by a scoring failure. It sits with `alwaysBlur` as user policy, not as a model verdict — that is what keeps it clear of the fail-open invariant.
 
 `position: relative` on the container is the one accepted layout side effect — it anchors the label. Verified on X without shifting.
 
@@ -41,6 +61,7 @@
 | Topics + Apply | Takes effect only on Apply, so a half-typed edit never filters a feed.   |
 | Strictness     | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
 | Advanced band  | Loosest / strictest score the slider spans.                              |
+| Blur media     | Default off. Blurs media posts under 30 chars of text.                   |
 | Show scores    | Advanced, default off. The only gate on the score badge, in any build.   |
 | Reset          | Restores defaults, keeps topics.                                         |
 | Status dot     | Engine state and backend.                                                |

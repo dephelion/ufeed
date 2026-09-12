@@ -12,6 +12,8 @@ export interface Settings {
   alwaysKeep: string[];
   alwaysBlur: string[];
   showScores: boolean;
+  /** Blur media posts carrying too little text to judge against the topics. */
+  blurThinMedia: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,6 +26,7 @@ export const DEFAULT_SETTINGS: Settings = {
   alwaysKeep: [],
   alwaysBlur: [],
   showScores: false,
+  blurThinMedia: false,
 };
 
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {
