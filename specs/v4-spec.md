@@ -39,7 +39,7 @@ content script must stand down per-path**, which neither existing adapter does.
 Cheapest shape: `findPosts()` returns `[]` on a comments URL, leaving
 `SiteAdapter` untouched.
 
-## 3. Permissions — decide before building
+## 3. Permissions — decided
 
 `reddit.com` already sits in `OPTIONAL_HOSTS` in
 [wxt.config.ts](../wxt.config.ts#L9), unused. v3 §2 faced the same fork for
@@ -47,14 +47,16 @@ LinkedIn and chose the default list, reasoning that _"a user installing Lensing
 already wants it running on the social sites they use, so there is no value in
 an extra runtime permission prompt per site."_
 
-**Recommendation: promote Reddit to `FEED_HOSTS` and delete `OPTIONAL_HOSTS`**,
-following that precedent. Keeping it optional is not a one-line choice — it
-means new UI (a request button in the popup), `permissions.request()` from a
-user gesture only, runtime content-script registration, and a second code path
-through `isActiveOn()`. That is a feature, not a config flag.
+**Decided: Reddit is a default host, exactly like X and LinkedIn.** Move it into
+`FEED_HOSTS` and delete `OPTIONAL_HOSTS` and its `web_accessible_resources`
+entry — nothing else uses the optional list, so the concept leaves the codebase
+with it. No runtime prompt, no request button, no second code path through
+`isActiveOn()`.
 
-**If the answer is "keep it optional", that is its own spec.** Do not build it
-inside this one.
+**Make the change with the adapter, not before it.** A manifest that asks for
+`reddit.com` while nothing filters Reddit is a permission prompt with no feature
+behind it — worse in store review than asking later, and invisible to test
+against. It belongs in the same commit as step 2 of §6.
 
 ## 4. DOM findings — verified
 
@@ -188,13 +190,13 @@ to the adapter. That is the one finding that could make this spec much larger.
 
 ## 6. Task order
 
-0. §3 permission decision. **Blocks the manifest change.**
 1. §5.2 measurement. **Blocks the text-extraction design**, and may add a band
    task.
 2. `redditAdapter` in `src/adapters/reddit.ts` + `reddit.test.ts`, synthetic
    fixtures only — never the raw capture.
-3. Register in `src/adapters/index.ts`; host into `wxt.config.ts` and
-   `content.ts` `matches`.
+3. Register in `src/adapters/index.ts`; Reddit into `FEED_HOSTS` in
+   `wxt.config.ts` (deleting `OPTIONAL_HOSTS`) and into `content.ts` `matches`,
+   same commit as step 2 — see §3.
 4. Live check: scroll the feed and confirm `FeedScanner` sees appended cards
    (§4 Q2), and that node recycling behaves as the score cache already assumes.
 5. Update `wiki-llm/adapters.md`, `manifest.md`, `index.md`, and `model.md` if
@@ -208,9 +210,8 @@ excludes all 4 ads and all 6 carousel cards by construction).
 
 **Blockers** — work stops until answered:
 
-- **B1. Permission model.** §3. Optional-host is a separate feature; the
-  manifest change cannot be written until this is decided. Recommendation:
-  promote to default.
+- ~~**B1. Permission model.**~~ **Decided:** default host like X and LinkedIn,
+  `OPTIONAL_HOSTS` deleted. §3.
 - **B2. v3 is still marked IN PROGRESS.** `conventions.md` allows **at most one
   active plan** in `specs/`. The LinkedIn adapter has shipped and was exercised
   against a live feed, but only you can confirm it is verified. **v3 must be
