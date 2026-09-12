@@ -17,6 +17,7 @@ Chrome and Firefox, MV3, built with WXT. v1 targets X.
 | [privacy.md](privacy.md)           | What Lensing reads, what it stores, what leaves the device, store policy, legal posture.                             |
 | [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                         |
 | [conventions.md](conventions.md)   | Repo layout, toolchain, hard invariants, definition of done, debug builds.                                           |
+| [glossary.md](glossary.md)         | What does AUC, d-prime, embedding, retrieval model, quantization, etc. mean, in plain language.                      |
 
 ## Status
 
@@ -25,6 +26,8 @@ Chrome and Firefox, MV3, built with WXT. v1 targets X.
 Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both browsers; e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model and is rejected at load.
 
 Not built: Reddit adapter, Chrome offscreen singleton, multilingual, mobile.
+
+**In flight: [specs/v2-spec.md](../specs/v2-spec.md)** — graded blur, thumbs feedback, relevance feedback, relative strictness. A plan, not authority: each task updates the owning page here as it lands. Amends Hard Invariant 1 (on-device persistence), authorised for the testing phase.
 
 Superseded design doc: [specs/v1-spec.md](../specs/v1-spec.md), kept for provenance only. This wiki is authoritative.
 
