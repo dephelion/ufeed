@@ -1,16 +1,26 @@
 # Lensing v4 — Reddit Adapter
 
-> **Status: DOM VERIFIED, scoring unmeasured.** Findings below come from one
-> logged-in home-feed capture (`.local/reddit/feed.html`, gitignored, never
-> committed): **25 posts, 4 ads, 6 carousel cards**. Subreddit listings were
-> confirmed to use the same card shape. Not captured: a poll, and a live scroll
-> to watch nodes append.
+> **Status: DELIVERED, superseded.** Built and verified on a live Reddit feed on
+> 2026-09-12. Kept for provenance: it records the blockers that turned out not to
+> be blockers, and the measurements that overturned two of its own
+> recommendations.
 >
-> **The DOM turned out to be the easy part** — Reddit hands the adapter more
-> structured data than either existing site. What is unmeasured is whether a
-> Reddit post carries enough text to score at all (§5).
+> **Both DOM blockers were wrong.** Shadow DOM is a non-issue — `shreddit-post`
+> content is slotted, so it is light DOM — and the ad/module gate fell out of the
+> markup as `article[data-post-id]`.
 >
-> Not authority on current behaviour once superseded — [`wiki-llm/`](../wiki-llm/index.md) is.
+> **Two of its recommendations were overturned by measurement.** §5.1 recommended
+> prepending the subreddit; measured, that compressed the score spread from 0.111
+> to 0.087 and lifted the wrong posts hardest, so the adapter leaves it out. And
+> §5.2's fear that Reddit would need its own threshold band did not materialise —
+> the score distribution sits where X's does.
+>
+> **Do not consult this document for current behaviour.** Its threshold
+> discussion predates the 0-10 strictness scale that replaced the band entirely.
+> Current behaviour lives in [adapters.md](../wiki-llm/adapters.md) and
+> [model.md](../wiki-llm/model.md).
+>
+> The source of truth is [`wiki-llm/`](../wiki-llm/index.md).
 
 ---
 
@@ -202,43 +212,25 @@ to the adapter. That is the one finding that could make this spec much larger.
 5. Update `wiki-llm/adapters.md`, `manifest.md`, `index.md`, and `model.md` if
    §5.2 produced numbers — same commit.
 
-## 7. Blockers and open questions
+## 7. Blockers and open questions — closed
 
-**Resolved by the capture:** shadow DOM (§4 Q1 — everything is light DOM, the
-adapter is buildable) and post-vs-ad detection (§4 Q3 — `article[data-post-id]`
-excludes all 4 ads and all 6 carousel cards by construction).
+All resolved. Recorded as delivered, with the two survivors carried into the
+wiki rather than left here.
 
-**Blockers** — work stops until answered:
+| Item                               | Outcome                                                                                                                                     |
+| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| Shadow DOM                         | **Not a blocker.** All light DOM. [adapters.md](../wiki-llm/adapters.md)                                                                    |
+| Post vs ad detection               | **Not a blocker.** `article[data-post-id]` excludes ads and carousels by construction.                                                      |
+| B1 permission model                | **Default host**, like X and LinkedIn. `optional_host_permissions` deleted.                                                                 |
+| B2 v3 still open                   | **Closed.** v3 marked superseded.                                                                                                           |
+| Q1 is a title enough to score?     | **Yes.** Real tech posts score 0.834-0.858 against a 0.790 default cut; the top of a scored feed is genuinely on topic.                     |
+| Q2 subreddit in the text?          | **No** — the opposite of this document's recommendation. Measured: spread 0.111 → 0.087, `r/fitness30plus` +0.066 against a software topic. |
+| Q3 own threshold band?             | **No.** Reddit's distribution sits where X's does. The band was replaced by the 0-10 scale regardless.                                      |
+| Q4 `blurThinMedia` on Reddit       | **Still open**, carried to [ui.md](../wiki-llm/ui.md). The 30-char rule rarely fires on Reddit image posts.                                 |
+| Q5 trust `post-language` over CLD? | **No.** CLD everywhere; Reddit does not get a second detection path.                                                                        |
+| Q6 filter comment pages?           | **No.** `isFeedPath()` stands down on `/comments/`.                                                                                         |
+| Q7 `old.reddit.com` adapter?       | **No**, deliberately not matched.                                                                                                           |
 
-- ~~**B1. Permission model.**~~ **Decided:** default host like X and LinkedIn,
-  `OPTIONAL_HOSTS` deleted. §3.
-- **B2. v3 is still marked IN PROGRESS.** `conventions.md` allows **at most one
-  active plan** in `specs/`. The LinkedIn adapter has shipped and was exercised
-  against a live feed, but only you can confirm it is verified. **v3 must be
-  marked superseded before v4 becomes the active plan.** Related and already
-  stale: `conventions.md` still names **v2** as the active plan, two versions
-  behind. Whoever closes v3 should repoint it in the same commit.
-
-**Open questions** — answer changes the design, not whether to start:
-
-- **Q1. Is a 60-character title enough to score?** §5.2 baseline. If AUC comes
-  back near chance, Reddit is not viable at any threshold and this spec should
-  stop rather than ship a filter that blurs at random — the same conclusion the
-  v1 spike was built to be able to reach.
-- **Q2. Does the subreddit go into the text?** §5.1. Recommendation: yes, bare
-  name, no `r/` — pending §5.2.
-- **Q3. Does Reddit need its own threshold band?** §5.2. If the means fall
-  outside `0.76 – 0.83`, the band stops being global and `Settings` grows a
-  per-site shape. Sizeable; better known now than discovered mid-build.
-- **Q4. What happens to `blurThinMedia` here?** §5. The 30-char rule barely
-  fires on Reddit image posts. Options: leave it (the hint is then wrong for
-  Reddit), raise the floor per-site, or treat an image post with only a title as
-  thin regardless of length. No recommendation yet.
-- **Q5. Trust `post-language` over CLD?** §4.1. Recommendation: no for v4, but
-  compare the two on the capture — cheap, and it validates our own gate.
-- **Q6. Should the comments page filter comments instead of standing down?**
-  §2 says stand down. There is a real product question underneath — a 400-comment
-  thread is a feed — but it is a different unit, a different reveal UX, and
-  should not ride along here.
-- **Q7. Does `old.reddit.com` ever get an adapter?** Recommendation: no. Noted
-  so it is not rediscovered as an oversight.
+**Never captured: a poll card.** The allowlist makes this safe — an unrecognised
+card is simply not scored, so it is never wrongly blurred. Carried to
+[adapters.md](../wiki-llm/adapters.md).

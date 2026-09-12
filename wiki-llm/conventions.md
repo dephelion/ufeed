@@ -35,11 +35,11 @@ wiki-llm/       source of truth
 specs/          design docs: one ACTIVE PLAN at most, the rest provenance
 ```
 
-**`specs/` holds at most one active plan.** [v2-spec.md](../specs/v2-spec.md) is
-the task plan for work in flight: read it to see what is being built and in what
-order. It is never authority on current behaviour — each task updates its owning
-wiki page in the same commit, and the plan is marked superseded once delivered.
-Every other file in `specs/` is provenance.
+**`specs/` holds at most one active plan.** There is none right now: v1 through
+v4 are all delivered and superseded, and everything in `specs/` is provenance.
+A plan there is never authority on current behaviour — each task updates its
+owning wiki page in the same commit, and the plan is marked superseded once
+delivered. Start a v5 the same way when the next piece of work needs one.
 
 `.local/` is gitignored and holds the measurement harnesses and the captured
 timeline data they ran against. The harnesses are reproducible from

@@ -79,7 +79,7 @@ removes that button before reading it.
 resolve to `profile-displayphoto-*`; post-body images resolve to
 `feedshare-image-*`, both on `media.licdn.com`. More durable than any class.
 
-**Not seen live, documented as gaps, see [v3-spec.md](../specs/v3-spec.md):** a
+**Not seen live, documented as gaps:** a
 quote-repost carrying the resharer's own added commentary (only a bare
 reshare was captured); any non-post module's heading text; whether the feed
 recycles DOM nodes on scroll the way X's does.
@@ -107,6 +107,8 @@ recycles DOM nodes on scroll the way X's does.
 **It stands down on comment threads.** `isFeedPath()` rejects any path containing `/comments/`; every other listing (home, `r/<sub>`, `r/all`, search, a multireddit) shares the card shape and filters. A thread the reader opened deliberately is not a feed. This is the only adapter that reads the path, and it does so in `findPosts()` so `SiteAdapter` stays as it is.
 
 **`old.reddit.com` is not matched**, deliberately — a different DOM entirely, and failing to match is the documented answer rather than an oversight.
+
+**A poll card was never captured**, and that is safe rather than unfinished: the `data-post-id` allowlist means an unrecognised card is not scored, so it is never wrongly blurred — it simply is not filtered either.
 
 **Reddit also labels the post's language** (`post-language` on `shreddit-post`). Not used: the language gate calls CLD like every other site, so Reddit does not get a second detection path with its own failure modes. See [model.md](model.md).
 

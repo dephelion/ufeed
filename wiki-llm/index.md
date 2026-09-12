@@ -25,12 +25,10 @@ Chrome and Firefox, MV3, built with WXT. v1 targets X; v3 adds LinkedIn.
 
 Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both browsers; e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model and is rejected at load.
 
-Not built: Reddit adapter, Chrome offscreen singleton, multilingual, mobile.
+Not built: Chrome offscreen singleton, multilingual model, mobile.
 
-**In flight: [specs/v2-spec.md](../specs/v2-spec.md)** — graded blur, thumbs feedback, relevance feedback, relative strictness. All three tasks implemented on `feat/v2` and documented in the pages above; **not yet verified on a live feed**. Amends Hard Invariant 1 (on-device persistence), authorised for the testing phase.
+**Nothing in flight.** v1-v4 are delivered and superseded; `specs/` is provenance only. v2 amended Hard Invariant 1 (on-device persistence of correction vectors), authorised for the testing phase and still in force.
 
-**In flight: [specs/v3-spec.md](../specs/v3-spec.md)** — LinkedIn adapter, second production site. Implemented, fixture-tested; **not yet verified on a live feed**. Known gaps: quote-repost with the resharer's own commentary, non-post module exclusion, and feed node recycling are all unconfirmed against a real sample — see the spec and [adapters.md](adapters.md#linkedin).
-
-Superseded design doc: [specs/v1-spec.md](../specs/v1-spec.md), kept for provenance only. This wiki is authoritative.
+Superseded design docs: [v1](../specs/v1-spec.md), [v2](../specs/v2-spec.md), [v3](../specs/v3-spec.md), [v4](../specs/v4-spec.md), kept for provenance only. This wiki is authoritative.
 
 Every number in these pages came from a measurement harness run against a captured timeline. Both live in gitignored `.local/`: the data is personal, and the method is described where the number is used.

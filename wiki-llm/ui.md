@@ -70,6 +70,8 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **Turning the language checkbox on does not re-filter what is already on screen**, and the popup hint says so. Those posts were scanned while the setting was off, so no detection ran for them, and their scores are cached — `rescore()` re-decides them with no language to decide on. Scrolling and reloading both work; new posts are filtered normally. Accepted over the machinery to fix it: detection would have to run ahead of the score cache and the visible posts be re-offered, for one toggle a user flips once.
 
+**`blurThinMedia` barely fires on Reddit, and that is unresolved.** The rule needs media plus under 30 characters of text; a Reddit image post carries a title that almost always clears 30 while the meaning stays entirely in the image. Options when it matters: leave it (the hint is then untrue for Reddit), raise the floor per site, or treat an image post carrying only a title as thin whatever its length. No recommendation yet — it needs a feed to argue with.
+
 **An unplaceable post is labelled `media`, not `language`.** CLD returning unreliable says the text is too thin to read, not that it is foreign. That is the same claim `MIN_BACKING_CHARS` makes by counting characters, so it lands in the same rule and the same label, and like that rule it needs media present and `blurThinMedia` on.
 
 `position: relative` on the container is the one accepted layout side effect — it anchors the label. Verified on X without shifting.

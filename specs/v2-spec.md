@@ -1,16 +1,14 @@
 # Lensing v2 — Graded Blur & Relevance Feedback
 
-> **Status: IMPLEMENTED on `feat/v2`, NOT yet verified on a live feed.** All three
-> tasks have landed with their wiki pages updated. What remains is running it
-> against a real timeline: the thumbs bar positioning, the peek legibility, and
-> whether a correction visibly moves the feed. Mark this superseded once that is
-> done, not before.
+> **Status: DELIVERED, superseded.** Verified on live X, LinkedIn and Reddit
+> feeds on 2026-09-12: the thumbs bar, the peek tier and relative strictness all
+> exercised against real timelines. Kept for provenance.
 >
-> It is not authority on current behaviour — [`wiki-llm/`](../wiki-llm/index.md) is.
+> **Do not consult this document for current behaviour.** The threshold band it
+> describes was overturned: strictness is a 0-10 scale of measured thresholds,
+> and `bandMin`/`bandMax` no longer exist. See [model.md](../wiki-llm/model.md).
 >
-> **Each task updates its owning wiki page in the same commit.** When every task
-> here is delivered, this document is marked superseded like
-> [`v1-spec.md`](v1-spec.md) and kept for provenance only.
+> The source of truth is [`wiki-llm/`](../wiki-llm/index.md).
 >
 > Every number below was measured against the 205 labelled posts in
 > `.local/spikes/topic-viability/`. The harnesses are named per finding.

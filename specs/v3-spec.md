@@ -1,13 +1,14 @@
 # Lensing v3 — LinkedIn Adapter
 
-> **Status: IN PROGRESS, NOT yet verified on a live feed.** DOM findings below came
-> from three cards captured against a real logged-in feed (`.local/linkedin/`,
-> gitignored, never committed). Two variants were searched for and not found in
-> ~10 minutes of scrolling one account's feed: a quote-repost carrying the
-> resharer's own added comment, and a non-post module (job ad, poll, "suggested
-> for you"). Both are documented as known gaps rather than blocking on discovery.
+> **Status: DELIVERED, superseded.** Verified on a live LinkedIn feed on
+> 2026-09-12. Kept for provenance.
 >
-> Not authority on current behaviour once superseded — [`wiki-llm/`](../wiki-llm/index.md) is.
+> The two variants this document left as known gaps were never found in practice
+> and never misbehaved; the allowlist design is what made them safe to leave
+> open. Current adapter behaviour lives in
+> [adapters.md](../wiki-llm/adapters.md).
+>
+> The source of truth is [`wiki-llm/`](../wiki-llm/index.md).
 
 ---
 
@@ -105,5 +106,5 @@ Not scheduled, documented so they are not rediscovered:
 4. Update `wiki-llm/adapters.md`, `wiki-llm/manifest.md`, `wiki-llm/index.md`
    in the same commit.
 
-Once verified on a live feed, this spec is marked superseded like
-[`v1-spec.md`](v1-spec.md) and [`v2-spec.md`](v2-spec.md).
+Delivered and verified; superseded like [`v1-spec.md`](v1-spec.md) and
+[`v2-spec.md`](v2-spec.md), and kept for provenance only.
