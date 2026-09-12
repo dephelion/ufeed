@@ -129,8 +129,14 @@ Measured with feedback items held out of evaluation, at equal feed volume
 Monotonic in both directions. 0.936 is "strong" on the scale in
 `.local/spikes/topic-viability/README.md`; v1 shipped at "usable".
 
-Feedback is scoped to the topic set that produced it. Changing topics must reset
-or decay it, or the correction is applied to a query it was never about.
+Feedback is scoped to **the topic line** that produced it, not the topic set.
+Scoring takes the max across lines, so a rating attaches to the line that came
+closest to claiming the post; the worker returns that index with the embedding.
+Editing one line discards only its own corrections.
+
+Behind `tuneFromFeedback` in Advanced, **off by default**, with a "Clear tuning"
+button beside it. Off means the thumbs are hidden and scoring is untouched, so a
+rating never has an invisible effect.
 
 ### 2.5 Relative strictness
 

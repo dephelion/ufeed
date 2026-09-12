@@ -76,22 +76,26 @@ One floating `.lx-fb` element positioned over the hovered post, appended to `doc
 
 Appears on any scored post, not only blurred ones: [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
 
+**Hidden unless `tuneFromFeedback` is on.** The checkbox gates the buttons and the scoring together, so a rating never has an invisible effect.
+
 The bar sits outside `.lx-blur`, so the reveal click handler never sees its clicks.
 
 **A reveal click is not feedback.** It cannot separate "I wanted this" from "I was checking you". Only the thumbs are a label.
 
 ## Popup
 
-| Control        | Effect                                                                   |
-| :------------- | :----------------------------------------------------------------------- |
-| On             | Global switch. Off reveals everything.                                   |
-| Topics + Apply | Takes effect only on Apply, so a half-typed edit never filters a feed.   |
-| Strictness     | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
-| Advanced band  | Loosest / strictest score the slider spans.                              |
-| Blur media     | Default off. Blurs media posts under 30 chars of text.                   |
-| Show scores    | Advanced, default off. The only gate on the score badge, in any build.   |
-| Reset          | Restores defaults, keeps topics.                                         |
-| Status dot     | Engine state and backend.                                                |
+| Control           | Effect                                                                   |
+| :---------------- | :----------------------------------------------------------------------- |
+| On                | Global switch. Off reveals everything.                                   |
+| Topics + Apply    | Takes effect only on Apply, so a half-typed edit never filters a feed.   |
+| Strictness        | Slider position 0..1 onto the band. Re-applies from cache, no inference. |
+| Advanced band     | Loosest / strictest score the slider spans.                              |
+| Blur media        | Default off. Blurs media posts under 30 chars of text.                   |
+| Learn from thumbs | Advanced, default off. Applies ratings to the line they matched.         |
+| Clear tuning      | Advanced. Deletes every stored correction; Reset does too.               |
+| Show scores       | Advanced, default off. The only gate on the score badge, in any build.   |
+| Reset             | Restores defaults, keeps topics.                                         |
+| Status dot        | Engine state and backend.                                                |
 
 Hints speak in outcomes, not cosines: _"Shows roughly 35% of a feed (score 0.784 and up)."_ Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 

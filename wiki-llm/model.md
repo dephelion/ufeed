@@ -113,7 +113,9 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 |          16 |    96% |  47.5 | 0.908     |
 |          32 |    97% |  42.0 | **0.936** |
 
-**Corrections are scoped to the topics that produced them.** Changing topics discards them; a correction means "not this, for THAT topic".
+**Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — the worker returns that index with the embedding. Editing one line discards only that line's corrections; the rest survive, including a reorder.
+
+**Off by default**, behind `tuneFromFeedback` in Advanced. An uncorrected query needs no relative threshold and is better calibrated, so the mechanism stays inert until asked for.
 
 ## Relative strictness
 
