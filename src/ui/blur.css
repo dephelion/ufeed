@@ -156,7 +156,14 @@
 
 .lx-fb button.lx-fb-active {
   opacity: 1;
+}
+
+.lx-fb-up.lx-fb-active {
   background: color-mix(in srgb, #4ade80 30%, transparent);
+}
+
+.lx-fb-down.lx-fb-active {
+  background: color-mix(in srgb, #f87171 32%, transparent);
 }
 
 .lx-fb-done {
