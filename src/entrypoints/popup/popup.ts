@@ -8,6 +8,8 @@ import {
   type Settings,
 } from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
+import { count } from '../../core/feedback';
+import { clearFeedback, loadFeedback } from '../../core/feedback-storage';
 
 const el = <T extends HTMLElement>(id: string): T => {
   const node = document.getElementById(id);
@@ -26,6 +28,9 @@ const bandMin = el<HTMLInputElement>('band-min');
 const bandMax = el<HTMLInputElement>('band-max');
 const showScores = el<HTMLInputElement>('show-scores');
 const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
+const tuneFeedback = el<HTMLInputElement>('tune-feedback');
+const clearTuning = el<HTMLButtonElement>('clear-tuning');
+const tuningCount = el<HTMLSpanElement>('tuning-count');
 const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
@@ -53,6 +58,7 @@ function render(settings: Settings): void {
   bandMax.value = settings.bandMax.toFixed(3);
   showScores.checked = settings.showScores;
   blurThinMedia.checked = settings.blurThinMedia;
+  tuneFeedback.checked = settings.tuneFromFeedback;
   refreshApply();
 }
 
@@ -119,6 +125,24 @@ const commitBand = (): void => {
 bandMin.addEventListener('change', commitBand);
 bandMax.addEventListener('change', commitBand);
 
+async function renderTuning(): Promise<void> {
+  const stored = await loadFeedback().catch(() => undefined);
+  const n = stored ? count(stored) : 0;
+  tuningCount.textContent = n === 0 ? 'nothing learned yet' : `${n} rated`;
+  clearTuning.disabled = n === 0;
+}
+
+void renderTuning();
+
+tuneFeedback.addEventListener(
+  'change',
+  () => void update({ tuneFromFeedback: tuneFeedback.checked }),
+);
+
+clearTuning.addEventListener('click', () => {
+  void clearFeedback().then(renderTuning);
+});
+
 blurThinMedia.addEventListener(
   'change',
   () => void update({ blurThinMedia: blurThinMedia.checked }),
@@ -130,8 +154,12 @@ showScores.addEventListener(
 );
 
 reset.addEventListener('click', () => {
-  void update({ ...DEFAULT_SETTINGS, topics: saved.topics }).then(() => {
+  void Promise.all([
+    update({ ...DEFAULT_SETTINGS, topics: saved.topics }),
+    clearFeedback(),
+  ]).then(() => {
     render(saved);
+    void renderTuning();
     applied.hidden = true;
   });
 });

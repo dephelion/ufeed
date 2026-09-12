@@ -85,6 +85,19 @@
         <label for="band-max">Strictest</label>
         <input type="number" id="band-max" min="0" max="1" step="0.005" />
       </div>
+      <label class="check" for="tune-feedback">
+        <input type="checkbox" id="tune-feedback" />
+        Learn from my thumbs
+      </label>
+      <p class="hint">
+        Hover a post to rate it. A rating adjusts the topic it matched, on this device
+        only. Off, the buttons are hidden and scoring is untouched.
+      </p>
+      <div class="row">
+        <button id="clear-tuning" class="ghost" type="button">Clear tuning</button>
+        <span class="applied" id="tuning-count"></span>
+      </div>
+
       <label class="check" for="show-scores">
         <input type="checkbox" id="show-scores" />
         Show each post's score

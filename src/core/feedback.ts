@@ -1,42 +1,62 @@
 /**
- * Corrections the user made to the model's verdicts, as embeddings. Pure: the
- * storage half lives in feedback-storage.ts so this tests without a browser.
+ * Corrections the user made to the model's verdicts, as embeddings, kept per
+ * topic line. Pure: the storage half lives in feedback-storage.ts.
+ *
+ * Per line, not per topic set. Scoring takes the max across lines, so a
+ * correction belongs to the line that came closest to claiming the post —
+ * and editing one line must not discard what was learned about the others.
  */
-export interface Feedback {
-  /** The topic set these corrections were collected against. */
-  topics: string[];
+export interface TopicCorrections {
   liked: number[][];
   disliked: number[][];
 }
 
-export const EMPTY_FEEDBACK: Feedback = { topics: [], liked: [], disliked: [] };
+export interface Feedback {
+  byTopic: Record<string, TopicCorrections>;
+}
+
+export const EMPTY_FEEDBACK: Feedback = { byTopic: {} };
+const NONE: TopicCorrections = { liked: [], disliked: [] };
 
 /** Oldest corrections fall off first; the query should follow current taste. */
 export const MAX_PER_CLASS = 50;
 
-const sameTopics = (a: readonly string[], b: readonly string[]): boolean =>
-  a.length === b.length && a.every((t, i) => t === b[i]);
+export function correctionsFor(feedback: Feedback, topic: string): TopicCorrections {
+  return feedback.byTopic[topic] ?? NONE;
+}
 
-/**
- * A correction means "not this, for THAT topic". Carrying it to a different
- * topic set applies it to a query it was never about.
- */
-export function forTopics(feedback: Feedback, topics: string[]): Feedback {
-  return sameTopics(feedback.topics, topics) ? feedback : { ...EMPTY_FEEDBACK, topics };
+/** Drops corrections for lines the user has removed or rewritten. */
+export function forTopics(feedback: Feedback, topics: readonly string[]): Feedback {
+  const kept: Record<string, TopicCorrections> = {};
+  for (const topic of topics) {
+    const existing = feedback.byTopic[topic];
+    if (existing) kept[topic] = existing;
+  }
+  return { byTopic: kept };
 }
 
 export function record(
   feedback: Feedback,
-  topics: string[],
+  topic: string,
   vector: number[],
   liked: boolean,
 ): Feedback {
-  const base = forTopics(feedback, topics);
-  if (vector.length === 0) return base;
+  if (vector.length === 0 || topic === '') return feedback;
+  const current = correctionsFor(feedback, topic);
   const key = liked ? 'liked' : 'disliked';
-  return { ...base, [key]: [...base[key], vector].slice(-MAX_PER_CLASS) };
+  return {
+    byTopic: {
+      ...feedback.byTopic,
+      [topic]: { ...current, [key]: [...current[key], vector].slice(-MAX_PER_CLASS) },
+    },
+  };
+}
+
+export function countFor(feedback: Feedback, topic: string): number {
+  const c = correctionsFor(feedback, topic);
+  return c.liked.length + c.disliked.length;
 }
 
 export function count(feedback: Feedback): number {
-  return feedback.liked.length + feedback.disliked.length;
+  return Object.keys(feedback.byTopic).reduce((n, t) => n + countFor(feedback, t), 0);
 }

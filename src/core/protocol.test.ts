@@ -73,8 +73,7 @@ describe('feedback messages', () => {
         id: 'r1',
         type: 'SET_TOPICS',
         topics: ['software'],
-        liked: [[0.1, 0.2]],
-        disliked: [],
+        corrections: [{ liked: [[0.1, 0.2]], disliked: [] }],
       }),
     ).toBe(true);
   });
@@ -87,15 +86,39 @@ describe('feedback messages', () => {
 
   it('rejects corrections that are not vectors', () => {
     expect(
-      isEngineRequest({ id: 'r1', type: 'SET_TOPICS', topics: [], liked: ['nope'] }),
+      isEngineRequest({
+        id: 'r1',
+        type: 'SET_TOPICS',
+        topics: [],
+        corrections: [{ liked: ['nope'], disliked: [] }],
+      }),
     ).toBe(false);
   });
 
-  it('accepts a returned vector', () => {
-    expect(isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1, 0.2] })).toBe(true);
+  it('rejects a correction missing a side, which would read as undefined', () => {
+    expect(
+      isEngineRequest({
+        id: 'r1',
+        type: 'SET_TOPICS',
+        topics: [],
+        corrections: [{ liked: [] }],
+      }),
+    ).toBe(false);
+  });
+
+  it('accepts a returned vector with the line it belongs to', () => {
+    expect(
+      isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1, 0.2], topic: 0 }),
+    ).toBe(true);
+  });
+
+  it('rejects a vector with no line, which could not be filed', () => {
+    expect(isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1] })).toBe(false);
   });
 
   it('rejects a vector with non-numbers, which would poison the query', () => {
-    expect(isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1, null] })).toBe(false);
+    expect(
+      isEngineReply({ id: 'r1', type: 'VECTOR', vector: [0.1, null], topic: 0 }),
+    ).toBe(false);
   });
 });

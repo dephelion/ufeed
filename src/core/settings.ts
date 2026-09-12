@@ -14,6 +14,8 @@ export interface Settings {
   showScores: boolean;
   /** Blur media posts carrying too little text to judge against the topics. */
   blurThinMedia: boolean;
+  /** Apply thumbed corrections to the topic vectors. Off leaves scoring untouched. */
+  tuneFromFeedback: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -27,6 +29,7 @@ export const DEFAULT_SETTINGS: Settings = {
   alwaysBlur: [],
   showScores: false,
   blurThinMedia: false,
+  tuneFromFeedback: false,
 };
 
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {
