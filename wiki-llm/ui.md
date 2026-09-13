@@ -126,10 +126,11 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing. |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                           |
 | Blur posts that aren't in English | Default off. Blurs posts outside the model's language; off skips detection.                                      |
-| Learn from thumbs                 | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.                                           |
-| Clear tuning                      | In that section. Deletes every correction; Reset does too.                                                       |
-| Show scores                       | Advanced, default off. The only gate on the score badge, in any build.                                           |
-| Reset                             | Advanced, own block, explained where it sits: restores defaults, deletes every rating, keeps topics.             |
+| Collapse blurred posts            | Default off. Shrinks a blurred post to a thin dark row instead of leaving it full height.                        |
+| Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                     |
+| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                         |
+| Show scores                       | Default off. The only gate on the score badge, in any build.                                                     |
+| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics.                       |
 | Engine chip                       | Header, beside the title. Two or three words plus a light.                                                       |
 | Footer                            | Settings line, engine line, contact address.                                                                     |
 
@@ -171,4 +172,4 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 `score 0.793 / needs 0.795 · 105 chars` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/content/score-badge.ts`).
 
-**Gated solely on `settings.showScores`** (Advanced, default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.
+**Gated solely on `settings.showScores`** (default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.

@@ -76,8 +76,10 @@ other tabs, your bookmarks, your passwords, or your identity.
 
 ## Deleting your data
 
-- **Clear tuning** (Advanced, in the popup) deletes every thumb rating.
-- **Reset** (Advanced) deletes every thumb rating and restores default settings.
+- **Clear tuning**, under "Learn from my thumbs" in the popup, deletes every
+  thumb rating.
+- **Reset**, under "Start over" in the popup, deletes every thumb rating and
+  restores default settings.
 - **Uninstalling Lensing** deletes everything it stored, including your topics.
 
 You do not need to contact us to delete anything, and there is nothing held

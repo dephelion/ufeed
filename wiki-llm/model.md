@@ -160,7 +160,7 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 
 **One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place. A duplicate would weight one post's vector twice in the centroid.
 
-**Off by default**, behind `tuneFromFeedback` in Advanced. An uncorrected query needs no relative threshold and is better calibrated, so the mechanism stays inert until asked for.
+**Off by default**, behind `tuneFromFeedback` ("Learn from my thumbs" in the popup). An uncorrected query needs no relative threshold and is better calibrated, so the mechanism stays inert until asked for.
 
 ## Relative strictness
 
