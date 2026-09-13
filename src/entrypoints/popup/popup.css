@@ -25,8 +25,10 @@ body {
   background: var(--bg);
   color: var(--fg);
   font:
-    13px/1.5 system-ui,
-    sans-serif;
+    13px/1.5 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
 }
 
 header {
@@ -141,8 +143,10 @@ textarea {
 
 button {
   font:
-    600 12px system-ui,
-    sans-serif;
+    600 12px 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
   padding: 6px 14px;
   color: var(--bg);
   background: var(--fg);
@@ -155,11 +159,12 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 10px 16px;
 }
 
 .btn-icon {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   flex: none;
 }
 

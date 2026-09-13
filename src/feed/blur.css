@@ -54,8 +54,10 @@
   color: #fff5f5;
   border: 1px solid color-mix(in srgb, #fff 22%, transparent);
   font:
-    600 11px/1.4 system-ui,
-    sans-serif;
+    600 11px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
   letter-spacing: 0.01em;
   cursor: pointer;
   transition: opacity 0.2s ease;
@@ -87,8 +89,10 @@
   background: color-mix(in srgb, #b45309 78%, transparent);
   color: #fffaf0;
   font:
-    500 12px/1.5 system-ui,
-    sans-serif;
+    500 12px/1.5 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
 }
 
 /* The score badge sits over the same top-left corner — drop the peek text
@@ -169,7 +173,9 @@
   border-radius: 4px;
   color: #fafaf9;
   font:
-    600 10px/1.4 ui-monospace,
+    600 10px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
     SFMono-Regular,
     Menlo,
     monospace;
@@ -260,8 +266,10 @@
   backdrop-filter: blur(6px);
   color: #fafaf9;
   font:
-    12.5px/1.45 system-ui,
-    sans-serif;
+    12.5px/1.45 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
 }
 
 .lx-nudge[hidden] {
