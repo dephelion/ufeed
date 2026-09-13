@@ -26,6 +26,7 @@ const strictnessHint = el<HTMLParagraphElement>('strictness-hint');
 const showScores = el<HTMLInputElement>('show-scores');
 const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
 const blurOtherLanguages = el<HTMLInputElement>('blur-other-languages');
+const collapseBlurred = el<HTMLInputElement>('collapse-blurred');
 const tuneFeedback = el<HTMLInputElement>('tune-feedback');
 const clearTuning = el<HTMLButtonElement>('clear-tuning');
 const tuningNote = el<HTMLSpanElement>('tuning-note');
@@ -63,6 +64,7 @@ function render(settings: Settings): void {
   showScores.checked = settings.showScores;
   blurThinMedia.checked = settings.blurThinMedia;
   blurOtherLanguages.checked = settings.blurOtherLanguages;
+  collapseBlurred.checked = settings.collapseBlurred;
   tuneFeedback.checked = settings.tuneFromFeedback;
   refreshApply();
 }
@@ -150,6 +152,11 @@ blurThinMedia.addEventListener(
 blurOtherLanguages.addEventListener(
   'change',
   () => void update({ blurOtherLanguages: blurOtherLanguages.checked }),
+);
+
+collapseBlurred.addEventListener(
+  'change',
+  () => void update({ collapseBlurred: collapseBlurred.checked }),
 );
 
 showScores.addEventListener(

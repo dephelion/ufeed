@@ -4,6 +4,7 @@ import {
   clearPending,
   markPending,
   peek,
+  isBlurred,
   isRevealed,
   listenForReveal,
   reveal,
@@ -42,6 +43,56 @@ describe('blur', () => {
     blur(el);
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(isRevealed(el)).toBe(true);
+  });
+
+  it('leaves a post uncollapsed by default', () => {
+    const el = post();
+    blur(el);
+    expect(el.classList.contains('lx-collapse')).toBe(false);
+  });
+
+  it('collapses a post on request', () => {
+    const el = post();
+    blur(el, 'topic', true);
+    expect(el.classList.contains('lx-blur')).toBe(true);
+    expect(el.classList.contains('lx-collapse')).toBe(true);
+  });
+
+  it('drops the collapse class when re-blurred without it', () => {
+    const el = post();
+    blur(el, 'topic', true);
+    blur(el, 'topic', false);
+    expect(el.classList.contains('lx-collapse')).toBe(false);
+  });
+
+  it('reveal clears the collapse class too', () => {
+    const el = post();
+    blur(el, 'topic', true);
+    reveal(el);
+    expect(el.classList.contains('lx-collapse')).toBe(false);
+  });
+});
+
+describe('isBlurred', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('is false before anything runs', () => {
+    expect(isBlurred(post())).toBe(false);
+  });
+
+  it('is true whether or not the blur is collapsed', () => {
+    const el = post();
+    blur(el, 'topic', true);
+    expect(isBlurred(el)).toBe(true);
+  });
+
+  it('is false again once revealed', () => {
+    const el = post();
+    blur(el);
+    reveal(el);
+    expect(isBlurred(el)).toBe(false);
   });
 });
 

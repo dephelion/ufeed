@@ -1,4 +1,5 @@
 const BLUR_CLASS = 'lx-blur';
+const COLLAPSE_CLASS = 'lx-collapse';
 const PENDING_CLASS = 'lx-pending';
 
 /**
@@ -31,10 +32,22 @@ export function clearPending(element: HTMLElement): void {
 /** Enough to judge the subject, short enough not to become the distraction. */
 const PEEK_CHARS = 50;
 
-export function blur(element: HTMLElement, reason: BlurReason = 'topic'): void {
+/**
+ * Collapse is a container-only trick — a fixed max-height plus overflow:hidden
+ * clips whatever is inside, no matter the host's markup — so it works on any
+ * adapter without per-site layout code. The badges stay legible because they
+ * render on the container's own ::before/::after, never on a child that gets
+ * clipped or hidden with it.
+ */
+export function blur(
+  element: HTMLElement,
+  reason: BlurReason = 'topic',
+  collapse = false,
+): void {
   if (revealed.has(element)) return;
   clearPending(element);
   element.classList.add(BLUR_CLASS);
+  element.classList.toggle(COLLAPSE_CLASS, collapse);
   element.dataset.lxReason = reason;
   element.setAttribute('aria-hidden', 'true');
 }
@@ -52,7 +65,7 @@ export function peek(element: HTMLElement, text: string): void {
 
 export function reveal(element: HTMLElement): void {
   clearPending(element);
-  element.classList.remove(BLUR_CLASS);
+  element.classList.remove(BLUR_CLASS, COLLAPSE_CLASS);
   delete element.dataset.lxReason;
   delete element.dataset.lxPeek;
   element.removeAttribute('aria-hidden');
@@ -65,6 +78,11 @@ export function revealPermanently(element: HTMLElement): void {
 
 export function isRevealed(element: HTMLElement): boolean {
   return revealed.has(element);
+}
+
+/** Current blur/collapse state, as opposed to `isRevealed`'s permanent-reveal record. */
+export function isBlurred(element: HTMLElement): boolean {
+  return element.classList.contains(BLUR_CLASS);
 }
 
 /**

@@ -16,6 +16,8 @@ export interface Settings {
   tuneFromFeedback: boolean;
   /** Blur posts the model cannot read. Off skips detection entirely. */
   blurOtherLanguages: boolean;
+  /** Shrink a blurred post to a thin row instead of leaving it full height. */
+  collapseBlurred: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -29,6 +31,7 @@ export const DEFAULT_SETTINGS: Settings = {
   blurThinMedia: false,
   tuneFromFeedback: false,
   blurOtherLanguages: false,
+  collapseBlurred: false,
 };
 
 /**

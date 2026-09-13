@@ -139,6 +139,23 @@
   cursor: pointer;
 }
 
+/* Collapses a blurred post into a thin, glanceable row instead of a full-height
+   blur. max-height/overflow work on any host markup — no per-site layout code —
+   and cap the box even when the host has set its own inline height (e.g. a
+   virtualized feed's measured row), since max-height constrains the used height
+   regardless of what set it. Children are hidden outright, not just dimmed:
+   a clipped sliver of text or a media frame would otherwise leak past the edge. */
+.lx-collapse {
+  max-height: 42px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: color-mix(in srgb, #1c1917 55%, transparent);
+}
+
+.lx-collapse > * {
+  visibility: hidden;
+}
+
 /* The content script stamps this attribute while the Show scores setting is on. */
 [data-lx-score] {
   position: relative;

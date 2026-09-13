@@ -77,6 +77,9 @@ textarea {
   align-items: center;
   gap: 10px;
   margin-top: 8px;
+  /* Apply now closes the Topics block, so it owns the gap to Strictness that
+     the hint below it used to provide. */
+  margin-bottom: 16px;
 }
 
 button {

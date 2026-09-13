@@ -9,6 +9,7 @@ import { loadSettings, onSettingsChanged } from '../core/settings-storage';
 import {
   blur,
   clearPending,
+  isBlurred,
   isRevealed,
   listenForReveal,
   markPending,
@@ -102,7 +103,7 @@ async function start(): Promise<void> {
   const apply = (post: Post, action: Action): Action => {
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, post.text);
-    else blur(post.container, REASONS[action]);
+    else blur(post.container, REASONS[action], settings.collapseBlurred);
     return action;
   };
 
@@ -226,6 +227,7 @@ async function start(): Promise<void> {
       const container = target.closest<HTMLElement>(adapter.containerSelector);
       const found = container ? adapter.findPosts(container)[0] : undefined;
       if (!found || !scanner.knows(found.container)) return undefined;
+      if (isBlurred(found.container)) return undefined;
       return { ...found, rating: tuner.ratingOf(found.text)?.liked };
     },
     onFeedback: takeFeedback,
