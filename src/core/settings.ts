@@ -30,8 +30,8 @@ export const DEFAULT_SETTINGS: Settings = {
   showScores: false,
   blurThinMedia: false,
   tuneFromFeedback: false,
-  blurOtherLanguages: false,
-  collapseBlurred: false,
+  blurOtherLanguages: true,
+  collapseBlurred: true,
 };
 
 /**

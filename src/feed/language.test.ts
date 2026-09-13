@@ -60,7 +60,12 @@ describe('blursAsOtherLanguage', () => {
     expect(blursAsOtherLanguage(on, undefined)).toBe(false);
   });
 
-  it('does nothing while the setting is off, which is the default', () => {
-    expect(blursAsOtherLanguage(DEFAULT_SETTINGS, 'other')).toBe(false);
+  it('does nothing while the setting is off', () => {
+    const off = { ...DEFAULT_SETTINGS, blurOtherLanguages: false };
+    expect(blursAsOtherLanguage(off, 'other')).toBe(false);
+  });
+
+  it('is on by default', () => {
+    expect(DEFAULT_SETTINGS.blurOtherLanguages).toBe(true);
   });
 });

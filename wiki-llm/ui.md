@@ -125,8 +125,8 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed.                                           |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing. |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                           |
-| Blur posts that aren't in English | Default off. Blurs posts outside the model's language; off skips detection.                                      |
-| Collapse blurred posts            | Default off. Shrinks a blurred post to a thin dark row instead of leaving it full height.                        |
+| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                       |
+| Collapse blurred posts            | Default on. Shrinks a blurred post to a thin dark row instead of leaving it full height.                         |
 | Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                     |
 | Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                         |
 | Show scores                       | Default off. The only gate on the score badge, in any build.                                                     |

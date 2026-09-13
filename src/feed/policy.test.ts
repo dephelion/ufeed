@@ -75,8 +75,13 @@ describe('the language rule', () => {
     expect(decide(withSettings(on, { language: 'match' }))).toBe('reveal');
   });
 
-  it('does nothing while the setting is off, which is the default', () => {
-    expect(decide(base({ language: 'other' }))).toBe('reveal');
+  it('does nothing while the setting is off', () => {
+    const off = withSettings({ blurOtherLanguages: false }, { language: 'other' });
+    expect(decide(off)).toBe('reveal');
+  });
+
+  it('is on by default', () => {
+    expect(decide(base({ language: 'other' }))).toBe('blur-language');
   });
 
   it('never blurs on an undetected post — nothing ran, nothing is known', () => {
