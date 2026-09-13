@@ -87,7 +87,8 @@ before anything can be published, unlisted included.
 > Lensing executes no remote code. The ONNX Runtime WebAssembly binary is
 > bundled in the package and loaded from an extension-relative path. The only
 > network request is a one-time download of the model **weights** (a data file,
-> not code) from the Hugging Face CDN, which the browser then caches.
+> not code) from Hugging Face (`huggingface.co`, redirecting to its `hf.co`
+> CDN), which the browser then caches.
 
 ## Data usage disclosure
 

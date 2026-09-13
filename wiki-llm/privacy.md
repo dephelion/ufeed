@@ -35,7 +35,7 @@ Listing copy, permission justifications and the data-disclosure answers live in 
 - [ ] Privacy policy live at https://dephelion.com/lensing-browser-extension/privacy/ and pasted into the dashboard.
 - [ ] Screenshots (1280x800 or 640x400), at least one.
 - [ ] Load `.output/chrome-mv3` unpacked in a cold profile and walk install -> topic -> first score. No suite covers it.
-- [ ] Network tab clean on that run: `huggingface.co` only. A `cdn.jsdelivr.net` WASM fetch is remote code execution and a rejection.
+- [ ] Network tab clean on that run: `GET` model files from `huggingface.co` and its storage CDN (`*.hf.co`, reached by redirect) only. A `cdn.jsdelivr.net` WASM fetch is remote code execution and a rejection.
 - [ ] AMO source bundle: unminified source plus reproducible build instructions. Bundled ONNX/WASM binaries make this mandatory. Firefox only.
 - [ ] ORT `.wasm` bundled locally, never CDN.
 - [ ] No platform trademarks in the extension title.

@@ -53,8 +53,9 @@ fall off first.
 **One kind of network request exists: downloading the language model.**
 
 The first time Lensing needs to score a feed, it downloads the model that does
-the comparison (about 30 MB) from the Hugging Face CDN at `huggingface.co`. Your
-browser then caches it, and later sessions use the cached copy.
+the comparison (about 30 MB) from Hugging Face at `huggingface.co`, which
+redirects the larger files to its storage CDN at `hf.co`. Your browser then
+caches it, and later sessions use the cached copy.
 
 Be aware of what this request implies: like any file download, it tells Hugging
 Face's servers your IP address and that a file was requested. It carries none of
