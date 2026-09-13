@@ -63,6 +63,26 @@ engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
 
 **Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
 
+## Status channel
+
+A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/core/status-channel.ts`.
+
+```
+popup   → content  { type: 'lensing:status?' }            to the ACTIVE tab only
+content → popup    EngineStatus (the reply)
+content → popup    { type: 'lensing:status', status }     pushed on change
+```
+
+**Asked per tab, never stored.** Each feed tab runs its own engine. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.
+
+**Pushes are filtered by `sender.tab.id`.** Every feed tab broadcasts; without the check a background tab's download overwrites the foreground tab's reading.
+
+**No reply means no engine on that tab.** `tabs.sendMessage` rejecting is the answer, not an error: not a feed, or not yet injected. Distinct from state `idle`, which means injected but not started.
+
+**Costs no permission.** The active tab's id needs none; reaching its content script is covered by `host_permissions`.
+
+**Reported changes are throttled** — new state, or progress moved >= 5 points. Per-file download progress fires several times a second.
+
 ## Invalidation
 
 | Change        | Effect                                                                     |

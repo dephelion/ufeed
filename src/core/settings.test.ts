@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_SETTINGS,
   isActiveOn,
+  needsTopics,
   overrideFor,
   parseTopics,
   topicsEqual,
@@ -25,6 +26,32 @@ describe('isActiveOn', () => {
 
   it('respects a per-host opt-out', () => {
     expect(isActiveOn({ ...withTopics, disabledHosts: ['x.com'] }, 'x.com')).toBe(false);
+  });
+});
+
+describe('needsTopics', () => {
+  it('speaks up on a fresh install: on, allowed here, nothing to do', () => {
+    expect(needsTopics(DEFAULT_SETTINGS, 'x.com')).toBe(true);
+  });
+
+  it('stays quiet once topics exist', () => {
+    expect(needsTopics(withTopics, 'x.com')).toBe(false);
+  });
+
+  it('stays quiet when the reader turned it off — that was a choice', () => {
+    expect(needsTopics({ ...DEFAULT_SETTINGS, enabled: false }, 'x.com')).toBe(false);
+  });
+
+  it('stays quiet on a host the reader opted out of', () => {
+    const s = { ...DEFAULT_SETTINGS, disabledHosts: ['x.com'] };
+    expect(needsTopics(s, 'x.com')).toBe(false);
+    expect(needsTopics(s, 'reddit.com')).toBe(true);
+  });
+
+  it('never fires at the same time as isActiveOn', () => {
+    for (const s of [DEFAULT_SETTINGS, withTopics, { ...withTopics, enabled: false }]) {
+      expect(needsTopics(s, 'x.com') && isActiveOn(s, 'x.com')).toBe(false);
+    }
   });
 });
 

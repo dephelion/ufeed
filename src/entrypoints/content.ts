@@ -4,8 +4,16 @@ import { logger } from '../core/log';
 
 import { adapterFor, type Post } from '../adapters';
 import { ScoreCache } from '../core/cache';
-import { isActiveOn, overrideFor, topicsEqual, type Settings } from '../core/settings';
-import { loadSettings, onSettingsChanged } from '../core/settings-storage';
+import {
+  isActiveOn,
+  needsTopics,
+  overrideFor,
+  topicsEqual,
+  type Settings,
+} from '../core/settings';
+import { loadSettings, onSettingsChanged, saveSettings } from '../core/settings-storage';
+import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
+import { publishEngineStatus, serveEngineStatus } from '../core/status-channel';
 import {
   blur,
   clearPending,
@@ -27,6 +35,7 @@ import { ScoreQueue } from '../feed/queue';
 import { Tuning } from '../feed/tuning';
 import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
 import { EngineClient } from '../feed/engine-client';
+import { mountNudge } from '../feed/nudge';
 
 export default defineContentScript({
   matches: [
@@ -63,13 +72,26 @@ async function start(): Promise<void> {
   const languages = new LanguageCache();
   const scoreWindow = new ScoreWindow();
 
+  // Held in memory and served on request. The popup cannot see into this tab,
+  // and without an answer a first-run download looks like a broken install.
+  let engineStatus: EngineStatus = { state: 'idle' };
+  serveEngineStatus(() => engineStatus);
+
   const engine = new EngineClient((next) => {
+    const status = toStatus(next);
+    if (worthReporting(engineStatus, status)) publishEngineStatus(status);
+    engineStatus = status;
     if (next.state === 'ready') {
       scanner.sweep(document);
       void queue.flush();
     }
     if (next.state === 'error') revealAll(document);
   });
+
+  const nudge = mountNudge({
+    onTurnOff: () => void saveSettings({ enabled: false }),
+  });
+  const showNudge = () => nudge.setVisible(needsTopics(settings, location.hostname));
 
   const active = () => isActiveOn(settings, location.hostname);
   const tuning = () => settings.tuneFromFeedback && tuner.count > 0;
@@ -190,6 +212,7 @@ async function start(): Promise<void> {
     const topicsChanged = !topicsEqual(next.topics, settings.topics);
     const tuningChanged = next.tuneFromFeedback !== settings.tuneFromFeedback;
     settings = next;
+    showNudge();
     if (!active()) {
       revealAll(document);
       clearAllScores(document);
@@ -236,6 +259,7 @@ async function start(): Promise<void> {
   listenForReveal(document);
   onSettingsChanged(applySettings);
   scanner.start();
+  showNudge();
 
   log.info('content script started', {
     host: location.hostname,

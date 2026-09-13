@@ -129,8 +129,9 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Learn from thumbs                 | Advanced, its own section. Checkbox, kept/blurred/rated counts, clear.                                           |
 | Clear tuning                      | In that section. Deletes every correction; Reset does too.                                                       |
 | Show scores                       | Advanced, default off. The only gate on the score badge, in any build.                                           |
-| Reset                             | Restores defaults, keeps topics.                                                                                 |
-| Status dot                        | Engine state and backend.                                                                                        |
+| Reset                             | Advanced, own block, explained where it sits: restores defaults, deletes every rating, keeps topics.             |
+| Engine chip                       | Header, beside the title. Two or three words plus a light.                                                       |
+| Footer                            | Settings line, engine line, contact address.                                                                     |
 
 **Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Keeps about 35% of a typical feed visible. The rest is blurred, one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
@@ -139,6 +140,22 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
 Apply is disabled until the textarea differs from what is saved.
+
+**Engine state is shown twice, on purpose.** The popup runs past Chrome's 600px cap, so the footer opens below the fold — the header chip is the only engine state most readers ever see (`Downloading 45%`, `Ready · wasm`, `Failed`, `No feed here`). The footer line carries what will not fit in a 380px header row: that the download happens once, and the failure reason a bug report needs. It hides itself once ready, when the chip says everything left to say. Both lights read from one tone, so they can never disagree.
+
+**Destructive controls explain themselves where they sit.** Reset was a bare ghost button in the footer that silently deleted every thumb rating.
+
+## No-topics card
+
+On, allowed on this host, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
+
+Fixed top-right, same dark chip as the thumbs bar so it reads the same on a light and a dark feed. Shows the toolbar icon, because finding that button is the actual task.
+
+**It cannot open the popup.** `action.openPopup` is unreachable from a content script, so the card points at the icon instead.
+
+**Turning Lensing off is the second option, offered on the card.** The `x` hides it for this page load only — persisting a dismissal leaves a silent extension and no route back to the explanation.
+
+**Mounted outside the active gate**, and it polls briefly for `document.body`: the content script runs at `document_start`.
 
 ## Debug mode
 

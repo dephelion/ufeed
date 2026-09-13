@@ -9,6 +9,12 @@ import {
 import { loadSettings, saveSettings } from '../../core/settings-storage';
 import { counts } from '../../core/feedback';
 import { clearFeedback, loadFeedback } from '../../core/feedback-storage';
+import {
+  describeEngine,
+  summarizeEngine,
+  type EngineStatus,
+} from '../../core/engine-status';
+import { askEngineStatus, onEngineStatus } from '../../core/status-channel';
 
 const el = <T extends HTMLElement>(id: string): T => {
   const node = document.getElementById(id);
@@ -37,6 +43,11 @@ const statTotal = el<HTMLElement>('stat-total');
 const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
+const engineText = el<HTMLSpanElement>('engine-status');
+const engineDot = el<HTMLSpanElement>('engine-dot');
+const engineLine = el<HTMLParagraphElement>('engine-line');
+const chipText = el<HTMLSpanElement>('engine-chip-text');
+const chipDot = el<HTMLSpanElement>('engine-chip-dot');
 
 let saved: Settings = await loadSettings();
 
@@ -98,6 +109,24 @@ function describeStatus(settings: Settings): void {
     (settings.topics.length === 1 ? '' : 's');
 }
 
+/**
+ * Twice, for two different readers. The header chip is what someone sees on
+ * open, since the footer sits below Chrome's 600px popup cap. The footer line
+ * carries what will not fit up there — the one-time-download reassurance, and
+ * the failure reason a bug report needs — so it stands down once ready, when
+ * the chip alone says everything left to say.
+ */
+function describeEngineStatus(status: EngineStatus | undefined): void {
+  const short = summarizeEngine(status);
+  chipDot.dataset.state = short.tone;
+  chipText.textContent = short.text;
+
+  const full = describeEngine(status);
+  engineDot.dataset.state = full.tone;
+  engineText.textContent = full.text;
+  engineLine.hidden = full.tone === 'ready';
+}
+
 async function update(patch: Partial<Settings>): Promise<void> {
   saved = await saveSettings(patch);
   describeStatus(saved);
@@ -106,6 +135,13 @@ async function update(patch: Partial<Settings>): Promise<void> {
 
 render(saved);
 describeStatus(saved);
+
+// Asked fresh every time the popup opens, so switching tabs cannot leave a
+// stale reading on screen, and followed for one tab only.
+void askEngineStatus().then(({ tabId, status }) => {
+  describeEngineStatus(status);
+  onEngineStatus(tabId, describeEngineStatus);
+});
 
 enabled.addEventListener('change', () => {
   renderEnabled(enabled.checked);

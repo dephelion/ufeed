@@ -239,3 +239,87 @@
 .lx-fb-done {
   border-color: color-mix(in srgb, #4ade80 60%, transparent);
 }
+
+/* First-run card: on, but no topics. Same dark chip as the thumbs bar, because
+   it has to read the same on a light and a dark feed. */
+.lx-nudge {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 2147483001;
+  display: flex;
+  gap: 10px;
+  width: 300px;
+  max-width: calc(100vw - 28px);
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, #1c1917 94%, transparent);
+  border: 1px solid color-mix(in srgb, #78716c 45%, transparent);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 35%);
+  backdrop-filter: blur(6px);
+  color: #fafaf9;
+  font:
+    12.5px/1.45 system-ui,
+    sans-serif;
+}
+
+.lx-nudge[hidden] {
+  display: none;
+}
+
+.lx-nudge-icon {
+  flex: none;
+  border-radius: 6px;
+}
+
+.lx-nudge-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.lx-nudge-body b {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.lx-nudge-body p {
+  margin: 0 0 10px;
+  color: #d6d3d1;
+}
+
+.lx-nudge-off {
+  all: unset;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #d6d3d1;
+  border: 1px solid color-mix(in srgb, #78716c 55%, transparent);
+}
+
+.lx-nudge-off:hover {
+  color: #fafaf9;
+  background: color-mix(in srgb, #fafaf9 12%, transparent);
+}
+
+.lx-nudge-x {
+  all: unset;
+  cursor: pointer;
+  flex: none;
+  align-self: flex-start;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 16px;
+  color: #a8a29e;
+  border-radius: 5px;
+}
+
+.lx-nudge-x:hover {
+  color: #fafaf9;
+  background: color-mix(in srgb, #fafaf9 12%, transparent);
+}

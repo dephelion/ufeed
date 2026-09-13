@@ -9,6 +9,10 @@
   <body>
     <header>
       <h1>Lensing</h1>
+      <span class="chip" id="engine-chip">
+        <span class="dot" id="engine-chip-dot"></span>
+        <span id="engine-chip-text">Idle</span>
+      </span>
       <label class="switch">
         <input type="checkbox" id="enabled" />
         <span id="enabled-label">On</span>
@@ -146,12 +150,33 @@
         stay visible, and how long it is. Useful for working out why something was
         blurred.
       </p>
+
+      <section class="block">
+        <div class="row block-head">
+          <span>Start over</span>
+          <button id="reset" class="ghost" type="button">Reset</button>
+        </div>
+        <p class="hint block-hint">
+          Puts strictness and every option on this page back to how they started, and
+          deletes every thumb rating you have given. Your topics are kept, and nothing
+          leaves this device either way.
+        </p>
+      </section>
     </details>
 
     <footer>
-      <span class="dot" id="dot"></span>
-      <span id="status">Checking engine…</span>
-      <button id="reset" class="ghost" type="button">Reset</button>
+      <p class="status-line">
+        <span class="dot" id="dot"></span>
+        <span id="status">Checking settings…</span>
+      </p>
+      <p class="status-line" id="engine-line">
+        <span class="dot" id="engine-dot"></span>
+        <span id="engine-status">Checking engine…</span>
+      </p>
+      <p class="contact">
+        Bugs, ideas, or a feed it does not work on?
+        <a href="mailto:contact@dephelion.com">contact@dephelion.com</a>
+      </p>
     </footer>
   </body>
   <script type="module" src="./popup.ts"></script>

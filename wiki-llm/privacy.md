@@ -19,6 +19,8 @@
 
 **Nothing is stored until the user opts in.** `tuneFromFeedback` is off by default; with it off the thumbs are hidden and no vector is written. "Clear tuning" in Advanced deletes every correction, and Reset does the same.
 
+**Engine status is asked, never stored.** The popup queries the active tab over `browser.runtime` messaging and keeps the answer in memory. An earlier version parked it in `storage.local` with a timestamp, which left a durable record of when a feed was last open — settings-adjacent, surviving restarts, and flatly at odds with the claim above. Nothing about engine activity now touches disk. See [architecture.md](architecture.md).
+
 **One class of network request exists: model weights.** Nothing else. No analytics in v1 — a hard constraint, and what makes the "does not collect user data" declaration truthful.
 
 **Never log post text.** `src/core/log.ts` takes counts, scores, states, errors and topic strings. Topic strings are user config. Post text is not, and a console log reaches devtools recordings and crash reports.

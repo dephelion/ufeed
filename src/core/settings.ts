@@ -49,6 +49,19 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
   return merged;
 }
 
+/**
+ * On, welcome on this host, and with nothing to do. It is the one inactive state
+ * that is not a choice the reader made, so it is the only one worth interrupting
+ * them about: everything looks installed and nothing happens.
+ */
+export function needsTopics(settings: Settings, hostname: string): boolean {
+  return (
+    settings.enabled &&
+    settings.topics.length === 0 &&
+    !settings.disabledHosts.includes(hostname)
+  );
+}
+
 export function isActiveOn(settings: Settings, hostname: string): boolean {
   return (
     settings.enabled &&

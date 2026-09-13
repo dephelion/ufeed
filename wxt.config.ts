@@ -29,7 +29,12 @@ export default defineConfig({
     description: 'Blur what you did not come here to read. Runs entirely on your device.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
-    web_accessible_resources: [{ resources: ['engine.html'], matches: FEED_HOSTS }],
+    web_accessible_resources: [
+      // icon/48.png is the toolbar icon, shown by the no-topics card so a new
+      // reader knows which button to look for. An <img> in the page cannot load
+      // an extension file that is not listed here.
+      { resources: ['engine.html', 'icon/48.png'], matches: FEED_HOSTS },
+    ],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
     },

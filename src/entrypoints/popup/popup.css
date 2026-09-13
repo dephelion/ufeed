@@ -32,8 +32,30 @@ body {
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 14px;
+}
+
+/* The switch keeps the right edge; the chip sits with the title. */
+header .switch {
+  margin-left: auto;
+}
+
+/* Above the fold, unlike the footer, so it is the only engine state most
+   readers will ever see. Truncates rather than pushing the switch off. */
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 h1 {
@@ -236,12 +258,32 @@ output {
 
 footer {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   padding-top: 12px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 11.5px;
+}
+
+/* Two lines answering two different questions: what the settings say, and what
+   the engine is actually doing. Each owns its own light. */
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+/* Last line in the popup, which is where a reader looks for a way to reply. */
+.contact {
+  margin: 2px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+a {
+  color: var(--accent);
 }
 
 .dot {
@@ -254,6 +296,9 @@ footer {
 
 .dot[data-state='ready'] {
   background: var(--accent);
+}
+.dot[data-state='busy'] {
+  background: #d97706;
 }
 .dot[data-state='error'] {
   background: #dc2626;
@@ -307,4 +352,8 @@ footer {
 
 .block-note {
   margin: 0;
+}
+
+.row.block-head {
+  justify-content: space-between;
 }
