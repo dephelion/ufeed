@@ -13,7 +13,9 @@
 | Model weights | Fetched once from the CDN, cached by the browser.                                                           |
 | Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by topic line and post hash. Vectors only, 50 each way. |
 
-**Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs. Authorised for the testing phase with no real users; before any public release decide what is stored, how it is cleared, and whether Reset removes it.
+**Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs.
+
+**Settled for the first public release: kept, on these terms.** Opt-in and off by default, so the untouched install stores nothing. Capped at `MAX_PER_CLASS = 50` each way per topic line, oldest off first. Local only, never synced, never transmitted. Cleared by "Clear tuning", by Reset, and by uninstalling. `docs/privacy-policy.md` states the partial invertibility plainly rather than calling an embedding anonymous — a policy that oversells is worse than the storage it describes.
 
 **Corrections are scoped to the topic line that produced them.** Editing a line discards its corrections rather than applying them to a query they were never about.
 
@@ -27,9 +29,14 @@
 
 ## Before a store submission
 
+Listing copy, permission justifications and the data-disclosure answers live in [`docs/store-listing.md`](../docs/store-listing.md); the policy itself in [`docs/privacy-policy.md`](../docs/privacy-policy.md).
+
 - [ ] `npm run build` — debug logs and score badges compiled out.
-- [ ] Privacy policy URL (Chrome Web Store requirement).
-- [ ] AMO source bundle: unminified source plus reproducible build instructions. Bundled ONNX/WASM binaries make this mandatory.
+- [ ] Privacy policy live at https://dephelion.com/lensing-browser-extension/privacy/ and pasted into the dashboard.
+- [ ] Screenshots (1280x800 or 640x400), at least one.
+- [ ] Load `.output/chrome-mv3` unpacked in a cold profile and walk install -> topic -> first score. No suite covers it.
+- [ ] Network tab clean on that run: `huggingface.co` only. A `cdn.jsdelivr.net` WASM fetch is remote code execution and a rejection.
+- [ ] AMO source bundle: unminified source plus reproducible build instructions. Bundled ONNX/WASM binaries make this mandatory. Firefox only.
 - [ ] ORT `.wasm` bundled locally, never CDN.
 - [ ] No platform trademarks in the extension title.
 - [ ] Single purpose held: topic-based content blurring, nothing else.

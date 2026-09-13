@@ -24,7 +24,7 @@ export default defineConfig({
   }),
   manifestVersion: 3,
   webExt: { disabled: true },
-  manifest: {
+  manifest: ({ browser }) => ({
     name: 'Lensing',
     description: 'Blur what you did not come here to read. Runs entirely on your device.',
     permissions: ['storage'],
@@ -38,8 +38,22 @@ export default defineConfig({
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
     },
-    browser_specific_settings: {
-      gecko: { id: 'lensing@juliomatcom.dev', strict_min_version: '115.0' },
-    },
-  },
+    /**
+     * Floor set by `color-mix()`, the newest thing the stylesheets use. Below it
+     * the blur label and the no-topics card lose their backgrounds, which is a
+     * broken-looking install rather than an honest refusal to run.
+     */
+    ...(browser === 'chrome' ? { minimum_chrome_version: '111' } : {}),
+    /**
+     * Firefox only. Chrome logs it as an unrecognized key, and a manifest a
+     * reviewer has to explain away is a manifest worth trimming.
+     */
+    ...(browser === 'firefox'
+      ? {
+          browser_specific_settings: {
+            gecko: { id: 'lensing@juliomatcom.dev', strict_min_version: '115.0' },
+          },
+        }
+      : {}),
+  }),
 });
