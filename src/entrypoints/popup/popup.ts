@@ -17,6 +17,7 @@ const el = <T extends HTMLElement>(id: string): T => {
 };
 
 const enabled = el<HTMLInputElement>('enabled');
+const enabledLabel = el<HTMLSpanElement>('enabled-label');
 const topics = el<HTMLTextAreaElement>('topics');
 const apply = el<HTMLButtonElement>('apply');
 const applied = el<HTMLSpanElement>('applied');
@@ -55,8 +56,13 @@ function describeStrictness(step: number): string {
   );
 }
 
+function renderEnabled(on: boolean): void {
+  enabled.checked = on;
+  enabledLabel.textContent = on ? 'On' : 'Off';
+}
+
 function render(settings: Settings): void {
-  enabled.checked = settings.enabled;
+  renderEnabled(settings.enabled);
   topics.value = topicsToText(settings.topics);
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
@@ -101,7 +107,10 @@ async function update(patch: Partial<Settings>): Promise<void> {
 render(saved);
 describeStatus(saved);
 
-enabled.addEventListener('change', () => void update({ enabled: enabled.checked }));
+enabled.addEventListener('change', () => {
+  renderEnabled(enabled.checked);
+  void update({ enabled: enabled.checked });
+});
 
 topics.addEventListener('input', refreshApply);
 

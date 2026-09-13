@@ -45,8 +45,42 @@ h1 {
 .switch {
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: var(--muted);
+  cursor: pointer;
+}
+
+/* Native checkbox stays for state and accessibility; the pill is the
+   visible control. Hidden with clip, not display:none, so it keeps
+   focus and keyboard toggling. */
+.switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.switch span {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: #dc2626;
+  box-shadow: 0 0 8px 1px color-mix(in srgb, #dc2626 70%, transparent);
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.switch input:checked + span {
+  background: #16a34a;
+  box-shadow: 0 0 8px 1px color-mix(in srgb, #16a34a 70%, transparent);
+}
+
+.switch input:focus-visible + span {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
 }
 
 .field {
@@ -75,6 +109,7 @@ textarea {
 .actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   margin-top: 8px;
   /* Apply now closes the Topics block, so it owns the gap to Strictness that
@@ -92,6 +127,18 @@ button {
   border: 1px solid var(--fg);
   border-radius: 7px;
   cursor: pointer;
+}
+
+#apply {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
 }
 
 button:disabled {

@@ -11,7 +11,7 @@
       <h1>Lensing</h1>
       <label class="switch">
         <input type="checkbox" id="enabled" />
-        <span>On</span>
+        <span id="enabled-label">On</span>
       </label>
     </header>
 
@@ -52,7 +52,10 @@
     </details>
 
     <div class="actions">
-      <button id="apply" type="button" disabled>Apply</button>
+      <button id="apply" type="button" disabled>
+        <img src="/icon/32.png" alt="" class="btn-icon" />
+        Save topics
+      </button>
       <span class="applied" id="applied" hidden>Saved</span>
     </div>
 
@@ -106,7 +109,7 @@
         <ul class="hint block-hint">
           <li>&#128077; means this content belongs in the topic.</li>
           <li>&#128078; means this content does not belong in the topic.</li>
-          <li>A correct blur needs no correction.</li>
+          <li>A correct call — blurred or shown — needs no correction.</li>
         </ul>
         <p class="hint block-hint">
           Your ratings stay on this device. One catch: it only learns from the words in
