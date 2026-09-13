@@ -57,7 +57,7 @@
     600 11px/1.4 system-ui,
     sans-serif;
   letter-spacing: 0.01em;
-  pointer-events: none;
+  cursor: pointer;
   transition: opacity 0.2s ease;
 }
 
@@ -133,10 +133,6 @@
   50% {
     opacity: 0.55;
   }
-}
-
-.lx-blur {
-  cursor: pointer;
 }
 
 /* Collapses a blurred post into a thin, glanceable row instead of a full-height
