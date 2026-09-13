@@ -15,6 +15,9 @@ import {
   type EngineStatus,
 } from '../../core/engine-status';
 import { askEngineStatus, onEngineStatus } from '../../core/status-channel';
+import { logger } from '../../core/log';
+
+const log = logger('popup');
 
 const el = <T extends HTMLElement>(id: string): T => {
   const node = document.getElementById(id);
@@ -127,10 +130,20 @@ function describeEngineStatus(status: EngineStatus | undefined): void {
   engineLine.hidden = full.tone === 'ready';
 }
 
-async function update(patch: Partial<Settings>): Promise<void> {
-  saved = await saveSettings(patch);
+/** A refused write puts the controls back to what is actually stored. */
+async function update(patch: Partial<Settings>): Promise<boolean> {
+  try {
+    saved = await saveSettings(patch);
+  } catch (error) {
+    log.warn('settings not saved', {
+      reason: error instanceof Error ? error.message : String(error),
+    });
+    render(saved);
+    return false;
+  }
   describeStatus(saved);
   refreshApply();
+  return true;
 }
 
 render(saved);
@@ -151,7 +164,8 @@ enabled.addEventListener('change', () => {
 topics.addEventListener('input', refreshApply);
 
 apply.addEventListener('click', () => {
-  void update({ topics: parseTopics(topics.value) }).then(() => {
+  void update({ topics: parseTopics(topics.value) }).then((ok) => {
+    if (!ok) return;
     topics.value = topicsToText(saved.topics);
     applied.hidden = false;
     refreshApply();
@@ -186,7 +200,9 @@ tuneFeedback.addEventListener(
 );
 
 clearTuning.addEventListener('click', () => {
-  void clearFeedback().then(renderTuning);
+  void clearFeedback()
+    .catch(() => undefined)
+    .then(renderTuning);
 });
 
 blurThinMedia.addEventListener(
@@ -212,7 +228,7 @@ showScores.addEventListener(
 reset.addEventListener('click', () => {
   void Promise.all([
     update({ ...DEFAULT_SETTINGS, topics: saved.topics }),
-    clearFeedback(),
+    clearFeedback().catch(() => undefined),
   ]).then(() => {
     render(saved);
     void renderTuning();

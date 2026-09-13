@@ -186,7 +186,7 @@ Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; 
 Two third-party messages used to appear on every load and neither meant anything:
 
 - **`VerifyEachNodeIsAssignedToAnEp`** (twice, in red — ORT pipes its stderr through `console.error`). ORT assigning shape ops to CPU on purpose. Silenced by `env.backends.onnx.logLevel = 'error'` plus `session_options.logSeverityLevel: 3` — the global env does not reach the session logger, so both are needed.
-- **`Unable to determine content-length…`** from transformers.js, once per hub file served gzipped without the header. It only means the progress bar cannot show a percentage for that file, and it has no off switch. It is matched by prefix against `EXPECTED_ERRORS` in `embedder.ts` and re-emitted as one `[lensing:embedder] expected runtime warning` line — still visible, no longer looking like a fault. Anything not on that list passes through untouched.
+- **`Unable to determine content-length…`** from transformers.js, once per hub file served gzipped without the header. Means only that the progress bar cannot show a percentage for that file; no off switch. Caught by the worker's console capture with every other library message; see conventions.md §Logging.
 
 ## Rejected
 

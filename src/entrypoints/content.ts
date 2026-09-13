@@ -54,14 +54,15 @@ export default defineContentScript({
   cssInjectionMode: 'manifest',
   main: () => {
     start().catch((error: unknown) => {
-      log.error('content script failed to start', {
-        reason: error instanceof Error ? error.message : String(error),
-      });
+      log.error('content script failed to start', { reason: describe(error) });
     });
   },
 });
 
 const log = logger('content');
+
+const describe = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
 
 async function start(): Promise<void> {
   const adapter = adapterFor(location.hostname);
@@ -214,6 +215,7 @@ async function start(): Promise<void> {
   const applySettings = (next: Settings): void => {
     const topicsChanged = !topicsEqual(next.topics, settings.topics);
     const tuningChanged = next.tuneFromFeedback !== settings.tuneFromFeedback;
+    const wasActive = active();
     settings = next;
     showNudge();
     if (!active()) {
@@ -222,14 +224,24 @@ async function start(): Promise<void> {
       return;
     }
     engine.connect();
-    if (topicsChanged) void tuner.keepOnly(next.topics);
-    if (topicsChanged || tuningChanged) requery();
+    if (topicsChanged) void persist(tuner.keepOnly(next.topics));
+    if (topicsChanged || tuningChanged || !wasActive) requery();
     else rescore();
   };
 
+  /** Storage can refuse a write (quota); the correction is lost, the feed is not. */
+  const persist = (write: Promise<void>): Promise<boolean> =>
+    write.then(
+      () => true,
+      (error: unknown) => {
+        log.warn('corrections not saved', { reason: describe(error) });
+        return false;
+      },
+    );
+
   const takeFeedback = (post: PostRef, liked: boolean): void => {
     const store = async (topic: string, vector: number[]): Promise<void> => {
-      await tuner.record(topic, post.text, vector, liked);
+      if (!(await persist(tuner.record(topic, post.text, vector, liked)))) return;
       log.info('feedback stored', { corrections: tuner.count });
       if (settings.tuneFromFeedback) requery();
     };
@@ -273,7 +285,7 @@ async function start(): Promise<void> {
 
   if (active()) {
     engine.connect();
-    void tuner.keepOnly(settings.topics);
+    void persist(tuner.keepOnly(settings.topics));
     engine.setTopics(settings.topics, corrections());
   }
 }

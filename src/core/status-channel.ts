@@ -67,7 +67,9 @@ export interface TabStatus {
 
 /** Popup side: ask the tab on screen, once, at open. */
 export async function askEngineStatus(): Promise<TabStatus> {
-  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await browser.tabs
+    .query({ active: true, currentWindow: true })
+    .catch(() => []);
   if (tab?.id === undefined) return { tabId: undefined, status: undefined };
   try {
     const reply = (await browser.tabs.sendMessage(tab.id, {

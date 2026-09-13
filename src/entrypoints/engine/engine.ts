@@ -15,40 +15,43 @@ import {
 const log = logger('engine');
 log.info('engine starting', { origin: location.origin });
 
-let worker: Worker;
-try {
-  worker = new EngineWorker();
-  log.info('worker spawned');
-} catch (error) {
-  const reason = error instanceof Error ? error.message : String(error);
-  log.error('worker could not be created', { reason });
-  throw error;
-}
-
 addEventListener('unhandledrejection', (event) => {
+  event.preventDefault();
   log.error('unhandled rejection in engine', { reason: String(event.reason) });
 });
 
 let port: MessagePort | undefined;
 let lastStatus: StatusEvent = { type: 'STATUS', state: 'idle' };
 
-worker.onmessage = (event: MessageEvent<unknown>) => {
-  const reply = event.data;
-  if (!isEngineReply(reply)) return;
-  if (reply.type === 'STATUS') lastStatus = reply;
-  port?.postMessage(reply satisfies EngineReply);
+const fail = (message: string): void => {
+  lastStatus = { type: 'STATUS', state: 'error', message };
+  port?.postMessage(lastStatus);
 };
 
-worker.onerror = (event) => {
-  log.error('worker error', { reason: event.message });
-  const status: StatusEvent = {
-    type: 'STATUS',
-    state: 'error',
-    message: event.message || 'worker failed to start',
+let worker: Worker | undefined;
+try {
+  worker = new EngineWorker();
+  log.info('worker spawned');
+} catch (error) {
+  const reason = error instanceof Error ? error.message : String(error);
+  log.error('worker could not be created', { reason });
+  fail(reason);
+}
+
+if (worker) {
+  worker.onmessage = (event: MessageEvent<unknown>) => {
+    const reply = event.data;
+    if (!isEngineReply(reply)) return;
+    if (reply.type === 'STATUS') lastStatus = reply;
+    port?.postMessage(reply satisfies EngineReply);
   };
-  lastStatus = status;
-  port?.postMessage(status);
-};
+
+  worker.onerror = (event) => {
+    event.preventDefault();
+    log.error('worker error', { reason: event.message });
+    fail(event.message || 'worker failed to start');
+  };
+}
 
 addEventListener('message', (event: MessageEvent<unknown>) => {
   const data = event.data as { type?: unknown } | null;
@@ -56,7 +59,7 @@ addEventListener('message', (event: MessageEvent<unknown>) => {
   port = event.ports[0];
   if (!port) return;
   port.onmessage = (request: MessageEvent<unknown>) => {
-    if (isEngineRequest(request.data)) worker.postMessage(request.data);
+    if (isEngineRequest(request.data)) worker?.postMessage(request.data);
   };
   port.postMessage(lastStatus);
   log.info('port connected');

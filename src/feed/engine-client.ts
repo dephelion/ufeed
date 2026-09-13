@@ -59,14 +59,14 @@ export class EngineClient {
     frame.style.cssText =
       'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;left:-9999px';
     frame.addEventListener('load', () => this.#handshake(frame));
-    frame.addEventListener('error', () => log.error('engine iframe failed to load'));
+    frame.addEventListener('error', () => log.warn('engine iframe failed to load'));
     log.info('injecting engine iframe', { src: frame.src });
     document.documentElement.appendChild(frame);
     this.#frame = frame;
 
     setTimeout(() => {
       if (this.#status.state === 'idle') {
-        log.error('engine never reported in; check the engine.html frame console', {
+        log.warn('engine never reported in; check the engine.html frame console', {
           framed: frame.isConnected,
           port: this.#port !== undefined,
           buffered: this.#outbox.length,
@@ -102,13 +102,13 @@ export class EngineClient {
     if (data.type === 'ACK') return;
     const pending = this.#pending.get(data.id);
     if (!pending) {
-      log.warn('reply with no matching request', { id: data.id, type: data.type });
+      log.info('late reply, request already timed out', { id: data.id, type: data.type });
       return;
     }
     this.#pending.delete(data.id);
     clearTimeout(pending.timer);
     if (data.type === 'ERROR') {
-      log.error('engine returned an error, revealing batch', { reason: data.message });
+      log.warn('engine returned an error, revealing batch', { reason: data.message });
       pending.resolve({});
       return;
     }

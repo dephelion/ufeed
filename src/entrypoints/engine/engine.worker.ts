@@ -2,19 +2,27 @@ import {
   isEngineRequest,
   type EngineReply,
   type EngineRequest,
+  type SetTopicsRequest,
 } from '../../core/protocol';
-import { logger } from '../../core/log';
+import { captureConsole, logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { MODEL, formatPost, formatTopic } from '../../ml/models';
 import { applyFeedback, cosine, scoreAgainstTopics, type Vector } from '../../ml/scoring';
+
+// transformers.js and ORT print handled conditions through console.warn and
+// console.error, which the browser's extension Errors page collects as faults.
+captureConsole('runtime');
 
 const log = logger('worker');
 const embedder = new Embedder();
 
 self.addEventListener('unhandledrejection', (event) => {
-  log.error('unhandled rejection in worker', { reason: String(event.reason) });
+  event.preventDefault();
+  log.error('unhandled rejection in worker', { reason: describe(event.reason) });
 });
-let topicVectors: Vector[] = [];
+
+/** Kept past a failed load, so the next load still has the query to embed. */
+let topics: { request: SetTopicsRequest; vectors?: Promise<Vector[]> } | undefined;
 let loading: Promise<void> | undefined;
 
 const post = (reply: EngineReply) => self.postMessage(reply);
@@ -33,49 +41,71 @@ function ensureLoaded(): Promise<void> {
     })
     .catch((error: unknown) => {
       loading = undefined;
-      log.error('model load failed', { reason: describe(error) });
+      log.warn('model load failed', { reason: describe(error) });
       post({ type: 'STATUS', state: 'error', message: describe(error) });
       throw error;
     });
   return loading;
 }
 
+function topicVectors(): Promise<Vector[]> {
+  const current = topics;
+  if (!current) return Promise.resolve([]);
+  current.vectors ??= embedTopics(current.request).catch((error: unknown) => {
+    current.vectors = undefined;
+    throw error;
+  });
+  return current.vectors;
+}
+
+async function embedTopics(request: SetTopicsRequest): Promise<Vector[]> {
+  const base = await embedder.embed(request.topics.map(formatTopic));
+  const vectors = base.map((v, i) => {
+    const c = request.corrections?.[i];
+    return c ? applyFeedback(v, toVectors(c.liked), toVectors(c.disliked)) : v;
+  });
+  log.info('topics embedded', {
+    model: MODEL.label,
+    count: vectors.length,
+    topics: JSON.stringify(request.topics),
+    corrected: (request.corrections ?? []).filter(
+      (c) => c.liked.length + c.disliked.length > 0,
+    ).length,
+  });
+  return vectors;
+}
+
 self.onmessage = (event: MessageEvent<unknown>) => {
   const request = event.data;
   if (!isEngineRequest(request)) return;
+  if (request.type === 'SET_TOPICS') topics = { request };
   void handle(request);
 };
 
 async function handle(request: EngineRequest): Promise<void> {
   try {
     await ensureLoaded();
+  } catch (error: unknown) {
+    post({ id: request.id, type: 'ERROR', message: describe(error) });
+    return;
+  }
+  try {
+    const vectors = await topicVectors();
     if (request.type === 'SET_TOPICS') {
-      const base = await embedder.embed(request.topics.map(formatTopic));
-      topicVectors = base.map((v, i) => {
-        const c = request.corrections?.[i];
-        return c ? applyFeedback(v, toVectors(c.liked), toVectors(c.disliked)) : v;
-      });
-      log.info('topics embedded', {
-        model: MODEL.label,
-        count: topicVectors.length,
-        topics: JSON.stringify(request.topics),
-        corrected: (request.corrections ?? []).filter(
-          (c) => c.liked.length + c.disliked.length > 0,
-        ).length,
-      });
       post({ id: request.id, type: 'ACK' });
       return;
     }
     if (request.type === 'FEEDBACK') {
       const [vector] = await embedder.embed([formatPost(request.text)]);
-      const topic = vector ? bestTopic(vector) : -1;
+      const topic = vector ? bestTopic(vector, vectors) : -1;
       log.info('feedback embedded', { liked: request.liked, topic });
       post({ id: request.id, type: 'VECTOR', vector: [...(vector ?? [])], topic });
       return;
     }
+    if (vectors.length === 0) throw new Error('scored before any topics were set');
     const started = Date.now();
-    const vectors = await embedder.embed(request.texts.map(formatPost));
-    const scores = vectors.map((v) => scoreAgainstTopics(v, topicVectors));
+    const embedded = await embedder.embed(request.texts.map(formatPost));
+    const scores = embedded.map((v) => scoreAgainstTopics(v, vectors));
     const elapsed = Date.now() - started;
     log.info('scored', {
       posts: scores.length,
@@ -84,7 +114,7 @@ async function handle(request: EngineRequest): Promise<void> {
     });
     post({ id: request.id, type: 'SCORES', scores });
   } catch (error: unknown) {
-    log.error('scoring failed', { reason: describe(error) });
+    log.error('request failed', { type: request.type, reason: describe(error) });
     post({ id: request.id, type: 'ERROR', message: describe(error) });
   }
 }
@@ -94,7 +124,7 @@ function toVectors(rows: number[][] | undefined): Vector[] {
 }
 
 /** The line that came closest to claiming the post is the one being corrected. */
-function bestTopic(vector: Vector): number {
+function bestTopic(vector: Vector, topicVectors: readonly Vector[]): number {
   let best = -1;
   let bestScore = -Infinity;
   topicVectors.forEach((topic, i) => {

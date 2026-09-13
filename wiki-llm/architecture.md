@@ -90,9 +90,10 @@ content → popup    { type: 'lensing:status', status }     pushed on change
 | Strictness    | Re-apply threshold from cache. No inference.                               |
 | Topics        | `epoch += 1`, clear cache and queue, new `seen` set, reveal all, re-sweep. |
 | Host disabled | Reveal all, stop.                                                          |
+| Turned on     | Same as Topics: the engine has never been sent a query.                    |
 
 **Epoch guards the race.** A batch in flight when topics change returns scores measured against the old vectors; replies from a previous epoch are discarded.
 
 ## Failure posture
 
-Fail-open everywhere. Unknown score, request timeout (8s), engine `ERROR`, or worker crash all **reveal**. A 15s watchdog logs if the engine never reports in. No path may leave a post blurred because something broke.
+Fail-open everywhere. Unknown score, request timeout (8s), engine `ERROR`, or worker crash all **reveal**. A 15s watchdog logs (debug builds) if the engine never reports in. The worker keeps the last `SET_TOPICS` past a failed load and embeds it on the next request; a `SCORE` with no topics replies `ERROR`, never a score against nothing. No path may leave a post blurred because something broke.

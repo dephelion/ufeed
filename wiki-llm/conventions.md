@@ -76,6 +76,20 @@ timeline data they ran against. The harnesses are reproducible from
 
 **`npm run dev` does not work for engine changes.** WXT serves entrypoint modules from `localhost`, which makes `new Worker()` cross-origin; it throws and the engine never starts, silently. Use `npm run watch`. `dev` is fine for popup-only work.
 
+## Logging
+
+Chrome's extension Errors page collects every `console.warn` and `console.error`, in every build. A handled condition there reads as a broken product.
+
+| Level   | Means                                                             | Prints                       |
+| :------ | :---------------------------------------------------------------- | :--------------------------- |
+| `info`  | State, progress                                                   | debug builds, `console.info` |
+| `warn`  | A condition the code handles: offline, timeout, quota, fallback   | debug builds, `console.info` |
+| `error` | A Lensing bug: an invariant broke, a loaded model failed to embed | every build, `console.error` |
+
+- **Pick `error` only if a user could file it as a bug.** Environment and network failures are `warn`; the popup already shows them.
+- **Every async path ends in a handler.** No floating rejection; `unhandledrejection` and worker `error` listeners call `preventDefault()` so the browser does not report the same fault twice.
+- **The worker captures its realm's console** (`captureConsole` in `log.ts`). transformers.js and ORT print handled conditions through `console.warn`/`console.error`; they re-emit as debug `info`, first string argument only — later arguments carry model inputs, which are post text. A real library failure still throws and is judged by the caller.
+
 ## Definition of done
 
 - [ ] Hard invariants hold; privacy and fail-open paths covered by assertions.

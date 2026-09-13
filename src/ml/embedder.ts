@@ -19,41 +19,6 @@ if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
 env.backends.onnx.logLevel = 'error';
 const SESSION_OPTIONS = { logSeverityLevel: 3 } as const;
 
-/**
- * Messages the libraries print on a load that went fine. Each one is true and
- * none of them is a fault, and none has an option to turn it off. Listed by the
- * prefix they start with; add to the list as new ones show up.
- *
- * - Content-length: transformers.js cannot show a percentage for a hub file
- *   served gzipped without the header. One line per such file.
- */
-const EXPECTED_ERRORS = [
-  'Unable to determine content-length from response headers.',
-] as const;
-
-function expected(message: unknown): string | undefined {
-  if (typeof message !== 'string') return undefined;
-  return EXPECTED_ERRORS.find((known) => message.startsWith(known));
-}
-
-/**
- * Folds the list above into our own warn line for the length of a load. They stay
- * visible — a known-harmless message is still worth seeing, it just should not
- * look like the library is failing. Anything not on the list passes through
- * untouched, so a new message from either library still reaches the console.
- */
-function foldExpectedErrors<T>(run: () => Promise<T>): Promise<T> {
-  const warn = console.warn;
-  console.warn = (...args: unknown[]) => {
-    const known = expected(args[0]);
-    if (known) log.warn('expected runtime warning', { message: known });
-    else warn.apply(console, args as []);
-  };
-  return run().finally(() => {
-    console.warn = warn;
-  });
-}
-
 export type Device = 'webgpu' | 'wasm' | 'cpu';
 
 const FORCED = import.meta.env.VITE_LENSING_BACKEND as Device | undefined;
@@ -109,13 +74,15 @@ export class Embedder {
       }
       try {
         log.info('trying backend', { device, model: MODEL.id });
-        this.#pipe = await foldExpectedErrors(() =>
-          pipeline<'feature-extraction'>('feature-extraction', MODEL.id, {
+        this.#pipe = await pipeline<'feature-extraction'>(
+          'feature-extraction',
+          MODEL.id,
+          {
             device,
             dtype: 'q8',
             progress_callback: report,
             session_options: SESSION_OPTIONS,
-          }),
+          },
         );
 
         onProgress?.({ state: 'warming' });
