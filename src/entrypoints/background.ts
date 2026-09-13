@@ -23,6 +23,18 @@ function urlHost(url: string | undefined): string | undefined {
 }
 
 /**
+ * The tab named in a setIcon call can close, or navigate to a discarded id,
+ * between the event firing and this running. Chrome answers with
+ * `runtime.lastError`, and an uncaught one prints as an "Unchecked
+ * runtime.lastError" extension error — a race, not a fault, so it is
+ * swallowed the same way status-channel.ts already swallows a popup that
+ * is not there to hear a broadcast.
+ */
+function setIcon(tabId: number, path: Record<string, string>): void {
+  void browser.action.setIcon({ tabId, path }).catch(() => {});
+}
+
+/**
  * Colored the moment a tab confirms it has a feed Lensing knows how to read —
  * whatever happens after that (still loading, warming up, failing outright)
  * is a separate question. Detecting the feed is the work that matters here;
@@ -30,7 +42,7 @@ function urlHost(url: string | undefined): string | undefined {
  */
 export default defineBackground(() => {
   onFeedDetected((tabId) => {
-    void browser.action.setIcon({ tabId, path: COLOR });
+    setIcon(tabId, COLOR);
   });
 
   // A tab that goes color on x.com and then navigates to a plain page keeps
@@ -43,6 +55,6 @@ export default defineBackground(() => {
     if (info.status !== 'loading') return;
     const host = urlHost(info.url ?? tab.url);
     if (host !== undefined && adapterFor(host)) return;
-    void browser.action.setIcon({ tabId, path: GRAY });
+    setIcon(tabId, GRAY);
   });
 });
