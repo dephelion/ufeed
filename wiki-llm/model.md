@@ -179,6 +179,15 @@ After load, `Embedder.selfCheck()` embeds a fixed probe pair and rejects the bac
 
 Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; absolute scores are not comparable across models. Rejection falls through to the next device; if none pass, the thrown error names every failure.
 
+**WebGPU therefore fails on every load** (`near=0.901 far=0.898`, against a required gap of 0.06), which makes it an expected event, not a warning. It logs at `info` while another device remains; only a rejection with no fallback left logs at `warn`.
+
+## Console noise from the runtime
+
+Two third-party messages used to appear on every load and neither meant anything:
+
+- **`VerifyEachNodeIsAssignedToAnEp`** (twice, in red — ORT pipes its stderr through `console.error`). ORT assigning shape ops to CPU on purpose. Silenced by `env.backends.onnx.logLevel = 'error'` plus `session_options.logSeverityLevel: 3` — the global env does not reach the session logger, so both are needed.
+- **`Unable to determine content-length…`** from transformers.js, once per hub file served gzipped without the header. It only means the progress bar cannot show a percentage for that file, and it has no off switch. It is matched by prefix against `EXPECTED_ERRORS` in `embedder.ts` and re-emitted as one `[lensing:embedder] expected runtime warning` line — still visible, no longer looking like a fault. Anything not on that list passes through untouched.
+
 ## Rejected
 
 - **Zero-shot NLI classification.** One forward pass per label per text, scales with topic count, scores normalized over the candidate set.

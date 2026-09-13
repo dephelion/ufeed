@@ -10,6 +10,50 @@ const log = logger('embedder');
 env.allowLocalModels = false;
 if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
 
+/**
+ * ORT logs at WARNING by default and pipes its stderr through `console.error`, so
+ * every load printed two red lines about shape ops being assigned to CPU — which is
+ * ORT doing the right thing on purpose. Error and above is what we want to hear.
+ * Set on the session too: the global env alone does not reach the session logger.
+ */
+env.backends.onnx.logLevel = 'error';
+const SESSION_OPTIONS = { logSeverityLevel: 3 } as const;
+
+/**
+ * Messages the libraries print on a load that went fine. Each one is true and
+ * none of them is a fault, and none has an option to turn it off. Listed by the
+ * prefix they start with; add to the list as new ones show up.
+ *
+ * - Content-length: transformers.js cannot show a percentage for a hub file
+ *   served gzipped without the header. One line per such file.
+ */
+const EXPECTED_ERRORS = [
+  'Unable to determine content-length from response headers.',
+] as const;
+
+function expected(message: unknown): string | undefined {
+  if (typeof message !== 'string') return undefined;
+  return EXPECTED_ERRORS.find((known) => message.startsWith(known));
+}
+
+/**
+ * Folds the list above into our own warn line for the length of a load. They stay
+ * visible — a known-harmless message is still worth seeing, it just should not
+ * look like the library is failing. Anything not on the list passes through
+ * untouched, so a new message from either library still reaches the console.
+ */
+function foldExpectedErrors<T>(run: () => Promise<T>): Promise<T> {
+  const warn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    const known = expected(args[0]);
+    if (known) log.warn('expected runtime warning', { message: known });
+    else warn.apply(console, args as []);
+  };
+  return run().finally(() => {
+    console.warn = warn;
+  });
+}
+
 export type Device = 'webgpu' | 'wasm' | 'cpu';
 
 const FORCED = import.meta.env.VITE_LENSING_BACKEND as Device | undefined;
@@ -65,14 +109,13 @@ export class Embedder {
       }
       try {
         log.info('trying backend', { device, model: MODEL.id });
-        this.#pipe = await pipeline<'feature-extraction'>(
-          'feature-extraction',
-          MODEL.id,
-          {
+        this.#pipe = await foldExpectedErrors(() =>
+          pipeline<'feature-extraction'>('feature-extraction', MODEL.id, {
             device,
             dtype: 'q8',
             progress_callback: report,
-          },
+            session_options: SESSION_OPTIONS,
+          }),
         );
 
         onProgress?.({ state: 'warming' });
@@ -81,11 +124,19 @@ export class Embedder {
           failures.push(
             `${device}: wrong vectors (near=${probe.near.toFixed(3)} far=${probe.far.toFixed(3)})`,
           );
-          log.warn('backend returns wrong vectors, rejecting', {
+          // A rejection with a device still to try is the guard working as designed —
+          // ORT's WebGPU backend misreads the q8 weights on every load, measured and
+          // expected. Only a rejection with nothing left to fall back on is news.
+          const fields = {
             device,
             near: probe.near.toFixed(3),
             far: probe.far.toFixed(3),
-          });
+          };
+          if (device === devices[devices.length - 1]) {
+            log.warn('backend returns wrong vectors, no fallback left', fields);
+          } else {
+            log.info('backend returns wrong vectors, falling back', fields);
+          }
           this.#pipe = undefined;
           continue;
         }

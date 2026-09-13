@@ -55,3 +55,15 @@ Not a standard ML term — this project's own load-time sanity check. Two fixed 
 ## Backend (inference backend)
 
 The underlying engine actually running the model's math — CPU (WASM) or WebGPU here. Same model, same weights; different backend can silently give different (even wrong) numbers, which is what the self-check above guards against.
+
+## ONNX
+
+An open file format for a trained neural net: the graph of operations plus the weights, independent of the framework that trained it. What `Xenova/e5-small-v2` ships as, and what makes running it in a browser possible at all.
+
+## ONNX Runtime (ORT)
+
+Microsoft's engine that executes an ONNX graph. `onnxruntime-web` here, sitting under transformers.js and above the backend; its compiled WASM is the `/ort/` payload the extension bundles rather than fetches. Log lines naming a `.cc` file come from it — that is its C++ source compiled to WASM, not a JavaScript error.
+
+## Execution provider (EP)
+
+ORT's name for a backend it can hand an operation to — `wasm`, `webgpu`, `cpu`. Assignment is per-operation, not per-model: ORT routes some ops elsewhere than the requested EP on purpose, which is what its `VerifyEachNodeIsAssignedToAnEp` message reports. See [model.md](model.md) for why that message is not a fault.

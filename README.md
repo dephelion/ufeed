@@ -61,10 +61,14 @@ logged — counts, scores, states and errors only.
 [lensing:client]  injecting engine iframe src=chrome-extension://.../engine.html
 [lensing:engine]  engine page loaded origin=chrome-extension://...
 [lensing:worker]  loading model
-[lensing:worker]  ready backend=webgpu
+[lensing:worker]  ready backend=wasm
 [lensing:worker]  scored posts=16 msPerPost=12 max=0.244
 [lensing:content] batch applied posts=16 blurred=13 strictness=0.06
 ```
+
+WebGPU is tried first and rejected by the self-check on the way past — ORT
+miscomputes the q8 weights there — so `backend=wasm` is the expected steady
+state, and the rejection prints at `info`, not as a warning.
 
 The first missing line locates the failure. `content` and `client` lines appear in
 the page console; `engine` and `worker` lines come from the iframe, so pick the
@@ -139,7 +143,7 @@ flowchart TB
   subgraph ext["Extension origin — chrome-extension://"]
     frame["hidden iframe<br/>routes messages"]
     subgraph thr["worker thread"]
-      wk["e5-small-v2<br/>embed, then cosine vs topics"]
+      wk["e5-small-v2<br/>embed, then cosine vs topics<br/>stack detailed below"]
     end
     frame -- "texts" --> wk
     wk -- "scores" --> frame
@@ -159,7 +163,60 @@ The iframe never sees the page: strings go in, scores come out. That boundary is
 what keeps post text on your device, and it is why the model layer knows nothing
 about X.
 
-Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md).
+### Inside the worker
+
+"Embed" is four pieces of machinery, and the console lines on a cold start come
+from three different ones — so it is worth knowing which is which. The thick
+edges are the same `texts` / `scores` pair the first diagram draws, seen from the
+other side of the worker boundary.
+
+```mermaid
+flowchart TB
+  frame["engine.ts — the iframe document<br/>relays, holds no state<br/>MessagePort to the content script"]
+
+  subgraph wkr["worker thread — engine.worker.ts"]
+    tj["transformers.js<br/>tokenize · mean-pool · normalize"]
+    ort["ONNX Runtime (ORT)<br/>executes the graph, node by node"]
+    wasm["wasm execution provider<br/>SIMD, single thread"]
+    cpu["CPU<br/>shape ops, on purpose"]
+    out["vectors → cosine vs topic vectors<br/>= the score"]
+    tj --> ort
+    ort --> wasm
+    ort -. "some nodes" .-> cpu
+    wasm --> out
+    cpu --> out
+  end
+
+  frame == "SCORE texts<br/>worker.postMessage" ==> tj
+  out == "SCORES, STATUS<br/>self.postMessage" ==> frame
+
+  gpu["webgpu execution provider<br/>rejected every load:<br/>miscomputes q8"]
+  ort -. "tried first" .-> gpu
+
+  weights[("hub CDN<br/>e5-small-v2 q8 weights<br/>fetched once, then cached")] -. "model" .-> tj
+  runtime[("bundled /ort/*.wasm<br/>never fetched at runtime")] -. "engine" .-> ort
+```
+
+**ONNX** is the model's file format — graph plus weights, framework-independent.
+**ORT** is Microsoft's engine that executes it, and an **execution provider** is a
+backend ORT can hand an operation to. Assignment is per operation, not per model:
+ORT deliberately keeps shape ops on CPU because moving them costs more than they
+save. That is all its `VerifyEachNodeIsAssignedToAnEp` line means, which is why
+the runtime is configured to log errors only.
+
+The two supply lines are deliberately different. **Weights** come from the hub CDN
+on first load and live in the browser cache after that. The **runtime WASM** is
+bundled in the extension and never fetched — remote WASM is reviewed as remote
+code execution, and that is not a review this extension needs to pass.
+
+WebGPU is tried first on every load and rejected on every load: ORT's WebGPU
+backend misreads the q8 weights and returns confident nonsense rather than
+failing, so the self-check probe is the only thing standing between that and a
+feed blurred at random. `wasm` is the steady state.
+
+Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md), model
+detail in [`wiki-llm/model.md`](wiki-llm/model.md), terms in
+[`wiki-llm/glossary.md`](wiki-llm/glossary.md).
 
 ## Source of truth
 
