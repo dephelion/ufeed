@@ -55,13 +55,13 @@
 - **No-Re-Read Constraint:** Do not re-read files after editing unless tests/lint fail.
 - **Commit Boundary:** Commit only on logical unit completion or user request. Return silent output (`SUCCESS: <task> micro-step N`). Pre-v1: work directly on `main`. Revisit branch/PR discipline when the extension ships.
 - **Definition of Done:**
-   - [ ] Passed Pre-Execution Integration Audit (zero broken cross-module imports/types).
-   - [ ] Hard Invariants hold; privacy and fail-open paths covered by assertions.
-   - [ ] Automated tests pass cleanly (zero network I/O; adapters tested against captured fixture HTML).
-   - [ ] No new test asserts blur radius, timing, color, or vendor DOM shape where the decision behind it would do.
-   - [ ] Verified on Chrome AND Firefox when the change touches manifest, messaging, or the engine host.
-   - [ ] Full verification command runs clean (`npm run format:check && npm run compile && npm test`).
-   - [ ] Zero raw `console.*`; never log post text under any condition.
-   - [ ] No new comment except a true edge-case WHY; none over 2 lines; zero measurements or dated findings inline.
-   - [ ] Owning `wiki-llm/` page updated in the same commit if architecture, contract, model, thresholds, selectors, permissions, or budgets moved.
-   - [ ] Formatter run before commit (`npm run format`).
+  - [ ] Passed Pre-Execution Integration Audit (zero broken cross-module imports/types).
+  - [ ] Hard Invariants hold; privacy and fail-open paths covered by assertions.
+  - [ ] Automated tests pass cleanly (zero network I/O; adapters tested against captured fixture HTML).
+  - [ ] No new test asserts blur radius, timing, color, or vendor DOM shape where the decision behind it would do.
+  - [ ] Verified on Chrome AND Firefox when the change touches manifest, messaging, or the engine host.
+  - [ ] Full verification command runs clean (`npm run format:check && npm run compile && npm test`).
+  - [ ] Zero raw `console.*`; never log post text under any condition.
+  - [ ] No new comment except a true edge-case WHY; none over 2 lines; zero measurements or dated findings inline.
+  - [ ] Owning `wiki-llm/` page updated in the same commit if architecture, contract, model, thresholds, selectors, permissions, or budgets moved.
+  - [ ] Formatter run before commit (`npm run format`).
