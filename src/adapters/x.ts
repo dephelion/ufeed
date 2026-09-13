@@ -39,12 +39,19 @@ export const xAdapter: SiteAdapter = {
 };
 
 /**
- * First tweetText only. A cell can hold a quoted tweet or a thread, and joining
- * them scores one blob of unrelated subjects. textContent, not innerText:
- * innerText forces a reflow on every post. Empty is a real answer: a caption-less
- * media post has no tweetText node at all.
+ * Every tweetText node, joined: a quote tweet's own comment is often a few
+ * throwaway words ("12 years ago") with the whole subject living in the quoted
+ * tweet beneath it, so scoring the outer text alone judges the wrong thing.
+ * DOM order puts the outer comment first and the quote after, which reads the
+ * same way a person does. textContent, not innerText: innerText forces a
+ * reflow on every post. Empty is a real answer: a caption-less media post has
+ * no tweetText node at all.
  */
 function extractText(container: HTMLElement): string {
-  const node = container.querySelector(TEXT);
-  return node?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+  const nodes = container.querySelectorAll(TEXT);
+  return [...nodes]
+    .map((node) => node.textContent ?? '')
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }

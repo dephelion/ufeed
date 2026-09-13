@@ -79,16 +79,26 @@ describe('xAdapter.findPosts', () => {
     expect(xAdapter.findPosts(mount(html))).toHaveLength(0);
   });
 
-  it('scores only the outer tweet, never blending a quoted tweet into it', () => {
+  it('folds a quoted tweet into the text, since the two read as one post', () => {
     const html = `<div data-testid="cellInnerDiv"><article>
-      <div data-testid="tweetText"><span>Left-wing Bundestag member ejected during the speech</span></div>
+      <div data-testid="tweetText"><span>Worth reading this</span></div>
       <div role="link">
         <div data-testid="tweetText"><span>Our new inference pipeline ships today</span></div>
       </div>
     </article></div>`;
     expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(
-      'Left-wing Bundestag member ejected during the speech',
+      'Worth reading this Our new inference pipeline ships today',
     );
+  });
+
+  it('still catches the topic when the comment on top of the quote carries none of it', () => {
+    const html = `<div data-testid="cellInnerDiv"><article>
+      <div data-testid="tweetText"><span>12 years ago</span></div>
+      <div role="link">
+        <div data-testid="tweetText"><span>${LONG}</span></div>
+      </div>
+    </article></div>`;
+    expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(`12 years ago ${LONG}`);
   });
 
   it('ignores surrounding chrome: handle, timestamp and engagement counts', () => {
