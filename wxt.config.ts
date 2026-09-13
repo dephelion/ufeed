@@ -29,11 +29,25 @@ export default defineConfig({
     description: 'Blur what you did not come here to read. Runs entirely on your device.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
+    /**
+     * Grayscale by default: a tab with no feed, or one whose engine has not
+     * started, never reports in (see background.ts), so the toolbar icon has
+     * to start idle-looking rather than assume a feed is running.
+     */
+    action: {
+      default_icon: {
+        16: 'icon-gray/16.png',
+        32: 'icon-gray/32.png',
+        48: 'icon-gray/48.png',
+        128: 'icon-gray/128.png',
+      },
+    },
     web_accessible_resources: [
-      // icon/48.png is the toolbar icon, shown by the no-topics card so a new
-      // reader knows which button to look for. An <img> in the page cannot load
-      // an extension file that is not listed here.
-      { resources: ['engine.html', 'icon/48.png'], matches: FEED_HOSTS },
+      // icon-gray/48.png is the toolbar icon as it looks during the no-topics
+      // state the nudge card appears in, so a new reader knows which (gray)
+      // button to look for. An <img> in the page cannot load an extension file
+      // that is not listed here.
+      { resources: ['engine.html', 'icon-gray/48.png'], matches: FEED_HOSTS },
     ],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",

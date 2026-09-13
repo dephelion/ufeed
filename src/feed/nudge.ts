@@ -41,7 +41,9 @@ export function mountNudge(options: NudgeOptions): Nudge {
   card.setAttribute('role', 'status');
   card.hidden = true;
 
-  const icon = browser.runtime.getURL('icon/48.png');
+  // Gray, not the branded color icon: this card only shows while the tab has
+  // no topics, which is exactly the state that leaves the toolbar icon gray.
+  const icon = browser.runtime.getURL('icon-gray/48.png');
   card.innerHTML =
     `<img class="lx-nudge-icon" src="${icon}" alt="" width="28" height="28">` +
     '<div class="lx-nudge-body">' +

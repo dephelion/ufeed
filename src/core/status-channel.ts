@@ -19,6 +19,7 @@ import type { EngineStatus } from './engine-status';
 
 const ASK = 'lensing:status?';
 const TELL = 'lensing:status';
+const FEED = 'lensing:feed';
 
 interface Ask {
   type: typeof ASK;
@@ -29,11 +30,18 @@ interface Tell {
   status: EngineStatus;
 }
 
+interface Feed {
+  type: typeof FEED;
+}
+
 const isAsk = (m: unknown): m is Ask =>
   typeof m === 'object' && m !== null && (m as Ask).type === ASK;
 
 const isTell = (m: unknown): m is Tell =>
   typeof m === 'object' && m !== null && (m as Tell).type === TELL;
+
+const isFeed = (m: unknown): m is Feed =>
+  typeof m === 'object' && m !== null && (m as Feed).type === FEED;
 
 /** Content side: answer whenever asked. `current` is read at answer time. */
 export function serveEngineStatus(current: () => EngineStatus): () => void {
@@ -84,6 +92,27 @@ export function onEngineStatus(
   const listener = (message: unknown, sender: browser.Runtime.MessageSender) => {
     if (!isTell(message) || sender.tab?.id !== tabId) return undefined;
     fn(message.status);
+    return undefined;
+  };
+  browser.runtime.onMessage.addListener(listener);
+  return () => browser.runtime.onMessage.removeListener(listener);
+}
+
+/**
+ * Content side: once, the moment an adapter matches — before settings, the
+ * engine, or anything that can fail. The toolbar icon reads this as "this tab
+ * is Lensing's business", full stop; whether filtering ever actually starts
+ * is a separate question the icon does not need to answer.
+ */
+export function publishFeedDetected(): void {
+  void browser.runtime.sendMessage({ type: FEED } satisfies Feed).catch(() => {});
+}
+
+/** Background side: colors a tab's icon the moment that tab confirms a feed. */
+export function onFeedDetected(fn: (tabId: number) => void): () => void {
+  const listener = (message: unknown, sender: browser.Runtime.MessageSender) => {
+    if (!isFeed(message) || sender.tab?.id === undefined) return undefined;
+    fn(sender.tab.id);
     return undefined;
   };
   browser.runtime.onMessage.addListener(listener);

@@ -13,7 +13,11 @@ import {
 } from '../core/settings';
 import { loadSettings, onSettingsChanged, saveSettings } from '../core/settings-storage';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
-import { publishEngineStatus, serveEngineStatus } from '../core/status-channel';
+import {
+  publishEngineStatus,
+  publishFeedDetected,
+  serveEngineStatus,
+} from '../core/status-channel';
 import {
   blur,
   clearPending,
@@ -65,6 +69,7 @@ async function start(): Promise<void> {
     log.info('no adapter for host, standing down', { host: location.hostname });
     return;
   }
+  publishFeedDetected();
 
   let settings = await loadSettings();
   const tuner = await Tuning.load();
