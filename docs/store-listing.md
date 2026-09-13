@@ -8,7 +8,7 @@ asks for. Kept in the repo so the listing and the code change together.
 | Field          | Value                                                    |
 | :------------- | :------------------------------------------------------- |
 | Name           | Lensing                                                  |
-| Version        | 0.1.1 — pre-1.0 while it is in friends' hands            |
+| Version        | 0.2.0 — pre-1.0 while it is in friends' hands            |
 | Category       | Productivity                                             |
 | Language       | English                                                  |
 | Support email  | contact@dephelion.com                                    |
@@ -27,7 +27,7 @@ before anything can be published, unlisted included.
 
 ## Short description (132 char max)
 
-> Blur what you did not come here to read. Choose your topics; Lensing blurs the rest of your feed, on your device.
+> Choose the topics you care about, and Lensing blurs the other posts in your social feeds. Everything runs on your device.
 
 ## Detailed description
 

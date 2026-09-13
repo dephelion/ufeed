@@ -26,7 +26,8 @@ export default defineConfig({
   webExt: { disabled: true },
   manifest: ({ browser }) => ({
     name: 'Lensing',
-    description: 'Blur what you did not come here to read. Runs entirely on your device.',
+    description:
+      'Choose the topics you care about, and Lensing blurs the other posts in your social feeds. Everything runs on your device.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
     /**

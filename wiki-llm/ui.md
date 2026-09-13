@@ -122,7 +122,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Control                           | Effect                                                                                                           |
 | :-------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | On                                | Global switch. Off reveals everything.                                                                           |
-| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed.                                           |
+| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped. |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing. |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                           |
 | Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                       |
