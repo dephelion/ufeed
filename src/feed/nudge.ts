@@ -9,11 +9,6 @@ import browser from 'webextension-polyfill';
  * content script. So it points at the toolbar icon and shows that icon, which is
  * the part a new user has to find.
  */
-export interface NudgeOptions {
-  /** Turning Lensing off is the honest second option, so the card offers it. */
-  onTurnOff(): void;
-}
-
 export interface Nudge {
   setVisible(visible: boolean): void;
   destroy(): void;
@@ -35,7 +30,7 @@ function whenBody(attach: (body: HTMLElement) => void): () => void {
   return () => clearInterval(timer);
 }
 
-export function mountNudge(options: NudgeOptions): Nudge {
+export function mountNudge(): Nudge {
   const card = document.createElement('div');
   card.className = 'lx-nudge';
   card.setAttribute('role', 'status');
@@ -51,7 +46,6 @@ export function mountNudge(options: NudgeOptions): Nudge {
     '<p>It is on, but it does not know what you want to see, so nothing is ' +
     'being blurred. Open the icon above in your browser toolbar and add a ' +
     'topic or two.</p>' +
-    '<button type="button" class="lx-nudge-off">Turn Lensing off</button>' +
     '</div>' +
     '<button type="button" class="lx-nudge-x" aria-label="Hide until the next ' +
     'page load">&times;</button>';
@@ -64,10 +58,6 @@ export function mountNudge(options: NudgeOptions): Nudge {
   const paint = () => {
     card.hidden = !(wanted && !dismissed);
   };
-
-  card.querySelector('.lx-nudge-off')!.addEventListener('click', () => {
-    options.onTurnOff();
-  });
 
   card.querySelector('.lx-nudge-x')!.addEventListener('click', () => {
     dismissed = true;

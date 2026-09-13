@@ -186,6 +186,10 @@ details {
   margin: 0 0 14px;
 }
 
+.hint-details {
+  margin: 2px 0 0;
+}
+
 summary {
   cursor: pointer;
   color: var(--muted);

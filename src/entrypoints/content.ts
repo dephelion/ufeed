@@ -11,7 +11,7 @@ import {
   topicsEqual,
   type Settings,
 } from '../core/settings';
-import { loadSettings, onSettingsChanged, saveSettings } from '../core/settings-storage';
+import { loadSettings, onSettingsChanged } from '../core/settings-storage';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
 import {
   publishEngineStatus,
@@ -93,9 +93,7 @@ async function start(): Promise<void> {
     if (next.state === 'error') revealAll(document);
   });
 
-  const nudge = mountNudge({
-    onTurnOff: () => void saveSettings({ enabled: false }),
-  });
+  const nudge = mountNudge();
   const showNudge = () => nudge.setVisible(needsTopics(settings, location.hostname));
 
   const active = () => isActiveOn(settings, location.hostname);

@@ -73,42 +73,64 @@
       <input type="checkbox" id="blur-thin-media" />
       Blur images and videos with no text
     </label>
-    <p class="hint">
-      Lensing reads words, not pictures. When a photo or video has only a word or two with
-      it, there is nothing to compare against your topics. Turn this on to blur those
-      posts instead of letting them through.
-    </p>
+    <details class="hint-details">
+      <summary>Details</summary>
+      <p class="hint">
+        Lensing reads words, not pictures. When a photo or video has only a word or two
+        with it, there is nothing to compare against your topics. Turn this on to blur
+        those posts instead of letting them through.
+      </p>
+    </details>
 
     <label class="check" for="blur-other-languages">
       <input type="checkbox" id="blur-other-languages" />
       Blur posts that aren't in English
     </label>
-    <p class="hint">
-      Lensing only understands English. It can't tell whether a post in another language
-      is about your topics or not, so it lets some through and blurs others at random.
-      Turn this on to blur them all — including ones that are on topic.
-      <br />
-      Posts already on screen stay as they are. Scroll on, or reload the page, to see the
-      change.
-    </p>
+    <details class="hint-details">
+      <summary>Details</summary>
+      <p class="hint">
+        Lensing only understands English. It can't tell whether a post in another language
+        is about your topics or not, so it lets some through and blurs others at random.
+        Turn this on to blur them all — including ones that are on topic.
+        <br />
+        Posts already on screen stay as they are. Scroll on, or reload the page, to see
+        the change.
+      </p>
+    </details>
 
     <label class="check" for="collapse-blurred">
       <input type="checkbox" id="collapse-blurred" />
       Collapse blurred posts into a thin row
     </label>
-    <p class="hint">
-      Instead of leaving a blurred post at full height, shrink it down to a small dark row
-      so it takes up almost no space while you scroll past. The label still shows, and a
-      click reveals it like any other blurred post.
-    </p>
+    <details class="hint-details">
+      <summary>Details</summary>
+      <p class="hint">
+        Instead of leaving a blurred post at full height, shrink it down to a small dark
+        row so it takes up almost no space while you scroll past. The label still shows,
+        and a click reveals it like any other blurred post.
+      </p>
+    </details>
 
-    <details id="advanced">
-      <summary>Advanced</summary>
-      <section class="block">
-        <label class="check block-head" for="tune-feedback">
-          <input type="checkbox" id="tune-feedback" />
-          Learn from my thumbs
-        </label>
+    <label class="check" for="show-scores">
+      <input type="checkbox" id="show-scores" />
+      Show each post's score
+    </label>
+    <details class="hint-details">
+      <summary>Details</summary>
+      <p class="hint">
+        Adds a small label to every post showing the score it got, the score it needed to
+        stay visible, and how long it is. Useful for working out why something was
+        blurred.
+      </p>
+    </details>
+
+    <section class="block">
+      <label class="check block-head" for="tune-feedback">
+        <input type="checkbox" id="tune-feedback" />
+        Learn from my thumbs
+      </label>
+      <details class="hint-details">
+        <summary>Details</summary>
         <p class="hint block-hint">Hover over a post to give it a thumb up or down.</p>
         <ul class="hint block-hint">
           <li>&#128077; means this content belongs in the topic.</li>
@@ -121,48 +143,38 @@
           forgettable, skip it — rating it teaches Lensing the wrong thing. Leave this off
           and the buttons stay hidden.
         </p>
-        <dl class="stats">
-          <div>
-            <dt>&#128077; Kept</dt>
-            <dd id="stat-up">0</dd>
-          </div>
-          <div>
-            <dt>&#128078; Blurred</dt>
-            <dd id="stat-down">0</dd>
-          </div>
-          <div>
-            <dt>Rated</dt>
-            <dd id="stat-total">0</dd>
-          </div>
-        </dl>
-        <div class="row block-foot">
-          <span class="hint block-note" id="tuning-note"></span>
-          <button id="clear-tuning" class="ghost" type="button">Clear tuning</button>
+      </details>
+      <dl class="stats">
+        <div>
+          <dt>&#128077; Kept</dt>
+          <dd id="stat-up">0</dd>
         </div>
-      </section>
+        <div>
+          <dt>&#128078; Blurred</dt>
+          <dd id="stat-down">0</dd>
+        </div>
+        <div>
+          <dt>Rated</dt>
+          <dd id="stat-total">0</dd>
+        </div>
+      </dl>
+      <div class="row block-foot">
+        <span class="hint block-note" id="tuning-note"></span>
+        <button id="clear-tuning" class="ghost" type="button">Clear tuning</button>
+      </div>
+    </section>
 
-      <label class="check" for="show-scores">
-        <input type="checkbox" id="show-scores" />
-        Show each post's score
-      </label>
-      <p class="hint">
-        Adds a small label to every post showing the score it got, the score it needed to
-        stay visible, and how long it is. Useful for working out why something was
-        blurred.
+    <section class="block">
+      <div class="row block-head">
+        <span>Start over</span>
+        <button id="reset" class="ghost" type="button">Reset</button>
+      </div>
+      <p class="hint block-hint">
+        Puts strictness and every option on this page back to how they started, and
+        deletes every thumb rating you have given. Your topics are kept, and nothing
+        leaves this device either way.
       </p>
-
-      <section class="block">
-        <div class="row block-head">
-          <span>Start over</span>
-          <button id="reset" class="ghost" type="button">Reset</button>
-        </div>
-        <p class="hint block-hint">
-          Puts strictness and every option on this page back to how they started, and
-          deletes every thumb rating you have given. Your topics are kept, and nothing
-          leaves this device either way.
-        </p>
-      </section>
-    </details>
+    </section>
 
     <footer>
       <p class="status-line">
