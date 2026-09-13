@@ -11,7 +11,7 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `permissions`               | `storage`                                                                                                                  | Settings only.                                                                                                                                     |
 | `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`, `*://linkedin.com/*`, `*://*.linkedin.com/*`, `*://reddit.com/*`, `*://*.reddit.com/*` | Default, not optional — installing Lensing implies wanting it on the sites you use. Both patterns per site: `*.reddit.com` misses the bare domain. |
-| `web_accessible_resources`  | `engine.html`, `icon/48.png`                                                                                               | The iframe the content script injects, plus the toolbar icon the no-topics card shows — an `<img>` in the page cannot load an unlisted file.       |
+| `web_accessible_resources`  | `engine.html`, `icon-gray/48.png`                                                                                          | The iframe the content script injects, plus the toolbar icon the no-topics card shows — an `<img>` in the page cannot load an unlisted file.       |
 | `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`                                                                                     | **Mandatory** or ONNX Runtime will not instantiate.                                                                                                |
 | `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`                                                                                    | Required to install on Firefox.                                                                                                                    |
 | `content_scripts[].css`     | `blur.css`                                                                                                                 | Declared CSS applies before first paint; injected does not.                                                                                        |
@@ -49,7 +49,9 @@ node -e "const s=require('sharp'),f=require('fs').readFileSync('assets/logo.svg'
 
 `density` sets the supersample before downscaling: 1200 rasterizes at 8533px. The source SVG has no intrinsic size (`width="100%"`), so without a density it rasterizes at 512 and any larger icon is an upscale.
 
-`action` declares no `default_icon`; both browsers fall back to `icons` for the toolbar button.
+**Toolbar icon starts gray** (`action.default_icon` → `public/icon-gray/`). `background.ts` colors a tab on the content script's feed message, and again on `tabs.onUpdated` `complete` for a feed host; grays on `loading` for any other host.
+
+**Per-tab icons do not survive a commit.** Chrome clears them, and a prerendered or back/forward-cached page commits without re-running the content script. The content message alone left those tabs gray.
 
 ## ONNX Runtime
 

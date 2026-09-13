@@ -52,9 +52,11 @@ export default defineBackground(() => {
   // than one 'loading' event for a single visit, and graying on all of them
   // raced the content script's own color signal and sometimes won.
   browser.tabs.onUpdated.addListener((tabId, info, tab) => {
-    if (info.status !== 'loading') return;
     const host = urlHost(info.url ?? tab.url);
-    if (host !== undefined && adapterFor(host)) return;
-    setIcon(tabId, GRAY);
+    const feed = host !== undefined && adapterFor(host) !== undefined;
+    if (info.status === 'loading' && !feed) setIcon(tabId, GRAY);
+    // Chrome clears per-tab icons when a page commits, and a prerendered or
+    // back/forward-cached page commits without re-running the content script.
+    if (info.status === 'complete' && feed) setIcon(tabId, COLOR);
   });
 });
