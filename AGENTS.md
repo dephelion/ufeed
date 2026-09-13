@@ -26,11 +26,10 @@
   - **Strict Scope Separation:** Store ONLY non-obvious workspace quirks, browser/extension API oddities, or recurring tool failures. Prohibit logging task status, implementation plans, or code summaries.
   - **Cache & Token Invariant:** Single-line imperative syntax. Max 100 lines; prune resolved entries in the same edit turn.
 
-## 0. Source of Truth: `wiki-llm/`
+## Source of Truth: `wiki-llm/`
 
 `wiki-llm/` is the authoritative model of how Lensing works and the map an agent reads before touching code. Consult it first; keep it synced as code changes.
 
-- **Wiki First:** To answer any architectural, model, selector, UI, permission, privacy or testing question — or to orient in an unfamiliar subsystem before reading its source — read `wiki-llm/index.md`, then open ONLY the page it names. Do this BEFORE open-ended grep or spending thinking budget on file reads. Drop to source only when no page covers the question or the page is demonstrably stale (then fix the page).
 - **Update-On-Change:** Update the affected `wiki-llm/` page in the SAME commit as any change to architecture, message contract, selectors, model, thresholds, permissions, budgets, or build commands. New page -> add its `index.md` row. Prohibit orphan pages.
 - **Authoring Standard (write inline):** Author every `wiki-llm/` edit directly to the token-optimized standard — telegraphic, imperative, one fact per line, no narrative prose, no rule repeated across sections, no multi-line mock examples. Preserve each page's `Maintenance Invariant` header and `> **Answers:**` routing line; never alter meaning, invariants, IDs, or commands.
 - **Measurements Live in `wiki-llm/`:** AUC, precision/recall, latency, thresholds, dated findings and negative results NEVER go inline. A constant in code cites its page and nothing more.
@@ -41,22 +40,23 @@
 
 ---
 
-## 1. Hard Invariants (Lensing-specific)
+## Hard Invariants
 
-1. **Privacy:** Post text never leaves the device, never reaches a log, never persists beyond the session cache. Zero analytics. The only permitted network request is model weights from the CDN.
-2. **Fail-Open:** Every error, timeout, and unready state reveals content. No code path may leave a post blurred because something broke. Assert this directly. A backend that loads but miscomputes must be rejected, not trusted (`wiki-llm/model.md`).
-3. **Host Page Integrity:** Never break the page. All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative` (see `wiki-llm/ui.md`). Never mutate host DOM beyond class and `aria-hidden` toggles.
-4. **Cross-Browser Floor:** Every API used must work on Chrome MV3 AND Firefox MV3. Promise-style `webextension-polyfill` only — never callback-style, never an aliased `browser ?? chrome`. Chrome-only paths (`chrome.offscreen`) are optimizations behind a fallback, never the default.
-5. **Main Thread:** No inference, embedding, or tokenization on the page's main thread. Ever.
+- **Wiki First:** First tool call on any code, architecture, model, selector, UI, permission, or testing task reads `wiki-llm/index.md`, then opens ONLY the page it names. No grep, source read, or thinking budget spent before that. Skip only when no page could plausibly cover the question — state why, then proceed to source.
+- **Privacy:** Post text never leaves the device, never reaches a log, never persists beyond the session cache. Zero analytics. The only permitted network request is model weights from the CDN.
+- **Fail-Open:** Every error, timeout, and unready state reveals content. No code path may leave a post blurred because something broke. Assert this directly. A backend that loads but miscomputes must be rejected, not trusted (`wiki-llm/model.md`).
+- **Host Page Integrity:** Never break the page. All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative` (see `wiki-llm/ui.md`). Never mutate host DOM beyond class and `aria-hidden` toggles.
+- **Cross-Browser Floor:** Every API used must work on Chrome MV3 AND Firefox MV3. Promise-style `webextension-polyfill` only — never callback-style, never an aliased `browser ?? chrome`. Chrome-only paths (`chrome.offscreen`) are optimizations behind a fallback, never the default.
+- **Main Thread:** No inference, embedding, or tokenization on the page's main thread. Ever.
 
-## 2. Atomic Task Execution & Verification
+## Atomic Task Execution & Verification
 
-1. **Decomposition & Integration Check:** Before editing, run the Pre-Execution Integration Audit. Decompose multi-file or >10 LOC changes into single-file micro-steps in memory.
-2. **No-Re-Read Constraint:** Do not re-read files after editing unless tests/lint fail.
-3. **Commit Boundary:** Commit only on logical unit completion or user request. Return silent output (`SUCCESS: <task> micro-step N`). Pre-v1: work directly on `main`. Revisit branch/PR discipline when the extension ships.
-4. **Definition of Done:**
+- **Decomposition & Integration Check:** Before editing, run the Pre-Execution Integration Audit. Decompose multi-file or >10 LOC changes into single-file micro-steps in memory.
+- **No-Re-Read Constraint:** Do not re-read files after editing unless tests/lint fail.
+- **Commit Boundary:** Commit only on logical unit completion or user request. Return silent output (`SUCCESS: <task> micro-step N`). Pre-v1: work directly on `main`. Revisit branch/PR discipline when the extension ships.
+- **Definition of Done:**
    - [ ] Passed Pre-Execution Integration Audit (zero broken cross-module imports/types).
-   - [ ] Hard Invariants §1 hold; privacy and fail-open paths covered by assertions.
+   - [ ] Hard Invariants hold; privacy and fail-open paths covered by assertions.
    - [ ] Automated tests pass cleanly (zero network I/O; adapters tested against captured fixture HTML).
    - [ ] No new test asserts blur radius, timing, color, or vendor DOM shape where the decision behind it would do.
    - [ ] Verified on Chrome AND Firefox when the change touches manifest, messaging, or the engine host.
