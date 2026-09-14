@@ -146,6 +146,10 @@ Concrete beats abstract: posts write about code, not about categories. `tech` sc
 
 `q' = normalize(q + 0.6 * mean(liked) - 0.4 * mean(disliked))` — Rocchio, applied to every topic vector in the worker. No training: vector arithmetic over embeddings already computed.
 
+**The whole post is one vector; no word is attributable.** The adapter's extracted text goes over as one string, tagged `passage:`, and the topic vector moves by the formula above. There is no term weighting to inspect and nothing that can say which word moved it — a limitation to state plainly rather than an explanation waiting to be built.
+
+**Scored and thumbed text are the same text.** Both pass through `forEngine()` in `queue.ts`, capped at `MAX_CHARS = 1200`. The feedback path once sent the whole post, so a correction on a long post embedded text the score never saw. **The rating key stays the whole post** (`hashText`), so capping the embedding did not orphan ratings already stored.
+
 Measured on the 205 posts with feedback items **held out** of evaluation, at equal feed volume, 40 trials per row:
 
 | Corrections | Recall | Leaks | AUC       |
@@ -156,7 +160,7 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 |          16 |    96% |  47.5 | 0.908     |
 |          32 |    97% |  42.0 | **0.936** |
 
-**Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — the worker returns that index with the embedding. Editing one line discards only that line's corrections; the rest survive, including a reorder.
+**Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — `bestTopic()` in the worker returns that index with the embedding. **Highest cosine wins with no floor**: a post weakly related to everything still lands on one line. **Measured against the corrected vector**, not the topic text, so corrections compound on the line they already shaped. A re-click reuses the stored line and never re-attributes. Editing one line discards only that line's corrections; the rest survive, including a reorder.
 
 **One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place. A duplicate would weight one post's vector twice in the centroid.
 
