@@ -211,8 +211,9 @@ The wiki already states plainly that an embedding is partially invertible and
 not the same as storing nothing. The export must inherit that honesty rather
 than quietly imply a backup is anonymous:
 
-- One sentence beside the button: the file contains embeddings of the posts you
-  rated; keep it as you would keep any personal file.
+- ~~One sentence beside the button.~~ **Overturned in review:** the popup hint
+  says what the buttons do and nothing else. The disclosure lives in the policy,
+  which is where a reader goes to read about a file rather than to make one.
 - The same sentence, once, in [privacy.md](../wiki-llm/privacy.md) and
   [`docs/privacy-policy.md`](../docs/privacy-policy.md).
 - **No automatic export, no scheduled backup, no cloud destination, ever.** The
