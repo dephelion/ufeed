@@ -4,6 +4,8 @@ import { SCHEMA, exportConfig, importConfig } from './config-transfer';
 import { EMPTY_FEEDBACK, MAX_PER_CLASS, type Feedback, type Rating } from './feedback';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
 
+const APP = '1.2.3';
+
 const vector = (seed: number): number[] =>
   Array.from({ length: MODEL.dim }, (_, i) => Math.sin(seed + i) / 8);
 
@@ -26,8 +28,7 @@ const feedback: Feedback = {
   byTopic: { 'software engineering': [rating(1), rating(2, false)] },
 };
 
-const roundTrip = (s = settings, f = feedback) =>
-  importConfig(exportConfig(s, f, '0.2.1'));
+const roundTrip = (s = settings, f = feedback) => importConfig(exportConfig(s, f, APP));
 
 describe('round trip', () => {
   it('restores the settings it was given', () => {
@@ -52,7 +53,7 @@ describe('round trip', () => {
   });
 
   it('stamps the running model', () => {
-    const file = JSON.parse(exportConfig(settings, feedback, '0.2.1'));
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
     expect(file.model).toEqual({ id: MODEL.id, dim: MODEL.dim });
     expect(file.schema).toBe(SCHEMA);
   });
@@ -72,19 +73,19 @@ describe('a file that cannot be trusted', () => {
   });
 
   it('refuses a truncated file', () => {
-    const whole = exportConfig(settings, feedback, '0.2.1');
+    const whole = exportConfig(settings, feedback, APP);
     expect(refused(whole.slice(0, whole.length / 2))).toBe('not a Lensing backup');
   });
 
   it('refuses a schema it does not know', () => {
-    const file = JSON.parse(exportConfig(settings, feedback, '0.2.1'));
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
     expect(refused(JSON.stringify({ ...file, schema: SCHEMA + 1 }))).toBe(
       'made by a newer version',
     );
   });
 
   it('refuses another model whole, settings included', () => {
-    const file = JSON.parse(exportConfig(settings, feedback, '0.2.1'));
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
     expect(refused(JSON.stringify({ ...file, model: { id: 'other', dim: 384 } }))).toBe(
       'made with a different model',
     );
@@ -96,7 +97,7 @@ describe('a file that cannot be trusted', () => {
 
 describe('a file that is trusted but wrong in places', () => {
   it('drops a rating whose vector is the wrong width', () => {
-    const file = JSON.parse(exportConfig(settings, feedback, '0.2.1'));
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
     file.feedback['software engineering'][0].vector = btoa('short');
     const result = importConfig(JSON.stringify(file));
     if (!result.ok) throw new Error(result.reason);
@@ -125,7 +126,7 @@ describe('a file that is trusted but wrong in places', () => {
   });
 
   it('repairs settings from an older shape rather than refusing them', () => {
-    const file = JSON.parse(exportConfig(settings, feedback, '0.2.1'));
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
     file.settings = { topics: ['software engineering'], strictness: 0.35 };
     const result = importConfig(JSON.stringify(file));
     if (!result.ok) throw new Error(result.reason);
