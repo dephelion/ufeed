@@ -243,7 +243,8 @@ function say(name: string, tail: string, state: 'ok' | 'bad'): void {
 
 /**
  * A popup is destroyed when it loses focus, and a download can take it. The URL
- * outlives the click either way; the browser has the blob by then.
+ * outlives the click either way; the browser has the blob by then. Nothing
+ * reports back: an anchor cannot tell a saved file from a cancelled dialog.
  */
 function download(name: string, text: string): void {
   const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
@@ -264,7 +265,9 @@ exportButton.addEventListener('click', () => {
         name,
         exportConfig(saved, feedback, browser.runtime.getManifest().version),
       );
-      say(name, 'saved', 'ok');
+      // The browser's own download UI is the outcome. Saying "saved" here lied
+      // whenever the save dialog was cancelled.
+      transfer.hidden = true;
     } catch (error) {
       log.warn('export failed', {
         reason: error instanceof Error ? error.message : String(error),

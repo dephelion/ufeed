@@ -71,8 +71,9 @@ describe('the backup row in a rendered popup', () => {
     expect(file.app).toBe('9.9.9');
     expect(file.settings.topics).toEqual(['software engineering']);
     expect(Object.keys(file.feedback['software engineering'])).toHaveLength(1);
-    expect(el('transfer').hidden).toBe(false);
-    expect(el('transfer').dataset['state']).toBe('ok');
+    // An anchor download reports nothing back, so the popup claims nothing:
+    // the save dialog may still be open, and may be cancelled.
+    expect(el('transfer').hidden).toBe(true);
   });
 
   it('imports a file back, replacing what was there', async () => {
