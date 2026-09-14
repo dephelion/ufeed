@@ -1,6 +1,17 @@
 # Lensing v5 — Export & Import Configuration
 
-> **Status: APPROVED, not yet built.** A plan, not a record. Numbers here are
+> **Status: BUILT, not yet verified in a browser.** Branch
+> `feat/config-export-import`. Every path is covered by tests, including the
+> popup's own buttons driven against the real markup under happy-dom — but
+> **whether a file picker keeps a popup alive is exactly what a DOM harness
+> cannot answer.** Load the unpacked build and click both buttons on Chrome and
+> Firefox before this ships.
+>
+> Two departures from the plan: `capped()` lives in `feedback.ts` beside the cap
+> it enforces rather than in the transfer module, and `append()` now reuses it.
+> The manifest is byte-identical to the one on `main`, as §6 predicted.
+>
+> **Status when written: APPROVED, not yet built.** A plan, not a record. Numbers here are
 > measured; everything else is a decision or a leaning, and `specs/` is
 > provenance rather than authority — the source of truth is
 > [`wiki-llm/`](../wiki-llm/index.md).
@@ -200,8 +211,9 @@ The wiki already states plainly that an embedding is partially invertible and
 not the same as storing nothing. The export must inherit that honesty rather
 than quietly imply a backup is anonymous:
 
-- One sentence beside the button: the file contains embeddings of the posts you
-  rated; keep it as you would keep any personal file.
+- ~~One sentence beside the button.~~ **Overturned in review:** the popup hint
+  says what the buttons do and nothing else. The disclosure lives in the policy,
+  which is where a reader goes to read about a file rather than to make one.
 - The same sentence, once, in [privacy.md](../wiki-llm/privacy.md) and
   [`docs/privacy-policy.md`](../docs/privacy-policy.md).
 - **No automatic export, no scheduled backup, no cloud destination, ever.** The

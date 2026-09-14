@@ -35,7 +35,7 @@ import { LanguageCache } from '../feed/language-detector';
 import { decide as decideAction, decideWithoutScore, type Action } from '../feed/policy';
 import { ScoreWindow } from '../feed/threshold';
 import { FeedScanner } from '../feed/scanner';
-import { ScoreQueue } from '../feed/queue';
+import { ScoreQueue, forEngine } from '../feed/queue';
 import { Tuning } from '../feed/tuning';
 import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
 import { EngineClient } from '../feed/engine-client';
@@ -253,7 +253,9 @@ async function start(): Promise<void> {
       return;
     }
 
-    void engine.feedback(post.text, liked).then(({ vector, topic }) => {
+    // Correct from the same text that was scored; the rating stays keyed by the
+    // whole post, so an existing rating still matches.
+    void engine.feedback(forEngine(post.text), liked).then(({ vector, topic }) => {
       const line = settings.topics[topic];
       if (vector.length > 0 && line !== undefined) void store(line, vector);
     });

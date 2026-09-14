@@ -171,13 +171,34 @@
 
     <section class="block">
       <div class="row block-head">
+        <span>Backup</span>
+        <button id="export" class="ghost" type="button">Export</button>
+        <button id="import" class="ghost" type="button">Import</button>
+      </div>
+      <p class="hint block-hint">
+        Saves your settings and thumb ratings to a file. Importing replaces what is here
+        now.
+      </p>
+      <p class="transfer" id="transfer" hidden>
+        <span class="transfer-name" id="transfer-name"></span>
+        <span class="transfer-tail" id="transfer-tail"></span>
+      </p>
+      <input
+        type="file"
+        id="import-file"
+        accept="application/json,.json"
+        hidden
+        aria-hidden="true"
+      />
+    </section>
+
+    <section class="block">
+      <div class="row block-head">
         <span>Start over</span>
         <button id="reset" class="ghost" type="button">Reset</button>
       </div>
       <p class="hint block-hint">
-        Puts strictness and every option on this page back to how they started, and
-        deletes every thumb rating you have given. Your topics are kept, and nothing
-        leaves this device either way.
+        Restores the defaults and deletes your thumb ratings. Your topics are kept.
       </p>
     </section>
 

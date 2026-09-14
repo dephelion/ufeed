@@ -39,6 +39,16 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 
 Background service worker: nothing on the hot path. Settings propagate through `storage.onChanged`.
 
+## Persisted state
+
+Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model, dim, byTopic }`.
+
+**Both are a file format now**, readable and writable through the popup's backup row — `src/core/config-transfer.ts` owns it, pure, with the base64 float32 vector encoding. Adding a third key means deciding whether it belongs in a backup.
+
+**The model stamp is the gate.** A missing one reads as `Xenova/e5-small-v2`, which is what every install that predates the stamp holds. On any other id or width, `forCurrentModel()` drops the vectors at load and keeps the settings: another model's embeddings are in another coordinate space, and the post text they came from was discarded at rating time, so there is nothing to re-embed. Shipping a new model therefore costs every reader their corrections — weigh it in the release, and say so in the popup.
+
+**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
+
 ## Message contract
 
 `src/core/protocol.ts` owns the types and the guards. Both sides validate; a host page posts its own messages constantly.

@@ -8,7 +8,7 @@ asks for. Kept in the repo so the listing and the code change together.
 | Field          | Value                                                    |
 | :------------- | :------------------------------------------------------- |
 | Name           | Lensing                                                  |
-| Version        | 0.2.1 — pre-1.0 while it is in friends' hands            |
+| Version        | 0.3.0 — pre-1.0 while it is in friends' hands            |
 | Category       | Productivity                                             |
 | Language       | English                                                  |
 | Support email  | contact@dephelion.com                                    |

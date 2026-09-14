@@ -10,7 +10,7 @@ import {
   type Feedback,
   type TopicCorrections,
 } from '../core/feedback';
-import { loadFeedback, saveFeedback } from '../core/feedback-storage';
+import { loadFeedback, onFeedbackChanged, saveFeedback } from '../core/feedback-storage';
 
 /**
  * Owns the user's corrections and their persistence. Vectors only: the
@@ -22,6 +22,9 @@ export class Tuning {
   static async load(): Promise<Tuning> {
     const tuning = new Tuning();
     tuning.#feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
+    onFeedbackChanged((next) => {
+      tuning.#feedback = next;
+    });
     return tuning;
   }
 

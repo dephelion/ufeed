@@ -15,11 +15,15 @@
 
 **Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs.
 
-**Settled for the first public release: kept, on these terms.** Opt-in and off by default, so the untouched install stores nothing. Capped at `MAX_PER_CLASS = 50` each way per topic line, oldest off first. Local only, never synced, never transmitted. Cleared by "Clear tuning", by Reset, and by uninstalling. `docs/privacy-policy.md` states the partial invertibility plainly rather than calling an embedding anonymous — a policy that oversells is worse than the storage it describes.
+**Settled for the first public release: kept, on these terms.** Opt-in and off by default, so the untouched install stores nothing. Capped at `MAX_PER_CLASS = 50` each way per topic line, oldest off first. Local only, never synced, never transmitted; the reader can export them to a file themselves, see below. Cleared by "Clear tuning", by Reset, and by uninstalling. `docs/privacy-policy.md` states the partial invertibility plainly rather than calling an embedding anonymous — a policy that oversells is worse than the storage it describes.
 
 **Corrections are scoped to the topic line that produced them.** Editing a line discards its corrections rather than applying them to a query they were never about.
 
 **Nothing is stored until the user opts in.** `tuneFromFeedback` is off by default; with it off the thumbs are hidden and no vector is written. "Clear tuning", under "Learn from my thumbs" in the popup, deletes every correction, and Reset does the same.
+
+**Export writes those vectors to a file the reader chooses.** Settings and corrections leave as one JSON file and come back the same way, on the reader's click and no other trigger — no automatic export, no scheduled backup, no cloud target, ever. The extension still transmits nothing; what changes is that a partially invertible derivative of read posts can now sit in a synced folder. **The policy carries that disclosure, not the popup** — [`docs/privacy-policy.md`](../docs/privacy-policy.md) and the published page say what the file holds rather than calling it anonymous; the popup hint says only what the buttons do. Import replaces what is stored, and refuses a file from another model whole (see [architecture.md](architecture.md)).
+
+**`storage.sync` was rejected for this.** 100KB total and 8KB per item cannot hold one topic's vectors, and it would ship a reader's topics to a browser vendor's server — a backend nobody chose.
 
 **Engine status is asked, never stored.** The popup queries the active tab over `browser.runtime` messaging and keeps the answer in memory. An earlier version parked it in `storage.local` with a timestamp, which left a durable record of when a feed was last open — settings-adjacent, surviving restarts, and flatly at odds with the claim above. Nothing about engine activity now touches disk. See [architecture.md](architecture.md).
 

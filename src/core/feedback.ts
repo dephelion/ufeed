@@ -1,3 +1,5 @@
+import { MODEL } from '../ml/models';
+
 /**
  * Corrections the user made to the model's verdicts, as embeddings, kept per
  * topic line. Pure: the storage half lives in feedback-storage.ts.
@@ -14,6 +16,9 @@ export interface Rating {
 }
 
 export interface Feedback {
+  /** Which model produced these vectors. Another model's are unusable. */
+  model: string;
+  dim: number;
   byTopic: Record<string, Rating[]>;
 }
 
@@ -22,7 +27,18 @@ export interface TopicCorrections {
   disliked: number[][];
 }
 
-export const EMPTY_FEEDBACK: Feedback = { byTopic: {} };
+export const EMPTY_FEEDBACK: Feedback = {
+  model: MODEL.id,
+  dim: MODEL.dim,
+  byTopic: {},
+};
+
+/**
+ * Stored corrections predate the stamp, and every install that has any was
+ * written by e5-small-v2. Reading MODEL.id here instead would relabel them as
+ * whatever ships next.
+ */
+const UNSTAMPED = { model: 'Xenova/e5-small-v2', dim: 384 } as const;
 
 /** Oldest corrections fall off first; the query should follow current taste. */
 export const MAX_PER_CLASS = 50;
@@ -33,15 +49,29 @@ export const MAX_PER_CLASS = 50;
  * shape took the whole content script down with it.
  */
 export function normalizeFeedback(value: unknown): Feedback {
-  const raw = isRecord(value) ? value['byTopic'] : undefined;
-  if (!isRecord(raw)) return EMPTY_FEEDBACK;
+  const record = isRecord(value) ? value : {};
+  const model = typeof record['model'] === 'string' ? record['model'] : UNSTAMPED.model;
+  const dim = typeof record['dim'] === 'number' ? record['dim'] : UNSTAMPED.dim;
+  const raw = record['byTopic'];
+  if (!isRecord(raw)) return { model, dim, byTopic: {} };
   const byTopic: Record<string, Rating[]> = {};
   for (const [topic, list] of Object.entries(raw)) {
     if (!Array.isArray(list)) continue;
     const ratings = list.filter(isRating);
     if (ratings.length > 0) byTopic[topic] = ratings;
   }
-  return { byTopic };
+  return { model, dim, byTopic };
+}
+
+/**
+ * Vectors from another model are in another coordinate space, and the text they
+ * came from is long gone, so there is nothing to re-embed. Drop them and keep
+ * the settings, which never depended on a model.
+ */
+export function forCurrentModel(feedback: Feedback): Feedback {
+  return feedback.model === MODEL.id && feedback.dim === MODEL.dim
+    ? feedback
+    : EMPTY_FEEDBACK;
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -103,20 +133,25 @@ export function remove(feedback: Feedback, key: string): Feedback {
     const kept = ratings.filter((r) => r.key !== key);
     if (kept.length > 0) byTopic[topic] = kept;
   }
-  return { byTopic };
+  return { ...feedback, byTopic };
+}
+
+/** Oldest first off each side, so a restored backup obeys the cap as thumbs do. */
+export function capped(ratings: readonly Rating[]): Rating[] {
+  const keep = new Set<Rating>();
+  for (const liked of [true, false]) {
+    for (const rating of ratings.filter((r) => r.liked === liked).slice(-MAX_PER_CLASS))
+      keep.add(rating);
+  }
+  return ratings.filter((r) => keep.has(r));
 }
 
 function append(feedback: Feedback, topic: string, rating: Rating): Feedback {
-  const current = ratingsFor(feedback, topic);
-  const sameSide = current.filter((r) => r.liked === rating.liked);
-  const drop =
-    sameSide.length >= MAX_PER_CLASS
-      ? new Set(sameSide.slice(0, sameSide.length - MAX_PER_CLASS + 1).map((r) => r.key))
-      : new Set<string>();
   return {
+    ...feedback,
     byTopic: {
       ...feedback.byTopic,
-      [topic]: [...current.filter((r) => !drop.has(r.key)), rating],
+      [topic]: capped([...ratingsFor(feedback, topic), rating]),
     },
   };
 }
@@ -128,7 +163,7 @@ export function forTopics(feedback: Feedback, topics: readonly string[]): Feedba
     const existing = feedback.byTopic[topic];
     if (existing) byTopic[topic] = existing;
   }
-  return { byTopic };
+  return { ...feedback, byTopic };
 }
 
 /** The protocol shape: two lists of raw vectors, per topic. */

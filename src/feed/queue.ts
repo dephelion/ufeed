@@ -7,6 +7,9 @@ const FLUSH_MS = 100;
 /** Long posts cost tokens without adding signal; e5 does not shift with length. */
 const MAX_CHARS = 1200;
 
+/** Every text the engine embeds passes through here, scored or thumbed alike. */
+export const forEngine = (text: string): string => text.slice(0, MAX_CHARS);
+
 const log = logger('queue');
 
 export interface Scored {
@@ -30,7 +33,7 @@ export class ScoreQueue {
   ) {}
 
   add(post: Post): void {
-    this.#pending.set(post.container, post.text.slice(0, MAX_CHARS));
+    this.#pending.set(post.container, forEngine(post.text));
     if (this.#pending.size >= BATCH_SIZE) void this.flush();
     else this.#schedule();
   }

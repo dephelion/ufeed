@@ -48,6 +48,14 @@ of a post you rated, not as an anonymous number. It never leaves your device, at
 most 50 up-ratings and 50 down-ratings are kept per topic line, and the oldest
 fall off first.
 
+**Exporting and importing.** The Backup row in the popup writes your settings
+and your thumb ratings to a file you choose, and reads one back. That file
+contains the same embeddings described above, so treat it as personal: anyone
+who opens it sees your topics, and holds a lossy trace of the posts you rated.
+Lensing only ever writes that file when you click Export — there is no automatic
+backup, no schedule, and nowhere for it to go but your own disk. Importing a
+file replaces the settings and ratings already stored.
+
 ## What Lensing sends
 
 **One kind of network request exists: downloading the language model.**

@@ -214,6 +214,26 @@ backend misreads the q8 weights and returns confident nonsense rather than
 failing, so the self-check probe is the only thing standing between that and a
 feed blurred at random. `wasm` is the steady state.
 
+### What a thumb changes
+
+A thumb corrects **one topic line: the one that came closest to claiming the
+post**, which is the same line that gave it its score. The comparison runs
+against the line as it currently stands, corrections included, so ratings
+compound on the line they have already shaped. Rate the same post again and it
+un-rates; rate it the other way and it flips, still on the line it was filed
+under.
+
+**No individual word is picked out.** The post's text goes to the worker as one
+string and comes back as one vector; the topic vector then moves toward the
+average of what you kept and away from the average of what you blurred. There is
+no keyword extraction to inspect, and nothing that could point at the word that
+did it.
+
+Two things follow. Rating a post whose meaning lives in its image teaches the
+topic from a caption that was never the point — the model reads words only. And
+a correction belongs to one line: rewrite that line and its corrections go with
+it, while the other lines keep theirs.
+
 Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](wiki-llm/model.md), terms in
 [`wiki-llm/glossary.md`](wiki-llm/glossary.md).
