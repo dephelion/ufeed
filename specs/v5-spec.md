@@ -7,9 +7,9 @@
 >
 > **Three questions were settled before implementation started.** The UI stays in
 > the popup (§5), so the manifest does not change and no new permission is asked
-> (§6). The model id is stamped into the file **and into storage**, so that
-> upgrading the model — or adding a second one — keeps every setting and drops
-> only what the new model cannot read (§3.1). The stale-`Tuning` bug is fixed inside this spec rather than
+> (§6). A backup belongs to the model that wrote it: the id is stamped into the
+> file and into storage, and an import that does not match exactly is refused
+> whole (§3.1). The stale-`Tuning` bug is fixed inside this spec rather than
 > deferred (§9).
 
 ---
@@ -73,31 +73,27 @@ reads `byTopic` and ignores what it does not recognise, so old stored data needs
 no migration — **a missing stamp means e5-small-v2**, which is true of every
 install that exists. §2 stays honest: still two keys.
 
-### 3.1 What a model change costs, and what it must not cost
+### 3.1 A backup belongs to the model that wrote it
 
-Both an upgrade (e5-small-v2 → a newer revision) and an addition (a second model
-alongside it) make every existing vector unusable. They differ from each other
-in nothing that matters here, so one rule covers both: **on `stored.model !==
-MODEL.id` or a dimension mismatch, settings survive whole and vectors are
-dropped.**
+**An import requires an exact model match. There is no partial import.** Same
+`id`, same `dim`, or the file is refused whole and nothing is written — settings
+included. Splitting the file, landing the settings and skipping the vectors, is
+a second outcome to explain in a one-line status field, a second path to test,
+and a state the reader did not ask for. Not worth it for a case that only exists
+after a release that has not been scheduled.
 
-| Data                                | On a model change | Why                                                                                                                                                                                      |
-| :---------------------------------- | :---------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Topics, overrides, per-host toggles | **Kept**          | Plain text. No model ever touched them.                                                                                                                                                  |
-| Strictness                          | **Kept**          | A step, not a score — [model.md](../wiki-llm/model.md) defines a step by what share of the feed it spends, so the number keeps its meaning while the threshold behind it is re-measured. |
-| Correction vectors                  | **Dropped**       | Wrong coordinate space. Keeping them is worse than losing them.                                                                                                                          |
+The stamp is still worth writing on the stored value, not only in the file,
+because it is what makes that check possible at all — and because it costs about
+five lines to also stop a model upgrade from silently corrupting an install that
+never exported anything: on `stored.model !== MODEL.id`, drop the vectors, keep
+the settings. Topics and overrides are plain text no model ever touched, and
+strictness is a step rather than a score, so it keeps its meaning while the
+threshold behind it is re-measured ([model.md](../wiki-llm/model.md)).
 
-**The vectors cannot be recovered, and that is the design working as intended.**
-Re-embedding needs the post text; the text was discarded at the moment of
-rating, which is the whole privacy claim. So a model upgrade permanently costs
-every reader their tuning.
-
-That is a real price on a release nobody has scheduled yet, and it belongs in
-the decision to ship a new model rather than being discovered afterwards:
-**weigh the AUC gain against every reader starting their thumbs from zero.**
-Say it plainly in the release, in the popup's tuning block: _"Ratings were
-cleared: the scoring model was updated."_ Silently emptying the stats and
-letting them wonder is the one unacceptable outcome.
+**The vectors cannot be recovered, by design.** Re-embedding needs the post text,
+and the text is discarded at the moment of rating. So a model upgrade
+permanently costs every reader their tuning — a price to weigh in the decision to
+ship a new model, not to discover afterwards.
 
 ## 4. Size, and how vectors are encoded
 
@@ -291,16 +287,14 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
 
 1. **`onFeedbackChanged` + `Tuning` adoption + its test (§9).** Its own commit:
    standalone, independently valuable, fixes "Clear tuning" and Reset today.
-2. **The stored model stamp and the drop-on-change rule (§3.1)**, in
-   `feedback.ts` / `feedback-storage.ts`: write the stamp, treat a missing one as
-   e5-small-v2, drop vectors on a mismatch, keep settings untouched. Its own
-   commit, and it ships value with no export attached — the next model release
-   stops being a silent corruption.
+2. **The stored model stamp (§3.1)**, in `feedback.ts` / `feedback-storage.ts`:
+   write it, treat a missing one as e5-small-v2, and drop vectors when it does
+   not match `MODEL.id`. Its own commit, and it ships value with no export
+   attached — the next model release stops being a silent corruption.
 3. **`src/core/config-transfer.ts`** — pure. `exportConfig(settings, feedback)`
    and `importConfig(unknown)` returning a result union, no `browser.*` inside.
    Tested for: round trip, float32 fidelity, junk file, truncated file, wrong
-   schema, wrong model (settings land, vectors do not), cap overflow, orphan
-   topic lines.
+   schema, wrong model (nothing is written), cap overflow, orphan topic lines.
 4. **Popup wiring**: the row and the status line from §5, import on select from
    §8, the one-line hint from §7. Check the picker and the download on Chrome and
    Firefox as you go (§5).
@@ -308,8 +302,8 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
    [ui.md](../wiki-llm/ui.md) (the new popup row and what it warns about),
    [architecture.md](../wiki-llm/architecture.md) (the two storage keys are now a
    documented file format, not an implementation detail),
-   [model.md](../wiki-llm/model.md) (§3.1: what shipping a new model now costs,
-   beside the numbers that would justify shipping one).
+   [model.md](../wiki-llm/model.md) (§3.1: what shipping a new model costs every
+   reader, beside the numbers that would justify shipping one).
    [manifest.md](../wiki-llm/manifest.md) is untouched — §6, and that is worth a
    line in the commit body rather than a wiki edit.
 6. **Policy copy, all three places, or none.** They must never disagree:
