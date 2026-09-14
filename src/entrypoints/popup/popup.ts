@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import { feedShownAt, junkShownAt } from '../../ml/scoring';
 import {
   DEFAULT_SETTINGS,
@@ -7,8 +8,9 @@ import {
   type Settings,
 } from '../../core/settings';
 import { loadSettings, saveSettings } from '../../core/settings-storage';
-import { counts } from '../../core/feedback';
-import { clearFeedback, loadFeedback } from '../../core/feedback-storage';
+import { EMPTY_FEEDBACK, counts } from '../../core/feedback';
+import { clearFeedback, loadFeedback, saveFeedback } from '../../core/feedback-storage';
+import { exportConfig, importConfig } from '../../core/config-transfer';
 import {
   describeEngine,
   summarizeEngine,
@@ -43,6 +45,12 @@ const tuningNote = el<HTMLSpanElement>('tuning-note');
 const statUp = el<HTMLElement>('stat-up');
 const statDown = el<HTMLElement>('stat-down');
 const statTotal = el<HTMLElement>('stat-total');
+const exportButton = el<HTMLButtonElement>('export');
+const importButton = el<HTMLButtonElement>('import');
+const importFile = el<HTMLInputElement>('import-file');
+const transfer = el<HTMLParagraphElement>('transfer');
+const transferName = el<HTMLSpanElement>('transfer-name');
+const transferTail = el<HTMLSpanElement>('transfer-tail');
 const reset = el<HTMLButtonElement>('reset');
 const statusText = el<HTMLSpanElement>('status');
 const dot = el<HTMLSpanElement>('dot');
@@ -184,12 +192,13 @@ strictness.addEventListener('change', () => {
 
 async function renderTuning(): Promise<void> {
   const stored = await loadFeedback().catch(() => undefined);
-  const { up, down, total } = counts(stored ?? { byTopic: {} });
+  const { up, down, total } = counts(stored ?? EMPTY_FEEDBACK);
   statUp.textContent = String(up);
   statDown.textContent = String(down);
   statTotal.textContent = String(total);
   tuningNote.textContent = total === 0 ? 'You have not rated any posts yet.' : '';
   clearTuning.disabled = total === 0;
+  exportButton.disabled = total === 0 && saved.topics.length === 0;
 }
 
 void renderTuning();
@@ -224,6 +233,80 @@ showScores.addEventListener(
   'change',
   () => void update({ showScores: showScores.checked }),
 );
+
+function say(name: string, tail: string, state: 'ok' | 'bad'): void {
+  transferName.textContent = name;
+  transferTail.textContent = tail;
+  transfer.dataset.state = state;
+  transfer.hidden = false;
+}
+
+/**
+ * A popup is destroyed when it loses focus, and a download can take it. The URL
+ * outlives the click either way; the browser has the blob by then.
+ */
+function download(name: string, text: string): void {
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+exportButton.addEventListener('click', () => {
+  void (async () => {
+    try {
+      const feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
+      const day = new Date().toISOString().slice(0, 10);
+      const name = `lensing-backup-${day}.json`;
+      download(
+        name,
+        exportConfig(saved, feedback, browser.runtime.getManifest().version),
+      );
+      say(name, 'saved', 'ok');
+    } catch (error) {
+      log.warn('export failed', {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      say('Export failed', 'nothing was written', 'bad');
+    }
+  })();
+});
+
+importButton.addEventListener('click', () => {
+  importFile.value = '';
+  importFile.click();
+});
+
+importFile.addEventListener('change', () => {
+  const file = importFile.files?.[0];
+  if (!file) return;
+  void (async () => {
+    const result = importConfig(await file.text().catch(() => ''));
+    if (!result.ok) {
+      say(file.name, `— ${result.reason}`, 'bad');
+      return;
+    }
+    // Corrections first: the settings write is what makes a feed tab requery,
+    // and it must not find the old vectors still in place.
+    await saveFeedback(result.feedback);
+    if (!(await update(result.settings))) {
+      say(file.name, '— could not be saved', 'bad');
+      return;
+    }
+    render(saved);
+    applied.hidden = true;
+    await renderTuning();
+    const { total } = counts(result.feedback);
+    const topics = saved.topics.length;
+    say(
+      file.name,
+      `\u2713 ${topics} topic${topics === 1 ? '' : 's'}, ${total} rating${total === 1 ? '' : 's'}`,
+      'ok',
+    );
+  })();
+});
 
 reset.addEventListener('click', () => {
   void Promise.all([

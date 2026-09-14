@@ -9,6 +9,8 @@
 export const MODEL = {
   id: 'Xenova/e5-small-v2',
   label: 'e5-small-v2',
+  /** Embedding width. A vector of any other length is from another model. */
+  dim: 384,
   /**
    * The only language it reads. Text in any other scores somewhere in the band
    * at random, so the language gate compares against this, not a literal 'en'.

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { MODEL } from '../ml/models';
 import {
   EMPTY_FEEDBACK,
+  forCurrentModel,
   MAX_PER_CLASS,
   correctionsFor,
   count,
@@ -155,5 +157,34 @@ describe('counts', () => {
       false,
     );
     expect(counts(f)).toEqual({ up: 0, down: 1, total: 1 });
+  });
+});
+
+describe('the model stamp', () => {
+  it('reads corrections written before the stamp existed as e5-small-v2', () => {
+    const legacy = { byTopic: { software: [{ key: 'a', vector: v(1), liked: true }] } };
+    expect(normalizeFeedback(legacy).model).toBe('Xenova/e5-small-v2');
+    expect(forCurrentModel(normalizeFeedback(legacy)).byTopic).not.toEqual({});
+  });
+
+  it('keeps what the running model wrote', () => {
+    const mine = rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true);
+    expect(forCurrentModel(mine)).toBe(mine);
+  });
+
+  it('drops vectors from another model, since there is no text to re-embed', () => {
+    const foreign = {
+      ...rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true),
+      model: 'other',
+    };
+    expect(forCurrentModel(foreign)).toEqual(EMPTY_FEEDBACK);
+  });
+
+  it('drops vectors of another width', () => {
+    const wide = {
+      ...rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true),
+      dim: MODEL.dim * 2,
+    };
+    expect(forCurrentModel(wide)).toEqual(EMPTY_FEEDBACK);
   });
 });

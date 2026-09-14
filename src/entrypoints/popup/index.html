@@ -171,6 +171,30 @@
 
     <section class="block">
       <div class="row block-head">
+        <span>Backup</span>
+        <button id="export" class="ghost" type="button">Export</button>
+        <button id="import" class="ghost" type="button">Import</button>
+      </div>
+      <p class="hint block-hint">
+        Saves your topics, options and thumb ratings to a file, and reads one back on
+        another device. The file holds embeddings of the posts you rated, so keep it as
+        you would any personal file. Importing replaces what is here now.
+      </p>
+      <p class="transfer" id="transfer" hidden>
+        <span class="transfer-name" id="transfer-name"></span>
+        <span class="transfer-tail" id="transfer-tail"></span>
+      </p>
+      <input
+        type="file"
+        id="import-file"
+        accept="application/json,.json"
+        hidden
+        aria-hidden="true"
+      />
+    </section>
+
+    <section class="block">
+      <div class="row block-head">
         <span>Start over</span>
         <button id="reset" class="ghost" type="button">Reset</button>
       </div>

@@ -119,20 +119,21 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 ## Popup
 
-| Control                           | Effect                                                                                                           |
-| :-------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| On                                | Global switch. Off reveals everything.                                                                           |
-| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped. |
-| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing. |
-| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                           |
-| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                       |
-| Collapse blurred posts            | Default on. Shrinks a blurred post to a thin dark row instead of leaving it full height.                         |
-| Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                     |
-| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                         |
-| Show scores                       | Default off. The only gate on the score badge, in any build.                                                     |
-| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics.                       |
-| Engine chip                       | Header, beside the title. Two or three words plus a light.                                                       |
-| Footer                            | Settings line, engine line, contact address.                                                                     |
+| Control                           | Effect                                                                                                                      |
+| :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| On                                | Global switch. Off reveals everything.                                                                                      |
+| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.            |
+| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.            |
+| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                      |
+| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                                  |
+| Collapse blurred posts            | Default on. Shrinks a blurred post to a thin dark row instead of leaving it full height.                                    |
+| Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                |
+| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                    |
+| Show scores                       | Default off. The only gate on the score badge, in any build.                                                                |
+| Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm. |
+| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics.                                  |
+| Engine chip                       | Header, beside the title. Two or three words plus a light.                                                                  |
+| Footer                            | Settings line, engine line, contact address.                                                                                |
 
 **Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Keeps about 35% of a typical feed visible. The rest is blurred, one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
@@ -145,6 +146,10 @@ Apply is disabled until the textarea differs from what is saved.
 **Engine state is shown twice, on purpose.** The popup runs past Chrome's 600px cap, so the footer opens below the fold — the header chip is the only engine state most readers ever see (`Downloading 45%`, `Ready · wasm`, `Failed`, `No feed here`). The footer line carries what will not fit in a 380px header row: that the download happens once, and the failure reason a bug report needs. It hides itself once ready, when the chip says everything left to say. Both lights read from one tone, so they can never disagree.
 
 **Destructive controls explain themselves where they sit.** Reset was a bare ghost button in the footer that silently deleted every thumb rating.
+
+**Backup is one row and one line, and never more.** Two ghost buttons; under them a single line carrying the file name, truncated with `text-overflow: ellipsis` on a `min-width: 0` flex child so a long name gives up width and the outcome never does. `data-state` on that line, `ok` or `bad`, is what the styling reads. No dialog, no panel, no second line: the popup is already past the 600px cap and this may not add height beyond that one line.
+
+**Import replaces on select, with no confirmation**, matching Reset, which destroys nearly as much on one click. A file is refused whole — settings included — when the schema is newer, the model does not match, or the JSON is not a backup; a refusal writes nothing. The line is transient. The durable proof an import landed is the topics box and the thumb counts re-rendering above it. Export is disabled with nothing to export.
 
 ## No-topics card
 

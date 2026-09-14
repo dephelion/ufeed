@@ -162,6 +162,8 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 
 **Off by default**, behind `tuneFromFeedback` ("Learn from my thumbs" in the popup). An uncorrected query needs no relative threshold and is better calibrated, so the mechanism stays inert until asked for.
 
+**A new model deletes every correction, on every install.** Vectors are stamped with the model that made them and dropped when it changes ([architecture.md](architecture.md)); the post text was discarded at rating time, so nothing can be re-embedded. The table above is what a reader loses and has to rebuild by hand: 32 corrections is +0.055 AUC. Weigh that against the AUC a candidate model gains before shipping it, and tell the reader in the popup why their counts went to zero.
+
 ## Relative strictness
 
 **A corrected query moves the whole score scale.** Left at a fixed 0.784, recall **collapsed to 11%**. Once corrections exist the threshold becomes the quantile of the last 300 scores that keeps the same share of feed the absolute threshold would have.
