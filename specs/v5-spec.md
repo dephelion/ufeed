@@ -7,8 +7,9 @@
 >
 > **Three questions were settled before implementation started.** The UI stays in
 > the popup (§5), so the manifest does not change and no new permission is asked
-> (§6). The model id is stamped into the file, for the release that ships a
-> second model (§3). The stale-`Tuning` bug is fixed inside this spec rather than
+> (§6). The model id is stamped into the file **and into storage**, so that
+> upgrading the model — or adding a second one — keeps every setting and drops
+> only what the new model cannot read (§3.1). The stale-`Tuning` bug is fixed inside this spec rather than
 > deferred (§9).
 
 ---
@@ -53,20 +54,50 @@ One JSON object: a header a human can read, then the two payloads.
 | `settings`   | Plain JSON. The part a privacy-minded reader can actually audit.            |
 | `feedback`   | Per topic line, ratings as `{ key, liked, vector }` with `vector` base64.   |
 
-**Decided: stamp the model id, and stamp it now.** Nothing in `storage.local`
-today records which model produced a vector, because only one model has ever
-shipped. An export is the first artifact that outlives the install that wrote
-it, so it is the first place the omission can hurt: a vector from another model
-dropped into a Rocchio update poisons the topic centroid silently, with no error
-and no visible symptom beyond a feed that gradually stops making sense.
+**Decided: stamp the model id, and stamp it in storage too — not only in the
+file.** Nothing in `storage.local` today records which model produced a vector,
+because only one model has ever shipped. That omission is not really about
+export: it bites the first time **this** extension changes model, on an install
+with no backup file anywhere near it. A vector from another model dropped into a
+Rocchio update poisons the topic centroid silently — no error, no symptom beyond
+a feed that gradually stops making sense.
 
-The stamp is written for the version after next. A new model version, or a
-second model shipping alongside e5-small-v2, makes every stored vector
-model-specific — and by then the files are already in readers' hands. `model.id`
-plus `dim` in the header is what lets that release read an old backup and know
-what to do with it: refuse the feedback half, or, once there is more than one
-model, re-embed from nothing rather than mix scales. Cheap now, unavailable
-later.
+So the stamp goes on the stored value, and the file inherits it:
+
+```
+feedback: { model: 'Xenova/e5-small-v2', dim: 384, byTopic: { … } }
+```
+
+Inside the existing `feedback` key, not beside it. `normalizeFeedback()` already
+reads `byTopic` and ignores what it does not recognise, so old stored data needs
+no migration — **a missing stamp means e5-small-v2**, which is true of every
+install that exists. §2 stays honest: still two keys.
+
+### 3.1 What a model change costs, and what it must not cost
+
+Both an upgrade (e5-small-v2 → a newer revision) and an addition (a second model
+alongside it) make every existing vector unusable. They differ from each other
+in nothing that matters here, so one rule covers both: **on `stored.model !==
+MODEL.id` or a dimension mismatch, settings survive whole and vectors are
+dropped.**
+
+| Data                                | On a model change | Why                                                                                                                                                                                      |
+| :---------------------------------- | :---------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Topics, overrides, per-host toggles | **Kept**          | Plain text. No model ever touched them.                                                                                                                                                  |
+| Strictness                          | **Kept**          | A step, not a score — [model.md](../wiki-llm/model.md) defines a step by what share of the feed it spends, so the number keeps its meaning while the threshold behind it is re-measured. |
+| Correction vectors                  | **Dropped**       | Wrong coordinate space. Keeping them is worse than losing them.                                                                                                                          |
+
+**The vectors cannot be recovered, and that is the design working as intended.**
+Re-embedding needs the post text; the text was discarded at the moment of
+rating, which is the whole privacy claim. So a model upgrade permanently costs
+every reader their tuning.
+
+That is a real price on a release nobody has scheduled yet, and it belongs in
+the decision to ship a new model rather than being discovered afterwards:
+**weigh the AUC gain against every reader starting their thumbs from zero.**
+Say it plainly in the release, in the popup's tuning block: _"Ratings were
+cleared: the scoring model was updated."_ Silently emptying the stats and
+letting them wonder is the one unacceptable outcome.
 
 ## 4. Size, and how vectors are encoded
 
@@ -260,20 +291,28 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
 
 1. **`onFeedbackChanged` + `Tuning` adoption + its test (§9).** Its own commit:
    standalone, independently valuable, fixes "Clear tuning" and Reset today.
-2. **`src/core/config-transfer.ts`** — pure. `exportConfig(settings, feedback)`
+2. **The stored model stamp and the drop-on-change rule (§3.1)**, in
+   `feedback.ts` / `feedback-storage.ts`: write the stamp, treat a missing one as
+   e5-small-v2, drop vectors on a mismatch, keep settings untouched. Its own
+   commit, and it ships value with no export attached — the next model release
+   stops being a silent corruption.
+3. **`src/core/config-transfer.ts`** — pure. `exportConfig(settings, feedback)`
    and `importConfig(unknown)` returning a result union, no `browser.*` inside.
    Tested for: round trip, float32 fidelity, junk file, truncated file, wrong
-   schema, wrong model, cap overflow, orphan topic lines.
-3. **Popup wiring**: the row and the status line from §5, import on select from
+   schema, wrong model (settings land, vectors do not), cap overflow, orphan
+   topic lines.
+4. **Popup wiring**: the row and the status line from §5, import on select from
    §8, the one-line hint from §7. Check the picker and the download on Chrome and
    Firefox as you go (§5).
-4. **Wiki, same commit as step 3**: [privacy.md](../wiki-llm/privacy.md) (§7),
+5. **Wiki, same commit as step 4**: [privacy.md](../wiki-llm/privacy.md) (§7),
    [ui.md](../wiki-llm/ui.md) (the new popup row and what it warns about),
    [architecture.md](../wiki-llm/architecture.md) (the two storage keys are now a
-   documented file format, not an implementation detail).
+   documented file format, not an implementation detail),
+   [model.md](../wiki-llm/model.md) (§3.1: what shipping a new model now costs,
+   beside the numbers that would justify shipping one).
    [manifest.md](../wiki-llm/manifest.md) is untouched — §6, and that is worth a
    line in the commit body rather than a wiki edit.
-5. **Policy copy, all three places, or none.** They must never disagree:
+6. **Policy copy, all three places, or none.** They must never disagree:
    - [`docs/privacy-policy.md`](../docs/privacy-policy.md) — the export sentence
      from §7.
    - **`dephelion.com`**, the published policy at
