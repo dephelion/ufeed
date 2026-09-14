@@ -89,43 +89,67 @@ size problem here to solve: 1 MB is a rounding error against the ~22.5 MB the
 package already carries, and sits well under Chrome's 10 MB `storage.local`
 quota on the way back in.
 
-## 5. Where the UI lives — decided: the popup
+## 5. The UI — decided: two buttons in the popup
 
 **Decided: the popup, not a new page.** No `options_ui`, no second surface to
-style, no second place a reader has to find. The cost is that both halves of the
-feature run against the popup lifecycle, and neither is guaranteed:
+style, no second place a reader has to find.
 
-1. **`<input type="file">` from a popup can lose the event.** The OS picker takes
-   focus, the browser may close the popup, the page is destroyed, and `change`
-   fires into nothing.
-2. **`<a download>` from a popup can lose the download**, the same way: focus
-   loss tears the page down and revokes the blob URL under it.
+### 5.1 Shape
 
-Both are per-browser, per-platform behaviours, not settled facts. **Test them
-before writing the UI** (§10, step 1) — twenty minutes on Chrome and Firefox,
-macOS, with a throwaway button. What the test decides is not the surface, it is
-whether a fallback ships:
+One row, in the `block` section that ends the popup, beside "Start over"/Reset,
+where the other whole-configuration actions already live:
 
-| Result           | What ships                                                                    |
-| :--------------- | :---------------------------------------------------------------------------- |
-| Both survive     | File input and anchor download. Nothing else.                                 |
-| One or both fail | That half falls back to a textarea: select-and-copy out, paste-and-import in. |
+- **Two `ghost` buttons side by side — Export, Import** — matching Reset and
+  Clear tuning, which are the buttons of the same weight.
+- **One line underneath, and only one.** It holds the chosen file name,
+  truncated with `text-overflow: ellipsis` on a `min-width: 0` flex child, never
+  wrapping to a second line and never growing the popup.
+- **A check mark on that line when the import lands.** The line is the whole
+  status surface: file name while deciding, file name + check when done, file
+  name + the reason when refused (§8).
 
-The textarea fallback needs no browser cooperation at all — no picker, no
-download, no focus to lose — which is exactly why it is the fallback rather than
-the default: at §4 sizes a full backup is ~1 MB of base64, fine to paste and
-ugly to look at. Do not build it pre-emptively.
+No new titled section, no accordion, no second `details`.
+[ui.md](../wiki-llm/ui.md) records that the popup already runs past the 600px cap
+both browsers put on a toolbar popup — a scroll, not a break, and two buttons do
+not change it. The cap is not a reason to build a page. It is a reason to stay
+inside one row plus one line.
 
-**Where it goes in the popup.** [ui.md](../wiki-llm/ui.md) records that the popup
-already runs past the 600px cap both browsers put on a toolbar popup. That is a
-scroll, not a break — the popup opens at its maximum height and the rest scrolls
-— and **two buttons do not change it either way**, so the cap is not a reason to
-build a page here. It is a reason to stay compact: not a new titled section. One
-compact row of two buttons — Export, Import — in the `block` section that ends
-the page, beside "Start over"/Reset, where the other whole-configuration actions
-already live. Keep the hint to a single line (§7).
+**The status line is transient, and does not need to be otherwise.** It is
+feedback for the click just made. The durable proof that an import landed is
+already on screen above it: the topics box repopulates and the thumb counts
+change. Nothing new is persisted to say "you imported a file" — that would be a
+third `storage.local` key, and §2 is worth more than the convenience.
 
-**Note for step 6: the live policy already misnames these.**
+### 5.2 The one thing that can break it
+
+The status line only exists if the popup is still alive to draw it. Two browser
+behaviours can end it, and neither is ours to decide:
+
+1. **`<input type="file">`.** The OS picker takes focus; the browser may close
+   the popup, destroying the page before `change` fires. Then nothing imports —
+   not a cosmetic failure, the whole action is lost.
+2. **`<a download>`.** Same focus loss, revoking the blob URL under a download
+   that has already started. Lower risk: the click, the blob and the download
+   registration all happen synchronously before any teardown.
+
+Per-browser and per-platform, not settled facts. **Test both before writing the
+UI** (§10, step 1): twenty minutes, Chrome and Firefox, with a throwaway button.
+
+**What the test decides is not the surface and not the layout.** §5.1 ships
+either way. It decides only how the file gets in:
+
+| Result                 | How a file gets in                                                                                                       |
+| :--------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| Picker keeps the popup | `<input type="file">` behind the Import button. Done.                                                                    |
+| Picker kills the popup | **Drop the file on the popup.** The Import button becomes a drop target; the same status line says "Drop a backup here". |
+
+**Drag-and-drop, not a textarea.** A drop never opens an OS dialog, so nothing
+takes focus and the popup never dies — and it keeps §5.1 intact, one row and one
+line, where a paste box would add a 1 MB textarea (§4) to a popup already over
+the cap. If a picker is unavailable, keep the input as a hidden second path
+anyway: on a platform where it does work it is the more familiar gesture.
+
+**Note for step 6: the live policy already misnames these controls.**
 `dephelion.com` says "Clear tuning, under Advanced in the popup" and the same of
 Reset. There is no Advanced section — the popup has a "Learn from my thumbs"
 block and a "Start over" block. Fix both sentences in the same commit that adds
@@ -194,9 +218,19 @@ the per-class cap resolves across two histories, and what a `key` collision
 means; every answer is arbitrary and none is inspectable afterwards. Replace is
 predictable and it is what "restore my backup" means.
 
-**Confirm with counts before writing anything**: _"Import 3 topics and 128
-ratings, replacing your 1 topic and 12 ratings?"_ Both sides of the trade, in
-the numbers the reader recognises from the popup's tuning stats.
+**Confirm with counts before writing anything**, on the §5.1 status line rather
+than in a dialog. `window.confirm()` is a focus-stealing dialog in a surface that
+dies of focus loss — the one place it must not be used. Two clicks, one line:
+
+| Step            | The line reads                                                                                             |
+| :-------------- | :--------------------------------------------------------------------------------------------------------- |
+| File chosen     | `lensing-backup-2026-09-14.json — 3 topics, 128 ratings` … with the Import button now reading **Replace**. |
+| Replace clicked | `lensing-backup-2026-09-14.json ✓`                                                                         |
+| Refused         | `lensing-backup-2026-09-14.json — not a Lensing backup`                                                    |
+
+Both sides of the trade stay visible, because what it replaces — the topics box
+and the thumb counts — is on screen directly above. A second click is cheap
+insurance against a misclick that destroys more than Reset does (Q4).
 
 **Validate by reuse, not by new code.** Two normalizers already exist and both
 already survive hostile input:
@@ -255,8 +289,9 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
    and `importConfig(unknown)` returning a result union, no `browser.*` inside.
    Tested for: round trip, float32 fidelity, junk file, truncated file, wrong
    schema, wrong model, cap overflow, orphan topic lines.
-4. **Popup wiring**: one Export/Import row beside "Start over"/Reset, the
-   confirm from §8, the one-line hint from §7.
+4. **Popup wiring**: the row and the status line from §5.1, the two-click
+   replace from §8, the one-line hint from §7, and whichever file-in path step 1
+   chose (§5.2).
 5. **Wiki, same commit as step 4**: [privacy.md](../wiki-llm/privacy.md) (§7),
    [ui.md](../wiki-llm/ui.md) (the new popup row and what it warns about),
    [architecture.md](../wiki-llm/architecture.md) (the two storage keys are now a
@@ -278,13 +313,13 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
 
 ## 11. Open questions
 
-| #   | Question                                                | Leaning                                                                                           |
-| :-- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------ |
-| Q1  | Filename                                                | `lensing-backup-YYYY-MM-DD.json`. Sorts, and says what it is in a downloads folder.               |
-| Q2  | Merge mode, ever?                                       | Not until someone with two real devices asks for it. §8.                                          |
-| Q3  | Export with nothing to export?                          | Disable the button at 0 topics and 0 ratings. An empty backup that looks like a backup is a trap. |
-| Q4  | Same confirm weight as Reset?                           | Yes — import destroys strictly more than Reset does.                                              |
-| Q8  | Does the popup survive a file picker and a download?    | **Open until step 1 runs.** The only open question that changes what gets built. §5.              |
-| Q5  | Encrypt or password-protect the file?                   | No. The same vectors already sit in plaintext in the profile on the same disk.                    |
-| Q6  | Import a file exporting hosts this build never matched? | Harmless — `disabledHosts` is an exclusion list; an unknown entry excludes nothing.               |
-| Q7  | Version the format, or the app?                         | Both, but only `schema` gates. An old app must refuse a new file; a new app must read an old one. |
+| #   | Question                                                | Leaning                                                                                             |
+| :-- | :------------------------------------------------------ | :-------------------------------------------------------------------------------------------------- |
+| Q1  | Filename                                                | `lensing-backup-YYYY-MM-DD.json`. Sorts, and says what it is in a downloads folder.                 |
+| Q2  | Merge mode, ever?                                       | Not until someone with two real devices asks for it. §8.                                            |
+| Q3  | Export with nothing to export?                          | Disable the button at 0 topics and 0 ratings. An empty backup that looks like a backup is a trap.   |
+| Q4  | Same confirm weight as Reset?                           | Yes — import destroys strictly more than Reset does.                                                |
+| Q8  | Does the popup survive a file picker and a download?    | **Open until step 1 runs.** Decides picker vs drop, and nothing else — §5.1 ships either way. §5.2. |
+| Q5  | Encrypt or password-protect the file?                   | No. The same vectors already sit in plaintext in the profile on the same disk.                      |
+| Q6  | Import a file exporting hosts this build never matched? | Harmless — `disabledHosts` is an exclusion list; an unknown entry excludes nothing.                 |
+| Q7  | Version the format, or the app?                         | Both, but only `schema` gates. An old app must refuse a new file; a new app must read an old one.   |
