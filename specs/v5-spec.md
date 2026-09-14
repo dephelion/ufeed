@@ -117,10 +117,19 @@ the default: at §4 sizes a full backup is ~1 MB of base64, fine to paste and
 ugly to look at. Do not build it pre-emptively.
 
 **Where it goes in the popup.** [ui.md](../wiki-llm/ui.md) records that the popup
-already runs past Chrome's 600px cap, so this cannot be a new titled section. One
-compact row of two buttons — Export, Import — beside Reset in Advanced, where the
-other whole-configuration actions already live. Keep the hint to a single line
-(§7).
+already runs past the 600px cap both browsers put on a toolbar popup. That is a
+scroll, not a break — the popup opens at its maximum height and the rest scrolls
+— and **two buttons do not change it either way**, so the cap is not a reason to
+build a page here. It is a reason to stay compact: not a new titled section. One
+compact row of two buttons — Export, Import — in the `block` section that ends
+the page, beside "Start over"/Reset, where the other whole-configuration actions
+already live. Keep the hint to a single line (§7).
+
+**Note for step 6: the live policy already misnames these.**
+`dephelion.com` says "Clear tuning, under Advanced in the popup" and the same of
+Reset. There is no Advanced section — the popup has a "Learn from my thumbs"
+block and a "Start over" block. Fix both sentences in the same commit that adds
+the export one.
 
 ## 6. Permissions and manifest
 
@@ -246,7 +255,7 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
    and `importConfig(unknown)` returning a result union, no `browser.*` inside.
    Tested for: round trip, float32 fidelity, junk file, truncated file, wrong
    schema, wrong model, cap overflow, orphan topic lines.
-4. **Popup wiring**: one Export/Import row in Advanced beside Reset, the
+4. **Popup wiring**: one Export/Import row beside "Start over"/Reset, the
    confirm from §8, the one-line hint from §7.
 5. **Wiki, same commit as step 4**: [privacy.md](../wiki-llm/privacy.md) (§7),
    [ui.md](../wiki-llm/ui.md) (the new popup row and what it warns about),
