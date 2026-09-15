@@ -25,9 +25,9 @@ export default defineConfig({
   manifestVersion: 3,
   webExt: { disabled: true },
   manifest: ({ browser }) => ({
-    name: 'Lensing',
+    name: 'Lensing: Local AI Feed Cleaner for Social Media',
     description:
-      'Choose the topics you care about, and Lensing blurs the other posts in your social feeds. Everything runs on your device.',
+      'Local AI blurs distracting posts on X, LinkedIn, and Reddit — nothing leaves your device. You choose the topics.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
     /**
@@ -36,6 +36,7 @@ export default defineConfig({
      * to start idle-looking rather than assume a feed is running.
      */
     action: {
+      default_title: 'Lensing',
       default_icon: {
         16: 'icon-gray/16.png',
         32: 'icon-gray/32.png',
