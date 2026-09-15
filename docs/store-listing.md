@@ -14,16 +14,11 @@ asks for. Kept in the repo so the listing and the code change together.
 | Support email  | contact@dephelion.com                                    |
 | Support URL    | https://dephelion.com/lensing-browser-extension/contact/ |
 | Privacy policy | https://dephelion.com/lensing-browser-extension/privacy/ |
-| Visibility     | Unlisted — installable by link, not in search or browse  |
-
-**Unlisted is a real store publication.** Same review, same package, same
-install: friends click the link, install normally, get automatic updates, and
-see none of the developer-mode warnings an unpacked zip triggers. It is hidden
-only from search and category browsing. Switching to Public later is a setting
-on this page, not a resubmission.
+| Visibility     | Public — listed in search and category browsing          |
+| Store URL      | https://chromewebstore.google.com/detail/lensing/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
 A Chrome Web Store developer account requires a one-time 5 USD registration fee
-before anything can be published, unlisted included.
+before anything can be published.
 
 ## Short description (132 char max)
 
