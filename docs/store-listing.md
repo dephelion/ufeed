@@ -5,16 +5,16 @@ asks for. Kept in the repo so the listing and the code change together.
 
 ## Identity
 
-| Field          | Value                                                    |
-| :------------- | :------------------------------------------------------- |
-| Name           | Lensing: Local AI Feed Cleaner for Social Media          |
-| Version        | 0.3.1 — pre-1.0 while it is in friends' hands            |
-| Category       | Productivity                                             |
-| Language       | English                                                  |
-| Support email  | contact@dephelion.com                                    |
-| Support URL    | https://dephelion.com/lensing-browser-extension/contact/ |
-| Privacy policy | https://dephelion.com/lensing-browser-extension/privacy/ |
-| Visibility     | Public — listed in search and category browsing          |
+| Field          | Value                                                                             |
+| :------------- | :-------------------------------------------------------------------------------- |
+| Name           | Lensing: Local AI Feed Cleaner for Social Media                                   |
+| Version        | 0.3.1 — pre-1.0 while it is in friends' hands                                     |
+| Category       | Productivity                                                                      |
+| Language       | English                                                                           |
+| Support email  | contact@dephelion.com                                                             |
+| Support URL    | https://dephelion.com/lensing-browser-extension/contact/                          |
+| Privacy policy | https://dephelion.com/lensing-browser-extension/privacy/                          |
+| Visibility     | Public — listed in search and category browsing                                   |
 | Store URL      | https://chromewebstore.google.com/detail/lensing/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
 A Chrome Web Store developer account requires a one-time 5 USD registration fee
