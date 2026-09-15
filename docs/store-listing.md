@@ -28,7 +28,7 @@ before anything can be published.
 
 > Your feed decides what you see. Lensing lets you decide instead.
 >
-> Write a few topics — what you actually opened the app for. Lensing reads each
+> Write a few topics — what you actually opened the app for. Local AI reads each
 > post as you scroll and blurs the ones that are not about them. Nothing is
 > deleted and nothing is hidden: a blurred post is always one click away, so you
 > never lose the choice, you just stop making it by accident.
