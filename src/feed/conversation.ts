@@ -1,50 +1,56 @@
-import type { Post } from '../adapters';
+import type { Post, SiteAdapter } from '../adapters';
 
 export type Route = 'keep' | 'judge' | 'wait';
 
 /**
- * Remembers which anchors were kept, so a reply is kept with the post it
- * answers and judged on its own otherwise. See architecture.md §Conversations.
+ * Replies follow their lead post: kept when it is kept, judged on their own
+ * otherwise. The adapter finds the lead post; see architecture.md §Conversations.
  */
-export class Conversations {
+export class Conversation {
   #kept = new WeakMap<HTMLElement, boolean>();
-  #anchors = new WeakMap<HTMLElement, HTMLElement>();
-  #waiting = new WeakMap<HTMLElement, Post[]>();
+  #leadPosts = new WeakMap<HTMLElement, HTMLElement>();
+  #replies = new WeakMap<HTMLElement, Map<HTMLElement, Post>>();
 
-  constructor(private readonly revealedByReader: (element: HTMLElement) => boolean) {}
+  private constructor(private readonly leadPost: NonNullable<SiteAdapter['leadPost']>) {}
+
+  /** Undefined for a site that renders no replies inline. */
+  static for(adapter: SiteAdapter): Conversation | undefined {
+    return adapter.leadPost && new Conversation(adapter.leadPost);
+  }
 
   route(post: Post): Route {
-    if (!post.anchor) {
-      this.#anchors.delete(post.container);
-      return 'judge';
-    }
-    this.#anchors.set(post.container, post.anchor);
-    const kept = this.#keptAnchor(post.anchor);
-    if (kept !== undefined) return kept ? 'keep' : 'judge';
-    this.#waiting.set(post.anchor, [...(this.#waiting.get(post.anchor) ?? []), post]);
-    return 'wait';
+    const lead = this.leadPost(post.container);
+    this.#link(post, lead);
+    if (!lead) return 'judge';
+    const kept = this.#kept.get(lead);
+    if (kept === undefined) return 'wait';
+    return kept ? 'keep' : 'judge';
   }
 
-  followsKept(container: HTMLElement): boolean {
-    const anchor = this.#anchors.get(container);
-    return anchor !== undefined && this.#keptAnchor(anchor) === true;
-  }
-
-  /** Returns the posts that were waiting on this verdict, for the caller to route again. */
+  /** A changed verdict hands back the replies that follow it, to be routed again. */
   settle(container: HTMLElement, kept: boolean): Post[] {
+    if (this.#kept.get(container) === kept) return [];
     this.#kept.set(container, kept);
-    const waiting = this.#waiting.get(container) ?? [];
-    this.#waiting.delete(container);
-    return waiting;
+    return [...(this.#replies.get(container)?.values() ?? [])];
   }
 
   reset(): void {
     this.#kept = new WeakMap();
-    this.#anchors = new WeakMap();
-    this.#waiting = new WeakMap();
+    this.#leadPosts = new WeakMap();
+    this.#replies = new WeakMap();
   }
 
-  #keptAnchor(anchor: HTMLElement): boolean | undefined {
-    return this.revealedByReader(anchor) || this.#kept.get(anchor);
+  #link(post: Post, lead: HTMLElement | undefined): void {
+    const previous = this.#leadPosts.get(post.container);
+    if (previous && previous !== lead)
+      this.#replies.get(previous)?.delete(post.container);
+    if (!lead) {
+      this.#leadPosts.delete(post.container);
+      return;
+    }
+    this.#leadPosts.set(post.container, lead);
+    const replies = this.#replies.get(lead) ?? new Map<HTMLElement, Post>();
+    replies.set(post.container, post);
+    this.#replies.set(lead, replies);
   }
 }

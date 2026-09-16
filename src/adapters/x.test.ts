@@ -130,50 +130,51 @@ const threaded = (
 
 const heading = `<div data-testid="cellInnerDiv"><h2 role="heading">Discover more</h2></div>`;
 
-const anchorText = (text: string) => {
+const leadPostText = (text: string) => {
   const post = xAdapter.findPosts(document).find((p) => p.text === text)!;
-  return post.anchor && xAdapter.findPosts(post.anchor)[0]!.text;
+  const lead = xAdapter.leadPost!(post.container);
+  return lead && xAdapter.findPosts(lead)[0]!.text;
 };
 
-describe('xAdapter anchors on the home feed', () => {
+describe('xAdapter lead post on the home feed', () => {
   beforeEach(() => history.replaceState(null, '', '/home'));
 
-  it('anchors every reply in a drawn thread to its first post', () => {
+  it('gives every reply in a drawn thread its first post', () => {
     mount(
       threaded('root', { down: true }) +
         threaded('middle', { up: true, down: true }) +
         threaded('last', { up: true }),
     );
-    expect(anchorText('root')).toBeUndefined();
-    expect(anchorText('middle')).toBe('root');
-    expect(anchorText('last')).toBe('root');
+    expect(leadPostText('root')).toBeUndefined();
+    expect(leadPostText('middle')).toBe('root');
+    expect(leadPostText('last')).toBe('root');
   });
 
   it('leaves unconnected neighbours to be judged alone', () => {
     mount(threaded('one') + threaded('two'));
-    expect(anchorText('two')).toBeUndefined();
+    expect(leadPostText('two')).toBeUndefined();
   });
 
   it('ignores a focused article off a status page', () => {
     mount(threaded('first', { focal: true }) + threaded('second'));
-    expect(anchorText('second')).toBeUndefined();
+    expect(leadPostText('second')).toBeUndefined();
   });
 });
 
-describe('xAdapter anchors on an opened post', () => {
+describe('xAdapter lead post on an opened post', () => {
   beforeEach(() => history.replaceState(null, '', '/someone/status/123'));
 
-  it('anchors the posts above and the replies below to the opened post', () => {
+  it('gives the posts above and the replies below the opened post', () => {
     mount(
       threaded('parent') +
         threaded('opened', { focal: true }) +
         threaded('reply') +
         threaded('nested', { up: true }),
     );
-    expect(anchorText('opened')).toBeUndefined();
-    expect(anchorText('parent')).toBe('opened');
-    expect(anchorText('reply')).toBe('opened');
-    expect(anchorText('nested')).toBe('opened');
+    expect(leadPostText('opened')).toBeUndefined();
+    expect(leadPostText('parent')).toBe('opened');
+    expect(leadPostText('reply')).toBe('opened');
+    expect(leadPostText('nested')).toBe('opened');
   });
 
   it('judges recommendations under a heading on their own', () => {
@@ -183,7 +184,7 @@ describe('xAdapter anchors on an opened post', () => {
         heading +
         threaded('suggested'),
     );
-    expect(anchorText('reply')).toBe('opened');
-    expect(anchorText('suggested')).toBeUndefined();
+    expect(leadPostText('reply')).toBe('opened');
+    expect(leadPostText('suggested')).toBeUndefined();
   });
 });

@@ -95,20 +95,17 @@ content → popup    { type: 'lensing:status', status }     pushed on change
 
 ## Conversations
 
-**A reply is kept when the post it answers is kept.** Replies lean on context the model never sees; scored alone they blur under a post that passed.
+**A reply is kept when its lead post is kept.** The lead post is the one its conversation hangs from. Replies lean on context the model never sees; scored alone they blur under a post that passed.
 
-- Adapter sets `Post.anchor`: the container of the post that decides. Only X sets it ([adapters.md](adapters.md)).
-- `Conversations` (`src/feed/conversation.ts`) records each container's verdict: kept = `reveal`, or revealed by the reader.
-- Anchor kept → reply revealed, never scored.
-- Anchor blurred or peeked → reply judged on its own, as any post.
-- Anchor undecided → reply held (`markPending`) and re-routed when the anchor settles.
-- Reader reveals an anchor → its blurred replies reveal.
-- `alwaysBlur` override still wins over a kept anchor.
+- `Conversation` (`src/feed/conversation.ts`) is generic: verdicts per container, replies per lead post. It never reads vendor DOM.
+- The adapter supplies the site part: `SiteAdapter.leadPost(container)`. Only X has one ([adapters.md](adapters.md)). `Conversation.for(adapter)` returns undefined without `leadPost`.
+- Content script touches it at three points: `route` before scoring, `settle` after every verdict and reveal click, `reset` on requery. Without one, no hook runs.
+- `route`: lead post kept → `keep` (revealed, never scored); blurred or peeked → `judge` (as any post); undecided → `wait` (held with `markPending`).
+- `settle`: a changed verdict hands back the lead post's replies, re-routed through `enqueue`. Covers waiting replies, a reader reveal, and a rescore flip.
+- `alwaysBlur` override still wins over a kept lead post.
 - No checkbox. Nobody wants the replies of a post they are reading blurred.
 
-**Fail-open holds.** A held reply is never blurred; the pending state clears itself. An anchor never decided leaves its replies visible.
-
-**Rescore decides anchors before replies.** A reply flipped back to its own verdict with no cached score reveals.
+**Fail-open holds.** A held reply is never blurred; the pending state clears itself. A lead post never decided leaves its replies visible.
 
 ## Invalidation
 

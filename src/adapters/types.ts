@@ -2,8 +2,6 @@ export interface Post {
   /** The element that receives the blur class. */
   container: HTMLElement;
   text: string;
-  /** Container of the post this one answers. Kept when it is kept; see architecture.md §Conversations. */
-  anchor?: HTMLElement;
 }
 
 export interface SiteAdapter {
@@ -15,4 +13,6 @@ export interface SiteAdapter {
   readonly mediaSelector: string;
   /** Matches a post container, for walking up from an arbitrary node. */
   readonly containerSelector: string;
+  /** Container of the post a reply's conversation hangs from. Only for sites that render replies inline. */
+  leadPost?(container: HTMLElement): HTMLElement | undefined;
 }

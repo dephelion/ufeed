@@ -9,12 +9,13 @@
 interface SiteAdapter {
   id: string;
   matches(hostname: string): boolean;
-  findPosts(root: ParentNode): Post[]; // { container, text, anchor? }
+  findPosts(root: ParentNode): Post[]; // { container, text }
   mediaSelector: string; // post-body media, never avatars
+  leadPost?(container: HTMLElement): HTMLElement | undefined; // sites with inline replies only
 }
 ```
 
-`container` receives the blur class. `text` is what gets scored. `anchor` is the container of the post this one answers; set it only where replies render inline ([architecture.md](architecture.md) §Conversations). `adapterFor(hostname)` picks one; no adapter means the content script stands down.
+`container` receives the blur class. `text` is what gets scored. `leadPost` returns the container of the post a reply's conversation hangs from. Thread markup is per vendor, so the rule lives here; what a conversation does with it does not ([architecture.md](architecture.md) §Conversations). `adapterFor(hostname)` picks one; no adapter means the content script stands down.
 
 `findPosts` MUST check `root.matches(sel)` as well as `root.querySelectorAll(sel)` — a mutation can add a node that **is** a post, and `querySelectorAll` alone misses it. Dedupe through a `Set`; both paths can hit the same element.
 
@@ -43,7 +44,7 @@ interface SiteAdapter {
 
 **The feed is virtualized.** Nodes are recycled with new content, so a `data-checked` flag on the node produces stale verdicts. The score cache is keyed on a hash of the **text** (`hashText`, FNV-1a over whitespace-collapsed lowercase), never on the node.
 
-### Anchors
+### Lead post (`leadPost`)
 
 | Concern       | Signal                                                          |
 | :------------ | :-------------------------------------------------------------- |
@@ -52,9 +53,9 @@ interface SiteAdapter {
 | Line down     | Parent of `Tweet-User-Avatar` has more than one child           |
 | Line up       | Row above the avatar row wraps a row with more than one child   |
 
-**Status page:** every cell before the opened post, and after it up to the first heading cell, anchors to the opened post. The opened post has no anchor. Cells past the heading are recommendations: chain rule only.
+**Status page:** every cell before the opened post, and after it up to the first heading cell, has the opened post as lead post. The opened post has none. Cells past the heading are recommendations: chain rule only.
 
-**Any page:** a cell with a line up anchors to the first cell of its unbroken chain of line-down neighbours. Home shows parent + reply this way.
+**Any page:** a cell with a line up has as lead post the first cell of its unbroken chain of line-down neighbours. Home shows parent + reply this way.
 
 **Structure, not classes.** The connector is an empty div with hashed classes. Verified on a home and a status capture: every drawn pair matched, no unconnected post matched.
 

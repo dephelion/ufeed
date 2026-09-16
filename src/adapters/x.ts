@@ -14,6 +14,7 @@ function isStatusPath(pathname: string): boolean {
 /** Blurs the cell, not the article: the article leaves separators and padding sharp. */
 export const xAdapter: SiteAdapter = {
   id: 'x',
+  leadPost,
 
   matches(hostname) {
     return (
@@ -39,8 +40,7 @@ export const xAdapter: SiteAdapter = {
     for (const container of containers) {
       if (!(container instanceof HTMLElement)) continue;
       if (!container.querySelector(POST)) continue;
-      const anchor = anchorOf(container);
-      posts.push({ container, text: extractText(container), ...(anchor && { anchor }) });
+      posts.push({ container, text: extractText(container) });
     }
     return posts;
   },
@@ -65,7 +65,7 @@ function extractText(container: HTMLElement): string {
 }
 
 /** A reply follows the opened post on a status page, else the root of its drawn thread. */
-function anchorOf(cell: HTMLElement): HTMLElement | undefined {
+function leadPost(cell: HTMLElement): HTMLElement | undefined {
   if (!isStatusPath(location.pathname)) return chainRoot(cell);
   const focal = cell.ownerDocument.querySelector(FOCAL)?.closest<HTMLElement>(CONTAINER);
   if (!focal || focal.parentElement !== cell.parentElement) return chainRoot(cell);

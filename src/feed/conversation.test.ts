@@ -1,67 +1,71 @@
 import { describe, expect, it } from 'vitest';
 import type { Post } from '../adapters';
-import { Conversations } from './conversation';
+import { redditAdapter } from '../adapters/reddit';
+import { Conversation } from './conversation';
 
 const element = () => document.createElement('div');
-const reply = (anchor: HTMLElement): Post => ({
-  container: element(),
-  text: 'reply',
-  anchor,
-});
+const post = (container = element()): Post => ({ container, text: 'post' });
 
-describe('Conversations', () => {
+/** Lead posts come from a fixed reply → post map, standing in for a site's DOM rule. */
+const setup = () => {
+  const leadPosts = new Map<HTMLElement, HTMLElement>();
+  const conversation = Conversation.for({
+    ...redditAdapter,
+    leadPost: (container) => leadPosts.get(container),
+  })!;
+  const lead = element();
+  const reply = post();
+  leadPosts.set(reply.container, lead);
+  return { conversation, lead, reply };
+};
+
+describe('Conversation', () => {
+  it('is not built for a site without lead posts', () => {
+    expect(Conversation.for(redditAdapter)).toBeUndefined();
+  });
+
   it('judges a post that answers nothing', () => {
-    const conversations = new Conversations(() => false);
-    expect(conversations.route({ container: element(), text: 'post' })).toBe('judge');
+    const { conversation } = setup();
+    expect(conversation.route(post())).toBe('judge');
   });
 
   it('keeps a reply to a kept post', () => {
-    const conversations = new Conversations(() => false);
-    const anchor = element();
-    conversations.settle(anchor, true);
-    const post = reply(anchor);
-    expect(conversations.route(post)).toBe('keep');
-    expect(conversations.followsKept(post.container)).toBe(true);
+    const { conversation, lead, reply } = setup();
+    conversation.settle(lead, true);
+    expect(conversation.route(reply)).toBe('keep');
   });
 
   it('judges a reply to a blurred post on its own', () => {
-    const conversations = new Conversations(() => false);
-    const anchor = element();
-    conversations.settle(anchor, false);
-    expect(conversations.route(reply(anchor))).toBe('judge');
+    const { conversation, lead, reply } = setup();
+    conversation.settle(lead, false);
+    expect(conversation.route(reply)).toBe('judge');
   });
 
   it('holds a reply until its post is decided, then hands it back', () => {
-    const conversations = new Conversations(() => false);
-    const anchor = element();
-    const post = reply(anchor);
-    expect(conversations.route(post)).toBe('wait');
-    expect(conversations.settle(anchor, true)).toEqual([post]);
-    expect(conversations.route(post)).toBe('keep');
+    const { conversation, lead, reply } = setup();
+    expect(conversation.route(reply)).toBe('wait');
+    expect(conversation.settle(lead, true)).toEqual([reply]);
+    expect(conversation.route(reply)).toBe('keep');
   });
 
-  it('counts a post the reader revealed as kept', () => {
-    const anchor = element();
-    const conversations = new Conversations((el) => el === anchor);
-    conversations.settle(anchor, false);
-    expect(conversations.route(reply(anchor))).toBe('keep');
+  it('hands replies back when a blurred post is revealed', () => {
+    const { conversation, lead, reply } = setup();
+    conversation.settle(lead, false);
+    conversation.route(reply);
+    expect(conversation.settle(lead, true)).toEqual([reply]);
   });
 
-  it('stops keeping replies when a later verdict blurs the post', () => {
-    const conversations = new Conversations(() => false);
-    const anchor = element();
-    const post = reply(anchor);
-    conversations.settle(anchor, true);
-    conversations.route(post);
-    conversations.settle(anchor, false);
-    expect(conversations.followsKept(post.container)).toBe(false);
+  it('hands nothing back when the verdict did not change', () => {
+    const { conversation, lead, reply } = setup();
+    conversation.settle(lead, true);
+    conversation.route(reply);
+    expect(conversation.settle(lead, true)).toEqual([]);
   });
 
   it('forgets verdicts on reset', () => {
-    const conversations = new Conversations(() => false);
-    const anchor = element();
-    conversations.settle(anchor, true);
-    conversations.reset();
-    expect(conversations.route(reply(anchor))).toBe('wait');
+    const { conversation, lead, reply } = setup();
+    conversation.settle(lead, true);
+    conversation.reset();
+    expect(conversation.route(reply)).toBe('wait');
   });
 });
