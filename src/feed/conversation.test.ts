@@ -16,7 +16,7 @@ const setup = () => {
   const lead = element();
   const reply = post();
   leadPosts.set(reply.container, lead);
-  return { conversation, lead, reply };
+  return { conversation, leadPosts, lead, reply };
 };
 
 describe('Conversation', () => {
@@ -27,6 +27,27 @@ describe('Conversation', () => {
   it('judges a post that answers nothing', () => {
     const { conversation } = setup();
     expect(conversation.route(post())).toBe('judge');
+  });
+
+  it('keeps the post the reader opened, which leads itself', () => {
+    const { conversation, leadPosts, lead } = setup();
+    leadPosts.set(lead, lead);
+    expect(conversation.route(post(lead))).toBe('keep');
+  });
+
+  it('reports kept posts as kept, so they offer no rating', () => {
+    const { conversation, leadPosts, lead, reply } = setup();
+    leadPosts.set(lead, lead);
+    conversation.settle(lead, true);
+    expect(conversation.keeps(lead)).toBe(true);
+    expect(conversation.keeps(reply.container)).toBe(true);
+    expect(conversation.keeps(element())).toBe(false);
+  });
+
+  it('reports a reply to a blurred post as judged', () => {
+    const { conversation, lead, reply } = setup();
+    conversation.settle(lead, false);
+    expect(conversation.keeps(reply.container)).toBe(false);
   });
 
   it('keeps a reply to a kept post', () => {

@@ -106,6 +106,8 @@ One floating `.lx-fb` element top-centred over the hovered post, appended to `do
 
 **Top-centred, not in a corner.** The top-right belongs to the vendor's post menu, and the blur label sits there too. It is anchored horizontally on the post's centre point with a `translate(-50%, 0)`, and vertically on the post's top edge, so the bar's own width never enters the maths.
 
+Hidden on a post its conversation kept (`Conversation.keeps`): the opened post and replies to a kept lead post were never judged, so there is nothing to rate ([architecture.md](architecture.md) §Conversations).
+
 Appears on any scored post, not only blurred ones: [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
 
 **Hidden unless `tuneFromFeedback` is on.** The checkbox gates the buttons and the scoring together, so a rating never has an invisible effect.

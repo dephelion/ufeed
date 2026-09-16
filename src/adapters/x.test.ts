@@ -171,7 +171,7 @@ describe('xAdapter lead post on an opened post', () => {
         threaded('reply') +
         threaded('nested', { up: true }),
     );
-    expect(leadPostText('opened')).toBeUndefined();
+    expect(leadPostText('opened')).toBe('opened');
     expect(leadPostText('parent')).toBe('opened');
     expect(leadPostText('reply')).toBe('opened');
     expect(leadPostText('nested')).toBe('opened');

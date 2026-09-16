@@ -291,6 +291,7 @@ async function start(): Promise<void> {
       const found = container ? adapter.findPosts(container)[0] : undefined;
       if (!found || !scanner.knows(found.container)) return undefined;
       if (isBlurred(found.container)) return undefined;
+      if (conversation?.keeps(found.container)) return undefined;
       return { ...found, rating: tuner.ratingOf(found.text)?.liked };
     },
     onFeedback: takeFeedback,

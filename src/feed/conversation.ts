@@ -20,11 +20,22 @@ export class Conversation {
 
   route(post: Post): Route {
     const lead = this.leadPost(post.container);
+    if (lead === post.container) {
+      this.#link(post, undefined);
+      return 'keep';
+    }
     this.#link(post, lead);
     if (!lead) return 'judge';
     const kept = this.#kept.get(lead);
     if (kept === undefined) return 'wait';
     return kept ? 'keep' : 'judge';
+  }
+
+  /** Kept by its conversation, not judged by the model: nothing to rate. Read-only, unlike `route`. */
+  keeps(container: HTMLElement): boolean {
+    const lead = this.leadPost(container);
+    if (!lead) return false;
+    return lead === container || this.#kept.get(lead) === true;
   }
 
   /** A changed verdict hands back the replies that follow it, to be routed again. */

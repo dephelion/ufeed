@@ -64,12 +64,12 @@ function extractText(container: HTMLElement): string {
     .trim();
 }
 
-/** A reply follows the opened post on a status page, else the root of its drawn thread. */
+/** The opened post leads itself; replies follow it. Elsewhere a reply follows its drawn thread's root. */
 function leadPost(cell: HTMLElement): HTMLElement | undefined {
   if (!isStatusPath(location.pathname)) return chainRoot(cell);
   const focal = cell.ownerDocument.querySelector(FOCAL)?.closest<HTMLElement>(CONTAINER);
   if (!focal || focal.parentElement !== cell.parentElement) return chainRoot(cell);
-  if (focal === cell) return undefined;
+  if (focal === cell) return cell;
   if (cell.compareDocumentPosition(focal) & Node.DOCUMENT_POSITION_FOLLOWING)
     return focal;
   for (let el = focal.nextElementSibling; el && el !== cell; el = el.nextElementSibling) {

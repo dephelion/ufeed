@@ -53,7 +53,7 @@ interface SiteAdapter {
 | Line down     | Parent of `Tweet-User-Avatar` has more than one child           |
 | Line up       | Row above the avatar row wraps a row with more than one child   |
 
-**Status page:** every cell before the opened post, and after it up to the first heading cell, has the opened post as lead post. The opened post has none. Cells past the heading are recommendations: chain rule only.
+**Status page:** every cell before the opened post, and after it up to the first heading cell, has the opened post as lead post. The opened post leads itself, so it is never filtered ([architecture.md](architecture.md) §Conversations). Cells past the heading are recommendations: chain rule only.
 
 **Any page:** a cell with a line up has as lead post the first cell of its unbroken chain of line-down neighbours. Home shows parent + reply this way.
 
