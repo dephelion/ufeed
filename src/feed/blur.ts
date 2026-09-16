@@ -90,7 +90,10 @@ export function isBlurred(element: HTMLElement): boolean {
  * the only way in — hover would expose every post the pointer crossed while
  * scrolling.
  */
-export function listenForReveal(root: Document = document): () => void {
+export function listenForReveal(
+  root: Document = document,
+  onReveal: (element: HTMLElement) => void = () => {},
+): () => void {
   const onClick = (event: MouseEvent) => {
     const target = event.target as Element | null;
     const element = target?.closest<HTMLElement>(`.${BLUR_CLASS}`);
@@ -98,6 +101,7 @@ export function listenForReveal(root: Document = document): () => void {
     event.preventDefault();
     event.stopPropagation();
     revealPermanently(element);
+    onReveal(element);
   };
   root.addEventListener('click', onClick, true);
   return () => root.removeEventListener('click', onClick, true);

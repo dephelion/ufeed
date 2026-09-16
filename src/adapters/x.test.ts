@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { xAdapter } from './x';
 
 const cell = (text: string, testid = 'cellInnerDiv') =>
@@ -115,5 +115,75 @@ describe('xAdapter.findPosts', () => {
     expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(
       'Distributed systems fail in practice always',
     );
+  });
+});
+
+/** Mirrors captured X markup: the thread connector is an extra empty child. */
+const threaded = (
+  text: string,
+  { up = false, down = false, focal = false } = {},
+) => `<div data-testid="cellInnerDiv"><article tabindex="${focal ? -1 : 0}">
+     <div><div>${up ? '<div><div></div></div>' : ''}<div></div></div></div>
+     <div><div><div data-testid="Tweet-User-Avatar"></div>${down ? '<div></div>' : ''}</div></div>
+     <div data-testid="tweetText"><span>${text}</span></div>
+   </article></div>`;
+
+const heading = `<div data-testid="cellInnerDiv"><h2 role="heading">Discover more</h2></div>`;
+
+const anchorText = (text: string) => {
+  const post = xAdapter.findPosts(document).find((p) => p.text === text)!;
+  return post.anchor && xAdapter.findPosts(post.anchor)[0]!.text;
+};
+
+describe('xAdapter anchors on the home feed', () => {
+  beforeEach(() => history.replaceState(null, '', '/home'));
+
+  it('anchors every reply in a drawn thread to its first post', () => {
+    mount(
+      threaded('root', { down: true }) +
+        threaded('middle', { up: true, down: true }) +
+        threaded('last', { up: true }),
+    );
+    expect(anchorText('root')).toBeUndefined();
+    expect(anchorText('middle')).toBe('root');
+    expect(anchorText('last')).toBe('root');
+  });
+
+  it('leaves unconnected neighbours to be judged alone', () => {
+    mount(threaded('one') + threaded('two'));
+    expect(anchorText('two')).toBeUndefined();
+  });
+
+  it('ignores a focused article off a status page', () => {
+    mount(threaded('first', { focal: true }) + threaded('second'));
+    expect(anchorText('second')).toBeUndefined();
+  });
+});
+
+describe('xAdapter anchors on an opened post', () => {
+  beforeEach(() => history.replaceState(null, '', '/someone/status/123'));
+
+  it('anchors the posts above and the replies below to the opened post', () => {
+    mount(
+      threaded('parent') +
+        threaded('opened', { focal: true }) +
+        threaded('reply') +
+        threaded('nested', { up: true }),
+    );
+    expect(anchorText('opened')).toBeUndefined();
+    expect(anchorText('parent')).toBe('opened');
+    expect(anchorText('reply')).toBe('opened');
+    expect(anchorText('nested')).toBe('opened');
+  });
+
+  it('judges recommendations under a heading on their own', () => {
+    mount(
+      threaded('opened', { focal: true }) +
+        threaded('reply') +
+        heading +
+        threaded('suggested'),
+    );
+    expect(anchorText('reply')).toBe('opened');
+    expect(anchorText('suggested')).toBeUndefined();
   });
 });

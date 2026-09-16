@@ -93,14 +93,31 @@ content → popup    { type: 'lensing:status', status }     pushed on change
 
 **Reported changes are throttled** — new state, or progress moved >= 5 points. Per-file download progress fires several times a second.
 
+## Conversations
+
+**A reply is kept when the post it answers is kept.** Replies lean on context the model never sees; scored alone they blur under a post that passed.
+
+- Adapter sets `Post.anchor`: the container of the post that decides. Only X sets it ([adapters.md](adapters.md)).
+- `Conversations` (`src/feed/conversation.ts`) records each container's verdict: kept = `reveal`, or revealed by the reader.
+- Anchor kept → reply revealed, never scored.
+- Anchor blurred or peeked → reply judged on its own, as any post.
+- Anchor undecided → reply held (`markPending`) and re-routed when the anchor settles.
+- Reader reveals an anchor → its blurred replies reveal.
+- `alwaysBlur` override still wins over a kept anchor.
+- No checkbox. Nobody wants the replies of a post they are reading blurred.
+
+**Fail-open holds.** A held reply is never blurred; the pending state clears itself. An anchor never decided leaves its replies visible.
+
+**Rescore decides anchors before replies.** A reply flipped back to its own verdict with no cached score reveals.
+
 ## Invalidation
 
-| Change        | Effect                                                                     |
-| :------------ | :------------------------------------------------------------------------- |
-| Strictness    | Re-apply threshold from cache. No inference.                               |
-| Topics        | `epoch += 1`, clear cache and queue, new `seen` set, reveal all, re-sweep. |
-| Host disabled | Reveal all, stop.                                                          |
-| Turned on     | Same as Topics: the engine has never been sent a query.                    |
+| Change        | Effect                                                                                            |
+| :------------ | :------------------------------------------------------------------------------------------------ |
+| Strictness    | Re-apply threshold from cache. No inference.                                                      |
+| Topics        | `epoch += 1`, clear cache, queue and conversation verdicts, new `seen` set, reveal all, re-sweep. |
+| Host disabled | Reveal all, stop.                                                                                 |
+| Turned on     | Same as Topics: the engine has never been sent a query.                                           |
 
 **Epoch guards the race.** A batch in flight when topics change returns scores measured against the old vectors; replies from a previous epoch are discarded.
 

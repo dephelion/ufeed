@@ -2,6 +2,8 @@ export interface Post {
   /** The element that receives the blur class. */
   container: HTMLElement;
   text: string;
+  /** Container of the post this one answers. Kept when it is kept; see architecture.md §Conversations. */
+  anchor?: HTMLElement;
 }
 
 export interface SiteAdapter {

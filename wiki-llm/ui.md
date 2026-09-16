@@ -96,6 +96,7 @@ Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with tex
 - First click: reveal, `preventDefault`, `stopPropagation`. The post never navigates.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
+- Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
 
 **Node-level is sufficient.** A reveal lost to virtualized recycling is an accepted tradeoff, not a bug. Do not add a persistence layer for it.
 
