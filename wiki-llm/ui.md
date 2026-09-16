@@ -96,6 +96,7 @@ Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with tex
 - First click: reveal, `preventDefault`, `stopPropagation`. The post never navigates.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
+- Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
 
 **Node-level is sufficient.** A reveal lost to virtualized recycling is an accepted tradeoff, not a bug. Do not add a persistence layer for it.
 
@@ -104,6 +105,8 @@ Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with tex
 One floating `.lx-fb` element top-centred over the hovered post, appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
 
 **Top-centred, not in a corner.** The top-right belongs to the vendor's post menu, and the blur label sits there too. It is anchored horizontally on the post's centre point with a `translate(-50%, 0)`, and vertically on the post's top edge, so the bar's own width never enters the maths.
+
+Hidden on a post its conversation kept (`Conversation.keeps`): the opened post and replies to a kept lead post were never judged, so there is nothing to rate ([architecture.md](architecture.md) §Conversations).
 
 Appears on any scored post, not only blurred ones: [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
 

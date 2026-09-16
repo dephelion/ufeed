@@ -93,14 +93,29 @@ content → popup    { type: 'lensing:status', status }     pushed on change
 
 **Reported changes are throttled** — new state, or progress moved >= 5 points. Per-file download progress fires several times a second.
 
+## Conversations
+
+**A reply is kept when its lead post is kept.** The lead post is the one its conversation hangs from. Replies lean on context the model never sees; scored alone they blur under a post that passed.
+
+- `Conversation` (`src/feed/conversation.ts`) is generic: verdicts per container, replies per lead post. It never reads vendor DOM.
+- The adapter supplies the site part: `SiteAdapter.leadPost(container)`. Only X has one ([adapters.md](adapters.md)). `Conversation.for(adapter)` returns undefined without `leadPost`.
+- Content script touches it at three points: `route` before scoring, `settle` after every verdict and reveal click, `reset` on requery. Without one, no hook runs.
+- **The post the reader opened is never filtered, on every site.** An adapter enforces it only where it breaks: X's `leadPost` returns the opened post itself (a reveal does not survive X's redraw). Reddit stands down on threads; LinkedIn already holds, checked by hand.
+- `route`: post leads itself → `keep`; lead post kept → `keep` (revealed, never scored); blurred or peeked → `judge` (as any post); undecided → `wait` (held with `markPending`).
+- `settle`: a changed verdict hands back the lead post's replies, re-routed through `enqueue`. Covers waiting replies, a reader reveal, and a rescore flip.
+- `alwaysBlur` override still wins over `keep`, the opened post included.
+- No checkbox. Nobody wants the replies of a post they are reading blurred.
+
+**Fail-open holds.** A held reply is never blurred; the pending state clears itself. A lead post never decided leaves its replies visible.
+
 ## Invalidation
 
-| Change        | Effect                                                                     |
-| :------------ | :------------------------------------------------------------------------- |
-| Strictness    | Re-apply threshold from cache. No inference.                               |
-| Topics        | `epoch += 1`, clear cache and queue, new `seen` set, reveal all, re-sweep. |
-| Host disabled | Reveal all, stop.                                                          |
-| Turned on     | Same as Topics: the engine has never been sent a query.                    |
+| Change        | Effect                                                                                            |
+| :------------ | :------------------------------------------------------------------------------------------------ |
+| Strictness    | Re-apply threshold from cache. No inference.                                                      |
+| Topics        | `epoch += 1`, clear cache, queue and conversation verdicts, new `seen` set, reveal all, re-sweep. |
+| Host disabled | Reveal all, stop.                                                                                 |
+| Turned on     | Same as Topics: the engine has never been sent a query.                                           |
 
 **Epoch guards the race.** A batch in flight when topics change returns scores measured against the old vectors; replies from a previous epoch are discarded.
 

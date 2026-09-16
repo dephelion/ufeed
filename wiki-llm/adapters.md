@@ -11,10 +11,11 @@ interface SiteAdapter {
   matches(hostname: string): boolean;
   findPosts(root: ParentNode): Post[]; // { container, text }
   mediaSelector: string; // post-body media, never avatars
+  leadPost?(container: HTMLElement): HTMLElement | undefined; // sites with inline replies only
 }
 ```
 
-`container` receives the blur class. `text` is what gets scored. `adapterFor(hostname)` picks one; no adapter means the content script stands down.
+`container` receives the blur class. `text` is what gets scored. `leadPost` returns the container of the post a reply's conversation hangs from. Thread markup is per vendor, so the rule lives here; what a conversation does with it does not ([architecture.md](architecture.md) §Conversations). `adapterFor(hostname)` picks one; no adapter means the content script stands down.
 
 `findPosts` MUST check `root.matches(sel)` as well as `root.querySelectorAll(sel)` — a mutation can add a node that **is** a post, and `querySelectorAll` alone misses it. Dedupe through a `Set`; both paths can hit the same element.
 
@@ -42,6 +43,23 @@ interface SiteAdapter {
 **Media selector excludes avatars.** `[data-testid="Tweet-User-Avatar"]` is on every post; matching it would make every post a media post.
 
 **The feed is virtualized.** Nodes are recycled with new content, so a `data-checked` flag on the node produces stale verdicts. The score cache is keyed on a hash of the **text** (`hashText`, FNV-1a over whitespace-collapsed lowercase), never on the node.
+
+### Lead post (`leadPost`)
+
+| Concern       | Signal                                                          |
+| :------------ | :-------------------------------------------------------------- |
+| Opened post   | `article[tabindex="-1"]` on a `/<user>/status/<id>` path        |
+| Section break | A cell holding `[role="heading"]` ("Discover more", any locale) |
+| Line down     | Parent of `Tweet-User-Avatar` has more than one child           |
+| Line up       | Row above the avatar row wraps a row with more than one child   |
+
+**Status page:** every cell before the opened post, and after it up to the first heading cell, has the opened post as lead post. The opened post leads itself, so it is never filtered ([architecture.md](architecture.md) §Conversations). Cells past the heading are recommendations: chain rule only.
+
+**Any page:** a cell with a line up has as lead post the first cell of its unbroken chain of line-down neighbours. Home shows parent + reply this way.
+
+**Structure, not classes.** The connector is an empty div with hashed classes. Verified on a home and a status capture: every drawn pair matched, no unconnected post matched.
+
+**Chain needs both cells rendered.** A parent recycled out of the DOM leaves the reply judged alone — today's behaviour, fail-safe.
 
 **Never a generic selector.** Bare `p` matched navigation, sidebars, our own UI, and text inside already-claimed posts.
 

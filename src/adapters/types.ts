@@ -13,4 +13,6 @@ export interface SiteAdapter {
   readonly mediaSelector: string;
   /** Matches a post container, for walking up from an arbitrary node. */
   readonly containerSelector: string;
+  /** Container of the post a reply's conversation hangs from; itself for the post the reader opened. Only for sites that render replies inline. */
+  leadPost?(container: HTMLElement): HTMLElement | undefined;
 }

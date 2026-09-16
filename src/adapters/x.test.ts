@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { xAdapter } from './x';
 
 const cell = (text: string, testid = 'cellInnerDiv') =>
@@ -115,5 +115,76 @@ describe('xAdapter.findPosts', () => {
     expect(xAdapter.findPosts(mount(html))[0]!.text).toBe(
       'Distributed systems fail in practice always',
     );
+  });
+});
+
+/** Mirrors captured X markup: the thread connector is an extra empty child. */
+const threaded = (
+  text: string,
+  { up = false, down = false, focal = false } = {},
+) => `<div data-testid="cellInnerDiv"><article tabindex="${focal ? -1 : 0}">
+     <div><div>${up ? '<div><div></div></div>' : ''}<div></div></div></div>
+     <div><div><div data-testid="Tweet-User-Avatar"></div>${down ? '<div></div>' : ''}</div></div>
+     <div data-testid="tweetText"><span>${text}</span></div>
+   </article></div>`;
+
+const heading = `<div data-testid="cellInnerDiv"><h2 role="heading">Discover more</h2></div>`;
+
+const leadPostText = (text: string) => {
+  const post = xAdapter.findPosts(document).find((p) => p.text === text)!;
+  const lead = xAdapter.leadPost!(post.container);
+  return lead && xAdapter.findPosts(lead)[0]!.text;
+};
+
+describe('xAdapter lead post on the home feed', () => {
+  beforeEach(() => history.replaceState(null, '', '/home'));
+
+  it('gives every reply in a drawn thread its first post', () => {
+    mount(
+      threaded('root', { down: true }) +
+        threaded('middle', { up: true, down: true }) +
+        threaded('last', { up: true }),
+    );
+    expect(leadPostText('root')).toBeUndefined();
+    expect(leadPostText('middle')).toBe('root');
+    expect(leadPostText('last')).toBe('root');
+  });
+
+  it('leaves unconnected neighbours to be judged alone', () => {
+    mount(threaded('one') + threaded('two'));
+    expect(leadPostText('two')).toBeUndefined();
+  });
+
+  it('ignores a focused article off a status page', () => {
+    mount(threaded('first', { focal: true }) + threaded('second'));
+    expect(leadPostText('second')).toBeUndefined();
+  });
+});
+
+describe('xAdapter lead post on an opened post', () => {
+  beforeEach(() => history.replaceState(null, '', '/someone/status/123'));
+
+  it('gives the posts above and the replies below the opened post', () => {
+    mount(
+      threaded('parent') +
+        threaded('opened', { focal: true }) +
+        threaded('reply') +
+        threaded('nested', { up: true }),
+    );
+    expect(leadPostText('opened')).toBe('opened');
+    expect(leadPostText('parent')).toBe('opened');
+    expect(leadPostText('reply')).toBe('opened');
+    expect(leadPostText('nested')).toBe('opened');
+  });
+
+  it('judges recommendations under a heading on their own', () => {
+    mount(
+      threaded('opened', { focal: true }) +
+        threaded('reply') +
+        heading +
+        threaded('suggested'),
+    );
+    expect(leadPostText('reply')).toBe('opened');
+    expect(leadPostText('suggested')).toBeUndefined();
   });
 });

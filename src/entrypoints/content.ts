@@ -35,6 +35,7 @@ import { LanguageCache } from '../feed/language-detector';
 import { decide as decideAction, decideWithoutScore, type Action } from '../feed/policy';
 import { ScoreWindow } from '../feed/threshold';
 import { FeedScanner } from '../feed/scanner';
+import { Conversation } from '../feed/conversation';
 import { ScoreQueue, forEngine } from '../feed/queue';
 import { Tuning } from '../feed/tuning';
 import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
@@ -103,14 +104,23 @@ async function start(): Promise<void> {
     settings.tuneFromFeedback ? tuner.corrections(settings.topics) : [];
 
   const threshold = () => scoreWindow.cut(settings, tuning());
+  const conversation = Conversation.for(adapter);
 
   /** Returns what it did, so callers need not re-derive the verdict to count it. */
   const decide = (post: Post, score: number | undefined): Action | undefined => {
     const cut = threshold();
     if (settings.showScores) stampScore(post.container, score, cut, post.text.length);
     else clearScore(post.container);
-    if (isRevealed(post.container)) return undefined;
-    return apply(post, decideAction({ ...grounds(post), score, threshold: cut }));
+    if (isRevealed(post.container)) {
+      settle(post.container, true);
+      return undefined;
+    }
+    const followsKept =
+      conversation?.route(post) === 'keep' && overrideFor(settings, post.text) !== 'blur';
+    return apply(
+      post,
+      followsKept ? 'reveal' : decideAction({ ...grounds(post), score, threshold: cut }),
+    );
   };
 
   const grounds = (post: Post) => ({
@@ -130,7 +140,12 @@ async function start(): Promise<void> {
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, post.text);
     else blur(post.container, REASONS[action], settings.collapseBlurred);
+    settle(post.container, action === 'reveal');
     return action;
+  };
+
+  const settle = (container: HTMLElement, kept: boolean): void => {
+    for (const reply of conversation?.settle(container, kept) ?? []) enqueue(reply);
   };
 
   const queue = new ScoreQueue(engine, (results) => {
@@ -154,7 +169,13 @@ async function start(): Promise<void> {
   /** Cached or overridden posts are decided here and never reach the engine. */
   const enqueue = (post: Post): void => {
     const cached = cache.get(post.text);
+    const route = conversation?.route(post);
+    if (route === 'wait') {
+      hold(post);
+      return;
+    }
     if (
+      route === 'keep' ||
       post.text.trim() === '' ||
       cached !== undefined ||
       overrideFor(settings, post.text)
@@ -178,7 +199,8 @@ async function start(): Promise<void> {
   const detectThenQueue = async (post: Post): Promise<void> => {
     hold(post);
     await languages.detect(post.text);
-    if (!post.container.isConnected || isRevealed(post.container)) return;
+    if (!post.container.isConnected) return;
+    if (isRevealed(post.container)) return settle(post.container, true);
     const settled = decideWithoutScore(grounds(post));
     if (settled === undefined) {
       queue.add(post);
@@ -209,6 +231,7 @@ async function start(): Promise<void> {
     engine.setTopics(settings.topics, corrections());
     queue.invalidate();
     cache.clear();
+    conversation?.reset();
     scanner.reset();
   };
 
@@ -268,12 +291,13 @@ async function start(): Promise<void> {
       const found = container ? adapter.findPosts(container)[0] : undefined;
       if (!found || !scanner.knows(found.container)) return undefined;
       if (isBlurred(found.container)) return undefined;
+      if (conversation?.keeps(found.container)) return undefined;
       return { ...found, rating: tuner.ratingOf(found.text)?.liked };
     },
     onFeedback: takeFeedback,
   });
 
-  listenForReveal(document);
+  listenForReveal(document, conversation && ((element) => settle(element, true)));
   onSettingsChanged(applySettings);
   scanner.start();
   showNudge();
