@@ -22,16 +22,22 @@ function urlHost(url: string | undefined): string | undefined {
   }
 }
 
-/**
- * The tab named in a setIcon call can close, or navigate to a discarded id,
- * between the event firing and this running. Chrome answers with
- * `runtime.lastError`, and an uncaught one prints as an "Unchecked
- * runtime.lastError" extension error — a race, not a fault, so it is
- * swallowed the same way status-channel.ts already swallows a popup that
- * is not there to hear a broadcast.
- */
+interface CallbackAction {
+  action: {
+    setIcon(
+      details: { tabId: number; path: Record<string, string> },
+      done: () => void,
+    ): void;
+  };
+  runtime: { lastError?: unknown };
+}
+
+const callbackApi = (globalThis as unknown as { chrome: CallbackAction }).chrome;
+
+// Chrome's setIcon binding reports a stale tab id as "Unchecked runtime.lastError" even when the
+// promise is caught; only reading lastError in a callback marks it handled. See conventions.md §4.
 function setIcon(tabId: number, path: Record<string, string>): void {
-  void browser.action.setIcon({ tabId, path }).catch(() => {});
+  callbackApi.action.setIcon({ tabId, path }, () => void callbackApi.runtime.lastError);
 }
 
 /**
