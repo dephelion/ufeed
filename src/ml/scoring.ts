@@ -65,11 +65,6 @@ export function feedShownAt(step: number): number {
   return STRICTNESS_STEPS[clampStrictness(step)]!.shown;
 }
 
-/** Share of what survives this step that was not wanted after all. */
-export function junkShownAt(step: number): number {
-  return STRICTNESS_STEPS[clampStrictness(step)]!.junk;
-}
-
 /**
  * Width of the uncertain strip below the threshold. Below it nothing was wanted
  * across 125 observations; inside it, 7% was. See wiki-llm/model.md.

@@ -159,7 +159,8 @@ actually use:
 **Strictness changes the threshold.** A post is shown when its score reaches the
 threshold. e5 packs all scores into a narrow band (see above), so a slider that
 moved the cosine evenly would do nothing for half its travel. Each of the 11
-steps is a threshold measured to hide about another tenth of a typical feed.
+steps is a threshold measured, on one sample feed, to hide about another tenth
+of it. Your feed will differ.
 Higher steps hide more noise, and also more of what you wanted.
 
 **The peek strip marks the close calls.** Just below the threshold is a thin

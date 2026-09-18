@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { feedShownAt, junkShownAt } from '../../ml/scoring';
+import { feedShownAt } from '../../ml/scoring';
 import {
   DEFAULT_SETTINGS,
   parseTopics,
@@ -62,20 +62,10 @@ const chipDot = el<HTMLSpanElement>('engine-chip-dot');
 
 let saved: Settings = await loadSettings();
 
-/**
- * Speaks only in what the reader sees, and admits what still gets through — a
- * hint that promised only the good half would be lying at every step. The cut
- * score belongs on the badge, not here.
- */
+/** States the trade-off, never a measured share: one feed's numbers are not the reader's. */
 function describeStrictness(step: number): string {
-  const shown = Math.round(feedShownAt(step) * 100);
-  if (shown >= 100) return 'Blurs nothing — every post stays visible.';
-  const hits = Math.round((1 - junkShownAt(step)) * 10);
-  return (
-    `Shows about ${shown}% of a typical feed. Even then, only about ${hits} in 10 ` +
-    'of the posts you see will really match your topics. ' +
-    'Blurred posts stay one click away.'
-  );
+  if (feedShownAt(step) >= 1) return 'Blurs nothing — every post stays visible.';
+  return "Stricter hides more, including some posts you'd want. Blurred posts stay one click away.";
 }
 
 function renderEnabled(on: boolean): void {

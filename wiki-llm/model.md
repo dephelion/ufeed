@@ -119,7 +119,7 @@ Step 5 to 7 costs 9 points of recall and takes junk from 27.6 to 15.0 per 10 wan
 
 **Recall falls off a cliff after step 7.** Steps 8-10 keep 67%, 42% and 15%. The scale stays even in feed volume there on purpose — the reader asked for less feed, and that is what less feed costs. Precision still climbs to step 9, so a reader whose topic phrasing is sharper than the calibration topic can sit at 8 or 9 and keep what they want.
 
-`feedShownAt()` and `junkShownAt()` read the table for the popup hint, which names both — a hint quoting only the good half would be lying at every step. One sample, one feed — a guide, not a promise.
+**Not quoted to readers.** The popup hint states the trade-off without numbers ([ui.md](ui.md)): one sample, one feed — a guide for picking thresholds, not a promise. `feedShownAt()` only tells the hint that step 0 blurs nothing.
 
 **`strictness` is validated on read-back, not merged.** It outlived a scale change: a stored `0.35` from the old 0..1 slider is step 0 here, which would silently unblur a whole feed. `withDefaults()` takes only an integer and clamps it; anything else falls back to the default.
 

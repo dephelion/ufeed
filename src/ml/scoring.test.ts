@@ -7,7 +7,6 @@ import {
   clampStrictness,
   cosine,
   feedShownAt,
-  junkShownAt,
   normalize,
   ratingFor,
   ratingNear,
@@ -78,15 +77,8 @@ describe('the strictness scale', () => {
     }
   });
 
-  it('defaults where the junk is halved, not where the recall reads best', () => {
+  it('defaults to step 7, the best measured trade-off', () => {
     expect(DEFAULT_STRICTNESS).toBe(7);
-    expect(junkShownAt(DEFAULT_STRICTNESS)).toBeLessThan(junkShownAt(5) - 0.1);
-  });
-
-  it('lets less junk through as it tightens, up to the point the sample thins', () => {
-    for (let i = 1; i <= 9; i++) {
-      expect(junkShownAt(i)).toBeLessThanOrEqual(junkShownAt(i - 1));
-    }
   });
 
   it('clamps off-scale values onto the nearest step', () => {

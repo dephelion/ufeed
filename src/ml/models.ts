@@ -30,17 +30,17 @@ export const MODEL = {
  * observations; see wiki-llm/model.md.
  */
 export const STRICTNESS_STEPS = [
-  { threshold: 0.69, shown: 1.0, junk: 0.87 },
-  { threshold: 0.74, shown: 0.9, junk: 0.86 },
-  { threshold: 0.75, shown: 0.8, junk: 0.85 },
-  { threshold: 0.76, shown: 0.7, junk: 0.82 },
-  { threshold: 0.765, shown: 0.6, junk: 0.8 },
-  { threshold: 0.775, shown: 0.5, junk: 0.73 },
-  { threshold: 0.78, shown: 0.4, junk: 0.71 },
-  { threshold: 0.79, shown: 0.3, junk: 0.6 },
-  { threshold: 0.8, shown: 0.2, junk: 0.54 },
-  { threshold: 0.81, shown: 0.1, junk: 0.49 },
-  { threshold: 0.82, shown: 0.05, junk: 0.52 },
+  { threshold: 0.69, shown: 1.0 },
+  { threshold: 0.74, shown: 0.9 },
+  { threshold: 0.75, shown: 0.8 },
+  { threshold: 0.76, shown: 0.7 },
+  { threshold: 0.765, shown: 0.6 },
+  { threshold: 0.775, shown: 0.5 },
+  { threshold: 0.78, shown: 0.4 },
+  { threshold: 0.79, shown: 0.3 },
+  { threshold: 0.8, shown: 0.2 },
+  { threshold: 0.81, shown: 0.1 },
+  { threshold: 0.82, shown: 0.05 },
 ] as const;
 
 /**
