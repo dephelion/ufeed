@@ -9,13 +9,24 @@ export function cosine(a: Vector, b: Vector): number {
   return dot;
 }
 
-/** Highest similarity to any topic. Cost is independent of topic count. */
-export function scoreAgainstTopics(post: Vector, topics: readonly Vector[]): number {
-  let best = -1;
-  for (const topic of topics) {
-    const s = cosine(post, topic);
-    if (s > best) best = s;
-  }
+export interface Match {
+  score: number;
+  /** Index of the closest topic line; -1 when there are no lines. */
+  topic: number;
+}
+
+/** A match, plus the rating that overrides it when a rated post is near-identical. */
+export interface RatedMatch extends Match {
+  rating: boolean | undefined;
+}
+
+/** Highest similarity to any topic, and the line that gave it. */
+export function bestMatch(post: Vector, topics: readonly Vector[]): Match {
+  let best: Match = { score: -1, topic: -1 };
+  topics.forEach((topic, i) => {
+    const score = cosine(post, topic);
+    if (score > best.score) best = { score, topic: i };
+  });
   return best;
 }
 
@@ -28,8 +39,6 @@ export function normalize(v: Vector): Vector {
   for (let i = 0; i < v.length; i++) out[i] = v[i]! / mag;
   return out;
 }
-
-const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
 
 /**
  * Settings store the step, not the score: unrelated text scores 0.74 with this
@@ -70,55 +79,51 @@ export const PEEK_BAND = 0.01;
 export type Verdict = 'show' | 'peek' | 'blur';
 
 /**
- * Rocchio relevance feedback. Measured on 205 posts with the feedback held out:
- * AUC 0.881 -> 0.936 at 32 corrections. See wiki-llm/model.md.
+ * A rating overrides the topic score only for a near-identical post: the closest
+ * rating at or above `near`, or undefined. See wiki-llm/model.md.
  */
-export const ROCCHIO = { beta: 0.6, gamma: 0.4 } as const;
-
-export function applyFeedback(
-  topic: Vector,
+export function ratingNear(
+  post: Vector,
   liked: readonly Vector[],
   disliked: readonly Vector[],
-): Vector {
-  if (liked.length === 0 && disliked.length === 0) return topic;
-  const out = new Float32Array(topic.length);
-  const add = centroid(liked, topic.length);
-  const sub = centroid(disliked, topic.length);
-  for (let i = 0; i < topic.length; i++) {
-    out[i] = topic[i]! + ROCCHIO.beta * add[i]! - ROCCHIO.gamma * sub[i]!;
+  near: number,
+): boolean | undefined {
+  let best = near;
+  let rating: boolean | undefined;
+  for (const [vectors, liking] of [
+    [liked, true],
+    [disliked, false],
+  ] as const) {
+    for (const v of vectors) {
+      const s = cosine(post, v);
+      if (s >= best) {
+        best = s;
+        rating = liking;
+      }
+    }
   }
-  return normalize(out);
+  return rating;
 }
 
-function centroid(vectors: readonly Vector[], dims: number): Vector {
-  const out = new Float32Array(dims);
-  if (vectors.length === 0) return out;
-  for (const v of vectors)
-    for (let i = 0; i < dims; i++) out[i]! += v[i]! / vectors.length;
-  return out;
+/** One topic line's rated posts. */
+export interface Rated {
+  liked: readonly Vector[];
+  disliked: readonly Vector[];
 }
 
-/** Verdict from an already-resolved threshold, which may be absolute or relative. */
+/** Only ratings filed under the post's own best line apply, so lines never cross. */
+export function ratingFor(
+  post: Vector,
+  topic: number,
+  rated: readonly Rated[],
+  near: number,
+): boolean | undefined {
+  const line = rated[topic];
+  return line && ratingNear(post, line.liked, line.disliked, near);
+}
+
+/** Verdict from the strictness threshold. */
 export function verdictAt(score: number, threshold: number): Verdict {
   if (score >= threshold) return 'show';
   return score >= threshold - PEEK_BAND ? 'peek' : 'blur';
-}
-
-/**
- * Feedback moves the query vector, which moves the whole score scale with it —
- * a fixed cosine stops meaning anything. Measured: recall fell to 11% when the
- * threshold was left absolute. Below MIN_SAMPLE the quantile is noise, so the
- * absolute threshold stands.
- */
-export const MIN_SAMPLE = 30;
-
-export function thresholdForFraction(
-  scores: readonly number[],
-  fraction: number,
-  fallback: number,
-): number {
-  if (scores.length < MIN_SAMPLE) return fallback;
-  const sorted = [...scores].sort((a, b) => a - b);
-  const index = Math.floor(sorted.length * (1 - clamp01(fraction)));
-  return sorted[Math.min(sorted.length - 1, Math.max(0, index))]!;
 }

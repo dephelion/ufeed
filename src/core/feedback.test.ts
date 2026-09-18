@@ -38,6 +38,11 @@ describe('rate', () => {
     expect(correctionsFor(f, 'software').disliked).toHaveLength(1);
   });
 
+  it('keeps the stored vector on a flip, since a re-click passes none', () => {
+    const f = rate(up(), 'software', 'a', [], false);
+    expect(correctionsFor(f, 'software').disliked).toEqual([v(1)]);
+  });
+
   it('flips in place, keeping the line it was already filed under', () => {
     const f = rate(up(EMPTY_FEEDBACK, 'software'), 'video games', 'a', v(1), false);
     expect(countFor(f, 'software')).toBe(1);

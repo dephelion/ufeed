@@ -161,20 +161,20 @@ never fetched. [Full section](docs/how-it-works.md#inside-the-worker).
 ### Tuning it yourself
 
 The model never changes. Every control moves either the query vector or the
-threshold. **Topic words** set the query, and plain words beat category names.
+threshold, and thumbs move neither. **Topic words** set the query, and plain words beat category names.
 **Strictness** picks a measured threshold within that narrow score band. A
 **peek strip** just below the threshold keeps close calls readable. **Thumbs**
-(off by default) move the query toward posts you kept and away from ones you
-blurred, using Rocchio relevance feedback. After the first thumb, the threshold
-is set relative to your recent scores.
+(off by default) only decide posts that are nearly identical to one you rated;
+everything else is judged by its score alone.
 [Full section](docs/how-it-works.md#tuning-it-yourself).
 
 ### What a thumb changes
 
-A thumb corrects only the topic line that gave the post its score. Rating the
-same post again removes the rating, and the other thumb flips it. No single word
-is picked out: the whole post is one vector. Rewriting a line discards its
-corrections, and the other lines keep theirs.
+A thumb belongs to the topic line the post matched best, and only affects new
+posts on that line that are nearly identical to it. Rating the same post again
+removes the rating, and the other thumb flips it. No single word is picked out:
+the whole post is one vector. Rewriting a line discards its ratings, and the
+other lines keep theirs.
 [Full section](docs/how-it-works.md#what-a-thumb-changes).
 
 Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md), model

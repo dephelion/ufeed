@@ -2,16 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { DEFAULT_STRICTNESS, STRICTNESS_STEPS } from './models';
 import {
   MAX_STRICTNESS,
-  MIN_SAMPLE,
   PEEK_BAND,
-  applyFeedback,
+  bestMatch,
   clampStrictness,
   cosine,
   feedShownAt,
   junkShownAt,
   normalize,
-  scoreAgainstTopics,
-  thresholdForFraction,
+  ratingFor,
+  ratingNear,
   thresholdForStrictness,
   verdictAt,
 } from './scoring';
@@ -32,16 +31,17 @@ describe('cosine', () => {
   });
 });
 
-describe('scoreAgainstTopics', () => {
-  it('returns the closest topic, not the average', () => {
-    const post = v(1, 0);
-    expect(scoreAgainstTopics(post, [v(0, 1), v(1, 0)])).toBeCloseTo(1);
+describe('bestMatch', () => {
+  it('returns the closest topic and its line, not the average', () => {
+    const match = bestMatch(v(1, 0), [v(0, 1), v(1, 0)]);
+    expect(match.score).toBeCloseTo(1);
+    expect(match.topic).toBe(1);
   });
 
   it('scores below any threshold when there are no topics', () => {
-    expect(verdictAt(scoreAgainstTopics(v(1, 0), []), thresholdForStrictness(0))).toBe(
-      'blur',
-    );
+    const match = bestMatch(v(1, 0), []);
+    expect(match.topic).toBe(-1);
+    expect(verdictAt(match.score, thresholdForStrictness(0))).toBe('blur');
   });
 });
 
@@ -124,48 +124,48 @@ describe('the three tiers', () => {
   });
 });
 
-describe('applyFeedback', () => {
-  const topic = normalize(v(1, 0));
-  const post = normalize(v(0, 1));
+describe('ratingNear', () => {
+  const post = normalize(v(1, 0));
+  const same = normalize(v(1, 0.01));
+  const other = normalize(v(0, 1));
 
-  it('returns the topic untouched when there is nothing to learn from', () => {
-    expect(applyFeedback(topic, [], [])).toBe(topic);
+  it('overrides nothing when no rated post is near enough', () => {
+    expect(ratingNear(post, [other], [other], 0.92)).toBeUndefined();
   });
 
-  it('pulls the query toward a liked post, so its neighbours score higher', () => {
-    const before = cosine(topic, post);
-    const after = cosine(applyFeedback(topic, [post], []), post);
-    expect(after).toBeGreaterThan(before);
+  it('follows a near-identical liked post', () => {
+    expect(ratingNear(post, [same], [other], 0.92)).toBe(true);
   });
 
-  it('pushes it away from a disliked post', () => {
-    const before = cosine(topic, post);
-    const after = cosine(applyFeedback(topic, [], [post]), post);
-    expect(after).toBeLessThan(before);
+  it('follows a near-identical disliked post', () => {
+    expect(ratingNear(post, [other], [same], 0.92)).toBe(false);
   });
 
-  it('stays a unit vector, or every score downstream shifts scale', () => {
-    const moved = applyFeedback(topic, [post], [normalize(v(1, 1))]);
-    expect(cosine(moved, moved)).toBeCloseTo(1);
+  it('follows the closer rating when both sides are near', () => {
+    const closer = normalize(v(1, 0.001));
+    expect(ratingNear(post, [same], [closer], 0.92)).toBe(false);
+    expect(ratingNear(post, [closer], [same], 0.92)).toBe(true);
   });
 });
 
-describe('thresholdForFraction', () => {
-  const scores = Array.from({ length: 100 }, (_, i) => i / 100);
+describe('ratingFor', () => {
+  const post = normalize(v(1, 0));
+  const same = normalize(v(1, 0.01));
+  const rated = [
+    { liked: [], disliked: [same] },
+    { liked: [], disliked: [] },
+  ];
 
-  it('falls back to the absolute threshold below a usable sample', () => {
-    expect(thresholdForFraction([0.1, 0.9], 0.5, 0.784)).toBe(0.784);
-    expect(thresholdForFraction(scores.slice(0, MIN_SAMPLE - 1), 0.5, 0.784)).toBe(0.784);
+  it('applies a rating filed under the post’s own line', () => {
+    expect(ratingFor(post, 0, rated, 0.92)).toBe(false);
   });
 
-  it('cuts at the requested share of the feed', () => {
-    expect(thresholdForFraction(scores, 0.2, 0)).toBeCloseTo(0.8, 1);
-    expect(thresholdForFraction(scores, 0.5, 0)).toBeCloseTo(0.5, 1);
+  it('never applies a rating filed under another line', () => {
+    expect(ratingFor(post, 1, rated, 0.92)).toBeUndefined();
   });
 
-  it('shows everything at fraction one, so a fully on-topic feed is never blurred', () => {
-    const cut = thresholdForFraction(scores, 1, 0);
-    expect(scores.every((s) => s >= cut)).toBe(true);
+  it('applies nothing to a post with no line', () => {
+    expect(ratingFor(post, -1, rated, 0.92)).toBeUndefined();
   });
 });
 

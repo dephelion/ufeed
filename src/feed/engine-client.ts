@@ -8,6 +8,7 @@ import {
   type StatusEvent,
   type TopicCorrections,
 } from '../core/protocol';
+import type { RatedMatch } from '../ml/scoring';
 
 const REQUEST_TIMEOUT_MS = 8000;
 const CONNECT_WATCHDOG_MS = 15000;
@@ -22,7 +23,7 @@ export interface Correction {
 
 /** What a reply can carry. Each caller maps it to its own shape. */
 interface Payload {
-  scores?: number[];
+  matches?: RatedMatch[];
   vector?: number[];
   topic?: number;
 }
@@ -114,7 +115,15 @@ export class EngineClient {
     }
     if (data.type === 'VECTOR')
       return pending.resolve({ vector: data.vector, topic: data.topic });
-    pending.resolve({ scores: data.type === 'SCORES' ? data.scores : [] });
+    if (data.type === 'SCORES')
+      return pending.resolve({
+        matches: data.scores.map((score, i) => ({
+          score,
+          topic: data.topics[i]!,
+          rating: data.ratings[i] ?? undefined,
+        })),
+      });
+    pending.resolve({});
   }
 
   setTopics(topics: string[], corrections: TopicCorrections[] = []): void {
@@ -122,16 +131,16 @@ export class EngineClient {
   }
 
   /** Resolves empty on timeout or error, so callers fail open. */
-  score(texts: string[]): Promise<number[]> {
+  score(texts: string[]): Promise<RatedMatch[]> {
     if (texts.length === 0) return Promise.resolve([]);
     const id = nextRequestId();
-    return new Promise<number[]>((resolve) => {
+    return new Promise<RatedMatch[]>((resolve) => {
       const timer = setTimeout(() => {
         this.#pending.delete(id);
         log.warn('score request timed out, revealing', { posts: texts.length });
         resolve([]);
       }, REQUEST_TIMEOUT_MS);
-      this.#pending.set(id, { resolve: (p) => resolve(p.scores ?? []), timer });
+      this.#pending.set(id, { resolve: (p) => resolve(p.matches ?? []), timer });
       this.#send({ id, type: 'SCORE', texts });
     });
   }

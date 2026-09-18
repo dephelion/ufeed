@@ -77,7 +77,7 @@ Calibration over 615 observations (205 labelled posts x 3 topic phrasings): what
 
 **In score space, never a fraction of the scale.** The strip is a property of the model; the threshold moves with strictness. Tying one to the other makes it correct only at the default.
 
-**Uncertainty straddles the threshold and is worse above it.** Posts at 0.790-0.810 are 26-40% wanted and are shown today with nothing marking them as doubtful. The tiers fix the half below the line; relevance feedback is aimed at the half above it.
+**Uncertainty straddles the threshold and is worse above it.** Posts at 0.790-0.810 are 26-40% wanted and are shown today with nothing marking them as doubtful. The tiers fix the half below the line; nothing yet targets the half above it — a disliked near-duplicate is the only override.
 
 ## Threshold
 
@@ -144,35 +144,32 @@ Concrete beats abstract: posts write about code, not about categories. `tech` sc
 
 ## Relevance feedback
 
-`q' = normalize(q + 0.6 * mean(liked) - 0.4 * mean(disliked))` — Rocchio, applied to every topic vector in the worker. No training: vector arithmetic over embeddings already computed.
+**The topic score is the source of truth; a thumb never moves a topic vector.** A rating overrides the verdict only for a near-identical post: `ratingNear()` in `scoring.ts`, cosine against the rated post's vector `>= MODEL.ratingNear = 0.92`. Closest rating wins; liked shows, disliked blurs. Everything else is judged by the fixed strictness threshold alone, so "shown means above this score" holds with or without ratings.
 
-**The whole post is one vector; no word is attributable.** The adapter's extracted text goes over as one string, tagged `passage:`, and the topic vector moves by the formula above. There is no term weighting to inspect and nothing that can say which word moved it — a limitation to state plainly rather than an explanation waiting to be built.
+**Why no query update.** Rocchio (`q + 0.6·mean(liked) − 0.4·mean(disliked)`) shipped through v0.4.1 and moved every score on the corrected line, junk included: a like added a typical-post direction and lifted the baseline, a dislike subtracted it. That forced a relative (quantile) threshold, which went stale after each correction, and a shared window let one line's correction hide another line's posts. Measured, it bought nothing (below).
 
-**Scored and thumbed text are the same text.** Both pass through `forEngine()` in `queue.ts`, capped at `MAX_CHARS = 1200`. The feedback path once sent the whole post, so a correction on a long post embedded text the score never saw. **The rating key stays the whole post** (`hashText`), so capping the embedding did not orphan ratings already stored.
+**Near-identical override, measured.** 205 labelled posts, topic `tech, software, ai`, 32 of the base score's mistakes rated, held out, 40 trials, fixed cutoff 0.784. Harness: `.local/spikes/topic-viability/near-probe.mjs`.
 
-Measured on the 205 posts with feedback items **held out** of evaluation, at equal feed volume, 40 trials per row:
+| Override at | Fixed | Broken |
+| ----------: | ----: | -----: |
+|        0.88 |   8.6 |    3.3 |
+|        0.90 |   3.2 |    1.0 |
+|    **0.92** |   1.6 |    0.0 |
+|        0.94 |   0.0 |    0.0 |
 
-| Corrections | Recall | Leaks | AUC       |
-| ----------: | -----: | ----: | :-------- |
-|           0 |    92% |  54.0 | 0.881     |
-|           4 |    96% |  52.3 | 0.896     |
-|           8 |    96% |  50.3 | 0.902     |
-|          16 |    96% |  47.5 | 0.908     |
-|          32 |    97% |  42.0 | **0.936** |
+No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pairs do. **Close to a no-op on this sample**: 32 ratings fix 1.6 verdicts, because most rated posts have no near-duplicate in a feed. **The margin is thin and fitted on the same 205 posts it is judged on** — 0.004 above the closest opposite-label pair — so "0 broken" is optimistic; re-measure on a second feed before lowering it. The sample was deduplicated at collection, so an exact repost of a rated post (cosine ~1) is not in it and always overrides.
 
-**Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — `bestTopic()` in the worker returns that index with the embedding. **Highest cosine wins with no floor**: a post weakly related to everything still lands on one line. **Measured against the corrected vector**, not the topic text, so corrections compound on the line they already shaped. A re-click reuses the stored line and never re-attributes. Editing one line discards only that line's corrections; the rest survive, including a reorder.
+**Rocchio's measured gain was a holdout artifact.** The table it shipped with (AUC 0.881 → 0.936 at 32 corrections) scored the held-out set, which excludes the rated posts — the base score's hardest mistakes. The **uncorrected** score on the same held-out sets reaches **0.943** at 32 (Rocchio 0.936; at 8 Rocchio led, 0.902 vs 0.896). At equal feed volume, 32 corrections fixed 7.5 verdicts and broke 8.2. Any future feedback measurement must compare against the base score on the same held-out set.
 
-**One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place. A duplicate would weight one post's vector twice in the centroid.
+**Ratings are per topic line.** A rating is filed under the line whose topic vector is closest (`bestMatch()`), and overrides only posts whose best line is the same one, so a thumb on one line never touches another. A re-click reuses the stored line. Editing a line discards only that line's ratings.
 
-**Off by default**, behind `tuneFromFeedback` ("Learn from my thumbs" in the popup). An uncorrected query needs no relative threshold and is better calibrated, so the mechanism stays inert until asked for.
+**The whole post is one vector; no word is attributable.** The adapter's extracted text goes over as one string, tagged `passage:`. **Scored and thumbed text are the same text.** Both pass through `forEngine()` in `queue.ts`, capped at `MAX_CHARS = 1200`. **The rating key stays the whole post** (`hashText`).
 
-**A new model deletes every correction, on every install.** Vectors are stamped with the model that made them and dropped when it changes ([architecture.md](architecture.md)); the post text was discarded at rating time, so nothing can be re-embedded. The table above is what a reader loses and has to rebuild by hand: 32 corrections is +0.055 AUC. Weigh that against the AUC a candidate model gains before shipping it, and tell the reader in the popup why their counts went to zero.
+**One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place.
 
-## Relative strictness
+**Off by default**, behind `tuneFromFeedback` ("Learn from my thumbs" in the popup).
 
-**A corrected query moves the whole score scale.** Left at a fixed 0.784, recall **collapsed to 11%**. Once corrections exist the threshold becomes the quantile of the last 300 scores that keeps the same share of feed the absolute threshold would have.
-
-**Absolute until the first correction.** It is better calibrated, and it never blurs a feed that is entirely on topic. Below `MIN_SAMPLE = 30` scores the quantile is noise, so the absolute threshold stands.
+**A new model deletes every rating, on every install.** Vectors are stamped with the model that made them and dropped when it changes ([architecture.md](architecture.md)); the post text was discarded at rating time, so nothing can be re-embedded. `ratingNear` is model-specific and must be re-measured with any new model.
 
 ## Backend self-check
 
@@ -199,8 +196,9 @@ Two third-party messages used to appear on every load and neither meant anything
 - **Zero-shot NLI classification.** One forward pass per label per text, scales with topic count, scores normalized over the candidate set.
 - **Length-scaled threshold.** Needed by MiniLM, unnecessary with e5. Also multiplicative scaling overshoots any band that starts above zero.
 - **A slider linear in cosine.** The original design, a 0.76-0.83 band. Half its travel did nothing and its floor could not reach the feed floor, so "loosest" still blurred a third of a feed. Replaced by the step table above, which is linear in feed shown.
-- **A slider linear in feed shown via a live quantile** (blur the bottom N% of recent scores). Guarantees the scale is even, and blurs a fixed share even when the whole feed is on topic — the same reason relative strictness is not the default. The step table buys the even scale while the threshold stays an absolute score.
-- **Relative "blur the bottom N%" as the default.** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic. **Revived conditionally in v2**, never as the default: relative only once relevance feedback has moved the query and an absolute cosine has stopped meaning anything.
+- **A slider linear in feed shown via a live quantile** (blur the bottom N% of recent scores). Guarantees the scale is even, and blurs a fixed share even when the whole feed is on topic — the reason a quantile threshold was dropped (§Rejected). The step table buys the even scale while the threshold stays an absolute score.
+- **Relative "blur the bottom N%".** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic. Revived in v2 for Rocchio-corrected queries, removed with Rocchio: the window went stale after every correction.
+- **Rocchio relevance feedback.** Moved the whole score scale and measured no gain once compared against the base score on the same held-out set. See §Relevance feedback.
 - **Multi-anchor topic averaging.** Lost to a plain short list on AUC.
 - **`multilingual-e5-small` to fix the language problem.** Scores other languages correctly, and that is the wrong outcome twice: ~33MB q8 becomes ~120MB (250k vocab), and every measured number on this page — band, `PEEK_BAND`, the `estimateFeedShown` curve, the probe bounds — is calibrated to e5-small-v2 and would have to be re-measured. It would also correctly surface on-topic posts in languages the reader does not want, which is the opposite of what the gate is for.
 - **A model registry.** One model, chosen by measurement. The comparison is the reason for the choice, not a runtime branch.

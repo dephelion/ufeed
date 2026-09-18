@@ -63,6 +63,29 @@ describe('overrides win over the model', () => {
   });
 });
 
+describe('a near-identical rating', () => {
+  it('shows a post like one the reader liked, whatever the score', () => {
+    expect(decide(base({ score: 0.1, rating: true }))).toBe('reveal');
+  });
+
+  it('blurs a post like one the reader disliked, whatever the score', () => {
+    expect(decide(base({ score: 0.99, rating: false }))).toBe('blur');
+  });
+
+  it('leaves the score in charge when nothing rated is near', () => {
+    expect(decide(base({ score: 0.99, rating: undefined }))).toBe('reveal');
+  });
+
+  it("yields to the reader's own keep and blur words", () => {
+    expect(decide(withSettings({ alwaysKeep: ['systems'] }, { rating: false }))).toBe(
+      'reveal',
+    );
+    expect(decide(withSettings({ alwaysBlur: ['systems'] }, { rating: true }))).toBe(
+      'blur',
+    );
+  });
+});
+
 describe('the language rule', () => {
   const on = { blurOtherLanguages: true };
 

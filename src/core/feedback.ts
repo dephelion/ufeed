@@ -97,17 +97,24 @@ export function findRating(
   feedback: Feedback,
   key: string,
 ): { topic: string; liked: boolean } | undefined {
+  const hit = find(feedback, key);
+  return hit && { topic: hit.topic, liked: hit.rating.liked };
+}
+
+function find(
+  feedback: Feedback,
+  key: string,
+): { topic: string; rating: Rating } | undefined {
   for (const [topic, ratings] of Object.entries(feedback.byTopic)) {
-    const hit = ratings.find((r) => r.key === key);
-    if (hit) return { topic, liked: hit.liked };
+    const rating = ratings.find((r) => r.key === key);
+    if (rating) return { topic, rating };
   }
   return undefined;
 }
 
 /**
- * Rating a post again un-rates it; rating it the other way flips it. Without
- * this a held click stacks copies of one post into the centroid and a
- * mind-change leaves it pulling both ways at once.
+ * Rating a post again un-rates it; rating it the other way flips it, keeping the
+ * stored vector: a re-click never reaches the engine, so it passes none.
  */
 export function rate(
   feedback: Feedback,
@@ -117,12 +124,12 @@ export function rate(
   liked: boolean,
 ): Feedback {
   if (topic === '' || key === '') return feedback;
-  const existing = findRating(feedback, key);
+  const existing = find(feedback, key);
   if (existing) {
     const cleared = remove(feedback, key);
-    return existing.liked === liked
+    return existing.rating.liked === liked
       ? cleared
-      : append(cleared, existing.topic, { key, vector, liked });
+      : append(cleared, existing.topic, { key, vector: existing.rating.vector, liked });
   }
   return vector.length === 0 ? feedback : append(feedback, topic, { key, vector, liked });
 }

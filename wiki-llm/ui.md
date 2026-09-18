@@ -112,9 +112,9 @@ Appears on any scored post, not only blurred ones: [model.md](model.md) puts the
 
 **Hidden unless `tuneFromFeedback` is on.** The checkbox gates the buttons and the scoring together, so a rating never has an invisible effect.
 
-**A rating is only as good as the post text.** [model.md](model.md)'s Rocchio update pulls the topic vector toward `mean(liked)` and away from `mean(disliked)` using the post's text embedding — it never sees images or video. Rating a post whose meaning lives in the media, over a neutral caption, teaches the topic from words that were never the point. The popup hint asks for text-carrying posts only; nothing enforces it, same as `blurThinMedia` trusting caption length (`MIN_BACKING_CHARS`) rather than reading the frame.
+**A rating is only as good as the post text.** A rating overrides only posts whose text embedding is near-identical to the rated one ([model.md](model.md) §Relevance feedback) — it never sees images or video. Rating a post whose meaning lives in the media, over a neutral caption, matches other posts on words that were never the point. The popup hint asks for text-carrying posts only; nothing enforces it, same as `blurThinMedia` trusting caption length (`MIN_BACKING_CHARS`) rather than reading the frame.
 
-**A post is rated once.** Ratings are keyed by `hashText`, so the same thumb again un-rates it and the other thumb flips it. Both re-clicks reuse the stored vector and never reach the engine. Without this a held click stacks copies of one post into the centroid, and a mind-change leaves it pulling both ways at once. The active thumb is marked, so a repeat click reads as a toggle rather than a no-op.
+**A post is rated once.** Ratings are keyed by `hashText`, so the same thumb again un-rates it and the other thumb flips it. Both re-clicks reuse the stored vector and never reach the engine. Without this a held click stores copies of one post, and a mind-change leaves it rated both ways at once. The active thumb is marked, so a repeat click reads as a toggle rather than a no-op.
 
 The bar sits outside `.lx-blur`, so the reveal click handler never sees its clicks.
 
@@ -178,6 +178,8 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/content/score-badge.ts`).
+`score 0.793 / needs 0.795 · 105 chars · Topic #2 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). `Topic #` is the 1-based position of the line that gave the score, absent when the post has no line (unscored). `needs` is the strictness threshold. The last field appears only when a near-identical rated post decided the verdict (not when a keep/blur word, the media or language rule, or a kept conversation did), and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
+
+**Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 
 **Gated solely on `settings.showScores`** (default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.

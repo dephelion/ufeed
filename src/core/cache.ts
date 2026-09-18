@@ -1,3 +1,5 @@
+import type { RatedMatch } from '../ml/scoring';
+
 /** FNV-1a. Content-keyed, because virtualized feeds recycle DOM nodes. */
 export function hashText(text: string): string {
   const normalized = text.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -10,11 +12,11 @@ export function hashText(text: string): string {
 }
 
 export class ScoreCache {
-  readonly #entries = new Map<string, number>();
+  readonly #entries = new Map<string, RatedMatch>();
 
   constructor(private readonly limit = 2000) {}
 
-  get(text: string): number | undefined {
+  get(text: string): RatedMatch | undefined {
     const key = hashText(text);
     const hit = this.#entries.get(key);
     if (hit === undefined) return undefined;
@@ -23,10 +25,10 @@ export class ScoreCache {
     return hit;
   }
 
-  set(text: string, score: number): void {
+  set(text: string, match: RatedMatch): void {
     const key = hashText(text);
     this.#entries.delete(key);
-    this.#entries.set(key, score);
+    this.#entries.set(key, match);
     if (this.#entries.size > this.limit) {
       const oldest = this.#entries.keys().next();
       if (!oldest.done) this.#entries.delete(oldest.value);

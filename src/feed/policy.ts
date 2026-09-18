@@ -19,6 +19,8 @@ export interface Judgement extends Grounds {
   /** Undefined means unscored — pending, failed, or nothing to score. */
   score: number | undefined;
   threshold: number;
+  /** A near-identical rated post: true liked, false disliked. Overrides the score. */
+  rating?: boolean | undefined;
 }
 
 /**
@@ -44,7 +46,8 @@ export function decideWithoutScore(grounds: Grounds): Action | undefined {
 export function decide(judgement: Judgement): Action {
   const settled = decideWithoutScore(judgement);
   if (settled !== undefined) return settled;
-  const { score, threshold } = judgement;
+  const { score, threshold, rating } = judgement;
+  if (rating !== undefined) return rating ? 'reveal' : 'blur';
   if (score === undefined) return 'reveal';
   const verdict = verdictAt(score, threshold);
   if (verdict === 'show') return 'reveal';
