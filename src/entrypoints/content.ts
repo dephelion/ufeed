@@ -33,10 +33,10 @@ import { clearAllScores, clearScore, stampScore } from '../feed/score-badge';
 import { hasMedia } from '../feed/media';
 import { LanguageCache } from '../feed/language-detector';
 import { decide as decideAction, decideWithoutScore, type Action } from '../feed/policy';
-import { ScoreWindow } from '../feed/threshold';
 import { FeedScanner } from '../feed/scanner';
 import { Conversation } from '../feed/conversation';
 import { ScoreQueue, forEngine } from '../feed/queue';
+import { thresholdForStrictness, type RatedMatch } from '../ml/scoring';
 import { Tuning } from '../feed/tuning';
 import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
 import { EngineClient } from '../feed/engine-client';
@@ -77,7 +77,6 @@ async function start(): Promise<void> {
   const tuner = await Tuning.load();
   const cache = new ScoreCache();
   const languages = new LanguageCache();
-  const scoreWindow = new ScoreWindow();
 
   // Held in memory and served on request. The popup cannot see into this tab,
   // and without an answer a first-run download looks like a broken install.
@@ -99,28 +98,46 @@ async function start(): Promise<void> {
   const showNudge = () => nudge.setVisible(needsTopics(settings, location.hostname));
 
   const active = () => isActiveOn(settings, location.hostname);
-  const tuning = () => settings.tuneFromFeedback && tuner.count > 0;
   const corrections = () =>
     settings.tuneFromFeedback ? tuner.corrections(settings.topics) : [];
 
-  const threshold = () => scoreWindow.cut(settings, tuning());
+  const threshold = () => thresholdForStrictness(settings.strictness);
   const conversation = Conversation.for(adapter);
 
   /** Returns what it did, so callers need not re-derive the verdict to count it. */
-  const decide = (post: Post, score: number | undefined): Action | undefined => {
+  const decide = (post: Post, match: RatedMatch | undefined): Action | undefined => {
+    const score = match?.score;
+    const rating = match?.rating;
     const cut = threshold();
-    if (settings.showScores) stampScore(post.container, score, cut, post.text.length);
+    const revealed = isRevealed(post.container);
+    const followsKept =
+      !revealed &&
+      conversation?.route(post) === 'keep' &&
+      overrideFor(settings, post.text) !== 'blur';
+    const judged = { ...grounds(post), score, threshold: cut, rating };
+    const ratingDecides =
+      !revealed &&
+      !followsKept &&
+      rating !== undefined &&
+      decideWithoutScore(judged) === undefined;
+    const topic =
+      match !== undefined && settings.topics[match.topic] !== undefined
+        ? match.topic + 1
+        : undefined;
+    if (settings.showScores)
+      stampScore(post.container, {
+        score,
+        needs: cut,
+        chars: post.text.length,
+        topic,
+        rating: ratingDecides ? rating : undefined,
+      });
     else clearScore(post.container);
-    if (isRevealed(post.container)) {
+    if (revealed) {
       settle(post.container, true);
       return undefined;
     }
-    const followsKept =
-      conversation?.route(post) === 'keep' && overrideFor(settings, post.text) !== 'blur';
-    return apply(
-      post,
-      followsKept ? 'reveal' : decideAction({ ...grounds(post), score, threshold: cut }),
-    );
+    return apply(post, followsKept ? 'reveal' : decideAction(judged));
   };
 
   const grounds = (post: Post) => ({
@@ -149,20 +166,18 @@ async function start(): Promise<void> {
   };
 
   const queue = new ScoreQueue(engine, (results) => {
-    scoreWindow.add(results.map((r) => r.score));
-    const cut = threshold();
     let blurred = 0;
-    for (const { post, score } of results) {
-      if (score !== undefined) cache.set(post.text, score);
+    for (const { post, match } of results) {
+      if (match !== undefined) cache.set(post.text, match);
       if (!post.container.isConnected) continue;
-      const action = decide(post, score);
+      const action = decide(post, match);
       if (action !== undefined && action !== 'reveal') blurred += 1;
     }
     log.info('batch applied', {
       posts: results.length,
       blurred,
-      threshold: cut.toFixed(3),
-      adapted: tuning(),
+      rated: results.filter((r) => r.match?.rating !== undefined).length,
+      threshold: threshold().toFixed(3),
     });
   });
 
@@ -227,7 +242,11 @@ async function start(): Promise<void> {
   };
 
   /** Topics and corrections both change the query, so both force a re-embed. */
+  /** What the worker last received, so a stored change it already has is not re-sent. */
+  let sentRatings = '';
+
   const requery = (): void => {
+    sentRatings = settings.tuneFromFeedback ? tuner.signature(settings.topics) : '';
     engine.setTopics(settings.topics, corrections());
     queue.invalidate();
     cache.clear();
@@ -242,6 +261,7 @@ async function start(): Promise<void> {
     settings = next;
     showNudge();
     if (!active()) {
+      queue.invalidate();
       revealAll(document);
       clearAllScores(document);
       return;
@@ -299,6 +319,10 @@ async function start(): Promise<void> {
 
   listenForReveal(document, conversation && ((element) => settle(element, true)));
   onSettingsChanged(applySettings);
+  tuner.onChange(() => {
+    if (!active() || !settings.tuneFromFeedback) return;
+    if (tuner.signature(settings.topics) !== sentRatings) requery();
+  });
   scanner.start();
   showNudge();
 
@@ -312,6 +336,7 @@ async function start(): Promise<void> {
   if (active()) {
     engine.connect();
     void persist(tuner.keepOnly(settings.topics));
+    sentRatings = settings.tuneFromFeedback ? tuner.signature(settings.topics) : '';
     engine.setTopics(settings.topics, corrections());
   }
 }

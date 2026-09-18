@@ -47,7 +47,7 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 
 **The model stamp is the gate.** A missing one reads as `Xenova/e5-small-v2`, which is what every install that predates the stamp holds. On any other id or width, `forCurrentModel()` drops the vectors at load and keeps the settings: another model's embeddings are in another coordinate space, and the post text they came from was discarded at rating time, so there is nothing to re-embed. Shipping a new model therefore costs every reader their corrections — weigh it in the release, and say so in the popup.
 
-**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
+**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`, and the content script requeries when the ratings on its lines differ from what the worker last received (`Tuning.signature`) — a clear, an import or a thumb in another tab. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
 
 ## Message contract
 
@@ -57,8 +57,8 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
 content → engine   { id, type: 'FEEDBACK',   text, liked }
-                   SET_TOPICS also carries liked/disliked vectors
-engine  → content  { id, type: 'SCORES',     scores }   raw cosine, never booleans
+                   SET_TOPICS also carries each line's liked/disliked vectors
+engine  → content  { id, type: 'SCORES',     scores, topics, ratings }   raw cosine, never booleans; line index and near-identical rating (true/false/null) per score
 engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design
 engine  → content  { id, type: 'ERROR',      message }

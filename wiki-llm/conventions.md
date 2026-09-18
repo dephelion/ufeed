@@ -25,7 +25,6 @@ src/
                   policy.ts    the blur decision, pure
                   scanner.ts   finds posts, says when one nears the viewport
                   queue.ts     batches to the engine, discards stale replies
-                  threshold.ts recent scores, absolute vs relative cut
                   tuning.ts    corrections and their persistence
                   language.ts  the model's language gate, pure
                   blur.ts · media.ts · language-detector.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
@@ -47,9 +46,9 @@ timeline data they ran against. The harnesses are reproducible from
 
 **Validate anything read back from `storage.local`.** It outlives the shape that wrote it. `normalizeFeedback()` drops what no longer parses instead of trusting it — a stale correction shape reached `.filter` and took the whole content script down before it could blur anything. Spreading defaults over stored JSON (`{ ...DEFAULTS, ...stored }`) checks nothing.
 
-**`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `scanner` what it has seen, `queue` what is in flight, `threshold` the recent scores, `tuning` the corrections. Logic that grows there belongs in `feed/`.
+**`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `scanner` what it has seen, `queue` what is in flight, `tuning` the ratings. Logic that grows there belongs in `feed/`.
 
-**The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold and a detected language — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
+**The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 
 **`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension. `language.ts` is split from `language-detector.ts` on the same line, and for the same reason.
 

@@ -7,6 +7,7 @@ import {
   findRating,
   forTopics,
   rate,
+  ratingsFor,
   type Feedback,
   type TopicCorrections,
 } from '../core/feedback';
@@ -18,14 +19,32 @@ import { loadFeedback, onFeedbackChanged, saveFeedback } from '../core/feedback-
  */
 export class Tuning {
   #feedback: Feedback = EMPTY_FEEDBACK;
+  #onChange: () => void = () => {};
 
   static async load(): Promise<Tuning> {
     const tuning = new Tuning();
     tuning.#feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
     onFeedbackChanged((next) => {
       tuning.#feedback = next;
+      tuning.#onChange();
     });
     return tuning;
+  }
+
+  /** Fires on every stored change, this tab's own writes included. */
+  onChange(fn: () => void): void {
+    this.#onChange = fn;
+  }
+
+  /** Which posts are rated which way on these lines; equal means nothing to re-send. */
+  signature(topics: readonly string[]): string {
+    return topics
+      .map((topic) =>
+        ratingsFor(this.#feedback, topic)
+          .map((r) => `${r.key}${r.liked ? '+' : '-'}`)
+          .join(','),
+      )
+      .join('|');
   }
 
   get count(): number {
@@ -36,7 +55,7 @@ export class Tuning {
     return counts(this.#feedback);
   }
 
-  /** Aligned with `topics`, so the worker corrects each line with its own. */
+  /** Aligned with `topics`, so the worker checks each line against its own ratings. */
   corrections(topics: readonly string[]): TopicCorrections[] {
     return topics.map((topic) => correctionsFor(this.#feedback, topic));
   }

@@ -19,6 +19,8 @@ export const MODEL = {
   /** Self-check bounds; a miscomputing backend collapses the gap. */
   probeMinNear: 0.78,
   probeMinGap: 0.06,
+  /** Similarity at which a rated post overrides the topic score. See wiki-llm/model.md. */
+  ratingNear: 0.92,
 } as const;
 
 /**

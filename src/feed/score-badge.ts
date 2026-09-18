@@ -1,15 +1,26 @@
-const ATTRS = ['lxScore', 'lxNeeds', 'lxChars', 'lxPass'] as const;
+const ATTRS = ['lxScore', 'lxNeeds', 'lxChars', 'lxPass', 'lxTopic', 'lxRated'] as const;
 
-export function stampScore(
-  container: HTMLElement,
-  score: number | undefined,
-  needs: number,
-  chars: number,
-): void {
-  container.dataset.lxScore = score === undefined ? 'none' : score.toFixed(3);
-  container.dataset.lxNeeds = needs.toFixed(3);
-  container.dataset.lxChars = String(chars);
-  container.dataset.lxPass = String(score !== undefined && score >= needs);
+export interface Badge {
+  score: number | undefined;
+  needs: number;
+  chars: number;
+  /** The line's 1-based position, never its text: the host page can read this. */
+  topic: number | undefined;
+  /** A near-identical rated post decided it: true liked, false disliked. */
+  rating: boolean | undefined;
+}
+
+export function stampScore(container: HTMLElement, badge: Badge): void {
+  const { score, needs, chars, topic, rating } = badge;
+  const data = container.dataset;
+  data.lxScore = score === undefined ? 'none' : score.toFixed(3);
+  data.lxNeeds = needs.toFixed(3);
+  data.lxChars = String(chars);
+  data.lxPass = String(rating ?? (score !== undefined && score >= needs));
+  if (topic === undefined) delete data.lxTopic;
+  else data.lxTopic = String(topic);
+  if (rating === undefined) delete data.lxRated;
+  else data.lxRated = rating ? 'like' : 'dislike';
 }
 
 export function clearScore(container: HTMLElement): void {

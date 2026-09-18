@@ -183,6 +183,17 @@
   pointer-events: none;
 }
 
+[data-lx-score][data-lx-topic]::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars · Topic #' attr(data-lx-topic);
+}
+
+[data-lx-score][data-lx-topic][data-lx-rated]::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars · Topic #' attr(data-lx-topic) ' · ' attr(data-lx-rated)
+    'd post';
+}
+
 /* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */
 [data-lx-score][data-lx-pass='true']::before {
   background: color-mix(in srgb, #14532d 50%, transparent);

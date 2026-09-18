@@ -141,7 +141,7 @@ feed blurred at random. `wasm` is the steady state.
 ## Tuning it yourself
 
 The model itself never changes. You do not retrain it, and no weights move.
-Every control changes one of two things:
+Every control except thumbs changes one of two things:
 
 - **The query vector:** what "on topic" means.
 - **The threshold:** how close a post has to be to count.
@@ -167,30 +167,27 @@ strip where a post could still be wanted. Posts there stay blurred, but their
 first few words remain readable, so you can judge them without revealing them.
 The strip's width is fixed in score units, so it moves with the threshold.
 
-**Thumbs change the query using examples.** This is off until you turn on _Learn
-from my thumbs_. It uses **Rocchio relevance feedback**, a classic
-search-engine technique that is older than E5:
+**Thumbs fix posts that are almost the same as one you rated.** This is off
+until you turn on _Learn from my thumbs_. A thumb never changes your topic: the
+score always comes from your topic words alone, so "shown means above the
+threshold" stays true. Instead, the rated post's vector is kept, and a new post
+that is nearly identical to it (a repost, a quote, the same story told the same
+way) follows your rating: shown if you liked the original, blurred if you
+disliked it. Everything else is judged by its score, as if you had never rated
+anything.
 
-```
-new query = normalize(query + β·mean(kept) − γ·mean(blurred))
-```
+"Nearly identical" is a high bar on purpose. Two unrelated posts already look
+fairly alike to this model, so the bar sits where, on a labelled sample, no
+post was ever that close to one with the opposite label. Most ratings therefore
+change nothing until a near-copy shows up. That is the trade: a thumb can never
+push a good post out of view by accident.
 
-Here `β` and `γ` are fixed weights, and the pull toward kept posts is stronger
-than the push away from blurred ones. The method works because of how E5 was
-trained. In its vector space, direction stands for meaning. The average of the
-posts you kept points at what they have in common, and moving the query toward
-that point is like adding words you did not think to type. A correction is just
-arithmetic on one 384-number vector stored in your browser. Each rated post is
-embedded once. Its text is then discarded, and only its vector is kept.
-
-**After the first correction, the threshold becomes relative.** Moving the query
-shifts every score, so a fixed cosine no longer means what it did before. From
-then on, Lensing sets the threshold from your recent scores so that each
-strictness step still shows the same share of your feed. Until it has seen
-enough scores to do that reliably, it keeps the fixed threshold.
+An earlier version moved the topic itself toward liked posts and away from
+disliked ones. It shifted every score on that topic, including posts that had
+nothing to do with the rated one, and measured no better than not moving it.
 
 **Vectors only make sense to the model that made them.** A model update
-therefore deletes every correction. The post text is already gone, so nothing
+therefore deletes every rating. The post text is already gone, so nothing
 can be embedded again.
 
 To see all of this at work, turn on _Show each post's score_ in the popup. Each
@@ -198,23 +195,19 @@ post then shows the score it got and the score it needed.
 
 ## What a thumb changes
 
-A thumb corrects **one topic line: the one that came closest to claiming the
-post**, which is the same line that gave it its score. The comparison runs
-against the line as it currently stands, corrections included, so ratings
-compound on the line they have already shaped. Rate the same post again and it
-un-rates; rate it the other way and it flips, still on the line it was filed
-under.
+A thumb belongs to **one topic line: the one the post matched best**. It only
+affects new posts that match that same line, so a thumb on one topic never
+changes another. Rate the same post again and it un-rates; rate it the other way
+and it flips.
 
 **No individual word is picked out.** The post's text goes to the worker as one
-string and comes back as one vector; the topic vector then moves toward the
-average of what you kept and away from the average of what you blurred. There is
-no keyword extraction to inspect, and nothing that could point at the word that
-did it.
+string and comes back as one vector, and new posts are compared with that
+vector as a whole. There is no keyword extraction to inspect.
 
-Two things follow. Rating a post whose meaning lives in its image teaches the
-topic from a caption that was never the point — the model reads words only. And
-a correction belongs to one line: rewrite that line and its corrections go with
-it, while the other lines keep theirs.
+Two things follow. Rating a post whose meaning lives in its image matches other
+posts on a caption that was never the point, because the model reads words only.
+And a rating belongs to one line: rewrite that line and its ratings go with it,
+while the other lines keep theirs.
 
 Full reasoning in [`wiki-llm/architecture.md`](../wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](../wiki-llm/model.md), terms in

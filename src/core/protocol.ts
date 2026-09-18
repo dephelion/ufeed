@@ -11,7 +11,7 @@ export interface SetTopicsRequest {
   id: string;
   type: 'SET_TOPICS';
   topics: string[];
-  /** Corrections per topic, aligned with `topics`; the worker re-derives each query. */
+  /** Rated posts per topic, aligned with `topics`; they override near-identical posts. */
   corrections?: TopicCorrections[];
 }
 
@@ -35,6 +35,10 @@ export interface ScoresReply {
   id: string;
   type: 'SCORES';
   scores: number[];
+  /** The line each score came from, aligned with `scores`. */
+  topics: number[];
+  /** A near-identical rated post on that line: true liked, false disliked, null none. */
+  ratings: (boolean | null)[];
 }
 
 /**
@@ -96,8 +100,12 @@ export function isEngineReply(data: unknown): data is EngineReply {
     case 'SCORES':
       return (
         typeof data.id === 'string' &&
-        Array.isArray(data.scores) &&
-        data.scores.every((n) => typeof n === 'number')
+        isNumberArray(data.scores) &&
+        isNumberArray(data.topics) &&
+        data.topics.length === data.scores.length &&
+        Array.isArray(data.ratings) &&
+        data.ratings.length === data.scores.length &&
+        data.ratings.every((r) => r === null || typeof r === 'boolean')
       );
     case 'VECTOR':
       return (
@@ -140,6 +148,10 @@ function isCorrections(v: unknown): v is TopicCorrections[] | undefined {
     (Array.isArray(v) &&
       v.every((c) => isRecord(c) && isVectors(c.liked) && isVectors(c.disliked)))
   );
+}
+
+function isNumberArray(v: unknown): v is number[] {
+  return Array.isArray(v) && v.every((n) => typeof n === 'number');
 }
 
 function isStringArray(v: unknown): v is string[] {

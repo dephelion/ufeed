@@ -83,6 +83,19 @@ describe('a feed tab open while storage changes underneath it', () => {
 
     expect(count(await loadFeedback())).toBe(1);
   });
+
+  it('tells the tab when a clear elsewhere changed what its lines hold', async () => {
+    await saveFeedback(rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), false));
+    const tuner = await Tuning.load();
+    const before = tuner.signature(['topic']);
+    let told = 0;
+    tuner.onChange(() => (told += 1));
+
+    await clearFeedback();
+
+    expect(told).toBe(1);
+    expect(tuner.signature(['topic'])).not.toBe(before);
+  });
 });
 
 describe('a model change', () => {

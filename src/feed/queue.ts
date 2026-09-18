@@ -1,5 +1,6 @@
 import type { Post } from '../adapters';
 import { logger } from '../core/log';
+import type { RatedMatch } from '../ml/scoring';
 import type { EngineClient } from './engine-client';
 
 const BATCH_SIZE = 16;
@@ -14,13 +15,13 @@ const log = logger('queue');
 
 export interface Scored {
   post: Post;
-  score: number | undefined;
+  match: RatedMatch | undefined;
 }
 
 /**
  * Batches posts to the engine. Holds the batch rather than dropping it while the
  * engine is warming, and discards replies issued against a query that has since
- * changed — a score means nothing once the topic vectors move.
+ * changed — a score means nothing once the topics or ratings move.
  */
 export class ScoreQueue {
   readonly #pending = new Map<HTMLElement, string>();
@@ -58,7 +59,7 @@ export class ScoreQueue {
     const batch = [...this.#pending.entries()].slice(0, BATCH_SIZE);
     for (const [element] of batch) this.#pending.delete(element);
 
-    const scores = await this.engine.score(batch.map(([, text]) => text));
+    const matches = await this.engine.score(batch.map(([, text]) => text));
     if (issuedAt !== this.#epoch) {
       log.info('discarding scores for a previous query', { posts: batch.length });
       return;
@@ -67,7 +68,7 @@ export class ScoreQueue {
     this.onScored(
       batch.map(([container, text], i) => ({
         post: { container, text },
-        score: scores[i],
+        match: matches[i],
       })),
     );
     if (this.#pending.size > 0) this.#schedule();
