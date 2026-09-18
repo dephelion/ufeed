@@ -178,7 +178,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars · Topic #2 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). `Topic #` is the 1-based position of the line that gave the score, absent when the post has no line (unscored). `needs` is the strictness threshold. The last field appears only when a near-identical rated post decided the verdict (not when a keep/blur word, the media or language rule, or a kept conversation did), and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
+`score 0.793 / needs 0.795 · 105 chars · Topic #2 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). `Topic #` is the 1-based position of the line that gave the score, absent when the post has no line (unscored). `needs` is the strictness threshold. The last field appears only when a near-identical rated post decided the verdict (not when a keep/blur word, the media or language rule, or a kept conversation did), and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post. **Always in front of the blur label**: stacked above it (`z-index` 3 vs 2) on an opaque background — a translucent one let the label show through and read as covering it.
 
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 
