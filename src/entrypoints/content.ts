@@ -308,7 +308,7 @@ async function start(): Promise<void> {
     });
   };
 
-  mountFeedbackBar({
+  const feedbackBar = mountFeedbackBar({
     postAt: (target) => {
       if (!settings.tuneFromFeedback) return undefined;
       const container = target.closest<HTMLElement>(adapter.containerSelector);
@@ -320,6 +320,7 @@ async function start(): Promise<void> {
     },
     onFeedback: takeFeedback,
   });
+  engine.onBusyChange((busy) => feedbackBar.setBusy(busy));
 
   listenForReveal(document, conversation && ((element) => settle(element, true)));
   onSettingsChanged(applySettings);

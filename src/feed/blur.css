@@ -254,6 +254,13 @@
   background: color-mix(in srgb, #f87171 32%, transparent);
 }
 
+.lx-fb-busy button,
+.lx-fb-busy button:hover {
+  opacity: 0.3;
+  background: none;
+  cursor: progress;
+}
+
 .lx-fb-done {
   border-color: color-mix(in srgb, #4ade80 60%, transparent);
 }

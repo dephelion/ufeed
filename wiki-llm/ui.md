@@ -116,6 +116,8 @@ Appears on shown and revealed posts, never on a blurred one (`postAt` skips it; 
 
 **A post is rated once.** Ratings are keyed by `hashText`, so the same thumb again un-rates it and the other thumb flips it. Both re-clicks reuse the stored vector and never reach the engine. Without this a held click stores copies of one post, and a mind-change leaves it rated both ways at once. The active thumb is marked, so a repeat click reads as a toggle rather than a no-op.
 
+**Disabled while the engine is busy.** `EngineClient.busy` is true until the model is ready and while any request waits on the worker. A thumb sent then queues behind scoring and could pass the 8s request timeout, dropping the rating silently. The buttons dim (`.lx-fb-busy`), say "Checking posts, one moment", and ignore clicks; batches finish in well under a second.
+
 The bar sits outside `.lx-blur`, so the reveal click handler never sees its clicks.
 
 **A reveal click is not feedback.** It cannot separate "I wanted this" from "I was checking you". Only the thumbs are a label.
