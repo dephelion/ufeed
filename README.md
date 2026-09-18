@@ -131,108 +131,51 @@ portable option.
 
 ## How it works
 
-```mermaid
-flowchart TB
-  subgraph host["Host page — https://x.com"]
-    dom["feed DOM"]
-    cs["content script<br/>finds posts, applies the blur"]
-    dom -- "post text" --> cs
-    cs -- ".lx-blur" --> dom
-  end
+Lensing has three layers, and each has one job. The **content script** runs in
+the page: it reads posts and applies the blur. A **hidden extension iframe**
+passes messages along. A **worker thread** runs the model, so scoring never
+blocks scrolling. Only strings go in and scores come out, which keeps post text
+on your device. The full version, with diagrams, is in
+[`docs/how-it-works.md`](docs/how-it-works.md).
 
-  subgraph ext["Extension origin — chrome-extension://"]
-    frame["hidden iframe<br/>routes messages"]
-    subgraph thr["worker thread"]
-      wk["e5-small-v2<br/>embed, then cosine vs topics<br/>stack detailed below"]
-    end
-    frame -- "texts" --> wk
-    wk -- "scores" --> frame
-  end
+### What the model does
 
-  cs == "texts" ==> frame
-  frame == "scores" ==> cs
-```
-
-Three layers, each for one reason. The **content script** lives inside the page,
-so it is the only part that can read the feed or blur anything. The **iframe**
-exists because a content script cannot spawn an extension-origin worker, but a
-document already on that origin can. The **worker** is a separate thread, so
-scoring never blocks scrolling.
-
-The iframe never sees the page: strings go in, scores come out. That boundary is
-what keeps post text on your device, and it is why the model layer knows nothing
-about X.
+**e5-small-v2** is a text embedding model from Microsoft
+([E5 paper](docs/2212.03533v2.pdf)). It turns text into a vector, so that texts
+about the same thing end up close together. Each topic line is embedded as
+`query:` and each post as `passage:`, and a post's score is its highest cosine
+against any topic line. E5 learned from web pairs such as a question and its
+answer, so it needs no training on your topics. Its training also packs scores
+into a narrow band. It reads English only, and it never sees images.
+[Full section](docs/how-it-works.md#what-the-model-does).
 
 ### Inside the worker
 
-"Embed" is four pieces of machinery, and the console lines on a cold start come
-from three different ones — so it is worth knowing which is which. The thick
-edges are the same `texts` / `scores` pair the first diagram draws, seen from the
-other side of the worker boundary.
+transformers.js splits the text into tokens and averages the model's output
+into one vector of length 1. The ONNX Runtime executes the model on its WASM
+backend. WebGPU is tried first, but a self-check rejects it because it
+miscomputes the quantized weights. The model weights download once from the
+hub CDN and are then cached. The runtime WASM ships inside the extension and is
+never fetched. [Full section](docs/how-it-works.md#inside-the-worker).
 
-```mermaid
-flowchart TB
-  frame["engine.ts — the iframe document<br/>relays, holds no state<br/>MessagePort to the content script"]
+### Tuning it yourself
 
-  subgraph wkr["worker thread — engine.worker.ts"]
-    tj["transformers.js<br/>tokenize · mean-pool · normalize"]
-    ort["ONNX Runtime (ORT)<br/>executes the graph, node by node"]
-    wasm["wasm execution provider<br/>SIMD, single thread"]
-    cpu["CPU<br/>shape ops, on purpose"]
-    out["vectors → cosine vs topic vectors<br/>= the score"]
-    tj --> ort
-    ort --> wasm
-    ort -. "some nodes" .-> cpu
-    wasm --> out
-    cpu --> out
-  end
-
-  frame == "SCORE texts<br/>worker.postMessage" ==> tj
-  out == "SCORES, STATUS<br/>self.postMessage" ==> frame
-
-  gpu["webgpu execution provider<br/>rejected every load:<br/>miscomputes q8"]
-  ort -. "tried first" .-> gpu
-
-  weights[("hub CDN<br/>e5-small-v2 q8 weights<br/>fetched once, then cached")] -. "model" .-> tj
-  runtime[("bundled /ort/*.wasm<br/>never fetched at runtime")] -. "engine" .-> ort
-```
-
-**ONNX** is the model's file format — graph plus weights, framework-independent.
-**ORT** is Microsoft's engine that executes it, and an **execution provider** is a
-backend ORT can hand an operation to. Assignment is per operation, not per model:
-ORT deliberately keeps shape ops on CPU because moving them costs more than they
-save. That is all its `VerifyEachNodeIsAssignedToAnEp` line means, which is why
-the runtime is configured to log errors only.
-
-The two supply lines are deliberately different. **Weights** come from the hub CDN
-on first load and live in the browser cache after that. The **runtime WASM** is
-bundled in the extension and never fetched — remote WASM is reviewed as remote
-code execution, and that is not a review this extension needs to pass.
-
-WebGPU is tried first on every load and rejected on every load: ORT's WebGPU
-backend misreads the q8 weights and returns confident nonsense rather than
-failing, so the self-check probe is the only thing standing between that and a
-feed blurred at random. `wasm` is the steady state.
+The model never changes. Every control moves either the query vector or the
+threshold. **Topic words** set the query, and plain words beat category names.
+**Strictness** picks a measured threshold within that narrow score band. A
+**peek strip** just below the threshold keeps close calls readable. **Thumbs**
+(off by default) move the query toward posts you kept and away from ones you
+blurred, using Rocchio relevance feedback. After the first thumb, the threshold
+is set relative to your recent scores.
+[Full section](docs/how-it-works.md#tuning-it-yourself).
 
 ### What a thumb changes
 
-A thumb corrects **one topic line: the one that came closest to claiming the
-post**, which is the same line that gave it its score. The comparison runs
-against the line as it currently stands, corrections included, so ratings
-compound on the line they have already shaped. Rate the same post again and it
-un-rates; rate it the other way and it flips, still on the line it was filed
-under.
-
-**No individual word is picked out.** The post's text goes to the worker as one
-string and comes back as one vector; the topic vector then moves toward the
-average of what you kept and away from the average of what you blurred. There is
-no keyword extraction to inspect, and nothing that could point at the word that
-did it.
-
-Two things follow. Rating a post whose meaning lives in its image teaches the
-topic from a caption that was never the point — the model reads words only. And
-a correction belongs to one line: rewrite that line and its corrections go with
-it, while the other lines keep theirs.
+A thumb corrects only the topic line that gave the post its score. Rating the
+same post again removes the rating, and the other thumb flips it. No single word
+is picked out: the whole post is one vector. Rewriting a line discards its
+corrections, and the other lines keep theirs.
+[Full section](docs/how-it-works.md#what-a-thumb-changes).
 
 Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](wiki-llm/model.md), terms in
