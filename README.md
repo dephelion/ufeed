@@ -62,8 +62,8 @@ logged — counts, scores, states and errors only.
 [lensing:engine]  engine page loaded origin=chrome-extension://...
 [lensing:worker]  loading model
 [lensing:worker]  ready backend=wasm
-[lensing:worker]  scored posts=16 msPerPost=12 max=0.244
-[lensing:content] batch applied posts=16 blurred=13 strictness=0.06
+[lensing:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
+[lensing:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
 ```
 
 WebGPU is tried first and rejected by the self-check on the way past — ORT

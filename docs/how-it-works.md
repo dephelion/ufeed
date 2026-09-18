@@ -192,7 +192,9 @@ therefore deletes every rating. The post text is already gone, so nothing
 can be embedded again.
 
 To see all of this at work, turn on _Show each post's score_ in the popup. Each
-post then shows the score it got and the score it needed.
+post then shows the score it got and the score it needed. Hover a post to see
+its score against every topic line, and a post decided by a thumb says
+"marked on topic" or "marked off topic".
 
 ## What a thumb changes
 
