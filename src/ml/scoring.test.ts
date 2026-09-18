@@ -7,9 +7,8 @@ import {
   clampStrictness,
   cosine,
   feedShownAt,
-  junkShownAt,
   normalize,
-  ratingFor,
+  pooled,
   ratingNear,
   thresholdForStrictness,
   verdictAt,
@@ -36,6 +35,7 @@ describe('bestMatch', () => {
     const match = bestMatch(v(1, 0), [v(0, 1), v(1, 0)]);
     expect(match.score).toBeCloseTo(1);
     expect(match.topic).toBe(1);
+    expect(match.lines.map((s) => Math.round(s))).toEqual([0, 1]);
   });
 
   it('scores below any threshold when there are no topics', () => {
@@ -78,15 +78,8 @@ describe('the strictness scale', () => {
     }
   });
 
-  it('defaults where the junk is halved, not where the recall reads best', () => {
+  it('defaults to step 7, the best measured trade-off', () => {
     expect(DEFAULT_STRICTNESS).toBe(7);
-    expect(junkShownAt(DEFAULT_STRICTNESS)).toBeLessThan(junkShownAt(5) - 0.1);
-  });
-
-  it('lets less junk through as it tightens, up to the point the sample thins', () => {
-    for (let i = 1; i <= 9; i++) {
-      expect(junkShownAt(i)).toBeLessThanOrEqual(junkShownAt(i - 1));
-    }
   });
 
   it('clamps off-scale values onto the nearest step', () => {
@@ -148,24 +141,15 @@ describe('ratingNear', () => {
   });
 });
 
-describe('ratingFor', () => {
-  const post = normalize(v(1, 0));
-  const same = normalize(v(1, 0.01));
-  const rated = [
-    { liked: [], disliked: [same] },
-    { liked: [], disliked: [] },
-  ];
-
-  it('applies a rating filed under the post’s own line', () => {
-    expect(ratingFor(post, 0, rated, 0.92)).toBe(false);
-  });
-
-  it('never applies a rating filed under another line', () => {
-    expect(ratingFor(post, 1, rated, 0.92)).toBeUndefined();
-  });
-
-  it('applies nothing to a post with no line', () => {
-    expect(ratingFor(post, -1, rated, 0.92)).toBeUndefined();
+describe('pooled', () => {
+  it('applies a rating filed under any line, whichever line the copy lands on', () => {
+    const post = normalize(v(1, 0));
+    const same = normalize(v(1, 0.01));
+    const all = pooled([
+      { liked: [], disliked: [] },
+      { liked: [], disliked: [same] },
+    ]);
+    expect(ratingNear(post, all.liked, all.disliked, 0.92)).toBe(false);
   });
 });
 

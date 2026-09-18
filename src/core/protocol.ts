@@ -37,7 +37,9 @@ export interface ScoresReply {
   scores: number[];
   /** The line each score came from, aligned with `scores`. */
   topics: number[];
-  /** A near-identical rated post on that line: true liked, false disliked, null none. */
+  /** Each post's similarity to every line, aligned with `scores`; for the badge. */
+  lines: number[][];
+  /** A near-identical rated post on any line: true liked, false disliked, null none. */
   ratings: (boolean | null)[];
 }
 
@@ -103,6 +105,9 @@ export function isEngineReply(data: unknown): data is EngineReply {
         isNumberArray(data.scores) &&
         isNumberArray(data.topics) &&
         data.topics.length === data.scores.length &&
+        Array.isArray(data.lines) &&
+        data.lines.length === data.scores.length &&
+        data.lines.every(isNumberArray) &&
         Array.isArray(data.ratings) &&
         data.ratings.length === data.scores.length &&
         data.ratings.every((r) => r === null || typeof r === 'boolean')

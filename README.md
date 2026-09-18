@@ -62,8 +62,8 @@ logged — counts, scores, states and errors only.
 [lensing:engine]  engine page loaded origin=chrome-extension://...
 [lensing:worker]  loading model
 [lensing:worker]  ready backend=wasm
-[lensing:worker]  scored posts=16 msPerPost=12 max=0.244
-[lensing:content] batch applied posts=16 blurred=13 strictness=0.06
+[lensing:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
+[lensing:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
 ```
 
 WebGPU is tried first and rejected by the self-check on the way past — ORT
@@ -170,8 +170,8 @@ everything else is judged by its score alone.
 
 ### What a thumb changes
 
-A thumb belongs to the topic line the post matched best, and only affects new
-posts on that line that are nearly identical to it. Rating the same post again
+A thumb only affects new posts that are nearly identical to the rated one, on
+any topic line; it never changes a topic's scores. Rating the same post again
 removes the rating, and the other thumb flips it. No single word is picked out:
 the whole post is one vector. Rewriting a line discards its ratings, and the
 other lines keep theirs.

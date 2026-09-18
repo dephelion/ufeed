@@ -119,7 +119,7 @@ Step 5 to 7 costs 9 points of recall and takes junk from 27.6 to 15.0 per 10 wan
 
 **Recall falls off a cliff after step 7.** Steps 8-10 keep 67%, 42% and 15%. The scale stays even in feed volume there on purpose — the reader asked for less feed, and that is what less feed costs. Precision still climbs to step 9, so a reader whose topic phrasing is sharper than the calibration topic can sit at 8 or 9 and keep what they want.
 
-`feedShownAt()` and `junkShownAt()` read the table for the popup hint, which names both — a hint quoting only the good half would be lying at every step. One sample, one feed — a guide, not a promise.
+**Not quoted to readers.** The popup hint states the trade-off without numbers ([ui.md](ui.md)): one sample, one feed — a guide for picking thresholds, not a promise. `feedShownAt()` only tells the hint that step 0 blurs nothing.
 
 **`strictness` is validated on read-back, not merged.** It outlived a scale change: a stored `0.35` from the old 0..1 slider is step 0 here, which would silently unblur a whole feed. `withDefaults()` takes only an integer and clamps it; anything else falls back to the default.
 
@@ -161,7 +161,7 @@ No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pai
 
 **Rocchio's measured gain was a holdout artifact.** The table it shipped with (AUC 0.881 → 0.936 at 32 corrections) scored the held-out set, which excludes the rated posts — the base score's hardest mistakes. The **uncorrected** score on the same held-out sets reaches **0.943** at 32 (Rocchio 0.936; at 8 Rocchio led, 0.902 vs 0.896). At equal feed volume, 32 corrections fixed 7.5 verdicts and broke 8.2. Any future feedback measurement must compare against the base score on the same held-out set.
 
-**Ratings are per topic line.** A rating is filed under the line whose topic vector is closest (`bestMatch()`), and overrides only posts whose best line is the same one, so a thumb on one line never touches another. A re-click reuses the stored line. Editing a line discards only that line's ratings.
+**Ratings are filed per line, checked across all lines.** A rating is stored under the line whose topic vector is closest (`bestMatch()`), so editing a line discards only that line's ratings; a re-click reuses the stored line. The near-identical check pools every line's ratings (`pooled()`). **Per-line checking failed in use**: an off-topic post scores near-equal on every line (measured 0.7985 vs 0.7990 on two lines), and embedding it alone (thumb) vs in a batch (scoring) moved scores by up to 0.003 (cosine 0.9976 between the two vectors), so a near-copy often landed on a different line than its rating and was never overridden. Pooling cannot shift a topic: no topic vector or score changes, only near-copies of a rated post are decided.
 
 **The whole post is one vector; no word is attributable.** The adapter's extracted text goes over as one string, tagged `passage:`. **Scored and thumbed text are the same text.** Both pass through `forEngine()` in `queue.ts`, capped at `MAX_CHARS = 1200`. **The rating key stays the whole post** (`hashText`).
 

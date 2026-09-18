@@ -108,13 +108,15 @@ One floating `.lx-fb` element top-centred over the hovered post, appended to `do
 
 Hidden on a post its conversation kept (`Conversation.keeps`): the opened post and replies to a kept lead post were never judged, so there is nothing to rate ([architecture.md](architecture.md) §Conversations).
 
-Appears on any scored post, not only blurred ones: [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
+Appears on shown and revealed posts, never on a blurred one (`postAt` skips it; reveal first): [model.md](model.md) puts the larger error mass _above_ the threshold, where posts are shown with nothing marking them as doubtful.
 
 **Hidden unless `tuneFromFeedback` is on.** The checkbox gates the buttons and the scoring together, so a rating never has an invisible effect.
 
 **A rating is only as good as the post text.** A rating overrides only posts whose text embedding is near-identical to the rated one ([model.md](model.md) §Relevance feedback) — it never sees images or video. Rating a post whose meaning lives in the media, over a neutral caption, matches other posts on words that were never the point. The popup hint asks for text-carrying posts only; nothing enforces it, same as `blurThinMedia` trusting caption length (`MIN_BACKING_CHARS`) rather than reading the frame.
 
 **A post is rated once.** Ratings are keyed by `hashText`, so the same thumb again un-rates it and the other thumb flips it. Both re-clicks reuse the stored vector and never reach the engine. Without this a held click stores copies of one post, and a mind-change leaves it rated both ways at once. The active thumb is marked, so a repeat click reads as a toggle rather than a no-op.
+
+**Disabled while the engine is busy.** `EngineClient.busy` is true until the model is ready and while any request waits on the worker. A thumb sent then queues behind scoring and could pass the 8s request timeout, dropping the rating silently. The buttons dim (`.lx-fb-busy`), say "Checking posts, one moment", and ignore clicks; batches finish in well under a second.
 
 The bar sits outside `.lx-blur`, so the reveal click handler never sees its clicks.
 
@@ -138,9 +140,9 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Engine chip                       | Header, beside the title. Two or three words plus a light.                                                                  |
 | Footer                            | Settings line, engine line, contact address.                                                                                |
 
-**Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Keeps about 35% of a typical feed visible. The rest is blurred, one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
+**Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
-**Admit what still gets through.** The strictness hint names how much of a feed survives _and_ how much of that is actually wanted — _"about 4 in 10 of the posts you see will really match your topics"_ — because at every step most or much of what survives is unwanted, and quoting only the good half is a lie the first scroll exposes. As a ratio of **what the reader sees**, never a bare percentage: "60% junk" leaves 60% of what unanswered. Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — Lensing reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
+**State the trade-off, never a measured share.** The strictness hint reads _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ at every step but 0. It once quoted the step table ("about 30% of a typical feed … about 4 in 10 … really match"); those numbers come from one feed and one topic family, and read as a promise to every reader. Let the reader judge from their own feed; the numbers stay in [model.md](model.md). Never quote only the good half: say that stricter also costs wanted posts. Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — Lensing reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
 
 Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
@@ -178,7 +180,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars · Topic #2 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). `Topic #` is the 1-based position of the line that gave the score, absent when the post has no line (unscored). `needs` is the strictness threshold. The last field appears only when a near-identical rated post decided the verdict (not when a keep/blur word, the media or language rule, or a kept conversation did), and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
+`score 0.793 / needs 0.795 · 105 chars · ℹ️ 3 topics · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). **Hovering the post** swaps `ℹ️ 3 topics` for every line's score by 1-based position (`#1 0.793 · #2 0.791 · #3 0.760`), pure CSS on `:hover`; the score is the highest of them. Absent when the post has no lines (unscored). A tooltip on the ℹ️ alone was rejected: the badge is a pseudo-element with no box of its own to hover. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when a keep/blur word, the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
 
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 

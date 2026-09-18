@@ -2,7 +2,7 @@
   "name": "lensing",
   "description": "On-device semantic focus for social feeds.",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.2",
   "type": "module",
   "scripts": {
     "dev": "wxt",

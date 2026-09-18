@@ -24,7 +24,7 @@ export interface Scored {
  * changed — a score means nothing once the topics or ratings move.
  */
 export class ScoreQueue {
-  readonly #pending = new Map<HTMLElement, string>();
+  readonly #pending = new Map<HTMLElement, Post>();
   #timer: ReturnType<typeof setTimeout> | undefined;
   #epoch = 0;
 
@@ -34,7 +34,7 @@ export class ScoreQueue {
   ) {}
 
   add(post: Post): void {
-    this.#pending.set(post.container, forEngine(post.text));
+    this.#pending.set(post.container, post);
     if (this.#pending.size >= BATCH_SIZE) void this.flush();
     else this.#schedule();
   }
@@ -59,18 +59,16 @@ export class ScoreQueue {
     const batch = [...this.#pending.entries()].slice(0, BATCH_SIZE);
     for (const [element] of batch) this.#pending.delete(element);
 
-    const matches = await this.engine.score(batch.map(([, text]) => text));
+    const matches = await this.engine.score(
+      batch.map(([, post]) => forEngine(post.text)),
+    );
     if (issuedAt !== this.#epoch) {
       log.info('discarding scores for a previous query', { posts: batch.length });
       return;
     }
 
-    this.onScored(
-      batch.map(([container, text], i) => ({
-        post: { container, text },
-        match: matches[i],
-      })),
-    );
+    // The whole post, not the capped text: the cache and the decision key on it.
+    this.onScored(batch.map(([, post], i) => ({ post, match: matches[i] })));
     if (this.#pending.size > 0) this.#schedule();
   }
 

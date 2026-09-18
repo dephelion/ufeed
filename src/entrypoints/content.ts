@@ -115,22 +115,17 @@ async function start(): Promise<void> {
       conversation?.route(post) === 'keep' &&
       overrideFor(settings, post.text) !== 'blur';
     const judged = { ...grounds(post), score, threshold: cut, rating };
-    const ratingDecides =
-      !revealed &&
-      !followsKept &&
+    // A revealed post stays shown whatever the rating, so the badge is the thumb's only confirmation.
+    const ratingShown =
       rating !== undefined &&
-      decideWithoutScore(judged) === undefined;
-    const topic =
-      match !== undefined && settings.topics[match.topic] !== undefined
-        ? match.topic + 1
-        : undefined;
+      (revealed || (!followsKept && decideWithoutScore(judged) === undefined));
     if (settings.showScores)
       stampScore(post.container, {
         score,
         needs: cut,
         chars: post.text.length,
-        topic,
-        rating: ratingDecides ? rating : undefined,
+        lines: match?.lines,
+        rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);
     if (revealed) {
@@ -212,10 +207,12 @@ async function start(): Promise<void> {
    * reveal now would flash the text a moment before the blur lands on it.
    */
   const detectThenQueue = async (post: Post): Promise<void> => {
+    // Scored anyway: it is never re-blurred, but its badge must follow a new rating.
+    if (isRevealed(post.container)) return queue.add(post);
     hold(post);
     await languages.detect(post.text);
     if (!post.container.isConnected) return;
-    if (isRevealed(post.container)) return settle(post.container, true);
+    if (isRevealed(post.container)) return queue.add(post);
     const settled = decideWithoutScore(grounds(post));
     if (settled === undefined) {
       queue.add(post);
@@ -283,14 +280,17 @@ async function start(): Promise<void> {
     );
 
   const takeFeedback = (post: PostRef, liked: boolean): void => {
+    // Read again at click time: expanding "…more" since hover changes the text.
+    const text = adapter.findPosts(post.container)[0]?.text ?? post.text;
     const store = async (topic: string, vector: number[]): Promise<void> => {
-      if (!(await persist(tuner.record(topic, post.text, vector, liked)))) return;
+      if (!(await persist(tuner.record(topic, text, vector, liked)))) return;
       log.info('feedback stored', { corrections: tuner.count });
-      if (settings.tuneFromFeedback) requery();
+      if (settings.tuneFromFeedback && tuner.signature(settings.topics) !== sentRatings)
+        requery();
     };
 
     /** Already rated: re-clicking toggles or flips it, and we hold the vector. */
-    const existing = tuner.ratingOf(post.text);
+    const existing = tuner.ratingOf(text);
     if (existing) {
       void store(existing.topic, []);
       return;
@@ -298,13 +298,13 @@ async function start(): Promise<void> {
 
     // Correct from the same text that was scored; the rating stays keyed by the
     // whole post, so an existing rating still matches.
-    void engine.feedback(forEngine(post.text), liked).then(({ vector, topic }) => {
+    void engine.feedback(forEngine(text), liked).then(({ vector, topic }) => {
       const line = settings.topics[topic];
       if (vector.length > 0 && line !== undefined) void store(line, vector);
     });
   };
 
-  mountFeedbackBar({
+  const feedbackBar = mountFeedbackBar({
     postAt: (target) => {
       if (!settings.tuneFromFeedback) return undefined;
       const container = target.closest<HTMLElement>(adapter.containerSelector);
@@ -316,6 +316,7 @@ async function start(): Promise<void> {
     },
     onFeedback: takeFeedback,
   });
+  engine.onBusyChange((busy) => feedbackBar.setBusy(busy));
 
   listenForReveal(document, conversation && ((element) => settle(element, true)));
   onSettingsChanged(applySettings);

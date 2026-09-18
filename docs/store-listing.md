@@ -41,14 +41,14 @@ The text of your feed is never uploaded, never stored, and never logged — we
 could not see it if we wanted to.
 
 🧑🏽‍💻 You set how strict it is. A 0–10 slider, where every step is a measured
-threshold rather than a guess. The popup tells you roughly how much of a
-typical feed each setting keeps, including how much of what survives will
-still be off-topic. It is not going to be perfect and it does not pretend to
-be.
+threshold rather than a guess. Stricter hides more, including some posts you'd
+want, so pick what suits your feed. It is not going to be perfect and it does
+not pretend to be.
 
-It learns from you, if you ask it to. Turn on thumbs and rate a post; the
-ratings stay on your device and shift what that topic means to Lensing. It is
-off by default.
+It takes corrections, if you ask it to. Turn on thumbs and mark a post on or off
+topic; the next time a near-copy of it shows up, such as a repost or a quote, it
+follows your call. Your topics never change. Ratings stay on your device, and
+this is off by default.
 
 What it cannot do. It reads words, not pictures, so a photo with no caption
 cannot be judged on content. It understands English. It matches subjects, not

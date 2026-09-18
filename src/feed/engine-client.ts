@@ -40,8 +40,27 @@ export class EngineClient {
   readonly #pending = new Map<string, Pending>();
   readonly #outbox: EngineRequest[] = [];
   #status: StatusEvent = { type: 'STATUS', state: 'idle' };
+  #busy = true;
+  #onBusy: (busy: boolean) => void = () => {};
 
   constructor(private readonly onStatus: (status: StatusEvent) => void) {}
+
+  /** Not ready, or a request is waiting on the worker. A thumb sent now would queue behind it. */
+  get busy(): boolean {
+    return this.#busy;
+  }
+
+  onBusyChange(fn: (busy: boolean) => void): void {
+    this.#onBusy = fn;
+    fn(this.#busy);
+  }
+
+  #updateBusy(): void {
+    const busy = !this.ready || this.#pending.size > 0;
+    if (busy === this.#busy) return;
+    this.#busy = busy;
+    this.#onBusy(busy);
+  }
 
   get status(): StatusEvent {
     return this.#status;
@@ -98,6 +117,7 @@ export class EngineClient {
       }
       this.#status = data;
       this.onStatus(data);
+      this.#updateBusy();
       return;
     }
     if (data.type === 'ACK') return;
@@ -108,6 +128,7 @@ export class EngineClient {
     }
     this.#pending.delete(data.id);
     clearTimeout(pending.timer);
+    this.#updateBusy();
     if (data.type === 'ERROR') {
       log.warn('engine returned an error, revealing batch', { reason: data.message });
       pending.resolve({});
@@ -120,6 +141,7 @@ export class EngineClient {
         matches: data.scores.map((score, i) => ({
           score,
           topic: data.topics[i]!,
+          lines: data.lines[i]!,
           rating: data.ratings[i] ?? undefined,
         })),
       });
@@ -137,10 +159,12 @@ export class EngineClient {
     return new Promise<RatedMatch[]>((resolve) => {
       const timer = setTimeout(() => {
         this.#pending.delete(id);
+        this.#updateBusy();
         log.warn('score request timed out, revealing', { posts: texts.length });
         resolve([]);
       }, REQUEST_TIMEOUT_MS);
       this.#pending.set(id, { resolve: (p) => resolve(p.matches ?? []), timer });
+      this.#updateBusy();
       this.#send({ id, type: 'SCORE', texts });
     });
   }
@@ -151,6 +175,7 @@ export class EngineClient {
     return new Promise<Correction>((resolve) => {
       const timer = setTimeout(() => {
         this.#pending.delete(id);
+        this.#updateBusy();
         log.warn('feedback request timed out');
         resolve({ vector: [], topic: -1 });
       }, REQUEST_TIMEOUT_MS);
@@ -158,6 +183,7 @@ export class EngineClient {
         resolve: (p) => resolve({ vector: p.vector ?? [], topic: p.topic ?? -1 }),
         timer,
       });
+      this.#updateBusy();
       this.#send({ id, type: 'FEEDBACK', text, liked });
     });
   }

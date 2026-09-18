@@ -13,6 +13,8 @@ export interface Match {
   score: number;
   /** Index of the closest topic line; -1 when there are no lines. */
   topic: number;
+  /** Similarity to every line, aligned with the topics; `score` is the highest. */
+  lines: number[];
 }
 
 /** A match, plus the rating that overrides it when a rated post is near-identical. */
@@ -22,12 +24,12 @@ export interface RatedMatch extends Match {
 
 /** Highest similarity to any topic, and the line that gave it. */
 export function bestMatch(post: Vector, topics: readonly Vector[]): Match {
-  let best: Match = { score: -1, topic: -1 };
-  topics.forEach((topic, i) => {
-    const score = cosine(post, topic);
+  const lines = topics.map((topic) => cosine(post, topic));
+  let best = { score: -1, topic: -1 };
+  lines.forEach((score, i) => {
     if (score > best.score) best = { score, topic: i };
   });
-  return best;
+  return { ...best, lines };
 }
 
 export function normalize(v: Vector): Vector {
@@ -65,11 +67,6 @@ export function feedShownAt(step: number): number {
   return STRICTNESS_STEPS[clampStrictness(step)]!.shown;
 }
 
-/** Share of what survives this step that was not wanted after all. */
-export function junkShownAt(step: number): number {
-  return STRICTNESS_STEPS[clampStrictness(step)]!.junk;
-}
-
 /**
  * Width of the uncertain strip below the threshold. Below it nothing was wanted
  * across 125 observations; inside it, 7% was. See wiki-llm/model.md.
@@ -105,21 +102,20 @@ export function ratingNear(
   return rating;
 }
 
-/** One topic line's rated posts. */
 export interface Rated {
   liked: readonly Vector[];
   disliked: readonly Vector[];
 }
 
-/** Only ratings filed under the post's own best line apply, so lines never cross. */
-export function ratingFor(
-  post: Vector,
-  topic: number,
-  rated: readonly Rated[],
-  near: number,
-): boolean | undefined {
-  const line = rated[topic];
-  return line && ratingNear(post, line.liked, line.disliked, near);
+/**
+ * Every line's ratings, checked together: an off-topic post's best line is a
+ * near-tie, so a near-copy can land on a different line than the rated post did.
+ */
+export function pooled(lines: readonly Rated[]): Rated {
+  return {
+    liked: lines.flatMap((line) => line.liked),
+    disliked: lines.flatMap((line) => line.disliked),
+  };
 }
 
 /** Verdict from the strictness threshold. */

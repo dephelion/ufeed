@@ -15,11 +15,19 @@ export interface FeedbackBarOptions {
   onFeedback(post: PostRef, liked: boolean): void;
 }
 
+export interface FeedbackBar {
+  /** While the engine is busy a thumb would queue behind scoring and could time out. */
+  setBusy(busy: boolean): void;
+  unmount(): void;
+}
+
+const BUSY_TITLE = 'Checking posts, one moment';
+
 /**
  * One floating element over the hovered post, never a child of it: injecting a
  * control into each post would mutate the feed's DOM and die on recycling.
  */
-export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
+export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
   const bar = document.createElement('div');
   bar.className = 'lx-fb';
   bar.setAttribute('aria-hidden', 'true');
@@ -28,14 +36,15 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
     '<button type="button" class="lx-fb-down" title="Off topic">&#128078;</button>';
 
   let current: PostRef | undefined;
+  let busy = false;
 
   const hide = () => {
     bar.classList.remove('lx-fb-on');
     current = undefined;
   };
 
-  const up = bar.querySelector('.lx-fb-up')!;
-  const down = bar.querySelector('.lx-fb-down')!;
+  const up = bar.querySelector<HTMLButtonElement>('.lx-fb-up')!;
+  const down = bar.querySelector<HTMLButtonElement>('.lx-fb-down')!;
 
   const show = (post: PostRef) => {
     const box = post.container.getBoundingClientRect();
@@ -67,6 +76,7 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
     if (!button || !current) return;
     event.preventDefault();
     event.stopPropagation();
+    if (busy) return;
     const liked = button.classList.contains('lx-fb-up');
     const cleared = current.rating === liked;
     log.info('feedback given', { liked, cleared, chars: current.text.length });
@@ -83,9 +93,19 @@ export function mountFeedbackBar(options: FeedbackBarOptions): () => void {
   window.addEventListener('scroll', hide, { passive: true });
   document.documentElement.appendChild(bar);
 
-  return () => {
-    document.removeEventListener('mouseover', onOver, true);
-    window.removeEventListener('scroll', hide);
-    bar.remove();
+  return {
+    setBusy(next: boolean) {
+      busy = next;
+      bar.classList.toggle('lx-fb-busy', busy);
+      up.disabled = busy;
+      down.disabled = busy;
+      up.title = busy ? BUSY_TITLE : 'On topic';
+      down.title = busy ? BUSY_TITLE : 'Off topic';
+    },
+    unmount() {
+      document.removeEventListener('mouseover', onOver, true);
+      window.removeEventListener('scroll', hide);
+      bar.remove();
+    },
   };
 }

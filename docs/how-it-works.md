@@ -159,7 +159,8 @@ actually use:
 **Strictness changes the threshold.** A post is shown when its score reaches the
 threshold. e5 packs all scores into a narrow band (see above), so a slider that
 moved the cosine evenly would do nothing for half its travel. Each of the 11
-steps is a threshold measured to hide about another tenth of a typical feed.
+steps is a threshold measured, on one sample feed, to hide about another tenth
+of it. Your feed will differ.
 Higher steps hide more noise, and also more of what you wanted.
 
 **The peek strip marks the close calls.** Just below the threshold is a thin
@@ -191,14 +192,18 @@ therefore deletes every rating. The post text is already gone, so nothing
 can be embedded again.
 
 To see all of this at work, turn on _Show each post's score_ in the popup. Each
-post then shows the score it got and the score it needed.
+post then shows the score it got and the score it needed. Hover a post to see
+its score against every topic line, and a post decided by a thumb says
+"marked on topic" or "marked off topic".
 
 ## What a thumb changes
 
-A thumb belongs to **one topic line: the one the post matched best**. It only
-affects new posts that match that same line, so a thumb on one topic never
-changes another. Rate the same post again and it un-rates; rate it the other way
-and it flips.
+A thumb is stored under **the topic line the post matched best**, and it applies
+to any near-copy of that post, whichever line the copy lands on. Off-topic posts
+score almost the same on every line, so the "best" line is close to a coin flip
+for them. A thumb never changes any topic's scores, so it cannot shift how other
+posts are judged. Rate the same post again and it un-rates; rate it the other
+way and it flips.
 
 **No individual word is picked out.** The post's text goes to the worker as one
 string and comes back as one vector, and new posts are compared with that
@@ -206,8 +211,8 @@ vector as a whole. There is no keyword extraction to inspect.
 
 Two things follow. Rating a post whose meaning lives in its image matches other
 posts on a caption that was never the point, because the model reads words only.
-And a rating belongs to one line: rewrite that line and its ratings go with it,
-while the other lines keep theirs.
+And a rating is stored with one line: rewrite that line and its ratings go with
+it, while the other lines keep theirs.
 
 Full reasoning in [`wiki-llm/architecture.md`](../wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](../wiki-llm/model.md), terms in
