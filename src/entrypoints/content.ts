@@ -114,8 +114,11 @@ async function start(): Promise<void> {
   /** Returns what it did, so callers need not re-derive the verdict to count it. */
   const decide = (post: Post, match: Match | undefined): Action | undefined => {
     const score = match?.score;
-    const cut = threshold(lineOf(match));
-    if (settings.showScores) stampScore(post.container, score, cut, post.text.length);
+    const line = lineOf(match);
+    const cut = threshold(line);
+    const topic = match !== undefined && line !== undefined ? match.topic + 1 : undefined;
+    if (settings.showScores)
+      stampScore(post.container, score, cut, post.text.length, topic);
     else clearScore(post.container);
     if (isRevealed(post.container)) {
       settle(post.container, true);

@@ -178,6 +178,8 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/content/score-badge.ts`).
+`score 0.793 / needs 0.795 · 105 chars · Topic #2` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). `Topic #` is the 1-based position of the line that gave the score, absent when the post has no line (unscored). `needs` is that line's cut.
+
+**Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 
 **Gated solely on `settings.showScores`** (default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.
