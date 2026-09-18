@@ -211,10 +211,12 @@ async function start(): Promise<void> {
    * reveal now would flash the text a moment before the blur lands on it.
    */
   const detectThenQueue = async (post: Post): Promise<void> => {
+    // Scored anyway: it is never re-blurred, but its badge must follow a new rating.
+    if (isRevealed(post.container)) return queue.add(post);
     hold(post);
     await languages.detect(post.text);
     if (!post.container.isConnected) return;
-    if (isRevealed(post.container)) return settle(post.container, true);
+    if (isRevealed(post.container)) return queue.add(post);
     const settled = decideWithoutScore(grounds(post));
     if (settled === undefined) {
       queue.add(post);
