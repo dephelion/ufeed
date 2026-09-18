@@ -183,11 +183,14 @@ that point is like adding words you did not think to type. A correction is just
 arithmetic on one 384-number vector stored in your browser. Each rated post is
 embedded once. Its text is then discarded, and only its vector is kept.
 
-**After the first correction, the threshold becomes relative.** Moving the query
-shifts every score, so a fixed cosine no longer means what it did before. From
-then on, Lensing sets the threshold from your recent scores so that each
-strictness step still shows the same share of your feed. Until it has seen
-enough scores to do that reliably, it keeps the fixed threshold.
+**A corrected topic line gets its own relative threshold.** Moving a line's
+query shifts every score that line gives, so a fixed cosine no longer means what
+it did before. From its first correction on, that line's threshold is set from
+that line's own recent scores, so each strictness step still shows the same
+share of the posts it matches. Each line is judged separately: correcting one
+line cannot push another line's posts out of view. Lines you have not corrected
+keep the fixed threshold. Until a corrected line has seen enough scores of its
+own, it borrows a threshold from all your lines' recent scores together.
 
 **Vectors only make sense to the model that made them.** A model update
 therefore deletes every correction. The post text is already gone, so nothing

@@ -28,12 +28,22 @@ describe('isEngineRequest', () => {
 });
 
 describe('isEngineReply', () => {
-  it('accepts scores', () => {
-    expect(isEngineReply({ id: 'r1', type: 'SCORES', scores: [0.1] })).toBe(true);
+  it('accepts scores with the line each came from', () => {
+    expect(isEngineReply({ id: 'r1', type: 'SCORES', scores: [0.1], topics: [0] })).toBe(
+      true,
+    );
   });
 
   it('rejects scores that are not numbers', () => {
-    expect(isEngineReply({ id: 'r1', type: 'SCORES', scores: ['0.1'] })).toBe(false);
+    expect(
+      isEngineReply({ id: 'r1', type: 'SCORES', scores: ['0.1'], topics: [0] }),
+    ).toBe(false);
+  });
+
+  it('rejects scores whose lines do not line up with them', () => {
+    expect(
+      isEngineReply({ id: 'r1', type: 'SCORES', scores: [0.1, 0.2], topics: [0] }),
+    ).toBe(false);
   });
 
   it('accepts a status event, which carries no id', () => {

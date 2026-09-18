@@ -7,7 +7,7 @@ import {
 import { captureConsole, logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { MODEL, formatPost, formatTopic } from '../../ml/models';
-import { applyFeedback, cosine, scoreAgainstTopics, type Vector } from '../../ml/scoring';
+import { applyFeedback, bestMatch, type Vector } from '../../ml/scoring';
 
 // transformers.js and ORT print handled conditions through console.warn and
 // console.error, which the browser's extension Errors page collects as faults.
@@ -97,7 +97,7 @@ async function handle(request: EngineRequest): Promise<void> {
     }
     if (request.type === 'FEEDBACK') {
       const [vector] = await embedder.embed([formatPost(request.text)]);
-      const topic = vector ? bestTopic(vector, vectors) : -1;
+      const topic = vector ? bestMatch(vector, vectors).topic : -1;
       log.info('feedback embedded', { liked: request.liked, topic });
       post({ id: request.id, type: 'VECTOR', vector: [...(vector ?? [])], topic });
       return;
@@ -105,14 +105,15 @@ async function handle(request: EngineRequest): Promise<void> {
     if (vectors.length === 0) throw new Error('scored before any topics were set');
     const started = Date.now();
     const embedded = await embedder.embed(request.texts.map(formatPost));
-    const scores = embedded.map((v) => scoreAgainstTopics(v, vectors));
+    const matches = embedded.map((v) => bestMatch(v, vectors));
+    const scores = matches.map((m) => m.score);
     const elapsed = Date.now() - started;
     log.info('scored', {
       posts: scores.length,
       msPerPost: scores.length ? Math.round(elapsed / scores.length) : 0,
       max: scores.length ? Math.max(...scores).toFixed(3) : undefined,
     });
-    post({ id: request.id, type: 'SCORES', scores });
+    post({ id: request.id, type: 'SCORES', scores, topics: matches.map((m) => m.topic) });
   } catch (error: unknown) {
     log.error('request failed', { type: request.type, reason: describe(error) });
     post({ id: request.id, type: 'ERROR', message: describe(error) });
@@ -121,20 +122,6 @@ async function handle(request: EngineRequest): Promise<void> {
 
 function toVectors(rows: number[][] | undefined): Vector[] {
   return (rows ?? []).map((row) => Float32Array.from(row));
-}
-
-/** The line that came closest to claiming the post is the one being corrected. */
-function bestTopic(vector: Vector, topicVectors: readonly Vector[]): number {
-  let best = -1;
-  let bestScore = -Infinity;
-  topicVectors.forEach((topic, i) => {
-    const score = cosine(topic, vector);
-    if (score > bestScore) {
-      bestScore = score;
-      best = i;
-    }
-  });
-  return best;
 }
 
 function describe(error: unknown): string {

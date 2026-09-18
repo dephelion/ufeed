@@ -35,6 +35,8 @@ export interface ScoresReply {
   id: string;
   type: 'SCORES';
   scores: number[];
+  /** The line each score came from, aligned with `scores`; each line has its own cut. */
+  topics: number[];
 }
 
 /**
@@ -96,8 +98,9 @@ export function isEngineReply(data: unknown): data is EngineReply {
     case 'SCORES':
       return (
         typeof data.id === 'string' &&
-        Array.isArray(data.scores) &&
-        data.scores.every((n) => typeof n === 'number')
+        isNumberArray(data.scores) &&
+        isNumberArray(data.topics) &&
+        data.topics.length === data.scores.length
       );
     case 'VECTOR':
       return (
@@ -140,6 +143,10 @@ function isCorrections(v: unknown): v is TopicCorrections[] | undefined {
     (Array.isArray(v) &&
       v.every((c) => isRecord(c) && isVectors(c.liked) && isVectors(c.disliked)))
   );
+}
+
+function isNumberArray(v: unknown): v is number[] {
+  return Array.isArray(v) && v.every((n) => typeof n === 'number');
 }
 
 function isStringArray(v: unknown): v is string[] {

@@ -5,12 +5,12 @@ import {
   MIN_SAMPLE,
   PEEK_BAND,
   applyFeedback,
+  bestMatch,
   clampStrictness,
   cosine,
   feedShownAt,
   junkShownAt,
   normalize,
-  scoreAgainstTopics,
   thresholdForFraction,
   thresholdForStrictness,
   verdictAt,
@@ -32,16 +32,17 @@ describe('cosine', () => {
   });
 });
 
-describe('scoreAgainstTopics', () => {
-  it('returns the closest topic, not the average', () => {
-    const post = v(1, 0);
-    expect(scoreAgainstTopics(post, [v(0, 1), v(1, 0)])).toBeCloseTo(1);
+describe('bestMatch', () => {
+  it('returns the closest topic and its line, not the average', () => {
+    const match = bestMatch(v(1, 0), [v(0, 1), v(1, 0)]);
+    expect(match.score).toBeCloseTo(1);
+    expect(match.topic).toBe(1);
   });
 
   it('scores below any threshold when there are no topics', () => {
-    expect(verdictAt(scoreAgainstTopics(v(1, 0), []), thresholdForStrictness(0))).toBe(
-      'blur',
-    );
+    const match = bestMatch(v(1, 0), []);
+    expect(match.topic).toBe(-1);
+    expect(verdictAt(match.score, thresholdForStrictness(0))).toBe('blur');
   });
 });
 

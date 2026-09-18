@@ -58,7 +58,7 @@ content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
 content → engine   { id, type: 'FEEDBACK',   text, liked }
                    SET_TOPICS also carries liked/disliked vectors
-engine  → content  { id, type: 'SCORES',     scores }   raw cosine, never booleans
+engine  → content  { id, type: 'SCORES',     scores, topics }   raw cosine, never booleans; topics = line index per score
 engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design
 engine  → content  { id, type: 'ERROR',      message }

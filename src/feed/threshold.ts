@@ -1,35 +1,47 @@
 import type { Settings } from '../core/settings';
-import { feedShownAt, thresholdForFraction, thresholdForStrictness } from '../ml/scoring';
+import {
+  MIN_SAMPLE,
+  feedShownAt,
+  thresholdForFraction,
+  thresholdForStrictness,
+} from '../ml/scoring';
 
 /** Enough recent scores for a stable quantile, short enough to follow the feed. */
 const WINDOW = 300;
 
 /**
- * Owns the recent-score window and the one decision that needs it: whether the
- * cut is an absolute cosine or a quantile of what the feed is actually scoring.
+ * Owns one recent-score window per topic line and the one decision that needs
+ * them: whether a line's cut is an absolute cosine or a quantile of its own scores.
  */
 export class ScoreWindow {
-  readonly #recent: number[] = [];
+  readonly #byLine = new Map<string, number[]>();
 
-  add(scores: readonly (number | undefined)[]): void {
-    for (const score of scores) if (score !== undefined) this.#recent.push(score);
-    if (this.#recent.length > WINDOW) {
-      this.#recent.splice(0, this.#recent.length - WINDOW);
-    }
+  add(line: string, score: number): void {
+    const recent = this.#byLine.get(line) ?? [];
+    recent.push(score);
+    if (recent.length > WINDOW) recent.splice(0, recent.length - WINDOW);
+    this.#byLine.set(line, recent);
   }
 
   /**
-   * A corrected query moves the whole score scale, so a fixed cosine stops
-   * meaning anything. Relative only when `adapted` — absolute is better
-   * calibrated until then, and never blurs a feed that is entirely on topic.
+   * A corrected line has its own score scale, so its cut is a quantile of what
+   * that line scored, or of every line's scores until it has enough of its own.
    */
-  cut(settings: Settings, adapted: boolean): number {
+  cut(settings: Settings, line: string | undefined, corrected: boolean): number {
     const absolute = thresholdForStrictness(settings.strictness);
-    if (!adapted) return absolute;
-    return thresholdForFraction(this.#recent, feedShownAt(settings.strictness), absolute);
+    if (line === undefined || !corrected) return absolute;
+    const own = this.#byLine.get(line) ?? [];
+    const sample = own.length >= MIN_SAMPLE ? own : [...this.#byLine.values()].flat();
+    return thresholdForFraction(sample, feedShownAt(settings.strictness), absolute);
   }
 
-  get size(): number {
-    return this.#recent.length;
+  /** Drops the windows of lines the user has removed or rewritten. */
+  keepOnly(lines: readonly string[]): void {
+    for (const line of this.#byLine.keys())
+      if (!lines.includes(line)) this.#byLine.delete(line);
+  }
+
+  sizeOf(line: string): number {
+    return this.#byLine.get(line)?.length ?? 0;
   }
 }

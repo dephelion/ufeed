@@ -3,6 +3,7 @@ import {
   EMPTY_FEEDBACK,
   correctionsFor,
   count,
+  countFor,
   counts,
   findRating,
   forTopics,
@@ -34,6 +35,10 @@ export class Tuning {
 
   get counts(): ReturnType<typeof counts> {
     return counts(this.#feedback);
+  }
+
+  countOf(topic: string): number {
+    return countFor(this.#feedback, topic);
   }
 
   /** Aligned with `topics`, so the worker corrects each line with its own. */

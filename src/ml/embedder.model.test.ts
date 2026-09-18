@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { Embedder } from './embedder';
 import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from './models';
-import { cosine, scoreAgainstTopics, thresholdForStrictness } from './scoring';
+import { bestMatch, cosine, thresholdForStrictness } from './scoring';
 
 const q = formatTopic;
 const d = formatPost;
@@ -68,7 +68,7 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
       q('tech'),
       d(TECH),
     ]);
-    const score = scoreAgainstTopics(post!, [cooking!, tech!]);
+    const { score } = bestMatch(post!, [cooking!, tech!]);
     expect(score).toBeCloseTo(Math.max(cosine(cooking!, post!), cosine(tech!, post!)), 5);
   });
 

@@ -25,7 +25,7 @@ src/
                   policy.ts    the blur decision, pure
                   scanner.ts   finds posts, says when one nears the viewport
                   queue.ts     batches to the engine, discards stale replies
-                  threshold.ts recent scores, absolute vs relative cut
+                  threshold.ts recent scores per line, absolute vs relative cut
                   tuning.ts    corrections and their persistence
                   language.ts  the model's language gate, pure
                   blur.ts · media.ts · language-detector.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css

@@ -160,7 +160,7 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 |          16 |    96% |  47.5 | 0.908     |
 |          32 |    97% |  42.0 | **0.936** |
 
-**Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — `bestTopic()` in the worker returns that index with the embedding. **Highest cosine wins with no floor**: a post weakly related to everything still lands on one line. **Measured against the corrected vector**, not the topic text, so corrections compound on the line they already shaped. A re-click reuses the stored line and never re-attributes. Editing one line discards only that line's corrections; the rest survive, including a reorder.
+**Corrections are per topic line, not per topic set.** Scoring takes the max across lines, so a rating attaches to the line that came closest to claiming the post — `bestMatch()` in `scoring.ts` returns that index with the score. **Highest cosine wins with no floor**: a post weakly related to everything still lands on one line. **Measured against the corrected vector**, not the topic text, so corrections compound on the line they already shaped. A re-click reuses the stored line and never re-attributes. Editing one line discards only that line's corrections; the rest survive, including a reorder.
 
 **One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place. A duplicate would weight one post's vector twice in the centroid.
 
@@ -170,9 +170,15 @@ Measured on the 205 posts with feedback items **held out** of evaluation, at equ
 
 ## Relative strictness
 
-**A corrected query moves the whole score scale.** Left at a fixed 0.784, recall **collapsed to 11%**. Once corrections exist the threshold becomes the quantile of the last 300 scores that keeps the same share of feed the absolute threshold would have.
+**A corrected query moves the whole score scale.** Left at a fixed 0.784, recall **collapsed to 11%**. A corrected line's threshold is the quantile of **that line's** last 300 scores that keeps the step's `shown` share — of the posts that line matched, not of the whole feed.
 
-**Absolute until the first correction.** It is better calibrated, and it never blurs a feed that is entirely on topic. Below `MIN_SAMPLE = 30` scores the quantile is noise, so the absolute threshold stands.
+**One window and one cut per topic line.** A post is judged against the cut of the line that gave its score (`bestMatch()` returns both). A shared window made lines compete: a correction lowered one line's scores, and its posts lost their places to posts on untouched lines. Windows are keyed by line text; removing or rewriting a line drops its window.
+
+**Absolute for every uncorrected line.** Relative only on a line with at least one correction, since only that line's scale moved. Absolute is better calibrated and never blurs a feed that is entirely on topic. Below `MIN_SAMPLE = 30` scores in its own window, a corrected line borrows the quantile of every line's window pooled; below 30 pooled, absolute. Windows are in memory, so each load warms up from zero.
+
+**Windows survive a requery.** A just-corrected line is cut against scores from its pre-correction query until the window refills. Open.
+
+**Unmeasured.** Per-line cuts have not been run against the 205-post harness. The 11% and AUC figures above were measured with the shared window; `shown` was measured over a whole feed, not one line's share of it.
 
 ## Backend self-check
 

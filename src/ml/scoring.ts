@@ -9,13 +9,19 @@ export function cosine(a: Vector, b: Vector): number {
   return dot;
 }
 
-/** Highest similarity to any topic. Cost is independent of topic count. */
-export function scoreAgainstTopics(post: Vector, topics: readonly Vector[]): number {
-  let best = -1;
-  for (const topic of topics) {
-    const s = cosine(post, topic);
-    if (s > best) best = s;
-  }
+export interface Match {
+  score: number;
+  /** Index of the closest topic line; -1 when there are no lines. */
+  topic: number;
+}
+
+/** Highest similarity to any topic, and the line that gave it. */
+export function bestMatch(post: Vector, topics: readonly Vector[]): Match {
+  let best: Match = { score: -1, topic: -1 };
+  topics.forEach((topic, i) => {
+    const score = cosine(post, topic);
+    if (score > best.score) best = { score, topic: i };
+  });
   return best;
 }
 

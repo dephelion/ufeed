@@ -37,6 +37,7 @@ import { ScoreWindow } from '../feed/threshold';
 import { FeedScanner } from '../feed/scanner';
 import { Conversation } from '../feed/conversation';
 import { ScoreQueue, forEngine } from '../feed/queue';
+import type { Match } from '../ml/scoring';
 import { Tuning } from '../feed/tuning';
 import { mountFeedbackBar, type PostRef } from '../feed/feedback-bar';
 import { EngineClient } from '../feed/engine-client';
@@ -99,16 +100,21 @@ async function start(): Promise<void> {
   const showNudge = () => nudge.setVisible(needsTopics(settings, location.hostname));
 
   const active = () => isActiveOn(settings, location.hostname);
-  const tuning = () => settings.tuneFromFeedback && tuner.count > 0;
+  const corrected = (line: string | undefined) =>
+    line !== undefined && settings.tuneFromFeedback && tuner.countOf(line) > 0;
   const corrections = () =>
     settings.tuneFromFeedback ? tuner.corrections(settings.topics) : [];
 
-  const threshold = () => scoreWindow.cut(settings, tuning());
+  const lineOf = (match: Match | undefined) =>
+    match === undefined ? undefined : settings.topics[match.topic];
+  const threshold = (line: string | undefined) =>
+    scoreWindow.cut(settings, line, corrected(line));
   const conversation = Conversation.for(adapter);
 
   /** Returns what it did, so callers need not re-derive the verdict to count it. */
-  const decide = (post: Post, score: number | undefined): Action | undefined => {
-    const cut = threshold();
+  const decide = (post: Post, match: Match | undefined): Action | undefined => {
+    const score = match?.score;
+    const cut = threshold(lineOf(match));
     if (settings.showScores) stampScore(post.container, score, cut, post.text.length);
     else clearScore(post.container);
     if (isRevealed(post.container)) {
@@ -149,20 +155,27 @@ async function start(): Promise<void> {
   };
 
   const queue = new ScoreQueue(engine, (results) => {
-    scoreWindow.add(results.map((r) => r.score));
-    const cut = threshold();
+    for (const { match } of results) {
+      const line = lineOf(match);
+      if (match !== undefined && line !== undefined) scoreWindow.add(line, match.score);
+    }
     let blurred = 0;
-    for (const { post, score } of results) {
-      if (score !== undefined) cache.set(post.text, score);
+    for (const { post, match } of results) {
+      if (match !== undefined) cache.set(post.text, match);
       if (!post.container.isConnected) continue;
-      const action = decide(post, score);
+      const action = decide(post, match);
       if (action !== undefined && action !== 'reveal') blurred += 1;
     }
     log.info('batch applied', {
       posts: results.length,
       blurred,
-      threshold: cut.toFixed(3),
-      adapted: tuning(),
+      cuts: JSON.stringify(
+        settings.topics.map((line, i) => [
+          i,
+          threshold(line).toFixed(3),
+          corrected(line),
+        ]),
+      ),
     });
   });
 
@@ -242,12 +255,16 @@ async function start(): Promise<void> {
     settings = next;
     showNudge();
     if (!active()) {
+      queue.invalidate();
       revealAll(document);
       clearAllScores(document);
       return;
     }
     engine.connect();
-    if (topicsChanged) void persist(tuner.keepOnly(next.topics));
+    if (topicsChanged) {
+      scoreWindow.keepOnly(next.topics);
+      void persist(tuner.keepOnly(next.topics));
+    }
     if (topicsChanged || tuningChanged || !wasActive) requery();
     else rescore();
   };

@@ -165,8 +165,8 @@ threshold. **Topic words** set the query, and plain words beat category names.
 **Strictness** picks a measured threshold within that narrow score band. A
 **peek strip** just below the threshold keeps close calls readable. **Thumbs**
 (off by default) move the query toward posts you kept and away from ones you
-blurred, using Rocchio relevance feedback. After the first thumb, the threshold
-is set relative to your recent scores.
+blurred, using Rocchio relevance feedback. Once a topic line has a thumb, its
+threshold is set relative to that line's own recent scores.
 [Full section](docs/how-it-works.md#tuning-it-yourself).
 
 ### What a thumb changes
