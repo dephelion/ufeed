@@ -115,11 +115,10 @@ async function start(): Promise<void> {
       conversation?.route(post) === 'keep' &&
       overrideFor(settings, post.text) !== 'blur';
     const judged = { ...grounds(post), score, threshold: cut, rating };
-    const ratingDecides =
-      !revealed &&
-      !followsKept &&
+    // A revealed post stays shown whatever the rating, so the badge is the thumb's only confirmation.
+    const ratingShown =
       rating !== undefined &&
-      decideWithoutScore(judged) === undefined;
+      (revealed || (!followsKept && decideWithoutScore(judged) === undefined));
     const topic =
       match !== undefined && settings.topics[match.topic] !== undefined
         ? match.topic + 1
@@ -130,7 +129,7 @@ async function start(): Promise<void> {
         needs: cut,
         chars: post.text.length,
         topic,
-        rating: ratingDecides ? rating : undefined,
+        rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);
     if (revealed) {
