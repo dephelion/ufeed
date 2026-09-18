@@ -31,7 +31,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 ```
 
 1. `MutationObserver` on `document.documentElement` → `sweep(node)`.
-2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`).
+2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo or first text mounts later is offered again: X can mount a cell before either. Other inner mutations never re-offer.
 3. On intersection: cache hit or override decides immediately; otherwise queue.
 4. Queue flushes at 16 posts or a 100ms debounce.
 5. Worker embeds, scores against topic vectors, replies with **raw scores**.
