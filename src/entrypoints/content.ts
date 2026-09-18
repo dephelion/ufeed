@@ -150,7 +150,7 @@ async function start(): Promise<void> {
 
   const apply = (post: Post, action: Action): Action => {
     if (action === 'reveal') reveal(post.container);
-    else if (action === 'peek') peek(post.container, post.text);
+    else if (action === 'peek') peek(post.container, post.text, settings.collapseBlurred);
     else blur(post.container, REASONS[action], settings.collapseBlurred);
     settle(post.container, action === 'reveal');
     return action;

@@ -57,9 +57,9 @@ export function blur(
  * the host's text node to un-blur them in place would mutate the feed's DOM and
  * die on the next re-render.
  */
-export function peek(element: HTMLElement, text: string): void {
+export function peek(element: HTMLElement, text: string, collapse = false): void {
   if (revealed.has(element)) return;
-  blur(element, 'peek');
+  blur(element, 'peek', collapse);
   element.dataset.lxPeek = text.slice(0, PEEK_CHARS).trim();
 }
 

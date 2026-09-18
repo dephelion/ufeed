@@ -157,6 +157,11 @@
   visibility: hidden;
 }
 
+/* The peek drops below the score badge; the row grows so it is not clipped. */
+.lx-collapse[data-lx-reason='peek'][data-lx-score] {
+  max-height: 58px;
+}
+
 /* The content script stamps this attribute while the Show scores setting is on. */
 [data-lx-score] {
   position: relative;
