@@ -37,7 +37,7 @@ export interface ScoresReply {
   scores: number[];
   /** The line each score came from, aligned with `scores`. */
   topics: number[];
-  /** A near-identical rated post on that line: true liked, false disliked, null none. */
+  /** A near-identical rated post on any line: true liked, false disliked, null none. */
   ratings: (boolean | null)[];
 }
 

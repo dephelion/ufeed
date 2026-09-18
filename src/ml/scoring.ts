@@ -100,21 +100,20 @@ export function ratingNear(
   return rating;
 }
 
-/** One topic line's rated posts. */
 export interface Rated {
   liked: readonly Vector[];
   disliked: readonly Vector[];
 }
 
-/** Only ratings filed under the post's own best line apply, so lines never cross. */
-export function ratingFor(
-  post: Vector,
-  topic: number,
-  rated: readonly Rated[],
-  near: number,
-): boolean | undefined {
-  const line = rated[topic];
-  return line && ratingNear(post, line.liked, line.disliked, near);
+/**
+ * Every line's ratings, checked together: an off-topic post's best line is a
+ * near-tie, so a near-copy can land on a different line than the rated post did.
+ */
+export function pooled(lines: readonly Rated[]): Rated {
+  return {
+    liked: lines.flatMap((line) => line.liked),
+    disliked: lines.flatMap((line) => line.disliked),
+  };
 }
 
 /** Verdict from the strictness threshold. */

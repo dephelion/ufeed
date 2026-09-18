@@ -55,7 +55,7 @@ export class Tuning {
     return counts(this.#feedback);
   }
 
-  /** Aligned with `topics`, so the worker checks each line against its own ratings. */
+  /** Aligned with `topics`; filed per line so editing one line drops only its ratings. */
   corrections(topics: readonly string[]): TopicCorrections[] {
     return topics.map((topic) => correctionsFor(this.#feedback, topic));
   }

@@ -170,8 +170,8 @@ everything else is judged by its score alone.
 
 ### What a thumb changes
 
-A thumb belongs to the topic line the post matched best, and only affects new
-posts on that line that are nearly identical to it. Rating the same post again
+A thumb only affects new posts that are nearly identical to the rated one, on
+any topic line; it never changes a topic's scores. Rating the same post again
 removes the rating, and the other thumb flips it. No single word is picked out:
 the whole post is one vector. Rewriting a line discards its ratings, and the
 other lines keep theirs.

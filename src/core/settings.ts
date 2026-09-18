@@ -12,7 +12,7 @@ export interface Settings {
   showScores: boolean;
   /** Blur media posts carrying too little text to judge against the topics. */
   blurThinMedia: boolean;
-  /** Apply thumbed corrections to the topic vectors. Off leaves scoring untouched. */
+  /** Let thumbed posts decide their near-copies. Off leaves scoring untouched. */
   tuneFromFeedback: boolean;
   /** Blur posts the model cannot read. Off skips detection entirely. */
   blurOtherLanguages: boolean;

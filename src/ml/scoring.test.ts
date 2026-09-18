@@ -8,7 +8,7 @@ import {
   cosine,
   feedShownAt,
   normalize,
-  ratingFor,
+  pooled,
   ratingNear,
   thresholdForStrictness,
   verdictAt,
@@ -140,24 +140,15 @@ describe('ratingNear', () => {
   });
 });
 
-describe('ratingFor', () => {
-  const post = normalize(v(1, 0));
-  const same = normalize(v(1, 0.01));
-  const rated = [
-    { liked: [], disliked: [same] },
-    { liked: [], disliked: [] },
-  ];
-
-  it('applies a rating filed under the post’s own line', () => {
-    expect(ratingFor(post, 0, rated, 0.92)).toBe(false);
-  });
-
-  it('never applies a rating filed under another line', () => {
-    expect(ratingFor(post, 1, rated, 0.92)).toBeUndefined();
-  });
-
-  it('applies nothing to a post with no line', () => {
-    expect(ratingFor(post, -1, rated, 0.92)).toBeUndefined();
+describe('pooled', () => {
+  it('applies a rating filed under any line, whichever line the copy lands on', () => {
+    const post = normalize(v(1, 0));
+    const same = normalize(v(1, 0.01));
+    const all = pooled([
+      { liked: [], disliked: [] },
+      { liked: [], disliked: [same] },
+    ]);
+    expect(ratingNear(post, all.liked, all.disliked, 0.92)).toBe(false);
   });
 });
 

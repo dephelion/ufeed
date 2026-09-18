@@ -7,7 +7,7 @@ import {
 import { captureConsole, logger } from '../../core/log';
 import { Embedder } from '../../ml/embedder';
 import { MODEL, formatPost, formatTopic } from '../../ml/models';
-import { bestMatch, ratingFor, type Rated, type Vector } from '../../ml/scoring';
+import { bestMatch, pooled, ratingNear, type Rated, type Vector } from '../../ml/scoring';
 
 // transformers.js and ORT print handled conditions through console.warn and
 // console.error, which the browser's extension Errors page collects as faults.
@@ -23,8 +23,8 @@ self.addEventListener('unhandledrejection', (event) => {
 
 interface Topics {
   request: SetTopicsRequest;
-  /** Aligned with `request.topics`; a line with no ratings has empty lists. */
-  rated: Rated[];
+  /** Every line's ratings together; see `pooled`. */
+  rated: Rated;
   vectors?: Promise<Vector[]>;
   embedded?: Vector[];
 }
@@ -96,11 +96,13 @@ function next(request: SetTopicsRequest): Topics {
   };
 }
 
-function ratedOf(request: SetTopicsRequest): Rated[] {
-  return request.topics.map((_, i) => ({
-    liked: toVectors(request.corrections?.[i]?.liked),
-    disliked: toVectors(request.corrections?.[i]?.disliked),
-  }));
+function ratedOf(request: SetTopicsRequest): Rated {
+  return pooled(
+    (request.corrections ?? []).map((c) => ({
+      liked: toVectors(c.liked),
+      disliked: toVectors(c.disliked),
+    })),
+  );
 }
 
 self.onmessage = (event: MessageEvent<unknown>) => {
@@ -135,9 +137,9 @@ async function handle(request: EngineRequest): Promise<void> {
     const started = Date.now();
     const embedded = await embedder.embed(request.texts.map(formatPost));
     const matches = embedded.map((v) => bestMatch(v, vectors));
+    const rated = current?.rated ?? { liked: [], disliked: [] };
     const ratings = embedded.map(
-      (v, i) =>
-        ratingFor(v, matches[i]!.topic, current?.rated ?? [], MODEL.ratingNear) ?? null,
+      (v) => ratingNear(v, rated.liked, rated.disliked, MODEL.ratingNear) ?? null,
     );
     const scores = matches.map((m) => m.score);
     const elapsed = Date.now() - started;

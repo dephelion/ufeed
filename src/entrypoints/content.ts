@@ -284,14 +284,17 @@ async function start(): Promise<void> {
     );
 
   const takeFeedback = (post: PostRef, liked: boolean): void => {
+    // Read again at click time: expanding "…more" since hover changes the text.
+    const text = adapter.findPosts(post.container)[0]?.text ?? post.text;
     const store = async (topic: string, vector: number[]): Promise<void> => {
-      if (!(await persist(tuner.record(topic, post.text, vector, liked)))) return;
+      if (!(await persist(tuner.record(topic, text, vector, liked)))) return;
       log.info('feedback stored', { corrections: tuner.count });
-      if (settings.tuneFromFeedback) requery();
+      if (settings.tuneFromFeedback && tuner.signature(settings.topics) !== sentRatings)
+        requery();
     };
 
     /** Already rated: re-clicking toggles or flips it, and we hold the vector. */
-    const existing = tuner.ratingOf(post.text);
+    const existing = tuner.ratingOf(text);
     if (existing) {
       void store(existing.topic, []);
       return;
@@ -299,7 +302,7 @@ async function start(): Promise<void> {
 
     // Correct from the same text that was scored; the rating stays keyed by the
     // whole post, so an existing rating still matches.
-    void engine.feedback(forEngine(post.text), liked).then(({ vector, topic }) => {
+    void engine.feedback(forEngine(text), liked).then(({ vector, topic }) => {
       const line = settings.topics[topic];
       if (vector.length > 0 && line !== undefined) void store(line, vector);
     });
