@@ -194,14 +194,13 @@
     attr(data-lx-rated) ' topic';
 }
 
-/* Shown: dark green. Blurred or unscored: dark red. Opaque, so the badge stays in
-   front of the blur label where the two overlap instead of showing it through. */
+/* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */
 [data-lx-score][data-lx-pass='true']::before {
-  background: #14532d;
+  background: color-mix(in srgb, #14532d 50%, transparent);
 }
 
 [data-lx-score][data-lx-pass='false']::before {
-  background: #7f1d1d;
+  background: color-mix(in srgb, #7f1d1d 50%, transparent);
 }
 
 /* Thumbs. One floating element over the hovered post, never injected into it. */
