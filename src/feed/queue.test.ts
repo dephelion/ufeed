@@ -8,7 +8,7 @@ const engine = {
   status: { type: 'STATUS', state: 'ready' },
   score: async (texts: string[]) => {
     sent.push(texts);
-    return texts.map(() => ({ score: 0.8, topic: 0, rating: undefined }));
+    return texts.map(() => ({ score: 0.8, topic: 0, lines: [0.8], rating: undefined }));
   },
 } as unknown as EngineClient;
 

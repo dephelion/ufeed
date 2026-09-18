@@ -183,15 +183,27 @@
   pointer-events: none;
 }
 
-[data-lx-score][data-lx-topic]::before {
+[data-lx-score][data-lx-topics]::before {
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
-    attr(data-lx-chars) ' chars · Topic #' attr(data-lx-topic);
+    attr(data-lx-chars) ' chars · ℹ️ ' attr(data-lx-topics);
 }
 
-[data-lx-score][data-lx-topic][data-lx-rated]::before {
+[data-lx-score][data-lx-topics][data-lx-rated]::before {
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
-    attr(data-lx-chars) ' chars · Topic #' attr(data-lx-topic) ' · marked '
+    attr(data-lx-chars) ' chars · ℹ️ ' attr(data-lx-topics) ' · marked '
     attr(data-lx-rated) ' topic';
+}
+
+/* Hovering the post lists every line's score; the rules above must come first. */
+[data-lx-score][data-lx-topics]:hover::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars · ' attr(data-lx-lines);
+}
+
+[data-lx-score][data-lx-topics][data-lx-rated]:hover::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars · ' attr(data-lx-lines) ' · marked ' attr(data-lx-rated)
+    ' topic';
 }
 
 /* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */

@@ -35,6 +35,7 @@ describe('bestMatch', () => {
     const match = bestMatch(v(1, 0), [v(0, 1), v(1, 0)]);
     expect(match.score).toBeCloseTo(1);
     expect(match.topic).toBe(1);
+    expect(match.lines.map((s) => Math.round(s))).toEqual([0, 1]);
   });
 
   it('scores below any threshold when there are no topics', () => {

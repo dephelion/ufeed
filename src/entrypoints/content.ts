@@ -119,16 +119,12 @@ async function start(): Promise<void> {
     const ratingShown =
       rating !== undefined &&
       (revealed || (!followsKept && decideWithoutScore(judged) === undefined));
-    const topic =
-      match !== undefined && settings.topics[match.topic] !== undefined
-        ? match.topic + 1
-        : undefined;
     if (settings.showScores)
       stampScore(post.container, {
         score,
         needs: cut,
         chars: post.text.length,
-        topic,
+        lines: match?.lines,
         rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);

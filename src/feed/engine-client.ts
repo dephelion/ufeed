@@ -141,6 +141,7 @@ export class EngineClient {
         matches: data.scores.map((score, i) => ({
           score,
           topic: data.topics[i]!,
+          lines: data.lines[i]!,
           rating: data.ratings[i] ?? undefined,
         })),
       });

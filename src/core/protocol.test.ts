@@ -33,6 +33,7 @@ describe('isEngineReply', () => {
     type: 'SCORES',
     scores: [0.1],
     topics: [0],
+    lines: [[0.1]],
     ratings: [null],
     ...extra,
   });
@@ -49,6 +50,8 @@ describe('isEngineReply', () => {
   it('rejects lines or ratings that do not line up with the scores', () => {
     expect(isEngineReply(scores({ topics: [0, 1] }))).toBe(false);
     expect(isEngineReply(scores({ ratings: [] }))).toBe(false);
+    expect(isEngineReply(scores({ lines: [] }))).toBe(false);
+    expect(isEngineReply(scores({ lines: [['0.1']] }))).toBe(false);
   });
 
   it('rejects a rating that is not a verdict', () => {

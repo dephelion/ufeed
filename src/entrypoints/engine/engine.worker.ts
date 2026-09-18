@@ -154,6 +154,7 @@ async function handle(request: EngineRequest): Promise<void> {
       type: 'SCORES',
       scores,
       topics: matches.map((m) => m.topic),
+      lines: matches.map((m) => m.lines),
       ratings,
     });
   } catch (error: unknown) {

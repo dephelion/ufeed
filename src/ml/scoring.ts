@@ -13,6 +13,8 @@ export interface Match {
   score: number;
   /** Index of the closest topic line; -1 when there are no lines. */
   topic: number;
+  /** Similarity to every line, aligned with the topics; `score` is the highest. */
+  lines: number[];
 }
 
 /** A match, plus the rating that overrides it when a rated post is near-identical. */
@@ -22,12 +24,12 @@ export interface RatedMatch extends Match {
 
 /** Highest similarity to any topic, and the line that gave it. */
 export function bestMatch(post: Vector, topics: readonly Vector[]): Match {
-  let best: Match = { score: -1, topic: -1 };
-  topics.forEach((topic, i) => {
-    const score = cosine(post, topic);
+  const lines = topics.map((topic) => cosine(post, topic));
+  let best = { score: -1, topic: -1 };
+  lines.forEach((score, i) => {
     if (score > best.score) best = { score, topic: i };
   });
-  return best;
+  return { ...best, lines };
 }
 
 export function normalize(v: Vector): Vector {
