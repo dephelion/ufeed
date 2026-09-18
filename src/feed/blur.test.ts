@@ -65,6 +65,12 @@ describe('blur', () => {
     expect(el.classList.contains('lx-collapse')).toBe(false);
   });
 
+  it('collapses a peek on request', () => {
+    const el = post();
+    peek(el, 'opening words', true);
+    expect(el.classList.contains('lx-collapse')).toBe(true);
+  });
+
   it('reveal clears the collapse class too', () => {
     const el = post();
     blur(el, 'topic', true);
