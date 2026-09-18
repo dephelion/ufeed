@@ -190,8 +190,8 @@
 
 [data-lx-score][data-lx-topic][data-lx-rated]::before {
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
-    attr(data-lx-chars) ' chars · Topic #' attr(data-lx-topic) ' · ' attr(data-lx-rated)
-    'd post';
+    attr(data-lx-chars) ' chars · Topic #' attr(data-lx-topic) ' · marked '
+    attr(data-lx-rated) ' topic';
 }
 
 /* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */

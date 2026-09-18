@@ -6,7 +6,7 @@ export interface Badge {
   chars: number;
   /** The line's 1-based position, never its text: the host page can read this. */
   topic: number | undefined;
-  /** A near-identical rated post decided it: true liked, false disliked. */
+  /** A near-identical rated post decided it: true marked on topic, false off. */
   rating: boolean | undefined;
 }
 
@@ -20,7 +20,7 @@ export function stampScore(container: HTMLElement, badge: Badge): void {
   if (topic === undefined) delete data.lxTopic;
   else data.lxTopic = String(topic);
   if (rating === undefined) delete data.lxRated;
-  else data.lxRated = rating ? 'like' : 'dislike';
+  else data.lxRated = rating ? 'on' : 'off';
 }
 
 export function clearScore(container: HTMLElement): void {

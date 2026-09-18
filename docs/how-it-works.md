@@ -172,8 +172,8 @@ until you turn on _Learn from my thumbs_. A thumb never changes your topic: the
 score always comes from your topic words alone, so "shown means above the
 threshold" stays true. Instead, the rated post's vector is kept, and a new post
 that is nearly identical to it (a repost, a quote, the same story told the same
-way) follows your rating: shown if you liked the original, blurred if you
-disliked it. Everything else is judged by its score, as if you had never rated
+way) follows your rating: shown if you marked the original on topic, blurred
+if you marked it off topic. Everything else is judged by its score, as if you had never rated
 anything.
 
 "Nearly identical" is a high bar on purpose. Two unrelated posts already look
@@ -182,8 +182,8 @@ post was ever that close to one with the opposite label. Most ratings therefore
 change nothing until a near-copy shows up. That is the trade: a thumb can never
 push a good post out of view by accident.
 
-An earlier version moved the topic itself toward liked posts and away from
-disliked ones. It shifted every score on that topic, including posts that had
+An earlier version moved the topic itself toward posts marked on topic and away
+from posts marked off topic. It shifted every score on that topic, including posts that had
 nothing to do with the rated one, and measured no better than not moving it.
 
 **Vectors only make sense to the model that made them.** A model update
