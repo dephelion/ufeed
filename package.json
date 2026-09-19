@@ -24,6 +24,7 @@
     "postinstall": "node scripts/sync-ort.mjs && wxt prepare",
     "sync:ort": "node scripts/sync-ort.mjs",
     "watch": "node scripts/watch-build.mjs",
+    "release": "node scripts/release.mjs",
     "test:model": "vitest run --config vitest.model.config.ts",
     "build:debug": "VITE_FEEDLENS_DEBUG=1 wxt build",
     "build:debug:firefox": "VITE_FEEDLENS_DEBUG=1 wxt build -b firefox"

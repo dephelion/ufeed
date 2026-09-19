@@ -96,9 +96,11 @@ status. See [`wiki-llm/testing.md`](../wiki-llm/testing.md).
 
 1. On the release branch, bump the version: `npm version minor --no-git-tag-version`.
 2. Merge to `main` through a pull request, with CI green.
-3. Tag the merge and push the tag: `git tag v0.7.0 && git push origin v0.7.0`.
+3. Run `npm run release`. It switches to `main`, pulls, tags the version in
+   `package.json` (`v0.7.0`) and pushes the tag. It stops if that tag already
+   exists.
 
-The **Release** workflow checks that the tag matches `package.json`, runs
+The tag starts the **Release** workflow. It checks that the tag matches `package.json`, runs
 `npm run check`, and attaches three zips to a GitHub release: Chrome, Firefox,
 and the sources Firefox Add-ons asks for. Upload those to the stores; never a zip
 built locally.
