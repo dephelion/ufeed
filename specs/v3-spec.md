@@ -1,4 +1,4 @@
-# Lensing v3 — LinkedIn Adapter
+# FeedLens v3 — LinkedIn Adapter
 
 > **Status: DELIVERED, superseded.** Verified on a live LinkedIn feed on
 > 2026-09-12. Kept for provenance.
@@ -14,7 +14,7 @@
 
 ## 1. Problem
 
-Lensing works end to end on X only. This adds LinkedIn's main feed as a second
+FeedLens works end to end on X only. This adds LinkedIn's main feed as a second
 `SiteAdapter` ([types.ts](../src/adapters/types.ts)) — no changes to scoring,
 UI, or storage, since those are already site-agnostic.
 
@@ -22,7 +22,7 @@ UI, or storage, since those are already site-agnostic.
 
 `linkedin.com` joins `FEED_HOSTS` in `wxt.config.ts` as a **default**
 `host_permissions` entry, same as x.com/twitter.com — not optional-on-request
-like the unused Reddit slot. Decided explicitly: a user installing Lensing
+like the unused Reddit slot. Decided explicitly: a user installing FeedLens
 already wants it running on the social sites they use, so there is no value in
 an extra runtime permission prompt per site.
 

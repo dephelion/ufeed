@@ -1,4 +1,4 @@
-# Lensing v1 — Technical Specification
+# FeedLens v1 — Technical Specification
 
 > **Status: DELIVERED, superseded.** Implemented and shipped to a working
 > extension on 2026-09-11. Kept for provenance: it records how the design was
@@ -14,8 +14,8 @@
 
 ## 1. Vision
 
-**Lensing** is a privacy-first, zero-backend browser extension. The user picks
-one or more topics; Lensing softens everything else in their social feeds in real
+**FeedLens** is a privacy-first, zero-backend browser extension. The user picks
+one or more topics; FeedLens softens everything else in their social feeds in real
 time, using a model that runs entirely on their device.
 
 ### Principles
@@ -32,7 +32,7 @@ time, using a model that runs entirely on their device.
 
 ## 2. Core Paradigm: Positive Isolation
 
-|                  | Negative Filtering               | Positive Isolation (Lensing)                    |
+|                  | Negative Filtering               | Positive Isolation (FeedLens)                   |
 | :--------------- | :------------------------------- | :---------------------------------------------- |
 | **Goal**         | Remove specific bad topics.      | Reveal only the chosen topics; soften the rest. |
 | **Logic**        | Enumerate 1,000+ bad categories. | Score similarity to N user topics.              |
@@ -180,7 +180,7 @@ field, because users get all three of these wrong by default:
 - _Do not write a description._ A verbose phrasing scored 12 AUC points worse
   than a three-word list. Multi-anchor averaging also lost.
 - _Topics match subject, not quality._ A shallow take and a deep technical post
-  on the same subject both match. Lensing cannot separate slop from substance.
+  on the same subject both match. FeedLens cannot separate slop from substance.
   This is a hard limit of the approach, not a tuning problem — say so in the UI.
 - Per-site enable/disable, and a global one-click off in the toolbar.
 - Always-keep and always-blur keyword overrides. Cheap to build, and

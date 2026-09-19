@@ -18,7 +18,7 @@ Two different things a text embedding model can be trained for.
 - **Similarity model** (e.g. MiniLM): trained so two _sentences_ about the same thing land close together. Symmetric — swapping the two inputs doesn't matter.
 - **Retrieval model** (e.g. e5): trained so a short _query_ finds a longer _passage_ that answers it — like a search engine. Asymmetric — query and passage are different roles and get different input prefixes (`query: …` / `passage: …`).
 
-Lensing's task — a short topic against a longer post — is asymmetric, which is why a retrieval model wins. Using one without its prefixes, or a symmetric model with prefixes, gives meaningless scores.
+FeedLens's task — a short topic against a longer post — is asymmetric, which is why a retrieval model wins. Using one without its prefixes, or a symmetric model with prefixes, gives meaningless scores.
 
 ## Quantization (q8)
 

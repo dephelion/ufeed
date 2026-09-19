@@ -69,7 +69,7 @@ timeline data they ran against. The harnesses are reproducible from
 | `npm run build`         | `.output/chrome-mv3`  | off  | no, minified          |
 | `npm run build:firefox` | `.output/firefox-mv3` | off  | no, minified          |
 
-**`VITE_LENSING_DEBUG` turns off minification too**, in `wxt.config.ts`. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
+**`VITE_FEEDLENS_DEBUG` turns off minification too**, in `wxt.config.ts`. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
 
 **The score badge is a setting, not a build flag.** It ships in every build behind `showScores`; only console logs are compiled out. See [ui.md](ui.md).
 
@@ -79,11 +79,11 @@ timeline data they ran against. The harnesses are reproducible from
 
 Chrome's extension Errors page collects every `console.warn` and `console.error`, in every build. A handled condition there reads as a broken product.
 
-| Level   | Means                                                             | Prints                       |
-| :------ | :---------------------------------------------------------------- | :--------------------------- |
-| `info`  | State, progress                                                   | debug builds, `console.info` |
-| `warn`  | A condition the code handles: offline, timeout, quota, fallback   | debug builds, `console.info` |
-| `error` | A Lensing bug: an invariant broke, a loaded model failed to embed | every build, `console.error` |
+| Level   | Means                                                              | Prints                       |
+| :------ | :----------------------------------------------------------------- | :--------------------------- |
+| `info`  | State, progress                                                    | debug builds, `console.info` |
+| `warn`  | A condition the code handles: offline, timeout, quota, fallback    | debug builds, `console.info` |
+| `error` | A FeedLens bug: an invariant broke, a loaded model failed to embed | every build, `console.error` |
 
 - **Pick `error` only if a user could file it as a bug.** Environment and network failures are `warn`; the popup already shows them.
 - **Every async path ends in a handler.** No floating rejection; `unhandledrejection` and worker `error` listeners call `preventDefault()` so the browser does not report the same fault twice.

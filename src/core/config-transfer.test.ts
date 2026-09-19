@@ -67,14 +67,14 @@ describe('a file that cannot be trusted', () => {
   };
 
   it('refuses junk', () => {
-    expect(refused('not json at all')).toBe('not a Lensing backup');
-    expect(refused('{}')).toBe('not a Lensing backup');
-    expect(refused('[]')).toBe('not a Lensing backup');
+    expect(refused('not json at all')).toBe('not a FeedLens backup');
+    expect(refused('{}')).toBe('not a FeedLens backup');
+    expect(refused('[]')).toBe('not a FeedLens backup');
   });
 
   it('refuses a truncated file', () => {
     const whole = exportConfig(settings, feedback, APP);
-    expect(refused(whole.slice(0, whole.length / 2))).toBe('not a Lensing backup');
+    expect(refused(whole.slice(0, whole.length / 2))).toBe('not a FeedLens backup');
   });
 
   it('refuses a schema it does not know', () => {

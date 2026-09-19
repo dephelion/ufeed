@@ -16,7 +16,7 @@ function build() {
   const started = Date.now();
   spawn('npx', ['wxt', 'build'], {
     stdio: 'inherit',
-    env: { ...process.env, VITE_LENSING_DEBUG: '1' },
+    env: { ...process.env, VITE_FEEDLENS_DEBUG: '1' },
   }).on('close', (code) => {
     running = false;
     console.log(

@@ -1,4 +1,4 @@
-# AGENTS.md — Lensing (Token-Optimized v1.0)
+# AGENTS.md — FeedLens (Token-Optimized v1.0)
 
 > **Operational Core:** Rules for all repository agents (Claude, GPT, & Grok native). Overridden only by explicit user command.
 > **Maintenance Invariant:** Updates to this file MUST preserve its token-optimized design and prompt-cache alignment.
@@ -28,7 +28,7 @@
 
 ## Source of Truth: `wiki-llm/`
 
-`wiki-llm/` is the authoritative model of how Lensing works and the map an agent reads before touching code. Consult it first; keep it synced as code changes.
+`wiki-llm/` is the authoritative model of how FeedLens works and the map an agent reads before touching code. Consult it first; keep it synced as code changes.
 
 - **Update-On-Change:** Update the affected `wiki-llm/` page in the SAME commit as any change to architecture, message contract, selectors, model, thresholds, permissions, budgets, or build commands. New page -> add its `index.md` row. Prohibit orphan pages.
 - **Authoring Standard (write inline):** Author every `wiki-llm/` edit directly to the token-optimized standard — telegraphic, imperative, one fact per line, no narrative prose, no rule repeated across sections, no multi-line mock examples. Preserve each page's `Maintenance Invariant` header and `> **Answers:**` routing line; never alter meaning, invariants, IDs, or commands.

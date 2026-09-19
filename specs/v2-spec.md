@@ -1,4 +1,4 @@
-# Lensing v2 — Graded Blur & Relevance Feedback
+# FeedLens v2 — Graded Blur & Relevance Feedback
 
 > **Status: DELIVERED, superseded.** Verified on live X, LinkedIn and Reddit
 > feeds on 2026-09-12: the thumbs bar, the peek tier and relative strictness all

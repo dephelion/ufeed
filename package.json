@@ -1,8 +1,8 @@
 {
-  "name": "lensing",
+  "name": "feedlens",
   "description": "On-device semantic focus for social feeds.",
   "private": true,
-  "version": "0.5.3",
+  "version": "0.5.4",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -20,9 +20,9 @@
     "sync:ort": "node scripts/sync-ort.mjs",
     "watch": "node scripts/watch-build.mjs",
     "test:model": "vitest run --config vitest.model.config.ts",
-    "build:debug": "VITE_LENSING_DEBUG=1 wxt build",
-    "build:debug:firefox": "VITE_LENSING_DEBUG=1 wxt build -b firefox",
-    "build:wasm": "VITE_LENSING_DEBUG=1 VITE_LENSING_BACKEND=wasm wxt build"
+    "build:debug": "VITE_FEEDLENS_DEBUG=1 wxt build",
+    "build:debug:firefox": "VITE_FEEDLENS_DEBUG=1 wxt build -b firefox",
+    "build:wasm": "VITE_FEEDLENS_DEBUG=1 VITE_FEEDLENS_BACKEND=wasm wxt build"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.7.6",

@@ -1,4 +1,4 @@
-# Lensing
+# FeedLens
 
 [![CI](https://github.com/juliomatcom/lensing/actions/workflows/ci.yml/badge.svg)](https://github.com/juliomatcom/lensing/actions/workflows/ci.yml)
 
@@ -53,17 +53,17 @@ and visit x.com.
 
 ### Watching it work
 
-Every layer logs to the console, prefixed `[lensing:*]`. Post text is never
+Every layer logs to the console, prefixed `[feedlens:*]`. Post text is never
 logged — counts, scores, states and errors only.
 
 ```
-[lensing:content] content script started host=x.com adapter=x topics=1 active=true
-[lensing:client]  injecting engine iframe src=chrome-extension://.../engine.html
-[lensing:engine]  engine page loaded origin=chrome-extension://...
-[lensing:worker]  loading model
-[lensing:worker]  ready backend=wasm
-[lensing:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
-[lensing:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
+[feedlens:content] content script started host=x.com adapter=x topics=1 active=true
+[feedlens:client]  injecting engine iframe src=chrome-extension://.../engine.html
+[feedlens:engine]  engine page loaded origin=chrome-extension://...
+[feedlens:worker]  loading model
+[feedlens:worker]  ready backend=wasm
+[feedlens:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
+[feedlens:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
 ```
 
 WebGPU is tried first and rejected by the self-check on the way past — ORT
@@ -74,7 +74,7 @@ The first missing line locates the failure. `content` and `client` lines appear 
 the page console; `engine` and `worker` lines come from the iframe, so pick the
 `engine.html` context in the devtools frame selector to see them.
 
-Logging is on while `VITE_LENSING_DEBUG=1` is set in `.env`. Turn it off before
+Logging is on while `VITE_FEEDLENS_DEBUG=1` is set in `.env`. Turn it off before
 any store submission.
 
 ### First run
@@ -131,7 +131,7 @@ portable option.
 
 ## How it works
 
-Lensing has three layers, and each has one job. The **content script** runs in
+FeedLens has three layers, and each has one job. The **content script** runs in
 the page: it reads posts and applies the blur. A **hidden extension iframe**
 passes messages along. A **worker thread** runs the model, so scoring never
 blocks scrolling. Only strings go in and scores come out, which keeps post text

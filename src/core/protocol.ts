@@ -76,7 +76,7 @@ export interface StatusEvent {
 
 export type EngineReply = ScoresReply | VectorReply | AckReply | ErrorReply | StatusEvent;
 
-export const HANDSHAKE = 'lensing:port';
+export const HANDSHAKE = 'feedlens:port';
 
 export interface Handshake {
   type: typeof HANDSHAKE;
