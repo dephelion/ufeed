@@ -21,7 +21,7 @@ const SESSION_OPTIONS = { logSeverityLevel: 3 } as const;
 
 export type Device = 'webgpu' | 'wasm' | 'cpu';
 
-const FORCED = import.meta.env.VITE_LENSING_BACKEND as Device | undefined;
+const FORCED = import.meta.env.VITE_FEEDLENS_BACKEND as Device | undefined;
 
 /** Browser order. Node offers only cpu, which is why this is a parameter. */
 export const BROWSER_DEVICES: readonly Device[] = FORCED ? [FORCED] : ['webgpu', 'wasm'];

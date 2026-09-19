@@ -6,7 +6,7 @@ import { DEBUG } from './debug';
 
 type Fields = Record<string, string | number | boolean | undefined>;
 
-const PREFIX = 'lensing';
+const PREFIX = 'feedlens';
 
 // Bound at import, so captureConsole() cannot swallow our own lines.
 const sink = { info: console.info.bind(console), error: console.error.bind(console) };
@@ -32,7 +32,7 @@ function emit(
 
 /**
  * `info` and `warn` are debug-build diagnostics; `warn` marks a condition the code
- * handles. `error` is a Lensing bug and the only level a release prints. See conventions.md §Logging.
+ * handles. `error` is a FeedLens bug and the only level a release prints. See conventions.md §Logging.
  */
 export interface Logger {
   info(message: string, fields?: Fields): void;

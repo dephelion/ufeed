@@ -1,4 +1,4 @@
-# Lensing v4 — Reddit Adapter
+# FeedLens v4 — Reddit Adapter
 
 > **Status: DELIVERED, superseded.** Built and verified on a live Reddit feed on
 > 2026-09-12. Kept for provenance: it records the blockers that turned out not to
@@ -26,7 +26,7 @@
 
 ## 1. Problem
 
-Lensing filters X and LinkedIn. Reddit is the third feed, and the first where
+FeedLens filters X and LinkedIn. Reddit is the third feed, and the first where
 the **scoring** assumptions may not hold: 17 of the 25 captured posts carry
 nothing but a title.
 
@@ -53,7 +53,7 @@ Cheapest shape: `findPosts()` returns `[]` on a comments URL, leaving
 
 `reddit.com` already sits in `OPTIONAL_HOSTS` in
 [wxt.config.ts](../wxt.config.ts#L9), unused. v3 §2 faced the same fork for
-LinkedIn and chose the default list, reasoning that _"a user installing Lensing
+LinkedIn and chose the default list, reasoning that _"a user installing FeedLens
 already wants it running on the social sites they use, so there is no value in
 an extra runtime permission prompt per site."_
 

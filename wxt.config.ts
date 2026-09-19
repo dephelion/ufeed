@@ -10,7 +10,7 @@ const FEED_HOSTS = [
 ];
 
 /** Same flag that turns on logging; a build you read is a build you can debug. */
-const DEBUG = process.env.VITE_LENSING_DEBUG === '1';
+const DEBUG = process.env.VITE_FEEDLENS_DEBUG === '1';
 
 export default defineConfig({
   srcDir: 'src',
@@ -25,9 +25,9 @@ export default defineConfig({
   manifestVersion: 3,
   webExt: { disabled: true },
   manifest: ({ browser }) => ({
-    name: 'Lensing: Local AI Feed Cleaner for Social Media',
+    name: 'FeedLens: Feed Cleaner for Social Networks',
     description:
-      'Local AI blurs distracting posts on X, LinkedIn, and Reddit — nothing leaves your device. You choose the topics.',
+      'FeedLens uses on-device AI to clean distracting posts on X, LinkedIn, and Reddit while you control the topics you want to focus on.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
     /**
@@ -36,7 +36,7 @@ export default defineConfig({
      * to start idle-looking rather than assume a feed is running.
      */
     action: {
-      default_title: 'Lensing',
+      default_title: 'FeedLens',
       default_icon: {
         16: 'icon-gray/16.png',
         32: 'icon-gray/32.png',
@@ -67,7 +67,7 @@ export default defineConfig({
     ...(browser === 'firefox'
       ? {
           browser_specific_settings: {
-            gecko: { id: 'lensing@juliomatcom.dev', strict_min_version: '115.0' },
+            gecko: { id: 'feedlens@juliomatcom.dev', strict_min_version: '115.0' },
           },
         }
       : {}),

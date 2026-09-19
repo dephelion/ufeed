@@ -41,7 +41,7 @@ function setIcon(tabId: number, path: Record<string, string>): void {
 }
 
 /**
- * Colored the moment a tab confirms it has a feed Lensing knows how to read —
+ * Colored the moment a tab confirms it has a feed FeedLens knows how to read —
  * whatever happens after that (still loading, warming up, failing outright)
  * is a separate question. Detecting the feed is the work that matters here;
  * gray means there was none to find.

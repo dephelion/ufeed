@@ -78,9 +78,9 @@ engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
 A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/core/status-channel.ts`.
 
 ```
-popup   → content  { type: 'lensing:status?' }            to the ACTIVE tab only
+popup   → content  { type: 'feedlens:status?' }            to the ACTIVE tab only
 content → popup    EngineStatus (the reply)
-content → popup    { type: 'lensing:status', status }     pushed on change
+content → popup    { type: 'feedlens:status', status }     pushed on change
 ```
 
 **Asked per tab, never stored.** Each feed tab runs its own engine. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.

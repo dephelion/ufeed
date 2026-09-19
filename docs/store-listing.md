@@ -5,30 +5,30 @@ asks for. Kept in the repo so the listing and the code change together.
 
 ## Identity
 
-| Field          | Value                                                                             |
-| :------------- | :-------------------------------------------------------------------------------- |
-| Name           | Lensing: Local AI Feed Cleaner for Social Media                                   |
-| Version        | 0.3.1 — pre-1.0 while it is in friends' hands                                     |
-| Category       | Productivity                                                                      |
-| Language       | English                                                                           |
-| Support email  | contact@dephelion.com                                                             |
-| Support URL    | https://dephelion.com/lensing-browser-extension/contact/                          |
-| Privacy policy | https://dephelion.com/lensing-browser-extension/privacy/                          |
-| Visibility     | Public — listed in search and category browsing                                   |
-| Store URL      | https://chromewebstore.google.com/detail/lensing/ahlojbckjlffcfdhmkjepaglnhhpmdck |
+| Field          | Value                                                                     |
+| :------------- | :------------------------------------------------------------------------ |
+| Name           | FeedLens: Feed Cleaner for Social Networks                                |
+| Version        | 0.5.4 — pre-1.0 while it is in friends' hands                             |
+| Category       | Productivity                                                              |
+| Language       | English                                                                   |
+| Support email  | contact@dephelion.com                                                     |
+| Support URL    | https://dephelion.com/feedlens-browser-extension/contact/                 |
+| Privacy policy | https://dephelion.com/feedlens-browser-extension/privacy/                 |
+| Visibility     | Public — listed in search and category browsing                           |
+| Store URL      | https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
 A Chrome Web Store developer account requires a one-time 5 USD registration fee
 before anything can be published.
 
 ## Short description (132 char max)
 
-Local AI blurs distracting posts on X, LinkedIn, and Reddit — nothing leaves your device. You choose the topics.
+FeedLens uses on-device AI to clean distracting posts on X, LinkedIn, and Reddit while you control the topics you want to focus on.
 
 ## Detailed description
 
-Social networks are deciding what you see. Lensing lets you decide instead.
+Social networks are deciding what you see. FeedLens lets you decide instead.
 
-📝 Write the topics you want. Lensing AI reads each post locally as you scroll
+📝 Write the topics you want. FeedLens AI reads each post locally as you scroll
 and hides the ones that are not about them. Nothing is deleted: a blurred
 post is always one click away, so you never lose the choice, you just stop
 making it by accident.
@@ -54,11 +54,11 @@ What it cannot do. It reads words, not pictures, so a photo with no caption
 cannot be judged on content. It understands English. It matches subjects, not
 quality: a great post and a poor one about the same thing both stay.
 
-❓Bugs, ideas, or a feed it does not work on: contact@dephelion.com
+❓Bugs, ideas, or a feed it does not work on: contact us with the email below.
 
 ## Single purpose
 
-Lensing has one purpose: to blur posts in a user's social feed that do not
+FeedLens has one purpose: to blur posts in a user's social feed that do not
 match topics the user has chosen. Every permission and every code path serves
 that. It does nothing else.
 
@@ -66,7 +66,7 @@ that. It does nothing else.
 
 **Host access to x.com, twitter.com, linkedin.com, reddit.com**
 
-Lensing must read the text of posts in the page to compare them against the
+FeedLens must read the text of posts in the page to compare them against the
 user's topics, and must modify the page to apply the blur. Both require
 running a content script on those sites. These four are the only sites it
 supports, and the only ones requested; it requests no wildcard host access.
@@ -78,7 +78,7 @@ in local extension storage. Nothing is synced or transmitted.
 
 **Remote code — none**
 
-Lensing executes no remote code. The ONNX Runtime WebAssembly binary is
+FeedLens executes no remote code. The ONNX Runtime WebAssembly binary is
 bundled in the package and loaded from an extension-relative path. The only
 network request is a one-time download of the model **weights** (a data file,
 not code) from Hugging Face (`huggingface.co`, redirecting to its `hf.co`
@@ -97,7 +97,7 @@ location, web history, user activity, and website content are all **not
 collected**: post text is read in memory and discarded, and nothing is
 transmitted anywhere.
 
-Note on "website content": Lensing reads post text in the page. It is not
+Note on "website content": FeedLens reads post text in the page. It is not
 _collected_ — it is never stored and never transmitted — so the answer is no.
 If a reviewer queries it, the explanation is that scoring happens entirely in
 the content script and a Web Worker, and the result is a number applied to the
@@ -110,7 +110,7 @@ page.
       revealed by clicking, the strictness slider with its hint, the no-topics
       card.
 - [ ] Small promo tile, 440×280. Optional, but listings without one look unfinished.
-- [ ] Privacy policy live at https://dephelion.com/lensing-browser-extension/privacy/ (ship the dephelion.com PR first).
+- [ ] Privacy policy live at https://dephelion.com/feedlens-browser-extension/privacy/ (ship the dephelion.com PR first).
 
 ## Before each submission
 

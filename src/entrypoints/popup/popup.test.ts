@@ -66,7 +66,7 @@ describe('the backup row in a rendered popup', () => {
   it('exports a named file holding the current config', async () => {
     (el('export') as HTMLButtonElement).click();
     await tick();
-    expect(downloaded?.name).toMatch(/^lensing-backup-\d{4}-\d{2}-\d{2}\.json$/);
+    expect(downloaded?.name).toMatch(/^feedlens-backup-\d{4}-\d{2}-\d{2}\.json$/);
     const file = JSON.parse(downloaded!.text);
     expect(file.app).toBe('9.9.9');
     expect(file.settings.topics).toEqual(['software engineering']);
@@ -84,7 +84,7 @@ describe('the backup row in a rendered popup', () => {
     const input = el('import-file') as HTMLInputElement;
     Object.defineProperty(input, 'files', {
       value: [
-        { name: 'lensing-backup-2026-09-14.json', text: async () => backup },
+        { name: 'feedlens-backup-2026-09-14.json', text: async () => backup },
       ] as unknown as FileList,
       configurable: true,
     });
@@ -97,7 +97,7 @@ describe('the backup row in a rendered popup', () => {
     expect((store['settings'] as { strictness: number }).strictness).toBe(3);
     expect((el('topics') as HTMLTextAreaElement).value).toBe('software engineering');
     expect(el('stat-total').textContent).toBe('1');
-    expect(el('transfer-name').textContent).toBe('lensing-backup-2026-09-14.json');
+    expect(el('transfer-name').textContent).toBe('feedlens-backup-2026-09-14.json');
     expect(el('transfer').dataset['state']).toBe('ok');
   });
 

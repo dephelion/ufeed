@@ -1,4 +1,4 @@
-# Lensing v5 — Export & Import Configuration
+# FeedLens v5 — Export & Import Configuration
 
 > **Status: BUILT, not yet verified in a browser.** Branch
 > `feat/config-export-import`. Every path is covered by tests, including the
@@ -237,10 +237,10 @@ reports what happened — no second click, no dialog. Reset destroys nearly as
 much today with one click and no confirm, and a reader who went looking for a
 backup file meant to open it.
 
-| Outcome  | The line reads                                           |
-| :------- | :------------------------------------------------------- |
-| Imported | `lensing-backup-2026-09-14.json ✓ 3 topics, 128 ratings` |
-| Refused  | `lensing-backup-2026-09-14.json — not a Lensing backup`  |
+| Outcome  | The line reads                                            |
+| :------- | :-------------------------------------------------------- |
+| Imported | `feedlens-backup-2026-09-14.json ✓ 3 topics, 128 ratings` |
+| Refused  | `feedlens-backup-2026-09-14.json — not a FeedLens backup` |
 
 The counts are on the line because they are the only record of what arrived; the
 topics box and thumb counts above it re-render to match.
@@ -322,9 +322,9 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
    - [`docs/privacy-policy.md`](../docs/privacy-policy.md) — the export sentence
      from §7.
    - **`dephelion.com`**, the published policy at
-     `src/app/lensing-browser-extension/privacy/page.tsx` — same sentence, beside
+     `src/app/feedlens-browser-extension/privacy/page.tsx` — same sentence, beside
      the existing "Thumb ratings" and Clear-tuning paragraphs, plus
-     `LENSING_POLICY_DATE` in `src/lib/lensing.ts` bumped in the same commit. It
+     `FEEDLENS_POLICY_DATE` in `src/lib/feedlens.ts` bumped in the same commit. It
      is a separate repo, so it is a separate commit that ships with the release,
      not after it: the extension must not offer an export the live policy does
      not describe.
@@ -340,7 +340,7 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
 
 | #   | Question                                                | Leaning                                                                                           |
 | :-- | :------------------------------------------------------ | :------------------------------------------------------------------------------------------------ |
-| Q1  | Filename                                                | `lensing-backup-YYYY-MM-DD.json`. Sorts, and says what it is in a downloads folder.               |
+| Q1  | Filename                                                | `feedlens-backup-YYYY-MM-DD.json`. Sorts, and says what it is in a downloads folder.              |
 | Q2  | Merge mode, ever?                                       | Not until someone with two real devices asks for it. §8.                                          |
 | Q3  | Export with nothing to export?                          | Disable the button at 0 topics and 0 ratings. An empty backup that looks like a backup is a trap. |
 | Q4  | Same confirm weight as Reset?                           | Yes — import destroys strictly more than Reset does.                                              |

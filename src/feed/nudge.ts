@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 
 /**
- * The card shown when Lensing is on and has no topics. That state is invisible
+ * The card shown when FeedLens is on and has no topics. That state is invisible
  * otherwise — the feed looks untouched, which reads as a broken install rather
  * than an unfinished setup, and a reader who cannot tell will just uninstall.
  *
@@ -42,7 +42,7 @@ export function mountNudge(): Nudge {
   card.innerHTML =
     `<img class="lx-nudge-icon" src="${icon}" alt="" width="28" height="28">` +
     '<div class="lx-nudge-body">' +
-    '<b>Lensing has no topics yet</b>' +
+    '<b>FeedLens has no topics yet</b>' +
     '<p>It is on, but it does not know what you want to see, so nothing is ' +
     'being blurred. Open the icon above in your browser toolbar and add a ' +
     'topic or two.</p>' +

@@ -250,7 +250,7 @@ exportButton.addEventListener('click', () => {
     try {
       const feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
       const day = new Date().toISOString().slice(0, 10);
-      const name = `lensing-backup-${day}.json`;
+      const name = `feedlens-backup-${day}.json`;
       download(
         name,
         exportConfig(saved, feedback, browser.runtime.getManifest().version),

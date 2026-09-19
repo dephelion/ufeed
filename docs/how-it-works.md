@@ -34,7 +34,7 @@ about X.
 
 ## What the model does
 
-Lensing does not train a classifier on your topics. It uses **e5-small-v2**, a
+FeedLens does not train a classifier on your topics. It uses **e5-small-v2**, a
 text _embedding_ model from Microsoft ([E5 paper](2212.03533v2.pdf); v2 is
 a later release by the same authors, using the same method). An embedding
 turns text into a vector, a fixed list of 384 numbers, so that texts about the
@@ -73,7 +73,7 @@ than a raw cosine, and why this model's scores mean nothing to a different model
 **What it cannot do.**
 
 - **Read other languages.** It was trained and evaluated on English. Text in
-  another language still gets a score, but that score is noise. Lensing checks a
+  another language still gets a score, but that score is noise. FeedLens checks a
   post's language before trusting its score.
 - **Match exact strings reliably.** The paper notes that embedding models still
   trail keyword search when a match depends on exact wording or a niche domain. A

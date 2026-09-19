@@ -56,14 +56,14 @@ export function importConfig(text: string): ImportResult {
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { ok: false, reason: 'not a Lensing backup' };
+    return { ok: false, reason: 'not a FeedLens backup' };
   }
   if (!isRecord(parsed) || !isRecord(parsed['settings'])) {
-    return { ok: false, reason: 'not a Lensing backup' };
+    return { ok: false, reason: 'not a FeedLens backup' };
   }
   const schema = parsed['schema'];
   if (typeof schema !== 'number' || !Number.isInteger(schema) || schema < 1) {
-    return { ok: false, reason: 'not a Lensing backup' };
+    return { ok: false, reason: 'not a FeedLens backup' };
   }
   if (schema > SCHEMA) return { ok: false, reason: 'made by a newer version' };
 
