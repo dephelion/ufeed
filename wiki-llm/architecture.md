@@ -103,7 +103,6 @@ content → popup    { type: 'feedlens:status', status }     pushed on change
 - **The post the reader opened is never filtered, on every site.** An adapter enforces it only where it breaks: X's `leadPost` returns the opened post itself (a reveal does not survive X's redraw). Reddit stands down on threads; LinkedIn already holds, checked by hand.
 - `route`: post leads itself → `keep`; lead post kept → `keep` (revealed, never scored); blurred or peeked → `judge` (as any post); undecided → `wait` (held with `markPending`).
 - `settle`: a changed verdict hands back the lead post's replies, re-routed through `enqueue`. Covers waiting replies, a reader reveal, and a rescore flip.
-- `alwaysBlur` override still wins over `keep`, the opened post included.
 - No checkbox. Nobody wants the replies of a post they are reading blurred.
 
 **Fail-open holds.** A held reply is never blurred; the pending state clears itself. A lead post never decided leaves its replies visible.

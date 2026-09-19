@@ -45,7 +45,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 | Reason     | Label                              | Set when                                                                                 |
 | :--------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
-| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or `alwaysBlur`.                                     |
+| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or a near-copy of a thumbed-down post.               |
 | `media`    | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
 | `language` | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
 | `peek`     | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
@@ -64,7 +64,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
 
-**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They sit with `alwaysBlur` as user policy, not as a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them plus the overrides, asked before an inference is spent: a post they claim never reaches the engine.
+**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They are user policy, not a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them, asked before an inference is spent: a post they claim never reaches the engine.
 
 **The language label carries its own colour**, indigo against the topic label's red. It is not a verdict about the subject and must not read as one — [model.md](model.md) has why the score behind it would have been noise.
 
@@ -160,7 +160,7 @@ Apply is disabled until the textarea differs from what is saved.
 
 ## No-topics card
 
-On, allowed on this host, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
+On, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
 
 Fixed top-right, same dark chip as the thumbs bar so it reads the same on a light and a dark feed. Shows the toolbar icon, because finding that button is the actual task.
 

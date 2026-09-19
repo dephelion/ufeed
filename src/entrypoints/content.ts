@@ -4,13 +4,7 @@ import { logger } from '../core/log';
 
 import { adapterFor, type Post } from '../adapters';
 import { ScoreCache } from '../core/cache';
-import {
-  isActiveOn,
-  needsTopics,
-  overrideFor,
-  topicsEqual,
-  type Settings,
-} from '../core/settings';
+import { isActive, needsTopics, topicsEqual, type Settings } from '../core/settings';
 import { loadSettings, onSettingsChanged } from '../core/settings-storage';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
 import {
@@ -95,9 +89,9 @@ async function start(): Promise<void> {
   });
 
   const nudge = mountNudge();
-  const showNudge = () => nudge.setVisible(needsTopics(settings, location.hostname));
+  const showNudge = () => nudge.setVisible(needsTopics(settings));
 
-  const active = () => isActiveOn(settings, location.hostname);
+  const active = () => isActive(settings);
   const corrections = () =>
     settings.tuneFromFeedback ? tuner.corrections(settings.topics) : [];
 
@@ -110,10 +104,7 @@ async function start(): Promise<void> {
     const rating = match?.rating;
     const cut = threshold();
     const revealed = isRevealed(post.container);
-    const followsKept =
-      !revealed &&
-      conversation?.route(post) === 'keep' &&
-      overrideFor(settings, post.text) !== 'blur';
+    const followsKept = !revealed && conversation?.route(post) === 'keep';
     const judged = { ...grounds(post), score, threshold: cut, rating };
     // A revealed post stays shown whatever the rating, so the badge is the thumb's only confirmation.
     const ratingShown =
@@ -176,7 +167,7 @@ async function start(): Promise<void> {
     });
   });
 
-  /** Cached or overridden posts are decided here and never reach the engine. */
+  /** Cached posts are decided here and never reach the engine. */
   const enqueue = (post: Post): void => {
     const cached = cache.get(post.text);
     const route = conversation?.route(post);
@@ -184,12 +175,7 @@ async function start(): Promise<void> {
       hold(post);
       return;
     }
-    if (
-      route === 'keep' ||
-      post.text.trim() === '' ||
-      cached !== undefined ||
-      overrideFor(settings, post.text)
-    ) {
+    if (route === 'keep' || post.text.trim() === '' || cached !== undefined) {
       decide(post, cached);
       return;
     }

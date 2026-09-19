@@ -65,4 +65,4 @@ Package size ~22.5MB, almost entirely that binary.
 
 An iframe injected into a host page cannot be cross-origin isolated: the host does not send COEP. `crossOriginIsolated` is false on both browsers, so `SharedArrayBuffer` is unusable and ORT runs single-threaded. Chrome exposes the `SharedArrayBuffer` constructor anyway — existence is not usability.
 
-**`optional_host_permissions` is gone.** Reddit was its only entry and is now a default host, so the concept left with it — see [adapters.md](adapters.md). An optional host is not a config flag: it needs a request button in the popup, `permissions.request()` from a user gesture, runtime content-script registration, and a second path through `isActiveOn()`.
+**`optional_host_permissions` is gone.** Reddit was its only entry and is now a default host, so the concept left with it — see [adapters.md](adapters.md). An optional host is not a config flag: it needs a request button in the popup, `permissions.request()` from a user gesture, runtime content-script registration, and a second path through `isActive()`.

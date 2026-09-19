@@ -1,4 +1,4 @@
-import { overrideFor, type Settings } from '../core/settings';
+import type { Settings } from '../core/settings';
 import { verdictAt } from '../ml/scoring';
 import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
@@ -30,9 +30,6 @@ export interface Judgement extends Grounds {
  */
 export function decideWithoutScore(grounds: Grounds): Action | undefined {
   const { settings, text, hasMedia, language } = grounds;
-  const override = overrideFor(settings, text);
-  if (override === 'keep') return 'reveal';
-  if (override === 'blur') return 'blur';
   if (blursAsThinMedia(settings, text, hasMedia, language)) return 'blur-media';
   if (blursAsOtherLanguage(settings, language)) return 'blur-language';
   return undefined;

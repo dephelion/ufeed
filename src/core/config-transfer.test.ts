@@ -19,7 +19,6 @@ const settings: Settings = {
   ...DEFAULT_SETTINGS,
   topics: ['software engineering', 'climbing'],
   strictness: 4,
-  alwaysKeep: ['rust'],
   tuneFromFeedback: true,
 };
 

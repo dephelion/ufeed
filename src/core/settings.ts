@@ -6,9 +6,6 @@ export interface Settings {
   topics: string[];
   /** Step 0..10, not a score: scores differ per model. */
   strictness: number;
-  disabledHosts: string[];
-  alwaysKeep: string[];
-  alwaysBlur: string[];
   showScores: boolean;
   /** Blur media posts carrying too little text to judge against the topics. */
   blurThinMedia: boolean;
@@ -24,9 +21,6 @@ export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
   strictness: DEFAULT_STRICTNESS,
-  disabledHosts: [],
-  alwaysKeep: [],
-  alwaysBlur: [],
   showScores: false,
   blurThinMedia: false,
   tuneFromFeedback: false,
@@ -50,37 +44,16 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
 }
 
 /**
- * On, welcome on this host, and with nothing to do. It is the one inactive state
- * that is not a choice the reader made, so it is the only one worth interrupting
- * them about: everything looks installed and nothing happens.
+ * On, with nothing to do. It is the one inactive state that is not a choice the
+ * reader made, so it is the only one worth interrupting them about: everything
+ * looks installed and nothing happens.
  */
-export function needsTopics(settings: Settings, hostname: string): boolean {
-  return (
-    settings.enabled &&
-    settings.topics.length === 0 &&
-    !settings.disabledHosts.includes(hostname)
-  );
+export function needsTopics(settings: Settings): boolean {
+  return settings.enabled && settings.topics.length === 0;
 }
 
-export function isActiveOn(settings: Settings, hostname: string): boolean {
-  return (
-    settings.enabled &&
-    settings.topics.length > 0 &&
-    !settings.disabledHosts.includes(hostname)
-  );
-}
-
-/** Overrides win over the model; empty terms never match. */
-export function overrideFor(
-  settings: Settings,
-  text: string,
-): 'keep' | 'blur' | undefined {
-  const haystack = text.toLowerCase();
-  const hit = (terms: string[]) =>
-    terms.some((t) => t.trim() !== '' && haystack.includes(t.toLowerCase()));
-  if (hit(settings.alwaysKeep)) return 'keep';
-  if (hit(settings.alwaysBlur)) return 'blur';
-  return undefined;
+export function isActive(settings: Settings): boolean {
+  return settings.enabled && settings.topics.length > 0;
 }
 
 /** One topic per line; blanks and duplicates dropped. */

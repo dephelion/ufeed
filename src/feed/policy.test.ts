@@ -41,28 +41,6 @@ describe('fail-open', () => {
   });
 });
 
-describe('overrides win over the model', () => {
-  it('keeps on alwaysKeep even when the score says blur', () => {
-    expect(decide(withSettings({ alwaysKeep: ['systems'] }, { score: 0.1 }))).toBe(
-      'reveal',
-    );
-  });
-
-  it('blurs on alwaysBlur even when the score says show', () => {
-    expect(decide(withSettings({ alwaysBlur: ['systems'] }, { score: 0.99 }))).toBe(
-      'blur',
-    );
-  });
-
-  it('keeps beating blur when both match, and beating the media rule', () => {
-    const j = withSettings(
-      { alwaysKeep: ['systems'], alwaysBlur: ['systems'], blurThinMedia: true },
-      { text: 'systems', hasMedia: true },
-    );
-    expect(decide(j)).toBe('reveal');
-  });
-});
-
 describe('a near-identical rating', () => {
   it('shows a post like one the reader liked, whatever the score', () => {
     expect(decide(base({ score: 0.1, rating: true }))).toBe('reveal');
@@ -74,15 +52,6 @@ describe('a near-identical rating', () => {
 
   it('leaves the score in charge when nothing rated is near', () => {
     expect(decide(base({ score: 0.99, rating: undefined }))).toBe('reveal');
-  });
-
-  it("yields to the reader's own keep and blur words", () => {
-    expect(decide(withSettings({ alwaysKeep: ['systems'] }, { rating: false }))).toBe(
-      'reveal',
-    );
-    expect(decide(withSettings({ alwaysBlur: ['systems'] }, { rating: true }))).toBe(
-      'blur',
-    );
   });
 });
 
@@ -109,14 +78,6 @@ describe('the language rule', () => {
 
   it('never blurs on an undetected post — nothing ran, nothing is known', () => {
     expect(decide(withSettings(on, { language: undefined, score: 0.99 }))).toBe('reveal');
-  });
-
-  it('loses to alwaysKeep like every other tier', () => {
-    const j = withSettings(
-      { ...on, alwaysKeep: ['systems'] },
-      { language: 'other', score: 0.1 },
-    );
-    expect(decide(j)).toBe('reveal');
   });
 
   it('blurs an unreadable post the engine never scored', () => {
