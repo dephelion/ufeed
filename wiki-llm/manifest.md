@@ -25,7 +25,7 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 | Background | `service_worker`, `type: module` | `scripts` (non-persistent event page) |
 | Output     | `.output/chrome-mv3`             | `.output/firefox-mv3`                 |
 
-Both reach `requestDevice()` from a Worker inside the injected iframe (measured, macOS). `allow="webgpu"` is **not** needed: Chrome logs "Unrecognized feature" and ignores it.
+Both reach WebGPU `requestDevice()` from a Worker inside the injected iframe (measured, macOS), and `allow="webgpu"` is not needed. Unused: WebGPU miscomputes the q8 model ([model.md](model.md) §Backend self-check).
 
 ## Icons
 
@@ -57,7 +57,7 @@ node -e "const s=require('sharp'),f=require('fs').readFileSync('assets/logo.svg'
 
 `public/ort/` holds `ort-wasm-simd-threaded.jsep.{wasm,mjs}`, synced from `node_modules` by `scripts/sync-ort.mjs` on `postinstall`. `env.backends.onnx.wasm.wasmPaths = '/ort/'`.
 
-**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. jsep only — it serves both WebGPU and the CPU fallback, and threads are unusable anyway.
+**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. jsep only, because the default `onnxruntime-web` entry that transformers.js imports asks for the jsep files by name. Threads are unusable anyway.
 
 Package size ~22.5MB, almost entirely that binary.
 

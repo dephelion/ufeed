@@ -133,9 +133,6 @@ flowchart TB
   frame == "SCORE texts<br/>worker.postMessage" ==> tj
   out == "SCORES, STATUS<br/>self.postMessage" ==> frame
 
-  gpu["webgpu execution provider<br/>rejected every load:<br/>miscomputes q8"]
-  ort -. "tried first" .-> gpu
-
   weights[("hub CDN<br/>e5-small-v2 q8 weights<br/>fetched once, then cached")] -. "model" .-> tj
   runtime[("bundled /ort/*.wasm<br/>never fetched at runtime")] -. "engine" .-> ort
 ```
@@ -158,10 +155,11 @@ on first load and live in the browser cache after that. The **runtime WASM** is
 bundled in the extension and never fetched — remote WASM is reviewed as remote
 code execution, and that is not a review this extension needs to pass.
 
-WebGPU is tried first on every load and rejected on every load: ORT's WebGPU
-backend misreads the q8 weights and returns confident nonsense rather than
-failing, so the self-check probe is the only thing standing between that and a
-feed blurred at random. `wasm` is the steady state.
+The model runs on the CPU, through WASM. WebGPU was tried and dropped: ORT's
+WebGPU backend misreads the q8 weights and returns confident nonsense rather than
+failing. A self-check probe still runs on every load, so a runtime that
+miscomputes on some machine is refused rather than trusted, and the feed stays
+unblurred.
 
 ## Tuning it yourself
 

@@ -175,14 +175,14 @@ No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pai
 
 A backend can load, report ready, run fast, and return confident nonsense. ORT's **WebGPU backend miscomputes the q8 model**: a Spanish political post scored 0.32 against `tech` where CPU gives 0.001. Nothing errors.
 
-After load, `Embedder.selfCheck()` embeds a fixed probe pair and rejects the backend unless both hold:
+**WASM is the only backend.** WebGPU failed the probe on every load (`near=0.901 far=0.898`, against a required gap of 0.06), so every feed tab paid for a WebGPU session it then threw away. Not attempted since 0.7.0. Revisit only with a model or ORT release that passes the probe on WebGPU.
+
+After load, `Embedder.selfCheck()` embeds a fixed probe pair and rejects the model unless both hold:
 
 - `near >= probeMinNear`
 - `near - far >= probeMinGap`
 
-Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; absolute scores are not comparable across models. Rejection falls through to the next device; if none pass, the thrown error names every failure.
-
-**WebGPU therefore fails on every load** (`near=0.901 far=0.898`, against a required gap of 0.06), which makes it an expected event, not a warning. It logs at `info` while another device remains; only a rejection with no fallback left logs at `warn`.
+Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; absolute scores are not comparable across models. A rejection throws; the engine reports `error` and the feed fails open.
 
 ## Console noise from the runtime
 

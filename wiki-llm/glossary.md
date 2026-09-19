@@ -50,11 +50,11 @@ An alternative approach (rejected here, see [model.md](model.md)) where the mode
 
 ## Self-check probe / gap
 
-Not a standard ML term — this project's own load-time sanity check. Two fixed texts (one expected close, one expected far) are embedded right after the model loads; if the "close" score isn't high enough, or the gap between close and far isn't big enough, the backend (see below) is rejected as broken rather than trusted. Catches a backend that loads fine but silently computes garbage.
+Not a standard ML term — this project's own load-time sanity check. Two fixed texts (one expected close, one expected far) are embedded right after the model loads; if the "close" score isn't high enough, or the gap between close and far isn't big enough, the model is rejected as broken rather than trusted. Catches a backend that loads fine but silently computes garbage.
 
 ## Backend (inference backend)
 
-The underlying engine actually running the model's math — CPU (WASM) or WebGPU here. Same model, same weights; different backend can silently give different (even wrong) numbers, which is what the self-check above guards against.
+The underlying engine actually running the model's math — CPU via WASM here. WebGPU was measured and dropped: same model, same weights, silently wrong numbers, which is what the self-check above guards against.
 
 ## ONNX
 

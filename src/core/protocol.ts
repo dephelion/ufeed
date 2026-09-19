@@ -1,5 +1,4 @@
 export type EngineState = 'idle' | 'downloading' | 'warming' | 'ready' | 'error';
-export type Backend = 'webgpu' | 'wasm';
 
 export interface ScoreRequest {
   id: string;
@@ -69,7 +68,6 @@ export interface ErrorReply {
 export interface StatusEvent {
   type: 'STATUS';
   state: EngineState;
-  backend?: Backend;
   progress?: number;
   message?: string;
 }

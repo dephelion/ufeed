@@ -1,5 +1,4 @@
 import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers';
-import type { Backend } from '../core/protocol';
 import { logger } from '../core/log';
 import { MODEL, PROBE, formatPost, formatTopic } from './models';
 import { cosine, normalize, type Vector } from './scoring';
@@ -19,22 +18,8 @@ if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
 env.backends.onnx.logLevel = 'error';
 const SESSION_OPTIONS = { logSeverityLevel: 3 } as const;
 
-export type Device = 'webgpu' | 'wasm' | 'cpu';
-
-const FORCED = import.meta.env.VITE_FEEDLENS_BACKEND as Device | undefined;
-
-/** Browser order. Node offers only cpu, which is why this is a parameter. */
-export const BROWSER_DEVICES: readonly Device[] = FORCED ? [FORCED] : ['webgpu', 'wasm'];
-
-async function hasGpuAdapter(): Promise<boolean> {
-  const gpu = (navigator as { gpu?: { requestAdapter(): Promise<unknown> } }).gpu;
-  if (!gpu) return false;
-  try {
-    return (await gpu.requestAdapter()) !== null;
-  } catch {
-    return false;
-  }
-}
+/** WASM in the browser, CPU under Node. WebGPU miscomputes q8; see wiki-llm/model.md. */
+export type Device = 'wasm' | 'cpu';
 
 export interface EmbedderProgress {
   state: 'downloading' | 'warming' | 'ready';
@@ -43,17 +28,12 @@ export interface EmbedderProgress {
 
 export class Embedder {
   #pipe: FeatureExtractionPipeline | undefined;
-  #backend: Backend | undefined;
-
-  get backend(): Backend | undefined {
-    return this.#backend;
-  }
 
   async load(
     onProgress?: (p: EmbedderProgress) => void,
-    devices: readonly Device[] = BROWSER_DEVICES,
-  ): Promise<Backend> {
-    if (this.#pipe) return this.#backend!;
+    device: Device = 'wasm',
+  ): Promise<void> {
+    if (this.#pipe) return;
 
     const report = (item: { status?: string; progress?: number }) => {
       if (item.status === 'progress') {
@@ -62,75 +42,31 @@ export class Embedder {
     };
 
     const started = Date.now();
-    const failures: string[] = [];
+    log.info('loading model', { device, model: MODEL.id });
+    this.#pipe = await pipeline<'feature-extraction'>('feature-extraction', MODEL.id, {
+      device,
+      dtype: 'q8',
+      progress_callback: report,
+      session_options: SESSION_OPTIONS,
+    });
 
-    for (const device of devices) {
-      // transformers.js memoizes the first session promise; a rejected WebGPU create
-      // poisons every later device, so the missing adapter must be caught before it.
-      if (device === 'webgpu' && !(await hasGpuAdapter())) {
-        failures.push('webgpu: no adapter');
-        log.warn('backend unavailable', { device, reason: 'no adapter' });
-        continue;
-      }
-      try {
-        log.info('trying backend', { device, model: MODEL.id });
-        this.#pipe = await pipeline<'feature-extraction'>(
-          'feature-extraction',
-          MODEL.id,
-          {
-            device,
-            dtype: 'q8',
-            progress_callback: report,
-            session_options: SESSION_OPTIONS,
-          },
-        );
-
-        onProgress?.({ state: 'warming' });
-        const probe = await this.selfCheck();
-        if (!probe.ok) {
-          failures.push(
-            `${device}: wrong vectors (near=${probe.near.toFixed(3)} far=${probe.far.toFixed(3)})`,
-          );
-          // A rejection with a device still to try is the guard working as designed —
-          // ORT's WebGPU backend misreads the q8 weights on every load, measured and
-          // expected. Only a rejection with nothing left to fall back on is news.
-          const fields = {
-            device,
-            near: probe.near.toFixed(3),
-            far: probe.far.toFixed(3),
-          };
-          if (device === devices[devices.length - 1]) {
-            log.warn('backend returns wrong vectors, no fallback left', fields);
-          } else {
-            log.info('backend returns wrong vectors, falling back', fields);
-          }
-          this.#pipe = undefined;
-          continue;
-        }
-
-        this.#backend = device === 'webgpu' ? 'webgpu' : 'wasm';
-        log.info('model loaded', {
-          backend: this.#backend,
-          ms: Date.now() - started,
-          near: probe.near.toFixed(3),
-          far: probe.far.toFixed(3),
-        });
-        onProgress?.({ state: 'ready' });
-        return this.#backend;
-      } catch (error) {
-        const reason = error instanceof Error ? error.message : String(error);
-        failures.push(`${device}: ${reason}`);
-        log.warn('backend unavailable', { device, reason });
-        this.#pipe = undefined;
-      }
+    onProgress?.({ state: 'warming' });
+    const probe = await this.selfCheck();
+    const fields = { near: probe.near.toFixed(3), far: probe.far.toFixed(3) };
+    if (!probe.ok) {
+      this.#pipe = undefined;
+      throw new Error(
+        `model returns wrong vectors (near=${fields.near} far=${fields.far})`,
+      );
     }
 
-    throw new Error(`no usable backend (${failures.join(' | ')})`);
+    log.info('model loaded', { device, ms: Date.now() - started, ...fields });
+    onProgress?.({ state: 'ready' });
   }
 
   /**
-   * A backend can load, report ready, and return confident nonsense — q8 on
-   * WebGPU does. The gap between a related and an unrelated pair is what
+   * A runtime can load, report ready, and return confident nonsense — q8 on
+   * WebGPU did. The gap between a related and an unrelated pair is what
    * collapses when it happens, and unlike absolute scores it is comparable
    * across models.
    */

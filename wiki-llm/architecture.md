@@ -11,10 +11,9 @@
 | Engine iframe  | Extension origin (`chrome-extension://`) | Spawn a same-origin module Worker | See the host DOM          |
 | Worker         | Separate thread, extension origin        | Load the model, embed, score      | Touch any DOM             |
 
-**Why the iframe exists.** Four constraints leave one portable answer:
+**Why the iframe exists.** Three constraints leave one portable answer:
 
 - `Worker` is not exposed in `ServiceWorkerGlobalScope` — an MV3 service worker cannot spawn one.
-- `navigator.gpu` is unavailable in a service worker.
 - MV3 service workers terminate after ~30s idle, evicting the model repeatedly.
 - A content script cannot `new Worker(runtime.getURL(...))` — cross-origin to the host page, and subject to the host page's CSP.
 
@@ -62,7 +61,7 @@ engine  → content  { id, type: 'SCORES',     scores, topics, lines, ratings } 
 engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design
 engine  → content  { id, type: 'ERROR',      message }
-engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
+engine  → content  { type: 'STATUS', state, progress?, message? }
 ```
 
 **The worker embeds a correction, the content script stores it.** Vectors live where the model lives; persistence lives where `storage.local` is reachable. The content script never embeds and the worker never persists.

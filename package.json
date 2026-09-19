@@ -22,8 +22,7 @@
     "watch": "node scripts/watch-build.mjs",
     "test:model": "vitest run --config vitest.model.config.ts",
     "build:debug": "VITE_FEEDLENS_DEBUG=1 wxt build",
-    "build:debug:firefox": "VITE_FEEDLENS_DEBUG=1 wxt build -b firefox",
-    "build:wasm": "VITE_FEEDLENS_DEBUG=1 VITE_FEEDLENS_BACKEND=wasm wxt build"
+    "build:debug:firefox": "VITE_FEEDLENS_DEBUG=1 wxt build -b firefox"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.7.6",

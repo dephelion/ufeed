@@ -24,7 +24,7 @@ Model tests assert **gaps and orderings, never absolute scores** — absolutes a
 
 ## What no test covers
 
-Model loading, WebGPU initialisation, and real scoring in a browser. Those need a build loaded in Chrome or Firefox and the popup status watched. A green suite is not a working extension.
+Model loading and real scoring in a browser. Those need a build loaded in Chrome or Firefox and the popup status watched. A green suite is not a working extension.
 
 The backend self-check ([model.md](model.md)) is the runtime substitute: it catches a miscomputing backend on the user's hardware, which no CI can.
 

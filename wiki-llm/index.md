@@ -24,7 +24,7 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
 **Working end to end on X, LinkedIn and Reddit.** Content script finds posts, scores them through an in-page extension iframe hosting a worker, blurs what falls below the threshold. Popup sets topics, strictness, and reset.
 
-Resolved by measurement, see [model.md](model.md): iframe WebGPU works on both browsers; e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model and is rejected at load.
+Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model, so WASM is the only backend.
 
 Not built: Chrome offscreen singleton, multilingual model, mobile.
 

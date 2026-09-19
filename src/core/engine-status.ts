@@ -3,13 +3,12 @@
  * status-channel.ts and holds it in memory only — nothing here is stored, so
  * there is no record of when a feed was last open.
  *
- * Never carries post text. State, backend, a percentage and a failure reason.
+ * Never carries post text. State, a percentage and a failure reason.
  */
-import type { Backend, EngineState, StatusEvent } from './protocol';
+import type { EngineState, StatusEvent } from './protocol';
 
 export interface EngineStatus {
   state: EngineState;
-  backend?: Backend;
   /** Per-file download percentage, 0-100. Rounded; transformers.js reports floats. */
   progress?: number;
   message?: string;
@@ -21,7 +20,6 @@ export type StatusTone = 'idle' | 'busy' | 'ready' | 'error';
 export function toStatus(event: StatusEvent): EngineStatus {
   return {
     state: event.state,
-    backend: event.backend,
     progress: event.progress === undefined ? undefined : Math.round(event.progress),
     message: event.message,
   };
@@ -40,7 +38,6 @@ export function worthReporting(
 ): boolean {
   if (!previous) return true;
   if (previous.state !== next.state) return true;
-  if (previous.backend !== next.backend) return true;
   if (previous.message !== next.message) return true;
   if (next.progress === undefined) return previous.progress !== undefined;
   if (previous.progress === undefined) return true;
@@ -72,10 +69,7 @@ export function summarizeEngine(status: EngineStatus | undefined): {
     case 'warming':
       return { tone: 'busy', text: 'Checking' };
     case 'ready':
-      return {
-        tone: 'ready',
-        text: status.backend ? `Ready · ${status.backend}` : 'Ready',
-      };
+      return { tone: 'ready', text: 'Ready' };
     case 'error':
       return { tone: 'error', text: 'Failed' };
   }
@@ -109,12 +103,7 @@ export function describeEngine(status: EngineStatus | undefined): {
     case 'warming':
       return { tone: 'busy', text: 'Checking the model before trusting it' };
     case 'ready':
-      return {
-        tone: 'ready',
-        text: status.backend
-          ? `Model ready, running on ${status.backend}`
-          : 'Model ready',
-      };
+      return { tone: 'ready', text: 'Model ready' };
     case 'error':
       return {
         tone: 'error',

@@ -36,16 +36,15 @@ let loading: Promise<void> | undefined;
 const post = (reply: EngineReply) => self.postMessage(reply);
 
 function ensureLoaded(): Promise<void> {
-  if (!loading) log.info('loading model');
   loading ??= embedder
     .load((p) => {
       if (p.state === 'downloading')
         log.info('downloading', { percent: Math.round(p.progress ?? 0) });
       post({ type: 'STATUS', state: p.state, progress: p.progress });
     })
-    .then((backend) => {
-      log.info('ready', { backend });
-      post({ type: 'STATUS', state: 'ready', backend });
+    .then(() => {
+      log.info('ready');
+      post({ type: 'STATUS', state: 'ready' });
     })
     .catch((error: unknown) => {
       loading = undefined;

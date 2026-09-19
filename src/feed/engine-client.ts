@@ -109,11 +109,7 @@ export class EngineClient {
     if (!isEngineReply(data)) return;
     if (data.type === 'STATUS') {
       if (data.state !== this.#status.state) {
-        log.info('engine status', {
-          state: data.state,
-          backend: data.backend,
-          reason: data.message,
-        });
+        log.info('engine status', { state: data.state, reason: data.message });
       }
       this.#status = data;
       this.onStatus(data);
