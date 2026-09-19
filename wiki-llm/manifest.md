@@ -25,7 +25,7 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 | Background | `service_worker`, `type: module` | `scripts` (non-persistent event page) |
 | Output     | `.output/chrome-mv3`             | `.output/firefox-mv3`                 |
 
-Both reach WebGPU `requestDevice()` from a Worker inside the injected iframe (measured, macOS), and `allow="webgpu"` is not needed. Unused: WebGPU miscomputes the q8 model ([model.md](model.md) §Backend self-check).
+Both reach WebGPU `requestDevice()` from a Worker inside the injected iframe (measured, macOS), and `allow="webgpu"` is not needed. Neither model uses it: WebGPU miscomputes e5's q8 weights and EmbeddingGemma's q4 weights, and the probe rejects both ([model.md](model.md) §Backend self-check).
 
 ## Icons
 

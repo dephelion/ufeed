@@ -1,4 +1,4 @@
-import { MODEL } from './models';
+import type { ModelSpec } from './models';
 
 /**
  * `unclear` is CLD's own verdict — it read the text and could not place it —
@@ -18,13 +18,26 @@ export interface Detection {
  */
 const MIN_SHARE = 60;
 
-export function classify(result: Detection): Language {
+export function classify(result: Detection, spec: ModelSpec): Language {
+  if (spec.language === undefined) return 'match';
   if (!result.isReliable) return 'unclear';
   const top = [...result.languages]
     .filter((l) => l.language !== 'und')
     .sort((a, b) => b.percentage - a.percentage)[0];
   if (!top || top.percentage < MIN_SHARE) return 'unclear';
-  return top.language.split('-')[0] === MODEL.language ? 'match' : 'other';
+  return top.language.split('-')[0] === spec.language ? 'match' : 'other';
+}
+
+/**
+ * Whether a post's language is worth detecting at all. A model that reads every
+ * language has nothing to gate, so the checkbox is ignored rather than obeyed —
+ * see ui.md: the popup disables it and says why.
+ */
+export function gatesLanguage(
+  settings: { blurOtherLanguages: boolean },
+  spec: ModelSpec,
+): boolean {
+  return settings.blurOtherLanguages && spec.language !== undefined;
 }
 
 /**

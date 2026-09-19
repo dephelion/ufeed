@@ -1,5 +1,7 @@
 import { ScoreCache } from '../core/cache';
 import { logger } from '../core/log';
+import { gatesLanguage } from '../core/language';
+import { modelFor } from '../core/models';
 import type { EngineState } from '../core/protocol';
 import { isActive, topicsEqual, type Settings } from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
@@ -63,7 +65,11 @@ export class FeedFilter {
     this.#settings = settings;
     this.#languages = new LanguageCache(detectLanguage);
     this.#conversation = Conversation.for(adapter);
-    this.#queue = new ScoreQueue(engine, (results) => this.#applyBatch(results));
+    this.#queue = new ScoreQueue(
+      engine,
+      (results) => this.#applyBatch(results),
+      () => this.#model().batchSize,
+    );
     this.#scanner = new FeedScanner({
       adapter,
       isActive: () => this.active,
@@ -78,7 +84,7 @@ export class FeedFilter {
   start(): void {
     this.#scanner.start();
     if (!this.active) return;
-    this.#engine.connect();
+    this.#engine.connect(this.#settings.model);
     void this.#persist(this.#tuner.keepOnly(this.#settings.topics));
     this.#requery();
   }
@@ -99,6 +105,7 @@ export class FeedFilter {
   applySettings(next: Settings): void {
     const topicsChanged = !topicsEqual(next.topics, this.#settings.topics);
     const tuningChanged = next.tuneFromFeedback !== this.#settings.tuneFromFeedback;
+    const modelChanged = next.model !== this.#settings.model;
     const wasActive = this.active;
     this.#settings = next;
     if (!this.active) {
@@ -107,9 +114,16 @@ export class FeedFilter {
       clearAllScores(document);
       return;
     }
-    this.#engine.connect();
+    // Every cached score is in the old model's space, and so is every language
+    // verdict the old model's gate produced. Both go before the new one answers.
+    if (modelChanged) {
+      this.#languages.clear();
+      this.#engine.restart(next.model);
+    } else {
+      this.#engine.connect(next.model);
+    }
     if (topicsChanged) void this.#persist(this.#tuner.keepOnly(next.topics));
-    if (topicsChanged || tuningChanged || !wasActive) this.#requery();
+    if (topicsChanged || tuningChanged || modelChanged || !wasActive) this.#requery();
     else this.#rescore();
   }
 
@@ -160,7 +174,11 @@ export class FeedFilter {
   }
 
   #threshold(): number {
-    return thresholdForStrictness(this.#settings.strictness);
+    return thresholdForStrictness(this.#settings.strictness, this.#model());
+  }
+
+  #model() {
+    return modelFor(this.#settings.model);
   }
 
   #applyBatch(results: Scored[]): void {
@@ -242,7 +260,9 @@ export class FeedFilter {
       this.#decide(post, cached);
       return;
     }
-    if (!this.#settings.blurOtherLanguages) {
+    // A model that reads every language has nothing to gate, so detection is
+    // skipped outright rather than run and ignored.
+    if (!gatesLanguage(this.#settings, this.#model())) {
       this.#hold(post);
       this.#queue.add(post);
       return;
@@ -259,7 +279,7 @@ export class FeedFilter {
     // Scored anyway: it is never re-blurred, but its badge must follow a new rating.
     if (isRevealed(post.container)) return this.#queue.add(post);
     this.#hold(post);
-    await this.#languages.detect(post.text);
+    await this.#languages.detect(post.text, this.#model());
     if (!post.container.isConnected) return;
     if (isRevealed(post.container)) return this.#queue.add(post);
     const settled = decideWithoutScore(this.#grounds(post));

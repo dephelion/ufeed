@@ -1,4 +1,4 @@
-import { MODEL } from './models';
+import type { ModelSpec } from './models';
 
 /**
  * Corrections the user made to the model's verdicts, as embeddings, kept per
@@ -27,18 +27,60 @@ export interface TopicCorrections {
   disliked: number[][];
 }
 
-export const EMPTY_FEEDBACK: Feedback = {
-  model: MODEL.id,
-  dim: MODEL.dim,
+/** No ratings, and no model: the storage layer stamps what it writes. */
+export const EMPTY_FEEDBACK: Feedback = { model: '', dim: 0, byTopic: {} };
+
+export const emptyFor = (spec: ModelSpec): Feedback => ({
+  model: spec.id,
+  dim: spec.dim,
   byTopic: {},
-};
+});
 
 /**
  * Stored corrections predate the stamp, and every install that has any was
- * written by e5-small-v2. Reading MODEL.id here instead would relabel them as
- * whatever ships next.
+ * written by e5-small-v2. Reading the current model's id here instead would
+ * relabel them as whatever ships next.
  */
 const UNSTAMPED = { model: 'Xenova/e5-small-v2', dim: 384 } as const;
+
+/**
+ * Ratings for every model that has any, keyed by model id.
+ *
+ * Kept apart rather than wiped on a switch: another model's vectors are in
+ * another coordinate space and the post text was discarded at rating time, so
+ * they can be neither compared nor re-embedded — but they are still perfectly
+ * good for the model that made them, and a switch back restores them.
+ */
+export type FeedbackByModel = Record<string, Feedback>;
+
+export function normalizeStore(value: unknown): FeedbackByModel {
+  if (!isRecord(value)) return {};
+  // Pre-0.8 shape: one model's ratings at the top level, always e5-small-v2's.
+  if ('byTopic' in value) {
+    const legacy = normalizeFeedback(value);
+    return { [legacy.model]: legacy };
+  }
+  const store: FeedbackByModel = {};
+  for (const [id, stored] of Object.entries(value)) {
+    const found = normalizeFeedback(stored);
+    if (Object.keys(found.byTopic).length > 0) store[id] = { ...found, model: id };
+  }
+  return store;
+}
+
+/** A model reads only its own ratings; a stamp that disagrees is not usable. */
+export function feedbackFor(store: FeedbackByModel, spec: ModelSpec): Feedback {
+  const found = store[spec.id];
+  return found ? forCurrentModel(found, spec) : emptyFor(spec);
+}
+
+export function withFeedback(
+  store: FeedbackByModel,
+  spec: ModelSpec,
+  feedback: Feedback,
+): FeedbackByModel {
+  return { ...store, [spec.id]: { ...feedback, model: spec.id, dim: spec.dim } };
+}
 
 /** Oldest corrections fall off first; the query should follow current taste. */
 export const MAX_PER_CLASS = 50;
@@ -65,13 +107,13 @@ export function normalizeFeedback(value: unknown): Feedback {
 
 /**
  * Vectors from another model are in another coordinate space, and the text they
- * came from is long gone, so there is nothing to re-embed. Drop them and keep
- * the settings, which never depended on a model.
+ * came from is long gone, so there is nothing to re-embed. A mismatched stamp
+ * reads as no ratings for this model; the stored blob is not touched.
  */
-export function forCurrentModel(feedback: Feedback): Feedback {
-  return feedback.model === MODEL.id && feedback.dim === MODEL.dim
+export function forCurrentModel(feedback: Feedback, spec: ModelSpec): Feedback {
+  return feedback.model === spec.id && feedback.dim === spec.dim
     ? feedback
-    : EMPTY_FEEDBACK;
+    : emptyFor(spec);
 }
 
 function isRecord(v: unknown): v is Record<string, unknown> {

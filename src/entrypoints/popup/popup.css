@@ -147,6 +147,41 @@ input[type='range'] {
   overflow-x: auto;
 }
 
+/* The native arrow is replaced by two gradients so it takes the theme color.
+   Padding is equal on both sides, so the centered label is centered in the box. */
+select {
+  display: block;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding: 6px 32px;
+  font: inherit;
+  color: var(--fg);
+  text-align: center;
+  text-align-last: center;
+  background-color: var(--card);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) 50%,
+    calc(100% - 12px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  appearance: none;
+  cursor: pointer;
+}
+
+select:hover {
+  border-color: var(--muted);
+}
+
+select:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
 .actions {
   display: flex;
   align-items: center;

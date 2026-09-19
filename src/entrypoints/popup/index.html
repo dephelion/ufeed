@@ -74,6 +74,25 @@
     <input type="range" id="strictness" min="0" max="10" step="1" />
     <p class="hint" id="strictness-hint"></p>
 
+    <label class="field" for="model">Model</label>
+    <select id="model">
+      <option value="e5-small">English only — 33 MB</option>
+      <option value="gemma">Every language — 197 MB download</option>
+    </select>
+    <p class="hint" id="model-hint"></p>
+    <details class="hint-details">
+      <summary>Details</summary>
+      <p class="hint">
+        The English model is small and fast, and it cannot read anything else. The
+        multilingual one reads every language and sorts your feed more accurately, but it
+        is a 197 MB one-time download and it is slower on every post.
+        <br />
+        Your topics, strictness and thumb ratings are all kept when you switch. Ratings
+        are stored per model, so each model keeps its own and switching back restores
+        them.
+      </p>
+    </details>
+
     <label class="check" for="blur-thin-media">
       <input type="checkbox" id="blur-thin-media" />
       Blur images and videos with no text
@@ -93,13 +112,17 @@
     </label>
     <details class="hint-details">
       <summary>Details</summary>
-      <p class="hint">
+      <p class="hint" id="language-hint">
         FeedLens only understands English. It can't tell whether a post in another
         language is about your topics or not, so it lets some through and blurs others at
         random. Turn this on to blur them all — including ones that are on topic.
         <br />
         Posts already on screen stay as they are. Scroll on, or reload the page, to see
         the change.
+      </p>
+      <p class="hint" id="language-off" hidden>
+        Switched off because the multilingual model reads every language — there is
+        nothing left for it to blur. Your setting is kept for when you switch back.
       </p>
     </details>
 

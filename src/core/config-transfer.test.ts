@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { MODEL } from './models';
+import { DEFAULT_MODEL, modelFor } from './models';
+
+const MODEL = modelFor(DEFAULT_MODEL);
 import { SCHEMA, exportConfig, importConfig } from './config-transfer';
 import { EMPTY_FEEDBACK, MAX_PER_CLASS, type Feedback, type Rating } from './feedback';
 import { DEFAULT_SETTINGS, type Settings } from './settings';

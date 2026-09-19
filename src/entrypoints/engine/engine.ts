@@ -1,10 +1,12 @@
 import EngineWorker from './engine.worker.ts?worker';
 import { logger } from '../../core/log';
+import { DEFAULT_MODEL, isModelKey } from '../../core/models';
 import {
   isEngineReply,
   isEngineRequest,
   isHandshake,
   type EngineReply,
+  type InitRequest,
   type StatusEvent,
 } from '../../core/protocol';
 
@@ -28,10 +30,20 @@ const fail = (message: string): void => {
   port?.postMessage(lastStatus);
 };
 
+/**
+ * The content script picks the model and puts it in this frame's URL. Read here
+ * rather than passed over the port: the worker must know before the first
+ * request, and the host page never gets a say.
+ */
+const requested = new URLSearchParams(location.search).get('model');
+const model = isModelKey(requested) ? requested : DEFAULT_MODEL;
+
 let worker: Worker | undefined;
 try {
   worker = new EngineWorker();
-  log.info('worker spawned');
+  // First message, before any port exists, so the worker cannot load without it.
+  worker.postMessage({ type: 'INIT', model } satisfies InitRequest);
+  log.info('worker spawned', { model });
 } catch (error) {
   const reason = error instanceof Error ? error.message : String(error);
   log.error('worker could not be created', { reason });

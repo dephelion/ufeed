@@ -2,9 +2,11 @@ import { logger } from '../core/log';
 import type { RatedMatch } from '../core/scoring';
 import type { Engine, Post } from './ports';
 
-const BATCH_SIZE = 16;
 const FLUSH_MS = 100;
-/** Long posts cost tokens without adding signal; e5 does not shift with length. */
+/**
+ * Long posts cost tokens without adding signal; e5 does not shift with length.
+ * Lowering it was measured and rejected as a speed lever: see wiki-llm/model.md.
+ */
 const MAX_CHARS = 1200;
 
 /** Every text the engine embeds passes through here, scored or thumbed alike. */
@@ -30,11 +32,13 @@ export class ScoreQueue {
   constructor(
     private readonly engine: Pick<Engine, 'ready' | 'status' | 'score'>,
     private readonly onScored: (results: Scored[]) => void,
+    /** Read per flush, not captured: a model switch changes it under a live queue. */
+    private readonly batchSize: () => number,
   ) {}
 
   add(post: Post): void {
     this.#pending.set(post.container, post);
-    if (this.#pending.size >= BATCH_SIZE) void this.flush();
+    if (this.#pending.size >= this.batchSize()) void this.flush();
     else this.#schedule();
   }
 
@@ -55,7 +59,7 @@ export class ScoreQueue {
     }
 
     const issuedAt = this.#epoch;
-    const batch = [...this.#pending.entries()].slice(0, BATCH_SIZE);
+    const batch = [...this.#pending.entries()].slice(0, this.batchSize());
     for (const [element] of batch) this.#pending.delete(element);
 
     const matches = await this.engine.score(

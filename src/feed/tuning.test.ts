@@ -27,12 +27,16 @@ vi.mock('webextension-polyfill', () => ({
   },
 }));
 
-const { MODEL } = await import('../core/models');
+const { DEFAULT_MODEL, modelFor } = await import('../core/models');
+const MODEL = modelFor(DEFAULT_MODEL);
+
+/** Which model the simulated tab is scoring with; a switch moves it. */
+let current: 'e5-small' | 'gemma' = DEFAULT_MODEL;
 const { hashText } = await import('../core/cache');
 const { EMPTY_FEEDBACK, count, findRating, rate } = await import('../core/feedback');
 const {
   clearFeedback,
-  feedbackStore,
+  feedbackStoreFor,
   loadFeedback,
   loadSettings,
   saveFeedback,
@@ -54,15 +58,15 @@ describe('a feed tab open while storage changes underneath it', () => {
     let mine = EMPTY_FEEDBACK;
     for (let i = 0; i < 8; i++)
       mine = rate(mine, 'software engineering', `mine${i}`, vector(i), true);
-    await saveFeedback(mine);
+    await saveFeedback(MODEL, mine);
 
-    const tuner = await Tuning.load(feedbackStore);
+    const tuner = await Tuning.load(feedbackStoreFor(() => current));
     const backup = exportConfig(await loadSettings(), mine, '0.0.0');
 
     await clearFeedback();
     const result = importConfig(backup);
     if (!result.ok) throw new Error(result.reason);
-    await saveFeedback(result.feedback);
+    await saveFeedback(modelFor(result.settings.model), result.feedback);
 
     await tuner.record(
       'software engineering',
@@ -71,7 +75,7 @@ describe('a feed tab open while storage changes underneath it', () => {
       true,
     );
 
-    const stored = await loadFeedback();
+    const stored = await loadFeedback(MODEL);
     expect(count(stored)).toBe(9);
     expect(findRating(stored, hashText('a post rated after the import'))).toEqual({
       topic: 'software engineering',
@@ -80,18 +84,18 @@ describe('a feed tab open while storage changes underneath it', () => {
   });
 
   it('keeps a cleared set cleared', async () => {
-    await saveFeedback(rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), true));
-    const tuner = await Tuning.load(feedbackStore);
+    await saveFeedback(MODEL, rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), true));
+    const tuner = await Tuning.load(feedbackStoreFor(() => current));
 
     await clearFeedback();
     await tuner.record('topic', 'a post rated after the clear', vector(2), true);
 
-    expect(count(await loadFeedback())).toBe(1);
+    expect(count(await loadFeedback(MODEL))).toBe(1);
   });
 
   it('tells the tab when a clear elsewhere changed what its lines hold', async () => {
-    await saveFeedback(rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), false));
-    const tuner = await Tuning.load(feedbackStore);
+    await saveFeedback(MODEL, rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), false));
+    const tuner = await Tuning.load(feedbackStoreFor(() => current));
     const before = tuner.signature(['topic']);
     let told = 0;
     tuner.onChange(() => (told += 1));
@@ -104,16 +108,51 @@ describe('a feed tab open while storage changes underneath it', () => {
 });
 
 describe('a model change', () => {
-  it('drops the vectors it cannot read and leaves the settings alone', async () => {
+  it("keeps each model's ratings and shows only the running one's", async () => {
+    const gemma = modelFor('gemma');
     await saveSettings({ topics: ['software engineering'], strictness: 4 });
-    await saveFeedback({
-      ...rate(EMPTY_FEEDBACK, 'software engineering', 'k', vector(1), true),
-      model: 'Xenova/some-later-model',
-    });
+    await saveFeedback(
+      MODEL,
+      rate(EMPTY_FEEDBACK, 'software engineering', 'k', vector(1), true),
+    );
 
-    expect(count(await loadFeedback())).toBe(0);
+    await saveSettings({ model: 'gemma' });
+    expect(count(await loadFeedback(gemma))).toBe(0);
+
+    await saveFeedback(
+      gemma,
+      rate(EMPTY_FEEDBACK, 'software engineering', 'g', vector(2), false),
+    );
+    expect(count(await loadFeedback(gemma))).toBe(1);
+
+    // Switching back restores what the first model wrote, untouched.
+    await saveSettings({ model: 'e5-small' });
+    expect(count(await loadFeedback(MODEL))).toBe(1);
+
     const settings = await loadSettings();
     expect(settings.topics).toEqual(['software engineering']);
     expect(settings.strictness).toBe(4);
+  });
+
+  it("clears every model's ratings when no model is named", async () => {
+    const gemma = modelFor('gemma');
+    await saveFeedback(MODEL, rate(EMPTY_FEEDBACK, 't', 'a', vector(1), true));
+    await saveFeedback(gemma, rate(EMPTY_FEEDBACK, 't', 'b', vector(2), true));
+
+    await clearFeedback();
+
+    expect(count(await loadFeedback(MODEL))).toBe(0);
+    expect(count(await loadFeedback(gemma))).toBe(0);
+  });
+
+  it('clears only the model it is given', async () => {
+    const gemma = modelFor('gemma');
+    await saveFeedback(MODEL, rate(EMPTY_FEEDBACK, 't', 'a', vector(1), true));
+    await saveFeedback(gemma, rate(EMPTY_FEEDBACK, 't', 'b', vector(2), true));
+
+    await clearFeedback(gemma);
+
+    expect(count(await loadFeedback(MODEL))).toBe(1);
+    expect(count(await loadFeedback(gemma))).toBe(0);
   });
 });

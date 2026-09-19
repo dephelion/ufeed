@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_STRICTNESS, STRICTNESS_STEPS } from './models';
+import { DEFAULT_MODEL, DEFAULT_STRICTNESS, MODELS, modelFor } from './models';
 import {
   MAX_STRICTNESS,
-  PEEK_BAND,
   bestMatch,
   clampStrictness,
   cosine,
@@ -15,6 +14,10 @@ import {
 } from './scoring';
 
 const v = (...xs: number[]) => new Float32Array(xs);
+
+/** The shipped default; every assertion about the scale must hold for each model. */
+const spec = modelFor(DEFAULT_MODEL);
+const PEEK_BAND = spec.peekBand;
 
 describe('cosine', () => {
   it('is 1 for a unit vector against itself', () => {
@@ -41,7 +44,7 @@ describe('bestMatch', () => {
   it('scores below any threshold when there are no topics', () => {
     const match = bestMatch(v(1, 0), []);
     expect(match.topic).toBe(-1);
-    expect(verdictAt(match.score, thresholdForStrictness(0))).toBe('blur');
+    expect(verdictAt(match.score, thresholdForStrictness(0, spec), spec)).toBe('blur');
   });
 });
 
@@ -58,23 +61,27 @@ describe('normalize', () => {
 describe('the strictness scale', () => {
   it('runs 0 to 10', () => {
     expect(MAX_STRICTNESS).toBe(10);
-    expect(STRICTNESS_STEPS).toHaveLength(11);
+    expect(spec.strictness).toHaveLength(11);
   });
 
   it('blurs nothing at 0, which is the point of starting at the feed floor', () => {
-    expect(feedShownAt(0)).toBe(1);
+    expect(feedShownAt(0, spec)).toBe(1);
   });
 
   it('every step is stricter than the one before it', () => {
     for (let i = 1; i <= MAX_STRICTNESS; i++) {
-      expect(thresholdForStrictness(i)).toBeGreaterThan(thresholdForStrictness(i - 1));
-      expect(feedShownAt(i)).toBeLessThan(feedShownAt(i - 1));
+      expect(thresholdForStrictness(i, spec)).toBeGreaterThan(
+        thresholdForStrictness(i - 1, spec),
+      );
+      expect(feedShownAt(i, spec)).toBeLessThan(feedShownAt(i - 1, spec));
     }
   });
 
   it('every step changes what the reader sees, which the old band did not', () => {
     for (let i = 1; i <= MAX_STRICTNESS; i++) {
-      expect(feedShownAt(i - 1) - feedShownAt(i)).toBeGreaterThanOrEqual(0.05);
+      expect(feedShownAt(i - 1, spec) - feedShownAt(i, spec)).toBeGreaterThanOrEqual(
+        0.05,
+      );
     }
   });
 
@@ -91,29 +98,29 @@ describe('the strictness scale', () => {
 });
 
 describe('the three tiers', () => {
-  const thr = thresholdForStrictness(5);
+  const thr = thresholdForStrictness(5, spec);
 
   it('shows a post at or above the threshold', () => {
-    expect(verdictAt(thr, thr)).toBe('show');
+    expect(verdictAt(thr, thr, spec)).toBe('show');
   });
 
   it('peeks just below it, where the model is least sure', () => {
-    expect(verdictAt(thr - 0.001, thr)).toBe('peek');
-    expect(verdictAt(thr - PEEK_BAND, thr)).toBe('peek');
+    expect(verdictAt(thr - 0.001, thr, spec)).toBe('peek');
+    expect(verdictAt(thr - PEEK_BAND, thr, spec)).toBe('peek');
   });
 
   it('blurs outright once past the uncertain strip', () => {
-    expect(verdictAt(thr - PEEK_BAND - 0.001, thr)).toBe('blur');
+    expect(verdictAt(thr - PEEK_BAND - 0.001, thr, spec)).toBe('blur');
   });
 
   it('keeps a post scoring below every real feed post at strictness 0', () => {
-    expect(verdictAt(0.7, thresholdForStrictness(0))).toBe('show');
+    expect(verdictAt(0.7, thresholdForStrictness(0, spec), spec)).toBe('show');
   });
 
   it('measures the strip from the threshold, so it moves with strictness', () => {
-    const loose = thresholdForStrictness(2);
-    expect(verdictAt(loose - 0.005, loose)).toBe('peek');
-    expect(verdictAt(loose - 0.005, thresholdForStrictness(9))).toBe('blur');
+    const loose = thresholdForStrictness(2, spec);
+    expect(verdictAt(loose - 0.005, loose, spec)).toBe('peek');
+    expect(verdictAt(loose - 0.005, thresholdForStrictness(9, spec), spec)).toBe('blur');
   });
 });
 
@@ -155,8 +162,38 @@ describe('pooled', () => {
 
 describe('verdictAt', () => {
   it('reads tiers off a resolved threshold, wherever it came from', () => {
-    expect(verdictAt(0.9, 0.8)).toBe('show');
-    expect(verdictAt(0.795, 0.8)).toBe('peek');
-    expect(verdictAt(0.5, 0.8)).toBe('blur');
+    expect(verdictAt(0.9, 0.8, spec)).toBe('show');
+    expect(verdictAt(0.795, 0.8, spec)).toBe('peek');
+    expect(verdictAt(0.5, 0.8, spec)).toBe('blur');
+  });
+});
+
+describe('every model carries a usable scale', () => {
+  it('gives each the same number of steps, so a stored step survives a switch', () => {
+    for (const model of Object.values(MODELS))
+      expect(model.strictness).toHaveLength(MAX_STRICTNESS + 1);
+  });
+
+  it('spends the same share of feed at a given step on every model', () => {
+    for (const model of Object.values(MODELS))
+      for (let i = 0; i <= MAX_STRICTNESS; i++)
+        expect(feedShownAt(i, model)).toBe(feedShownAt(i, spec));
+  });
+
+  it('rises monotonically on every model, whatever band it scores in', () => {
+    for (const model of Object.values(MODELS))
+      for (let i = 1; i <= MAX_STRICTNESS; i++)
+        expect(thresholdForStrictness(i, model)).toBeGreaterThan(
+          thresholdForStrictness(i - 1, model),
+        );
+  });
+
+  it('leaves a peek strip that fits inside its own scale', () => {
+    for (const model of Object.values(MODELS)) {
+      expect(model.peekBand).toBeGreaterThan(0);
+      const span =
+        thresholdForStrictness(MAX_STRICTNESS, model) - thresholdForStrictness(0, model);
+      expect(model.peekBand).toBeLessThan(span / 2);
+    }
   });
 });

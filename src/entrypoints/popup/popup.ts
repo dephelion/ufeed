@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill';
+import { modelFor, type ModelKey } from '../../core/models';
 import { feedShownAt } from '../../core/scoring';
 import {
   DEFAULT_SETTINGS,
@@ -41,8 +42,11 @@ const strictness = el<HTMLInputElement>('strictness');
 const strictnessValue = el<HTMLOutputElement>('strictness-value');
 const strictnessHint = el<HTMLParagraphElement>('strictness-hint');
 const showScores = el<HTMLInputElement>('show-scores');
+const model = el<HTMLSelectElement>('model');
+const modelHint = el<HTMLParagraphElement>('model-hint');
 const blurThinMedia = el<HTMLInputElement>('blur-thin-media');
 const blurOtherLanguages = el<HTMLInputElement>('blur-other-languages');
+const languageHint = el<HTMLParagraphElement>('language-hint');
 const collapseBlurred = el<HTMLInputElement>('collapse-blurred');
 const tuneFeedback = el<HTMLInputElement>('tune-feedback');
 const clearTuning = el<HTMLButtonElement>('clear-tuning');
@@ -68,9 +72,28 @@ const chipDot = el<HTMLSpanElement>('engine-chip-dot');
 let saved: Settings = await loadSettings();
 
 /** States the trade-off, never a measured share: one feed's numbers are not the reader's. */
-function describeStrictness(step: number): string {
-  if (feedShownAt(step) >= 1) return 'Blurs nothing — every post stays visible.';
+function describeStrictness(step: number, key: ModelKey): string {
+  if (feedShownAt(step, modelFor(key)) >= 1)
+    return 'Blurs nothing — every post stays visible.';
   return "Stricter hides more, including some posts you'd want. Blurred posts stay one click away.";
+}
+
+/**
+ * The language checkbox belongs to a model that reads one language. With a
+ * multilingual model there is nothing to gate, so it is disabled and says why
+ * rather than sitting there looking like it still does something.
+ */
+function renderModel(key: ModelKey): void {
+  const spec = modelFor(key);
+  model.value = key;
+  const monolingual = spec.language !== undefined;
+  modelHint.textContent = monolingual
+    ? 'Reads English only. Small and fast.'
+    : 'Reads every language. Downloads once, then it is cached.';
+  blurOtherLanguages.disabled = !monolingual;
+  languageHint.hidden = !monolingual;
+  const note = el<HTMLElement>('language-off');
+  note.hidden = monolingual;
 }
 
 function renderEnabled(on: boolean): void {
@@ -83,7 +106,8 @@ function render(settings: Settings): void {
   topics.value = topicsToText(settings.topics);
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
-  strictnessHint.textContent = describeStrictness(settings.strictness);
+  strictnessHint.textContent = describeStrictness(settings.strictness, settings.model);
+  renderModel(settings.model);
   showScores.checked = settings.showScores;
   blurThinMedia.checked = settings.blurThinMedia;
   blurOtherLanguages.checked = settings.blurOtherLanguages;
@@ -178,7 +202,16 @@ apply.addEventListener('click', () => {
 strictness.addEventListener('input', () => {
   const next = Number(strictness.value);
   strictnessValue.textContent = String(next);
-  strictnessHint.textContent = describeStrictness(next);
+  strictnessHint.textContent = describeStrictness(next, saved.model);
+});
+
+model.addEventListener('change', () => {
+  const next = model.value as ModelKey;
+  renderModel(next);
+  void update({ model: next }).then((ok) => {
+    if (ok) void renderTuning();
+    else renderModel(saved.model);
+  });
 });
 
 strictness.addEventListener('change', () => {
@@ -186,7 +219,7 @@ strictness.addEventListener('change', () => {
 });
 
 async function renderTuning(): Promise<void> {
-  const stored = await loadFeedback().catch(() => undefined);
+  const stored = await loadFeedback(modelFor(saved.model)).catch(() => undefined);
   const { up, down, total } = counts(stored ?? EMPTY_FEEDBACK);
   statUp.textContent = String(up);
   statDown.textContent = String(down);
@@ -204,7 +237,7 @@ tuneFeedback.addEventListener(
 );
 
 clearTuning.addEventListener('click', () => {
-  void clearFeedback()
+  void clearFeedback(modelFor(saved.model))
     .catch(() => undefined)
     .then(renderTuning);
 });
@@ -253,7 +286,9 @@ function download(name: string, text: string): void {
 exportButton.addEventListener('click', () => {
   void (async () => {
     try {
-      const feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
+      const feedback = await loadFeedback(modelFor(saved.model)).catch(
+        () => EMPTY_FEEDBACK,
+      );
       const day = new Date().toISOString().slice(0, 10);
       const name = `feedlens-backup-${day}.json`;
       download(
@@ -302,7 +337,7 @@ importFile.addEventListener('change', () => {
     }
     // Corrections first: the settings write is what makes a feed tab requery,
     // and it must not find the old vectors still in place.
-    await saveFeedback(result.feedback);
+    await saveFeedback(modelFor(result.settings.model), result.feedback);
     if (!(await update(result.settings))) {
       say(file.name, '— could not be saved', 'bad');
       return;

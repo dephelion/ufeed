@@ -5,16 +5,27 @@
 
 ## Model
 
-`Xenova/e5-small-v2`, q8, ~33MB, downloaded once and cached by the browser (Cache API, evictable).
+Two, and the reader picks. Both are downloaded once and cached by the browser (Cache API, evictable).
 
-**Retrieval model, not a similarity model.** The task is a short topic against a longer post — asymmetric. Prefixes are mandatory and asymmetric too:
+| Key        | Model                                     | dtype | Size   | Reads          | Default |
+| :--------- | :---------------------------------------- | :---- | :----- | :------------- | :------ |
+| `e5-small` | `Xenova/e5-small-v2`                      | q8    | ~33MB  | English only   | **yes** |
+| `gemma`    | `onnx-community/embeddinggemma-300m-ONNX` | q4    | ~197MB | Every language | no      |
+
+**Retrieval models, not similarity models.** The task is a short topic against a longer post — asymmetric. Prefixes are mandatory, asymmetric, and **per model**:
 
 ```
-topic → "query: software, programming"
-post  → "passage: <text>"
+e5-small  topic → "query: software, programming"        post → "passage: <text>"
+gemma     topic → "task: search result | query: ..."    post → "title: none | text: <text>"
 ```
 
-`src/core/models.ts` is the single source for the id, the prefixes, the strictness scale and the probe bounds. One constant, no registry, no runtime branching.
+`src/core/models.ts` is the single source: `MODELS` holds one `ModelSpec` per key, carrying the id, dtype, prefixes, vector width, strictness scale, probe bounds, `ratingNear`, peek band, batch size, and whether WebGPU may be tried. Nothing model-dependent is a bare constant anywhere else — `scoring.ts`, `language.ts`, `policy.ts` and the worker all take a spec.
+
+**A registry was rejected while there was one model**, and that held for as long as the product read one language. The second model is not a runtime branch for its own sake: it is the only way to filter a feed that is not in English, which the gate below can otherwise only blur wholesale.
+
+**`google/embeddinggemma-300m` is gated** (HTTP 401 unauthenticated). The `onnx-community` mirror is not, and is what ships. If it is ever gated the model fails to load, the engine reports `error`, and the feed fails open. EmbeddingGemma is under the **Gemma Terms of Use**, not an OSI licence; the weights are fetched by the browser and never redistributed here.
+
+**The step means the same thing on both scales.** Every model's strictness table has 11 steps spending the same share of feed, so a stored step survives a switch. Enforced by `scoring.test.ts`.
 
 ## Why this model
 
@@ -35,6 +46,30 @@ MiniLM is trained sentence-to-sentence; it compressed every score toward zero an
 | Multi-computer copy/paste (tech)              | 0.005  | 0.826 |
 | "Almeida destrozando a TelePedro." (politics) | 0.133  | 0.742 |
 
+## Why a second model
+
+Measured 2026-09-20 on **both feeds pooled, 415 posts** (the 205 above plus 210 from a second X timeline), against five topics — `politica`, `inmigracion`, `tecnologia`, `deportes`, `videojuegos` — each in four phrasings (unaccented Spanish, accented, a longer Spanish line, and English). A topic is a subject, not a language: an English post about politics is on topic for `politica`.
+
+Every row of a block is averaged; none were picked. 95% CI from a paired bootstrap over posts, 1000 resamples. Harness: `.local/spikes/multilingual/` (`eval.mjs`, `compare.mjs`), findings: `.local/embeddinggemma-2026-09-20.md`.
+
+| Block                                    | e5-small-v2 | multilingual-e5-small | EmbeddingGemma q4 |
+| :--------------------------------------- | ----------: | --------------------: | ----------------: |
+| Owner's English tech labels, 3 phrasings |       0.826 |                 0.842 |         **0.875** |
+| Same labels, `tecnologia` phrasings      |       0.746 |                 0.761 |         **0.846** |
+| Both feeds pooled, 12 rows               |       0.712 |                 0.740 |         **0.883** |
+| Spanish posts only                       |       0.721 |                 0.718 |         **0.941** |
+| English posts only                       |       0.680 |                 0.784 |         **0.882** |
+
+Gemma wins 11 of 12 rows in the pooled block; e5-small-v2 takes one (`politics`), multilingual-e5-small none. Gemma − multilingual on the pooled block is **+0.143 [+0.114, +0.175]**.
+
+**It is also far less sensitive to phrasing**, which is what the popup's topic guidance exists to work around: across the owner's three phrasings e5-small-v2 ranges 0.706 – 0.881, Gemma 0.896 – 0.946. A one-word topic works with Gemma.
+
+**Its English edge over the default is real but modest** (+0.050 [+0.001, +0.098]) — not on its own a reason to pay 6× the download and ~9× the compute. Reading every language is.
+
+**Topic language matters more than the model's reach.** An English topic scores Spanish posts lower: `politics` pooled reads 0.759 against 0.930 within Spanish and 0.867 within English. Topics typed in the posts' language work best, and a post matching any line stays visible, so a bilingual reader adds both.
+
+**What this did not measure.** One person's two timelines, skewed to Spanish politics and immigration. Spanish-language tech has only 5 wanted posts. Every label but the tech ones is one pass by an agent; changing what the unsure posts count as moves absolute AUC by ≤0.03 and never the order. Native ORT throughout, never browser WASM. (q8 was since compared on both speed and quality — see §Making WASM faster.)
+
 ## Score semantics
 
 **Scores are model-relative.** Unrelated text sits near **0.74** with e5 and near **0.00** with a symmetric model. Never persist a score; persist the slider position and derive.
@@ -51,6 +86,8 @@ Measured distribution, topic `tech, software, ai`: on-topic mean **0.806**, off-
 
 Guard: `embedder.model.test.ts` compares a post alone against the same post in a batch to six digits. Harness: `.local/spikes/topic-viability/batch-probe.mjs`.
 
+**Batching EmbeddingGemma was measured and closed** (2026-09-20, `.local/spikes/multilingual/throughput.mjs`). Two independent reasons: it is **no faster** — 16 texts in one call ran at 0.93× of one call each, because padding to the longest text wastes what the batch was meant to win — and cosine(alone, in batch) is **0.99966**, which the six-digit guard rejects. One text per call is not a cost paid for determinism here; it is simply better.
+
 ## Language
 
 **e5-small-v2 reads English only.** Text in another language still gets a score, and that score is noise — drawn from across the usable band with no relation to the topic. No threshold fixes it.
@@ -59,7 +96,9 @@ Measured on the same 205 posts, topic `tech, software, ai`: **68 of them are Spa
 
 Reproduce with the harness in `.local/`: classify each post's language, then compare the score distribution against the English posts'.
 
-`MODEL.language` is the single source. The gate compares against it, never a literal `en`, so a model swap moves it.
+`spec.language` is the single source. The gate compares against it, never a literal `en`, so a model swap moves it. **A spec with no `language` gates nothing**: `gatesLanguage()` returns false, detection never runs, and the popup disables the checkbox and says why rather than leaving it looking live. The reader's setting is kept for a switch back.
+
+**The multilingual model therefore costs more inference than its per-post figure says.** The gate currently settles foreign posts before they reach the engine — 79 of the 205 labelled posts are Spanish — so turning it off takes the share of a feed needing inference from ~62% to 100%: about 38% more posts scored, on top of the per-post cost.
 
 **Detection is `browser.i18n.detectLanguage()`** — Chrome's CLD, shipped in Chrome 47+ and Firefox 47+, no permission, available to content scripts. Nothing to bundle, nothing to keep trained. Rejected: `languagedetect` (npm, unmaintained, bundled trigram tables) and a hand-rolled English function-word rate — measured at **67 of 68 Spanish posts flagged with 0 false positives**, good enough to ship and still worse than CLD for free.
 
@@ -116,6 +155,25 @@ Base rate 13%: that is the precision a filter has to beat to be worth anything.
 **This replaced a 0.76 - 0.83 linear band**, whose floor blurred **30% of a feed at slider 0%** and whose documented rationale — "the range where moving it changes something" — did not survive measurement: 0.72 to 0.76 moves 28% of a feed and the band could not reach it.
 
 Default **step 7**: best F1 (0.55) on the labelled set.
+
+### EmbeddingGemma's scale — PROVISIONAL
+
+Derived 2026-09-20 by the same method (`.local/spikes/multilingual/calibrate.mjs`), over the same 615 observations, so a switched feed looks sane. **Not measured the way e5-small-v2's was, and not to be quoted as if it were.**
+
+**Its band is somewhere else entirely:** −0.046 … 0.407, median 0.141, against e5-small-v2's 0.679 … 0.871. Applying either table to the other model blurs everything or nothing — which is why the step, never the score, is what settings store.
+
+| Step | e5-small-v2 |  gemma | Feed shown |
+| ---: | ----------: | -----: | ---------: |
+|    0 |       0.690 | −0.047 |       100% |
+|    3 |       0.760 |  0.100 |        70% |
+|    5 |       0.775 |  0.141 |        50% |
+|    7 |       0.790 |  0.188 |        30% |
+|    9 |       0.810 |  0.253 |        10% |
+|   10 |       0.820 |  0.299 |         5% |
+
+Best F1 on the pooled set: Gemma **0.55 at step 8**, e5-small-v2 0.43 at step 8 under the same recomputation.
+
+**The method here does not exactly reproduce the shipped e5 table** (it gives 0.678 – 0.812 where the shipped one is 0.690 – 0.820), so the shape is validated and the digits are not. `peekBand` 0.02 and `ratingNear` 0.66 are likewise provisional: 0.66 matches the share of post-to-post pairs that e5's 0.90 sits above (top 0.111%; Gemma pairs run median 0.215, p99 0.458). **`near-probe.mjs` must be re-run against Gemma before any of this is treated as measured.**
 
 **The table is calibrated to one topic phrasing, and broader lines run looser.** Measured 2026-09-19 on two feeds pooled, English only (281 posts: the 205 above plus 210 from a second X timeline labelled by eye, 23 ambiguous dropped), scored alone, topic lines `programming, code, developers, software, hardware` / `linux, open source` / `AI, agents`:
 
@@ -191,20 +249,51 @@ No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pai
 
 **Off by default**, behind `tuneFromFeedback` ("Learn from my thumbs" in the popup).
 
-**A new model deletes every rating, on every install.** Vectors are stamped with the model that made them and dropped when it changes ([architecture.md](architecture.md)); the post text was discarded at rating time, so nothing can be re-embedded. `ratingNear` is model-specific and must be re-measured with any new model.
+**Ratings are kept per model, not deleted on a switch.** Vectors are stamped with the model that made them and stored under its id ([architecture.md](architecture.md)); a model reads only its own, and a switch back restores them untouched. The post text was discarded at rating time, so nothing can be re-embedded across models — but nothing needs to be. `ratingNear` is model-specific and must be re-measured with any new model.
 
 ## Backend self-check
 
 A backend can load, report ready, run fast, and return confident nonsense. ORT's **WebGPU backend miscomputes the q8 model**: a Spanish political post scored 0.32 against `tech` where CPU gives 0.001. Nothing errors.
 
-**WASM is the only backend.** WebGPU failed the probe on every load (`near=0.901 far=0.898`, against a required gap of 0.06), so every feed tab paid for a WebGPU session it then threw away. Not attempted since 0.7.0. Revisit only with a model or ORT release that passes the probe on WebGPU.
+**WASM is the only backend, for both models.** e5's q8 failed the probe on WebGPU on every load (`near=0.901 far=0.898`, against a required gap of 0.06), and so did Gemma's q4 (`near=0.353 far=0.375`, against `0.597` and `0.138` on WASM) — see `tryWebGPU` below. Every feed tab that tried paid for a WebGPU session it then threw away.
+
+**WASM threads are out for good**, whatever the model: an injected iframe cannot be cross-origin isolated, so `SharedArrayBuffer` is unusable and ORT runs single-threaded ([manifest.md](manifest.md) §No WASM threads). **Separate workers do parallelise** — measured 1.81× at 2, 3.07× at 4, 4.19× at 6 — but each holds its own copy of the weights, and at ~197MB per session that is a memory problem per feed tab before any pool is built. Not implemented; see `.local/embeddinggemma-2026-09-20.md`.
+
+## Making WASM faster: what was measured and rejected
+
+WASM is the only backend either model gets, so its cost is the product's cost. Measured 2026-09-20, native ORT single-threaded (the order is the finding, not the absolute ms). Harnesses in `.local/spikes/multilingual/`.
+
+**Cost is mostly fixed, not per-character.** Fitting the length sweep gives **`cost ≈ 31ms + 0.366ms × chars`**. A third of the cost of a median post is overhead that no amount of trimming touches.
+
+| Lever            | Real gain                    | Cost                                 | Verdict                                    |
+| :--------------- | :--------------------------- | :----------------------------------- | :----------------------------------------- |
+| q8 instead of q4 | **−70%** (168 vs 98 ms/post) | +112MB, +0.006 AUC                   | Rejected. q4 is both faster and smaller.   |
+| Cap text at 240  | 3.7%                         | −0.005 AUC                           | Rejected: not worth a code path.           |
+| Cap text at 160  | 17.5%                        | −0.022 AUC                           | Rejected: real accuracy for a modest gain. |
+| Cap text at 80   | 38%                          | −0.070 AUC                           | Rejected outright.                         |
+| Batching         | none (0.93×)                 | breaks determinism                   | Closed, see §Determinism.                  |
+| WASM threads     | —                            | impossible                           | Closed, no cross-origin isolation.         |
+| Smaller batch    | 0% throughput                | none                                 | **Adopted**, `spec.batchSize`.             |
+| 2 workers        | 45%                          | a second copy of the weights per tab | Open. Needs the engine singleton first.    |
+
+**Truncation looked far better than it is.** The per-post figures (80 chars runs at 0.40× the cost of 320) are for the _longest_ posts. Across the real length distribution — mean 174 chars, median 182, max 325 — a cap at 240 touches 125 of 415 posts and saves under 4%. Short posts cannot be made shorter, and `MAX_CHARS = 1200` never binds on a feed at all.
+
+**q4 beats q8 on speed by more than it loses on accuracy**, which was not the expectation: 4-bit weights usually cost dequantization work. Both land in the same band (cosine between a post's q4 and q8 vectors: mean 0.965), so the calibrated table holds either way. The model card forbids fp16 and its derivatives — EmbeddingGemma's activations do not support them — so `q4f16` is not an option however tempting its 175MB is.
+
+**`batchSize` is per model and buys latency, not throughput.** Since batching is measured to be no faster, a large batch only delays the first verdict and eats head-room under the engine's 8s timeout — and a timeout fails the whole batch open. e5-small keeps 16; Gemma takes **6**, which at its cost is a few hundred ms to the first unblur and leaves the request several times clear of the timeout.
 
 After load, `Embedder.selfCheck()` embeds a fixed probe pair and rejects the model unless both hold:
 
 - `near >= probeMinNear`
 - `near - far >= probeMinGap`
 
-Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; absolute scores are not comparable across models. A rejection throws; the engine reports `error` and the feed fails open.
+Bounds are per-model and live in `models.ts`. The **gap** is the robust signal; absolute scores are not comparable across models.
+
+**The probe now picks the backend, rather than only vetoing one.** `Embedder.load()` walks the backends a spec allows, keeps the first whose probe passes, and logs the rest as rejected. Only the last failure throws; then the engine reports `error` and the feed fails open.
+
+**`tryWebGPU` is a per-model switch, and it is off for both.** It was made per model because the 0.7.0 rejection was of _e5's q8_ alone, so Gemma's q4 was allowed to try and fall back to WASM in the same load. **Measured on Chrome, Apple M2 Pro: it fails.** Gemma's q4 on WebGPU scores `near=0.353 far=0.375` — the unrelated post above the related one — where WASM gives `near=0.597 far=0.138`. Nothing errors; the probe is the only thing that sees it. The wrong numbers were identical to three decimals under two runtimes, the bundled `onnxruntime-web` 1.22.0-dev and 1.30.0, and with `graphOptimizationLevel: 'disabled'` on the session, which rules out both a stale runtime and an optimizer fusion. That leaves a kernel in ORT's WebGPU backend. No other dtype is a way out: q8 already fails there, fp16 is unsafe for this model's activations, and fp32 is about 1.2 GB.
+
+**Reopen it only with a new ORT and a new probe run.** The worker logs `device` on `ready` and on every `scored` line, and the probe result is logged on every load; set `tryWebGPU: true` on one spec and read that log. Gemma on WASM costs about 610-720 ms per post, single-threaded, which is the reason to look again.
 
 ## Console noise from the runtime
 
@@ -226,5 +315,5 @@ Two third-party messages used to appear on every load and neither meant anything
 - **Per-line offset or z-score from a second feed.** AUC 0.838 / 0.831 against 0.861 on the first feed; 0.895 / 0.892 against 0.894 on the second.
 - **Shifting the cut by the topic's score on a neutral background** (62 generic posts). The background mean moves only 0.722 – 0.739 across phrasings; the spread in junk share at 0.790 (5% – 36%) comes from how broad the words are, and the shift narrows it only to 4% – 24%.
 - **Subtracting the closest neutral text's similarity** (`score - β·max`). AUC +0.013 / +0.017 at β = 0.25, worse from 0.5. The two leaked political posts sit at 0.821 / 0.832 from their closest neutral text against a skip median of 0.817: no signal. A hidden penalty is also a blocklist, which [product.md](product.md) rules out.
-- **`multilingual-e5-small` to fix the language problem.** Scores other languages correctly, and that is the wrong outcome twice: ~33MB q8 becomes ~120MB (250k vocab), and every measured number on this page — band, `PEEK_BAND`, the `estimateFeedShown` curve, the probe bounds — is calibrated to e5-small-v2 and would have to be re-measured. It would also correctly surface on-topic posts in languages the reader does not want, which is the opposite of what the gate is for.
-- **A model registry.** One model, chosen by measurement. The comparison is the reason for the choice, not a runtime branch.
+- **`multilingual-e5-small` to fix the language problem.** Measured 2026-09-20 against both feeds and rejected on its numbers, not its size. It buys nothing over e5-small-v2 on the owner's English labels (AUC 0.842 vs 0.826, 95% CI of the difference [−0.019, +0.048]) or on Spanish posts (0.718 vs 0.721), and scores _below_ it on `tecnologia` (0.634 vs 0.661). It gains only where topic and post are in different languages (English-post block 0.784 vs 0.680). 118MB for that is not a trade worth offering. EmbeddingGemma beats it in every block.
+- **A model registry, while there was one model.** Superseded: see §Model. The comparison is still the reason for each choice; what changed is that one model cannot serve a feed that is not in English.

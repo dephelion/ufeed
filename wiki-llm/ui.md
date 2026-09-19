@@ -132,8 +132,9 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | On                                | Global switch. Off reveals everything.                                                                                                                           |
 | Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                 |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                 |
+| Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                             |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                           |
-| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                                                                       |
+| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection. **Disabled** while a multilingual model runs.                                         |
 | Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                     |
 | Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                                                     |
 | Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                         |
@@ -160,6 +161,14 @@ Apply is disabled until the textarea differs from what is saved.
 **Import replaces on select, with no confirmation**, matching Reset, which destroys nearly as much on one click. A file is refused whole — settings included — when the schema is newer, the model does not match, or the JSON is not a backup; a refusal writes nothing. A settings field of the wrong type falls back to its default rather than refusing the file. The line is transient. The durable proof an import landed is the topics box and the thumb counts re-rendering above it. Export is disabled with nothing to export.
 
 **Firefox imports in a tab.** Firefox closes the popup when the file picker takes focus; `change` fires into a dead page. On Firefox (`import.meta.env.FIREFOX`), Import opens `popup.html?tab` and closes the popup. The tab needs a second click: a picker opens only on user activation. Chrome keeps the in-popup picker.
+
+**The model selector sits directly under the strictness slider**, above every checkbox: it changes what the other controls mean, so it is read before them and not buried in the block of toggles.
+
+**A disabled control must say why, and keep the reader's setting.** With a multilingual model there is nothing for the language checkbox to gate, so it is disabled and a line appears saying it is off because the model reads every language and that the setting is kept for a switch back. Silently unchecking it would look like FeedLens overrode a choice; leaving it live would be a lie.
+
+**Say the download size on the option itself**, not only in the details. 197MB is the whole cost of the choice, and a reader deciding between two options should not have to open anything to see it.
+
+**A switch keeps everything.** Topics, strictness and every checkbox survive; ratings are kept per model and come back on a switch back ([architecture.md](architecture.md)). The details text says so, because "switching models" otherwise reads as a thing that might cost the reader their work.
 
 ## No-topics card
 

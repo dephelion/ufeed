@@ -67,6 +67,7 @@ async function run(
     ready: true,
     status: { type: 'STATUS', state: 'ready' },
     connect: vi.fn(),
+    restart: vi.fn(),
     setTopics: vi.fn(),
     score: vi.fn(score),
     feedback: vi.fn(),

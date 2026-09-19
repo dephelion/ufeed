@@ -1,4 +1,4 @@
-import { STRICTNESS_STEPS } from './models';
+import { MODELS, DEFAULT_MODEL, type ModelSpec } from './models';
 
 export type Vector = Float32Array;
 
@@ -43,11 +43,12 @@ export function normalize(v: Vector): Vector {
 }
 
 /**
- * Settings store the step, not the score: unrelated text scores 0.74 with this
- * model and 0.00 with a symmetric one, so a stored score would mean something
- * different the moment the model changes.
+ * Settings store the step, not the score: unrelated text scores 0.74 with one
+ * model and 0.14 with another, so a stored score would mean something different
+ * the moment the model changes. Every model's scale has the same number of
+ * steps, and a step means the same share of the feed on each — enforced by test.
  */
-export const MAX_STRICTNESS = STRICTNESS_STEPS.length - 1;
+export const MAX_STRICTNESS = MODELS[DEFAULT_MODEL].strictness.length - 1;
 
 /** Anything that is not a step on the scale lands on the nearest one. */
 export function clampStrictness(step: number): number {
@@ -55,23 +56,17 @@ export function clampStrictness(step: number): number {
   return Math.min(MAX_STRICTNESS, Math.max(0, Math.round(step)));
 }
 
-export function thresholdForStrictness(step: number): number {
-  return STRICTNESS_STEPS[clampStrictness(step)]!.threshold;
+export function thresholdForStrictness(step: number, spec: ModelSpec): number {
+  return spec.strictness[clampStrictness(step)]!.threshold;
 }
 
 /**
- * Roughly how much of a feed this step leaves visible, from the 205 labelled
- * posts in wiki-llm/model.md. One sample, one feed: a hint, not a promise.
+ * Roughly how much of a feed this step leaves visible, from the labelled posts
+ * in wiki-llm/model.md. One sample, one feed: a hint, not a promise.
  */
-export function feedShownAt(step: number): number {
-  return STRICTNESS_STEPS[clampStrictness(step)]!.shown;
+export function feedShownAt(step: number, spec: ModelSpec): number {
+  return spec.strictness[clampStrictness(step)]!.shown;
 }
-
-/**
- * Width of the uncertain strip below the threshold. Below it nothing was wanted
- * across 125 observations; inside it, 7% was. See wiki-llm/model.md.
- */
-export const PEEK_BAND = 0.01;
 
 export type Verdict = 'show' | 'peek' | 'blur';
 
@@ -118,8 +113,12 @@ export function pooled(lines: readonly Rated[]): Rated {
   };
 }
 
-/** Verdict from the strictness threshold. */
-export function verdictAt(score: number, threshold: number): Verdict {
+/**
+ * Verdict from the strictness threshold. The peek strip is in score space and
+ * belongs to the model, never a fraction of the scale: tying one to the other
+ * makes it correct only at the default step.
+ */
+export function verdictAt(score: number, threshold: number, spec: ModelSpec): Verdict {
   if (score >= threshold) return 'show';
-  return score >= threshold - PEEK_BAND ? 'peek' : 'blur';
+  return score >= threshold - spec.peekBand ? 'peek' : 'blur';
 }

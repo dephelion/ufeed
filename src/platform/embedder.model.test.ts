@@ -6,16 +6,25 @@
  */
 import { describe, expect, it } from 'vitest';
 import { Embedder } from './embedder';
-import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from '../core/models';
+import {
+  DEFAULT_MODEL,
+  DEFAULT_STRICTNESS,
+  formatPost,
+  formatTopic,
+  modelFor,
+} from '../core/models';
+
 import { bestMatch, cosine, thresholdForStrictness } from '../core/scoring';
 
-const q = formatTopic;
-const d = formatPost;
-const THRESHOLD = thresholdForStrictness(DEFAULT_STRICTNESS);
+const MODEL = modelFor(DEFAULT_MODEL);
+
+const q = (t: string) => formatTopic(t, MODEL);
+const d = (t: string) => formatPost(t, MODEL);
+const THRESHOLD = thresholdForStrictness(DEFAULT_STRICTNESS, MODEL);
 
 const embedder = new Embedder();
 const vectorsFor = async (texts: string[]) => {
-  await embedder.load(undefined, 'cpu');
+  await embedder.load(MODEL, undefined, 'cpu');
   return embedder.embed(texts);
 };
 
@@ -92,17 +101,91 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
   });
 
   it('self-check passes on a backend that computes correctly', async () => {
-    await embedder.load(undefined, 'cpu');
+    await embedder.load(MODEL, undefined, 'cpu');
     const probe = await embedder.selfCheck();
     expect(probe.ok).toBe(true);
     expect(probe.near).toBeGreaterThan(probe.far);
   });
 
   it("self-check clears this model's gap by a real margin", async () => {
-    await embedder.load(undefined, 'cpu');
+    await embedder.load(MODEL, undefined, 'cpu');
     const probe = await embedder.selfCheck();
     // Absolute scores differ per model; the gap is what a broken backend collapses.
     expect(probe.near - probe.far).toBeGreaterThan(MODEL.probeMinGap);
     expect(probe.near).toBeGreaterThan(MODEL.probeMinNear);
+  });
+});
+
+/**
+ * The second model, through the shipped Embedder rather than a spike harness:
+ * a different graph, different prefixes, and its own pooled output. Downloads
+ * ~197MB the first time, which is why this suite is never part of `npm test`.
+ */
+describe('EmbeddingGemma, the multilingual model', { timeout: 600_000 }, () => {
+  const GEMMA = modelFor('gemma');
+  const gq = (t: string) => formatTopic(t, GEMMA);
+  const gd = (t: string) => formatPost(t, GEMMA);
+  const GEMMA_THRESHOLD = thresholdForStrictness(DEFAULT_STRICTNESS, GEMMA);
+
+  const gemma = new Embedder();
+  const vectors = async (texts: string[]) => {
+    await gemma.load(GEMMA, undefined, 'cpu');
+    return gemma.embed(texts);
+  };
+
+  it('loads and passes its own probe, which is what lets a backend be trusted', async () => {
+    await gemma.load(GEMMA, undefined, 'cpu');
+    const probe = await gemma.selfCheck();
+    expect(probe.ok).toBe(true);
+    expect(probe.near - probe.far).toBeGreaterThan(GEMMA.probeMinGap);
+  });
+
+  it("returns vectors of its own width, not the default model's", async () => {
+    const [v] = await vectors([gd(TECH)]);
+    expect(v).toHaveLength(GEMMA.dim);
+    expect(GEMMA.dim).not.toBe(MODEL.dim);
+  });
+
+  it('reads a Spanish post against a Spanish topic, which is the whole point', async () => {
+    const [housing, wanted, unwanted] = await vectors([
+      gd(HOUSING),
+      gq('vivienda, alquiler'),
+      gq('videojuegos, consolas'),
+    ]);
+    expect(cosine(wanted!, housing!)).toBeGreaterThan(cosine(unwanted!, housing!));
+    expect(cosine(wanted!, housing!)).toBeGreaterThan(GEMMA_THRESHOLD);
+  });
+
+  it('matches across languages: a Spanish topic claims an English post', async () => {
+    const [tech, politics, topic] = await vectors([
+      gd(TECH),
+      gd(POLITICS),
+      gq('tecnologia, software'),
+    ]);
+    expect(cosine(topic!, tech!)).toBeGreaterThan(cosine(topic!, politics!));
+  });
+
+  it('still separates within English, so multilingual costs no English accuracy', async () => {
+    const [tech, politics, topic] = await vectors([
+      gd(TECH),
+      gd(POLITICS),
+      gq('tech, software, ai'),
+    ]);
+    expect(cosine(topic!, tech!)).toBeGreaterThan(cosine(topic!, politics!));
+  });
+
+  it("scores in its own calibrated band, nowhere near the default model's", async () => {
+    const [tech, topic] = await vectors([gd(TECH), gq('tech, software, ai')]);
+    const score = cosine(topic!, tech!);
+    expect(score).toBeGreaterThan(thresholdForStrictness(0, GEMMA));
+    // e5's loosest step; a Gemma score reaching it would mean the tables were swapped.
+    expect(score).toBeLessThan(thresholdForStrictness(0, MODEL));
+  });
+
+  it('scores a post the same alone and among other posts', async () => {
+    const [topic] = await vectors([gq('tech, software, ai')]);
+    const [alone] = await vectors([gd(POLITICS)]);
+    const among = await vectors([gd(TECH), gd(HOUSING), gd(POLITICS)]);
+    expect(cosine(topic!, among[2]!)).toBeCloseTo(cosine(topic!, alone!), 6);
   });
 });

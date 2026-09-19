@@ -156,8 +156,8 @@ bundled in the extension and never fetched — remote WASM is reviewed as remote
 code execution, and that is not a review this extension needs to pass.
 
 The model runs on the CPU, through WASM. WebGPU was tried and dropped: ORT's
-WebGPU backend misreads the q8 weights and returns confident nonsense rather than
-failing. A self-check probe still runs on every load, so a runtime that
+WebGPU backend misreads the quantized weights of both models and returns confident
+nonsense rather than failing. A self-check probe still runs on every load, so a runtime that
 miscomputes on some machine is refused rather than trusted, and the feed stays
 unblurred.
 

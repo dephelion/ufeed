@@ -16,7 +16,7 @@ import {
   publishFeedDetected,
   serveEngineStatus,
 } from '../platform/status-channel';
-import { feedbackStore, loadSettings, onSettingsChanged } from '../platform/storage';
+import { feedbackStoreFor, loadSettings, onSettingsChanged } from '../platform/storage';
 
 export default defineContentScript({
   matches: [
@@ -48,8 +48,10 @@ async function start(): Promise<void> {
   }
   publishFeedDetected();
 
-  const settings = await loadSettings();
-  const tuner = await Tuning.load(feedbackStore);
+  // Tracked here because the feedback store reads the model on every call: it
+  // has to see the switch at the same moment the filter does.
+  let settings = await loadSettings();
+  const tuner = await Tuning.load(feedbackStoreFor(() => settings.model));
   const engine = new EngineClient();
   const filter = new FeedFilter({
     adapter,
@@ -73,7 +75,12 @@ async function start(): Promise<void> {
   const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'));
   nudge.setVisible(needsTopics(settings));
   onSettingsChanged((next) => {
+    const modelChanged = next.model !== settings.model;
+    settings = next;
     nudge.setVisible(needsTopics(next));
+    // The store now answers for the new model, so what this tab holds in memory
+    // is the old model's ratings until it is told to read again.
+    if (modelChanged) void tuner.reload();
     filter.applySettings(next);
   });
   tuner.onChange(() => filter.tuningChanged());

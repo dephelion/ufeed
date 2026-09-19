@@ -1,4 +1,4 @@
-import { MODEL } from './models';
+import { modelById, modelFor, type ModelSpec } from './models';
 import {
   capped,
   forTopics,
@@ -26,12 +26,15 @@ export interface Backup {
 export type ImportResult =
   { ok: true; settings: Settings; feedback: Feedback } | { ok: false; reason: string };
 
+/** The backup carries the model the ratings were made with, so a reader's file
+ *  is refused rather than silently misread when it meets another model. */
 export function exportConfig(
   settings: Settings,
   feedback: Feedback,
   app: string,
   now = new Date(),
 ): string {
+  const spec = modelFor(settings.model);
   const byTopic: Backup['feedback'] = {};
   for (const [topic, ratings] of Object.entries(feedback.byTopic)) {
     byTopic[topic] = ratings.map((r) => ({
@@ -44,7 +47,7 @@ export function exportConfig(
     schema: SCHEMA,
     app,
     exportedAt: now.toISOString(),
-    model: { id: MODEL.id, dim: MODEL.dim },
+    model: { id: spec.id, dim: spec.dim },
     settings,
     feedback: byTopic,
   };
@@ -68,23 +71,28 @@ export function importConfig(text: string): ImportResult {
   if (schema > SCHEMA) return { ok: false, reason: 'made by a newer version' };
 
   const model = parsed['model'];
-  const id = isRecord(model) ? model['id'] : undefined;
-  const dim = isRecord(model) ? model['dim'] : undefined;
-  if (id !== MODEL.id || dim !== MODEL.dim) {
+  const stamp = isRecord(model) ? model['id'] : undefined;
+  const spec = modelById(stamp);
+  if (!spec || (isRecord(model) ? model['dim'] : undefined) !== spec.dim) {
     return { ok: false, reason: 'made with a different model' };
   }
 
-  const settings = withDefaults(parsed['settings'] as Partial<Settings>);
+  // The stamp, not the settings, decides which model these vectors belong to:
+  // the ratings are unusable under any other, whatever the file's settings say.
+  const settings = withDefaults({
+    ...(parsed['settings'] as Partial<Settings>),
+    model: spec.key,
+  });
   const byTopic: Record<string, Rating[]> = {};
   const stored = parsed['feedback'];
   if (isRecord(stored)) {
     for (const [topic, list] of Object.entries(stored)) {
       if (!Array.isArray(list)) continue;
-      const ratings = list.flatMap(decodeRating);
+      const ratings = list.flatMap((value) => decodeRating(value, spec));
       if (ratings.length > 0) byTopic[topic] = capped(ratings);
     }
   }
-  const feedback = normalizeFeedback({ model: MODEL.id, dim: MODEL.dim, byTopic });
+  const feedback = normalizeFeedback({ model: spec.id, dim: spec.dim, byTopic });
   return { ok: true, settings, feedback: forTopics(feedback, settings.topics) };
 }
 
@@ -98,25 +106,25 @@ function encodeVector(vector: readonly number[]): string {
   return btoa(binary);
 }
 
-function decodeVector(encoded: string): number[] | undefined {
+function decodeVector(encoded: string, dim: number): number[] | undefined {
   let binary: string;
   try {
     binary = atob(encoded);
   } catch {
     return undefined;
   }
-  if (binary.length !== MODEL.dim * 4) return undefined;
+  if (binary.length !== dim * 4) return undefined;
   const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
   const view = new DataView(bytes.buffer);
-  return Array.from({ length: MODEL.dim }, (_, i) => view.getFloat32(i * 4, true));
+  return Array.from({ length: dim }, (_, i) => view.getFloat32(i * 4, true));
 }
 
-function decodeRating(value: unknown): Rating[] {
+function decodeRating(value: unknown, spec: ModelSpec): Rating[] {
   if (!isRecord(value)) return [];
   const { key, liked, vector } = value;
   if (typeof key !== 'string' || typeof liked !== 'boolean') return [];
   if (typeof vector !== 'string') return [];
-  const decoded = decodeVector(vector);
+  const decoded = decodeVector(vector, spec.dim);
   return decoded ? [{ key, liked, vector: decoded }] : [];
 }
 

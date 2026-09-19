@@ -5,13 +5,13 @@
 
 ## Data
 
-| Data          | Where it goes                                                                                               |
-| :------------ | :---------------------------------------------------------------------------------------------------------- |
-| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.     |
-| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                        |
-| Settings      | `storage.local`. Topics, strictness step, per-host toggles.                                                 |
-| Model weights | Fetched once from the CDN, cached by the browser.                                                           |
-| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by topic line and post hash. Vectors only, 50 each way. |
+| Data          | Where it goes                                                                                                             |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------ |
+| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                   |
+| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                      |
+| Settings      | `storage.local`. Topics, strictness step, per-host toggles.                                                               |
+| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                     |
+| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way. |
 
 **Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs.
 
@@ -28,6 +28,8 @@
 **Engine status is asked, never stored.** The popup queries the active tab over `browser.runtime` messaging and keeps the answer in memory. An earlier version parked it in `storage.local` with a timestamp, which left a durable record of when a feed was last open — settings-adjacent, surviving restarts, and flatly at odds with the claim above. Nothing about engine activity now touches disk. See [architecture.md](architecture.md).
 
 **One class of network request exists: model weights.** Nothing else. No analytics in v1 — a hard constraint, and what makes the "does not collect user data" declaration truthful.
+
+**Choosing a model does not tell anyone anything more.** Both come from `huggingface.co` and its storage CDN, on the same one-time fetch, with no identifier attached. Picking the multilingual one changes which files are requested and nothing else; the selection itself stays in `storage.local` and is never transmitted.
 
 **Never log post text.** `src/core/log.ts` takes counts, scores, states, errors and topic strings. Topic strings are user config. Post text is not, and a console log reaches devtools recordings and crash reports.
 
