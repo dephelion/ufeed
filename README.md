@@ -22,7 +22,7 @@ video games, game design
 ```
 
 Each post is compared with them as you scroll. Posts about your topics stay.
-Everything else is blurred, not deleted, and one click reveals it.
+Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 ## Why FeedLens
 
@@ -34,7 +34,7 @@ Everything else is blurred, not deleted, and one click reveals it.
 - **You can see why, and steer it.** A 0–10 strictness slider, an option to show
   every post's score, a peek strip that keeps close calls readable, and thumbs
   that correct near-copies of posts you rated.
-- **You stay in charge.** A blurred post is always one click away. If anything
+- **You stay in charge.** A blurred post is always one click, or one Enter, away. If anything
   breaks, the feed shows instead of staying blurred.
 
 ## What it cannot do

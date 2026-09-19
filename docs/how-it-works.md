@@ -10,8 +10,8 @@ Four choices shape everything else. Each one gives something up.
 - **You name what you want, not what you hate.** A list of topics to keep is short
   and finite. A list of topics to avoid never is. The cost: a post that is about
   none of your topics is blurred, even if it is harmless.
-- **Blur, never delete.** Every blurred post is one click from readable, so a wrong
-  call costs a click, not a missed post.
+- **Blur, never delete.** Every blurred post is one click (or Enter, from the
+  keyboard) from readable, so a wrong call costs a click, not a missed post.
 - **An embedding model, not a chat model.** FeedLens turns text into numbers and
   compares them. It does not reason about a post. That is what keeps the model at
   33 MB, lets it run in your browser, and makes it give the same answer every time

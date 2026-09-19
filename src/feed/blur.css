@@ -63,6 +63,12 @@
   transition: opacity 0.2s ease;
 }
 
+/* Focus inside a blurred post lands on content nobody can see; the label shows where it is. */
+.lx-blur:focus-within::after {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .lx-blur[data-lx-reason='media']::after {
   content: 'No text to check — click to view';
   background: color-mix(in srgb, #57534e 78%, transparent);
@@ -143,8 +149,9 @@
    blur. max-height/overflow work on any host markup — no per-site layout code —
    and cap the box even when the host has set its own inline height (e.g. a
    virtualized feed's measured row), since max-height constrains the used height
-   regardless of what set it. Children are hidden outright, not just dimmed:
+   regardless of what set it. Children go fully transparent, not just dimmed:
    a clipped sliver of text or a media frame would otherwise leak past the edge.
+   Transparent rather than visibility: hidden, which a keyboard cannot focus.
    No fill of our own: the row shows whatever the host paints behind the post,
    and the inset hairline keeps a run of rows apart on a dark or a light feed. */
 .lx-collapse {
@@ -154,7 +161,7 @@
 }
 
 .lx-collapse > * {
-  visibility: hidden;
+  opacity: 0;
 }
 
 /* Smaller than the full-height label, and centred in the row. */
@@ -374,4 +381,17 @@
 .lx-nudge-x:hover {
   color: #fafaf9;
   background: color-mix(in srgb, #fafaf9 12%, transparent);
+}
+
+/* The screen-reader announcer: present to assistive tech, invisible on the page. */
+.lx-sr {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

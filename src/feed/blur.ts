@@ -85,26 +85,81 @@ export function isBlurred(element: HTMLElement): boolean {
   return element.classList.contains(BLUR_CLASS);
 }
 
+/** What a screen reader hears when focus enters a blurred post, per `BlurReason`. */
+const SPOKEN: Record<BlurReason, string> = {
+  topic: 'out of topic',
+  media: 'no text to check',
+  language: 'another language',
+  peek: 'borderline',
+};
+
 /**
- * First click reveals and goes no further; a second behaves normally. Click is
- * the only way in — hover would expose every post the pointer crossed while
- * scrolling.
+ * One polite live region of our own. Blurred posts are `aria-hidden`, yet their
+ * links stay focusable (Invariant 3 rules out `inert`), so focus needs a voice.
+ */
+function mountAnnouncer(root: Document): { say(text: string): void; remove(): void } {
+  const region = root.createElement('div');
+  region.className = 'lx-sr';
+  region.setAttribute('role', 'status');
+  root.documentElement.appendChild(region);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return {
+    say(text) {
+      // Cleared first: a screen reader skips a region whose text did not change.
+      region.textContent = '';
+      clearTimeout(timer);
+      timer = setTimeout(() => (region.textContent = text), 50);
+    },
+    remove() {
+      clearTimeout(timer);
+      region.remove();
+    },
+  };
+}
+
+/**
+ * First click, or Enter on anything focused inside, reveals and goes no further;
+ * a second behaves normally. No hover: it would expose every post the pointer
+ * crossed while scrolling.
  */
 export function listenForReveal(
   root: Document = document,
   onReveal: (element: HTMLElement) => void = () => {},
 ): () => void {
-  const onClick = (event: MouseEvent) => {
-    const target = event.target as Element | null;
-    const element = target?.closest<HTMLElement>(`.${BLUR_CLASS}`);
+  const blurredAt = (target: EventTarget | null) =>
+    target instanceof Element ? target.closest<HTMLElement>(`.${BLUR_CLASS}`) : null;
+
+  const take = (event: Event): void => {
+    const element = blurredAt(event.target);
     if (!element) return;
     event.preventDefault();
     event.stopPropagation();
     revealPermanently(element);
     onReveal(element);
   };
-  root.addEventListener('click', onClick, true);
-  return () => root.removeEventListener('click', onClick, true);
+  const onKey = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') take(event);
+  };
+
+  const announcer = mountAnnouncer(root);
+  let announced: HTMLElement | undefined;
+  const onFocus = (event: FocusEvent) => {
+    const element = blurredAt(event.target);
+    if (!element || element === announced) return;
+    announced = element;
+    const reason = SPOKEN[element.dataset.lxReason as BlurReason] ?? SPOKEN.topic;
+    announcer.say(`Blurred by FeedLens: ${reason}. Press Enter to read it.`);
+  };
+
+  root.addEventListener('click', take, true);
+  root.addEventListener('keydown', onKey, true);
+  root.addEventListener('focusin', onFocus, true);
+  return () => {
+    root.removeEventListener('click', take, true);
+    root.removeEventListener('keydown', onKey, true);
+    root.removeEventListener('focusin', onFocus, true);
+    announcer.remove();
+  };
 }
 
 export function revealAll(root: ParentNode = document): void {

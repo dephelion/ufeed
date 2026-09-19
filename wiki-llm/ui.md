@@ -23,7 +23,7 @@
 
 **Never `filter: blur()` on the container.** It creates a stacking context **and a containing block**, breaking `position: fixed` descendants and vendor overlays, and it is expensive across a long feed. Media is a leaf with no fixed descendants, so blurring it directly is safe.
 
-**`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose.
+**`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose. Its links stay focusable — `inert` would mutate host DOM (Invariant 3) — so focus entering a blurred post is announced instead (§Reveal).
 
 **Never nest.** Blur the outermost claimed container; effects must not stack.
 
@@ -90,10 +90,13 @@ Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with tex
 
 ## Reveal
 
-**Click only. No hover.** Scrolling drags the pointer across the feed, so hover exposed every post it passed over.
+**Click or Enter. No hover.** Scrolling drags the pointer across the feed, so hover exposed every post it passed over.
 
 - `pointer-events: none` on `.lx-blur > *` makes the first click consumable.
 - First click: reveal, `preventDefault`, `stopPropagation`. The post never navigates.
+- Enter with focus anywhere inside a blurred post does the same. X's J/K and Tab both land there; without it a keyboard reader could not reveal at all.
+- Collapsed posts hide their content with `opacity: 0`, never `visibility: hidden`: hidden content cannot take focus, which left a keyboard reader no way in. `.lx-blur:focus-within::after` rings the label, since the focused element itself is invisible.
+- Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by FeedLens: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
 - Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
