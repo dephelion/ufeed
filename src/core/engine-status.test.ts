@@ -26,16 +26,15 @@ describe('toStatus', () => {
     expect(toStatus({ type: 'STATUS', state: 'ready' }).progress).toBeUndefined();
   });
 
-  it('carries backend, message and the timestamp through', () => {
+  it('carries the message through', () => {
     const out = toStatus({
       type: 'STATUS',
       state: 'error',
-      message: 'no usable backend',
+      message: 'model returns wrong vectors',
     });
     expect(out).toEqual({
       state: 'error',
-      message: 'no usable backend',
-      backend: undefined,
+      message: 'model returns wrong vectors',
       progress: undefined,
     });
   });
@@ -62,11 +61,6 @@ describe('worthReporting', () => {
     const before = status({ state: 'downloading', progress: 40 });
     const after = status({ state: 'downloading', progress: 45 });
     expect(worthReporting(before, after)).toBe(true);
-  });
-
-  it('reports when the backend changes under the same state', () => {
-    const before = status({ backend: 'webgpu' });
-    expect(worthReporting(before, status({ backend: 'wasm' }))).toBe(true);
   });
 
   it('reports when a message appears on an unchanged state', () => {
@@ -102,13 +96,7 @@ describe('describeEngine', () => {
     expect(text).not.toContain('NaN');
   });
 
-  it('names the backend once ready, which is the whole point of showing it', () => {
-    expect(describeEngine(status({ state: 'ready', backend: 'wasm' })).text).toContain(
-      'wasm',
-    );
-  });
-
-  it('reports ready without a backend rather than printing undefined', () => {
+  it('reports ready without printing undefined', () => {
     const { tone, text } = describeEngine(status({ state: 'ready' }));
     expect(tone).toBe('ready');
     expect(text).not.toContain('undefined');
@@ -116,10 +104,10 @@ describe('describeEngine', () => {
 
   it('surfaces the failure reason, since that is what a bug report needs', () => {
     const { tone, text } = describeEngine(
-      status({ state: 'error', message: 'no usable backend' }),
+      status({ state: 'error', message: 'model returns wrong vectors' }),
     );
     expect(tone).toBe('error');
-    expect(text).toContain('no usable backend');
+    expect(text).toContain('model returns wrong vectors');
   });
 });
 
@@ -133,7 +121,7 @@ describe('summarizeEngine', () => {
       status({ state: 'downloading', progress: 100 }),
       status({ state: 'downloading' }),
       status({ state: 'warming' }),
-      status({ state: 'ready', backend: 'webgpu' }),
+      status({ state: 'ready' }),
       status({ state: 'error', message: 'a'.repeat(200) }),
     ];
     for (const s of states) {
@@ -148,16 +136,10 @@ describe('summarizeEngine', () => {
     );
   });
 
-  it('names the backend once ready, so a bug report carries it', () => {
-    expect(summarizeEngine(status({ state: 'ready', backend: 'wasm' })).text).toBe(
-      'Ready \u00b7 wasm',
-    );
-  });
-
   it('drops the failure reason, which the footer line keeps', () => {
-    const failed = status({ state: 'error', message: 'no usable backend' });
+    const failed = status({ state: 'error', message: 'model returns wrong vectors' });
     expect(summarizeEngine(failed).text).toBe('Failed');
-    expect(describeEngine(failed).text).toContain('no usable backend');
+    expect(describeEngine(failed).text).toContain('model returns wrong vectors');
   });
 
   it('distinguishes a tab with no engine from one that has not started', () => {
@@ -170,7 +152,7 @@ describe('summarizeEngine', () => {
       status({ state: 'idle' }),
       status({ state: 'downloading', progress: 50 }),
       status({ state: 'warming' }),
-      status({ state: 'ready', backend: 'wasm' }),
+      status({ state: 'ready' }),
       status({ state: 'error' }),
     ];
     for (const s of states) {

@@ -5,6 +5,7 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     include: ['src/**/*.test.ts'],
+    setupFiles: ['vitest.setup.ts'],
     // Model tests load real weights and take seconds; run them with test:model.
     exclude: ['**/node_modules/**', 'src/**/*.model.test.ts'],
   },

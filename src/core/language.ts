@@ -1,4 +1,4 @@
-import { MODEL } from '../ml/models';
+import { MODEL } from './models';
 
 /**
  * `unclear` is CLD's own verdict — it read the text and could not place it —

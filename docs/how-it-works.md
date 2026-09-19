@@ -10,8 +10,8 @@ Four choices shape everything else. Each one gives something up.
 - **You name what you want, not what you hate.** A list of topics to keep is short
   and finite. A list of topics to avoid never is. The cost: a post that is about
   none of your topics is blurred, even if it is harmless.
-- **Blur, never delete.** Every blurred post is one click from readable, so a wrong
-  call costs a click, not a missed post.
+- **Blur, never delete.** Every blurred post is one click (or Enter, from the
+  keyboard) from readable, so a wrong call costs a click, not a missed post.
 - **An embedding model, not a chat model.** FeedLens turns text into numbers and
   compares them. It does not reason about a post. That is what keeps the model at
   33 MB, lets it run in your browser, and makes it give the same answer every time
@@ -23,7 +23,7 @@ Four choices shape everything else. Each one gives something up.
 
 The rest of this page shows the machinery.
 
-## The three layers
+## Where it runs
 
 ```mermaid
 flowchart TB
@@ -47,7 +47,7 @@ flowchart TB
   frame == "scores" ==> cs
 ```
 
-Three layers, each for one reason. The **content script** lives inside the page,
+Three execution contexts, each for one reason. The **content script** lives inside the page,
 so it is the only part that can read the feed or blur anything. The **iframe**
 exists because a content script cannot spawn an extension-origin worker, but a
 document already on that origin can. The **worker** is a separate thread, so
@@ -133,9 +133,6 @@ flowchart TB
   frame == "SCORE texts<br/>worker.postMessage" ==> tj
   out == "SCORES, STATUS<br/>self.postMessage" ==> frame
 
-  gpu["webgpu execution provider<br/>rejected every load:<br/>miscomputes q8"]
-  ort -. "tried first" .-> gpu
-
   weights[("hub CDN<br/>e5-small-v2 q8 weights<br/>fetched once, then cached")] -. "model" .-> tj
   runtime[("bundled /ort/*.wasm<br/>never fetched at runtime")] -. "engine" .-> ort
 ```
@@ -158,10 +155,11 @@ on first load and live in the browser cache after that. The **runtime WASM** is
 bundled in the extension and never fetched — remote WASM is reviewed as remote
 code execution, and that is not a review this extension needs to pass.
 
-WebGPU is tried first on every load and rejected on every load: ORT's WebGPU
-backend misreads the q8 weights and returns confident nonsense rather than
-failing, so the self-check probe is the only thing standing between that and a
-feed blurred at random. `wasm` is the steady state.
+The model runs on the CPU, through WASM. WebGPU was tried and dropped: ORT's
+WebGPU backend misreads the q8 weights and returns confident nonsense rather than
+failing. A self-check probe still runs on every load, so a runtime that
+miscomputes on some machine is refused rather than trusted, and the feed stays
+unblurred.
 
 ## Tuning it yourself
 

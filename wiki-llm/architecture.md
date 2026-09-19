@@ -1,20 +1,21 @@
 # Architecture
 
-> **Maintenance Invariant:** Structure, layers, message flow only. No selectors ([adapters.md](adapters.md)), no scoring rules ([model.md](model.md)). Update in the SAME commit as any boundary or contract change. Token-optimized: imperative, no prose, no redundancy.
-> **Answers:** The three layers and why each exists. End-to-end flow. Message contract. Invalidation and races.
+> **Maintenance Invariant:** Runtime structure, execution contexts, message flow only. Code layers live in [layers.md](layers.md). No selectors ([adapters.md](adapters.md)), no scoring rules ([model.md](model.md)). Update in the SAME commit as any boundary or contract change. Token-optimized: imperative, no prose, no redundancy.
+> **Answers:** The three execution contexts and why each exists. End-to-end flow. Message contract. Invalidation and races.
 
-## Three layers
+## Three execution contexts
 
-| Layer          | Lives in                                 | Can                               | Cannot                    |
+Where code runs, not how it is layered: that is [layers.md](layers.md).
+
+| Context        | Lives in                                 | Can                               | Cannot                    |
 | :------------- | :--------------------------------------- | :-------------------------------- | :------------------------ |
 | Content script | Host page world (`x.com`)                | Read feed DOM, apply blur         | Spawn an extension worker |
 | Engine iframe  | Extension origin (`chrome-extension://`) | Spawn a same-origin module Worker | See the host DOM          |
 | Worker         | Separate thread, extension origin        | Load the model, embed, score      | Touch any DOM             |
 
-**Why the iframe exists.** Four constraints leave one portable answer:
+**Why the iframe exists.** Three constraints leave one portable answer:
 
 - `Worker` is not exposed in `ServiceWorkerGlobalScope` — an MV3 service worker cannot spawn one.
-- `navigator.gpu` is unavailable in a service worker.
 - MV3 service workers terminate after ~30s idle, evicting the model repeatedly.
 - A content script cannot `new Worker(runtime.getURL(...))` — cross-origin to the host page, and subject to the host page's CSP.
 
@@ -32,10 +33,12 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 
 1. `MutationObserver` on `document.documentElement` → `sweep(node)`.
 2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo or first text mounts later is offered again: X can mount a cell before either. Other inner mutations never re-offer.
-3. On intersection: cache hit or override decides immediately; otherwise queue.
+3. On intersection: a cache hit, a kept conversation, or the media or language rule decides immediately; otherwise queue.
 4. Queue flushes at 16 posts or a 100ms debounce.
 5. Worker embeds, scores against topic vectors, replies with **raw scores**.
 6. `decide()` blurs or reveals; the score is cached by text hash.
+
+Steps 1–6 live in `FeedFilter` (`src/feed/filter.ts`). `content.ts` only wires it to storage, the engine client, the popup and the page.
 
 Background service worker: nothing on the hot path. Settings propagate through `storage.onChanged`.
 
@@ -47,7 +50,7 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 
 **The model stamp is the gate.** A missing one reads as `Xenova/e5-small-v2`, which is what every install that predates the stamp holds. On any other id or width, `forCurrentModel()` drops the vectors at load and keeps the settings: another model's embeddings are in another coordinate space, and the post text they came from was discarded at rating time, so there is nothing to re-embed. Shipping a new model therefore costs every reader their corrections — weigh it in the release, and say so in the popup.
 
-**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`, and the content script requeries when the ratings on its lines differ from what the worker last received (`Tuning.signature`) — a clear, an import or a thumb in another tab. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
+**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`, and `FeedFilter` requeries when the ratings on its lines differ from what the worker last received (`Tuning.signature`) — a clear, an import or a thumb in another tab. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
 
 ## Message contract
 
@@ -62,7 +65,7 @@ engine  → content  { id, type: 'SCORES',     scores, topics, lines, ratings } 
 engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design
 engine  → content  { id, type: 'ERROR',      message }
-engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
+engine  → content  { type: 'STATUS', state, progress?, message? }
 ```
 
 **The worker embeds a correction, the content script stores it.** Vectors live where the model lives; persistence lives where `storage.local` is reachable. The content script never embeds and the worker never persists.
@@ -73,9 +76,11 @@ engine  → content  { type: 'STATUS', state, backend?, progress?, message? }
 
 **Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
 
+**The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and FeedLens fails open.
+
 ## Status channel
 
-A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/core/status-channel.ts`.
+A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/platform/status-channel.ts`.
 
 ```
 popup   → content  { type: 'feedlens:status?' }            to the ACTIVE tab only
@@ -99,11 +104,10 @@ content → popup    { type: 'feedlens:status', status }     pushed on change
 
 - `Conversation` (`src/feed/conversation.ts`) is generic: verdicts per container, replies per lead post. It never reads vendor DOM.
 - The adapter supplies the site part: `SiteAdapter.leadPost(container)`. Only X has one ([adapters.md](adapters.md)). `Conversation.for(adapter)` returns undefined without `leadPost`.
-- Content script touches it at three points: `route` before scoring, `settle` after every verdict and reveal click, `reset` on requery. Without one, no hook runs.
+- `FeedFilter` touches it at three points: `route` before scoring, `settle` after every verdict and reveal click, `reset` on requery. Without one, no hook runs.
 - **The post the reader opened is never filtered, on every site.** An adapter enforces it only where it breaks: X's `leadPost` returns the opened post itself (a reveal does not survive X's redraw). Reddit stands down on threads; LinkedIn already holds, checked by hand.
 - `route`: post leads itself → `keep`; lead post kept → `keep` (revealed, never scored); blurred or peeked → `judge` (as any post); undecided → `wait` (held with `markPending`).
 - `settle`: a changed verdict hands back the lead post's replies, re-routed through `enqueue`. Covers waiting replies, a reader reveal, and a rescore flip.
-- `alwaysBlur` override still wins over `keep`, the opened post included.
 - No checkbox. Nobody wants the replies of a post they are reading blurred.
 
 **Fail-open holds.** A held reply is never blurred; the pending state clears itself. A lead post never decided leaves its replies visible.

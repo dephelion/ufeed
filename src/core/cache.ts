@@ -1,4 +1,4 @@
-import type { RatedMatch } from '../ml/scoring';
+import type { RatedMatch } from './scoring';
 
 /** FNV-1a. Content-keyed, because virtualized feeds recycle DOM nodes. */
 export function hashText(text: string): string {

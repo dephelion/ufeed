@@ -1,7 +1,7 @@
-import browser from 'webextension-polyfill';
 import { hashText } from '../core/cache';
+import { classify, type Language } from '../core/language';
 import { logger } from '../core/log';
-import { classify, type Language } from './language';
+import type { DetectLanguage } from './ports';
 
 const log = logger('language');
 
@@ -9,15 +9,15 @@ const log = logger('language');
  * CLD ships in both browsers behind `i18n`, so there is nothing to bundle and
  * nothing to keep trained. A missing or throwing API returns undefined and the
  * language tiers stand down — the post is judged on its score alone.
- *
- * Split from `language.ts` for the reason `settings-storage.ts` is: the polyfill
- * throws on import outside an extension, and the rules must test in milliseconds.
  */
 export class LanguageCache {
   readonly #known = new Map<string, Language>();
   readonly #inFlight = new Map<string, Promise<Language | undefined>>();
 
-  constructor(private readonly limit = 2000) {}
+  constructor(
+    private readonly detectLanguage: DetectLanguage,
+    private readonly limit = 2000,
+  ) {}
 
   get(text: string): Language | undefined {
     return this.#known.get(hashText(text));
@@ -43,7 +43,7 @@ export class LanguageCache {
 
   async #run(text: string): Promise<Language | undefined> {
     try {
-      return classify(await browser.i18n.detectLanguage(text));
+      return classify(await this.detectLanguage(text));
     } catch (error) {
       log.warn('detection unavailable, scoring alone from here', {
         reason: error instanceof Error ? error.message : String(error),

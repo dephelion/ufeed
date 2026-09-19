@@ -1,9 +1,9 @@
 import EngineWorker from './engine.worker.ts?worker';
 import { logger } from '../../core/log';
 import {
-  HANDSHAKE,
   isEngineReply,
   isEngineRequest,
+  isHandshake,
   type EngineReply,
   type StatusEvent,
 } from '../../core/protocol';
@@ -53,9 +53,9 @@ if (worker) {
   };
 }
 
+// First handshake only: the host page shares the parent window and could send a second one.
 addEventListener('message', (event: MessageEvent<unknown>) => {
-  const data = event.data as { type?: unknown } | null;
-  if (!data || data.type !== HANDSHAKE) return;
+  if (port || !isHandshake(event.data)) return;
   port = event.ports[0];
   if (!port) return;
   port.onmessage = (request: MessageEvent<unknown>) => {

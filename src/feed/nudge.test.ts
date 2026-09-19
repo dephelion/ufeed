@@ -1,14 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { mountNudge } from './nudge';
 
-vi.mock('webextension-polyfill', () => ({
-  default: { runtime: { getURL: (p: string) => `moz-extension://id/${p}` } },
-}));
-
-const { mountNudge } = await import('./nudge');
+const ICON = 'moz-extension://id/icon-gray/48.png';
 
 describe('mountNudge', () => {
   it('hides on ×', () => {
-    const nudge = mountNudge();
+    const nudge = mountNudge(ICON);
     nudge.setVisible(true);
     const card = document.querySelector<HTMLElement>('.lx-nudge')!;
     expect(card.hidden).toBe(false);
@@ -22,7 +19,7 @@ describe('mountNudge', () => {
     orphan.className = 'lx-nudge';
     document.body.append(orphan);
 
-    const nudge = mountNudge();
+    const nudge = mountNudge(ICON);
     expect(document.querySelectorAll('.lx-nudge')).toHaveLength(1);
     expect(orphan.isConnected).toBe(false);
     nudge.destroy();

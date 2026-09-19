@@ -22,7 +22,7 @@ video games, game design
 ```
 
 Each post is compared with them as you scroll. Posts about your topics stay.
-Everything else is blurred, not deleted, and one click reveals it.
+Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 ## Why FeedLens
 
@@ -34,7 +34,7 @@ Everything else is blurred, not deleted, and one click reveals it.
 - **You can see why, and steer it.** A 0–10 strictness slider, an option to show
   every post's score, a peek strip that keeps close calls readable, and thumbs
   that correct near-copies of posts you rated.
-- **You stay in charge.** A blurred post is always one click away. If anything
+- **You stay in charge.** A blurred post is always one click, or one Enter, away. If anything
   breaks, the feed shows instead of staying blurred.
 
 ## What it cannot do
@@ -67,7 +67,7 @@ Nothing blurs until it has loaded.
 
 ## Build from source
 
-Node 20+ and npm. Nothing else.
+Node 22.12+ and npm. Nothing else.
 
 ```bash
 npm install
@@ -84,36 +84,45 @@ Working on it? Use `npm run watch` instead of `npm run dev`, and see
 [`docs/development.md`](docs/development.md) for why.
 
 ```bash
-npm run format:check && npm run compile && npm test && npm run build
+npm run check            # format, typecheck, tests, both builds
 ```
 
 Tests never touch the network or a live feed. Site adapters run against captured
 fixture HTML, so a vendor DOM change fails as a red test instead of a silent
 no-op in production.
 
-## Layout
+## Beautifully architected, easy to extend
 
 ```
-src/
-  ml/          the model, scoring (pure), and the only transformers.js import
-  core/        message protocol, score cache, settings, logging
-  adapters/    per-site DOM knowledge: X, LinkedIn, Reddit
-  feed/        host-page logic: scanner, blur, engine client
-  entrypoints/ content script, engine iframe + worker, background, popup
-public/ort/    ONNX runtime, synced from node_modules by scripts/sync-ort.mjs
-docs/          for people: how it works, development, privacy policy, store copy
-wiki-llm/      source of truth for agents
-specs/         superseded design docs, provenance only
+┌─ entrypoints/ ─────────────────────────────────────────────────────────────┐
+│  wires it all: content script · popup · background · engine                │
+│  ┌─ adapters/ · platform/ ──────────────────────────────────────────────┐  │
+│  │  X · LinkedIn · Reddit       storage · messaging · model runtime     │  │
+│  │  ┌─ feed/ ────────────────────────────────────────────────────────┐  │  │
+│  │  │  the page: find posts, score them, blur, reveal                │  │  │
+│  │  │  ┌─ core/ ──────────────────────────────────────────────────┐  │  │  │
+│  │  │  │  the rules: scoring · blur policy · settings             │  │  │  │
+│  │  │  └──────────────────────────────────────────────────────────┘  │  │  │
+│  │  └────────────────────────────────────────────────────────────────┘  │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────────────────┘
+                          imports point inward only
 ```
+
+FeedLens follows the Dependency Rule from [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html): imports only point inward.
+The rules in `core/` know nothing of the browser, and the page logic in `feed/` knows nothing of the extension, so a new site never touches the filter.
+`npm run check` fails any import that points outward; [`wiki-llm/layers.md`](wiki-llm/layers.md) says where new code goes.
 
 ## Read more
 
-- [`docs/how-it-works.md`](docs/how-it-works.md) — the three layers, the model, and
+- [`docs/how-it-works.md`](docs/how-it-works.md) — where it runs, the model, and
   every control, in plain language.
 - [`docs/development.md`](docs/development.md) — running, debugging and testing.
 - [`docs/android.md`](docs/android.md) — Firefox for Android.
 - [`docs/privacy-policy.md`](docs/privacy-policy.md) — what it reads, stores and sends.
 - Found a bug or have an idea? [Open an issue](https://github.com/dephelion/feedlens/issues/new/choose).
+  Want to change the code? Read [`CONTRIBUTING.md`](CONTRIBUTING.md). Security or
+  privacy problem? [`SECURITY.md`](SECURITY.md) says how to report it privately.
 - [`wiki-llm/`](wiki-llm/index.md) — the authoritative model of the code. Start at
   the index. Agent rules are in [`AGENTS.md`](AGENTS.md).
 

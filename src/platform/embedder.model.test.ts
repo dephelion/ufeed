@@ -6,8 +6,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { Embedder } from './embedder';
-import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from './models';
-import { bestMatch, cosine, thresholdForStrictness } from './scoring';
+import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from '../core/models';
+import { bestMatch, cosine, thresholdForStrictness } from '../core/scoring';
 
 const q = formatTopic;
 const d = formatPost;
@@ -15,7 +15,7 @@ const THRESHOLD = thresholdForStrictness(DEFAULT_STRICTNESS);
 
 const embedder = new Embedder();
 const vectorsFor = async (texts: string[]) => {
-  await embedder.load(undefined, ['cpu']);
+  await embedder.load(undefined, 'cpu');
   return embedder.embed(texts);
 };
 
@@ -84,14 +84,14 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
   });
 
   it('self-check passes on a backend that computes correctly', async () => {
-    await embedder.load(undefined, ['cpu']);
+    await embedder.load(undefined, 'cpu');
     const probe = await embedder.selfCheck();
     expect(probe.ok).toBe(true);
     expect(probe.near).toBeGreaterThan(probe.far);
   });
 
   it("self-check clears this model's gap by a real margin", async () => {
-    await embedder.load(undefined, ['cpu']);
+    await embedder.load(undefined, 'cpu');
     const probe = await embedder.selfCheck();
     // Absolute scores differ per model; the gap is what a broken backend collapses.
     expect(probe.near - probe.far).toBeGreaterThan(MODEL.probeMinGap);

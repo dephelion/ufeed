@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   blur,
   clearPending,
@@ -189,6 +189,60 @@ describe('listenForReveal', () => {
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
     expect(reachedPost).toBe(true);
     stop();
+  });
+});
+
+describe('keyboard and screen-reader reveal', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  const linkInside = () => {
+    document.body.innerHTML = '<div id="p"><a id="link" href="#post">text</a></div>';
+    return document.getElementById('link') as HTMLElement;
+  };
+  const enter = () =>
+    new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+
+  it('reveals on Enter from anything focused inside, without opening the post', () => {
+    const link = linkInside();
+    const el = link.parentElement!;
+    blur(el);
+    const stop = listenForReveal(document);
+    const key = enter();
+
+    link.dispatchEvent(key);
+
+    expect(isBlurred(el)).toBe(false);
+    expect(key.defaultPrevented).toBe(true);
+    stop();
+  });
+
+  it('leaves Enter alone on a post that is not blurred', () => {
+    const link = linkInside();
+    const stop = listenForReveal(document);
+    const key = enter();
+
+    link.dispatchEvent(key);
+
+    expect(key.defaultPrevented).toBe(false);
+    stop();
+  });
+
+  it('tells a screen reader why the focused post is hidden and how to read it', () => {
+    vi.useFakeTimers();
+    const link = linkInside();
+    blur(link.parentElement!, 'language');
+    const stop = listenForReveal(document);
+
+    link.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
+    vi.advanceTimersByTime(100);
+
+    const said = document.querySelector('[role="status"]')?.textContent ?? '';
+    expect(said).toContain('another language');
+    expect(said).toContain('Enter');
+    stop();
+    vi.useRealTimers();
   });
 });
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Post } from '../adapters';
+import type { Post } from './ports';
 import { redditAdapter } from '../adapters/reddit';
 import { Conversation } from './conversation';
 

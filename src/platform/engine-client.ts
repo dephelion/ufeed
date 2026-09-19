@@ -8,18 +8,13 @@ import {
   type StatusEvent,
   type TopicCorrections,
 } from '../core/protocol';
-import type { RatedMatch } from '../ml/scoring';
+import type { RatedMatch } from '../core/scoring';
+import type { Correction, Engine } from '../feed/ports';
 
 const REQUEST_TIMEOUT_MS = 8000;
 const CONNECT_WATCHDOG_MS = 15000;
 
 const log = logger('client');
-
-/** A correction with the topic line it belongs to; topic -1 means nowhere to file it. */
-export interface Correction {
-  vector: number[];
-  topic: number;
-}
 
 /** What a reply can carry. Each caller maps it to its own shape. */
 interface Payload {
@@ -34,16 +29,20 @@ type Pending = {
 };
 
 /** Owns the hidden extension-origin iframe and the private port into it. */
-export class EngineClient {
+export class EngineClient implements Engine {
   #port: MessagePort | undefined;
   #frame: HTMLIFrameElement | undefined;
+  #extension = '';
   readonly #pending = new Map<string, Pending>();
   readonly #outbox: EngineRequest[] = [];
   #status: StatusEvent = { type: 'STATUS', state: 'idle' };
   #busy = true;
   #onBusy: (busy: boolean) => void = () => {};
+  #onStatus: (status: StatusEvent) => void = () => {};
 
-  constructor(private readonly onStatus: (status: StatusEvent) => void) {}
+  onStatus(fn: (status: StatusEvent) => void): void {
+    this.#onStatus = fn;
+  }
 
   /** Not ready, or a request is waiting on the worker. A thumb sent now would queue behind it. */
   get busy(): boolean {
@@ -73,6 +72,7 @@ export class EngineClient {
   connect(): void {
     if (this.#frame) return;
     const frame = document.createElement('iframe');
+    this.#extension = browser.runtime.getURL('/');
     frame.src = browser.runtime.getURL('engine.html');
     frame.setAttribute('aria-hidden', 'true');
     frame.setAttribute('tabindex', '-1');
@@ -100,7 +100,10 @@ export class EngineClient {
     this.#port = channel.port1;
     channel.port1.onmessage = (event: MessageEvent<unknown>) => this.#receive(event.data);
     channel.port1.start();
-    frame.contentWindow?.postMessage({ type: HANDSHAKE }, '*', [channel.port2]);
+    // The frame sits in the host DOM: a page that navigates it must not receive the port.
+    frame.contentWindow?.postMessage({ type: HANDSHAKE }, this.#extension, [
+      channel.port2,
+    ]);
     log.info('handshake sent', { buffered: this.#outbox.length });
     for (const request of this.#outbox.splice(0)) channel.port1.postMessage(request);
   }
@@ -109,14 +112,10 @@ export class EngineClient {
     if (!isEngineReply(data)) return;
     if (data.type === 'STATUS') {
       if (data.state !== this.#status.state) {
-        log.info('engine status', {
-          state: data.state,
-          backend: data.backend,
-          reason: data.message,
-        });
+        log.info('engine status', { state: data.state, reason: data.message });
       }
       this.#status = data;
-      this.onStatus(data);
+      this.#onStatus(data);
       this.#updateBusy();
       return;
     }
@@ -152,7 +151,6 @@ export class EngineClient {
     this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, corrections });
   }
 
-  /** Resolves empty on timeout or error, so callers fail open. */
   score(texts: string[]): Promise<RatedMatch[]> {
     if (texts.length === 0) return Promise.resolve([]);
     const id = nextRequestId();
@@ -169,7 +167,6 @@ export class EngineClient {
     });
   }
 
-  /** Resolves empty when the engine cannot answer, so feedback is dropped, never guessed. */
   feedback(text: string, liked: boolean): Promise<Correction> {
     const id = nextRequestId();
     return new Promise<Correction>((resolve) => {

@@ -1,8 +1,8 @@
-import { MODEL } from '../ml/models';
+import { MODEL } from './models';
 
 /**
  * Corrections the user made to the model's verdicts, as embeddings, kept per
- * topic line. Pure: the storage half lives in feedback-storage.ts.
+ * topic line.
  *
  * Per line, not per topic set. Scoring takes the max across lines, so a
  * correction belongs to the line that came closest to claiming the post —

@@ -43,7 +43,6 @@ HTMLAnchorElement.prototype.click = function (this: HTMLAnchorElement) {
 store['settings'] = {
   topics: ['software engineering'],
   strictness: 3,
-  alwaysKeep: ['rust'],
 };
 store['feedback'] = {
   model: 'Xenova/e5-small-v2',

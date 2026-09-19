@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { feedShownAt } from '../../ml/scoring';
+import { feedShownAt } from '../../core/scoring';
 import {
   DEFAULT_SETTINGS,
   parseTopics,
@@ -7,17 +7,22 @@ import {
   topicsToText,
   type Settings,
 } from '../../core/settings';
-import { loadSettings, saveSettings } from '../../core/settings-storage';
 import { EMPTY_FEEDBACK, counts } from '../../core/feedback';
-import { clearFeedback, loadFeedback, saveFeedback } from '../../core/feedback-storage';
 import { exportConfig, importConfig } from '../../core/config-transfer';
 import {
   describeEngine,
   summarizeEngine,
   type EngineStatus,
 } from '../../core/engine-status';
-import { askEngineStatus, onEngineStatus } from '../../core/status-channel';
 import { logger } from '../../core/log';
+import { askEngineStatus, onEngineStatus } from '../../platform/status-channel';
+import {
+  clearFeedback,
+  loadFeedback,
+  loadSettings,
+  saveFeedback,
+  saveSettings,
+} from '../../platform/storage';
 
 const log = logger('popup');
 

@@ -1,4 +1,4 @@
-import { MODEL } from '../ml/models';
+import { MODEL } from './models';
 import {
   capped,
   forTopics,

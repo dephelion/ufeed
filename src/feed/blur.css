@@ -63,6 +63,12 @@
   transition: opacity 0.2s ease;
 }
 
+/* Focus inside a blurred post lands on content nobody can see; the label shows where it is. */
+.lx-blur:focus-within::after {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .lx-blur[data-lx-reason='media']::after {
   content: 'No text to check — click to view';
   background: color-mix(in srgb, #57534e 78%, transparent);
@@ -93,12 +99,6 @@
     'JetBrains Mono',
     ui-monospace,
     monospace;
-}
-
-/* The score badge sits over the same top-left corner — drop the peek text
-   below it so the two don't overlap. */
-.lx-blur[data-lx-reason='peek'][data-lx-score]::after {
-  top: 26px;
 }
 
 /* Borderline text is dimmed, not erased: the peek is the point. */
@@ -143,8 +143,9 @@
    blur. max-height/overflow work on any host markup — no per-site layout code —
    and cap the box even when the host has set its own inline height (e.g. a
    virtualized feed's measured row), since max-height constrains the used height
-   regardless of what set it. Children are hidden outright, not just dimmed:
+   regardless of what set it. Children go fully transparent, not just dimmed:
    a clipped sliver of text or a media frame would otherwise leak past the edge.
+   Transparent rather than visibility: hidden, which a keyboard cannot focus.
    No fill of our own: the row shows whatever the host paints behind the post,
    and the inset hairline keeps a run of rows apart on a dark or a light feed. */
 .lx-collapse {
@@ -154,7 +155,7 @@
 }
 
 .lx-collapse > * {
-  visibility: hidden;
+  opacity: 0;
 }
 
 /* Smaller than the full-height label, and centred in the row. */
@@ -176,13 +177,13 @@
   line-height: 1.4;
 }
 
-/* The peek drops below the score badge; the row grows so it is not clipped. */
-.lx-collapse[data-lx-reason='peek'][data-lx-score] {
+/* The label rises to the top so the score badge fits under it; the row grows to hold both. */
+.lx-collapse[data-lx-score] {
   max-height: 46px;
 }
 
-.lx-collapse[data-lx-reason='peek'][data-lx-score]::after {
-  top: 22px;
+.lx-collapse[data-lx-score]::after {
+  top: 4px;
   transform: none;
 }
 
@@ -196,8 +197,8 @@
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
     attr(data-lx-chars) ' chars';
   position: absolute;
-  top: 2px;
-  left: 2px;
+  right: 2px;
+  bottom: 2px;
   z-index: 3;
   padding: 2px 6px;
   border-radius: 4px;
@@ -212,24 +213,12 @@
   pointer-events: none;
 }
 
-[data-lx-score][data-lx-topics]::before {
-  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
-    attr(data-lx-chars) ' chars · ℹ️ ' attr(data-lx-topics);
-}
-
-[data-lx-score][data-lx-topics][data-lx-rated]::before {
-  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
-    attr(data-lx-chars) ' chars · ℹ️ ' attr(data-lx-topics) ' · marked '
-    attr(data-lx-rated) ' topic';
-}
-
-/* Hovering the post lists every line's score; the rules above must come first. */
-[data-lx-score][data-lx-topics]:hover::before {
+[data-lx-score][data-lx-lines]::before {
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
     attr(data-lx-chars) ' chars · ' attr(data-lx-lines);
 }
 
-[data-lx-score][data-lx-topics][data-lx-rated]:hover::before {
+[data-lx-score][data-lx-lines][data-lx-rated]::before {
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
     attr(data-lx-chars) ' chars · ' attr(data-lx-lines) ' · marked ' attr(data-lx-rated)
     ' topic';
@@ -374,4 +363,17 @@
 .lx-nudge-x:hover {
   color: #fafaf9;
   background: color-mix(in srgb, #fafaf9 12%, transparent);
+}
+
+/* The screen-reader announcer: present to assistive tech, invisible on the page. */
+.lx-sr {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

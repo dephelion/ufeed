@@ -1,14 +1,11 @@
-import { DEFAULT_STRICTNESS } from '../ml/models';
-import { clampStrictness } from '../ml/scoring';
+import { DEFAULT_STRICTNESS } from './models';
+import { clampStrictness } from './scoring';
 
 export interface Settings {
   enabled: boolean;
   topics: string[];
   /** Step 0..10, not a score: scores differ per model. */
   strictness: number;
-  disabledHosts: string[];
-  alwaysKeep: string[];
-  alwaysBlur: string[];
   showScores: boolean;
   /** Blur media posts carrying too little text to judge against the topics. */
   blurThinMedia: boolean;
@@ -24,9 +21,6 @@ export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
   strictness: DEFAULT_STRICTNESS,
-  disabledHosts: [],
-  alwaysKeep: [],
-  alwaysBlur: [],
   showScores: false,
   blurThinMedia: false,
   tuneFromFeedback: false,
@@ -35,12 +29,17 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Spreading defaults over stored JSON checks nothing, and `strictness` outlived
- * a scale change: a stored 0.35 from the old 0..1 slider is step 0 here, which
- * would silently unblur a feed. Anything off the scale lands on the nearest step.
+ * Stored JSON and backup files outlive the shape that wrote them, and a hand-edited
+ * backup can hold anything. A field of the wrong type falls back to its default;
+ * `strictness` must also be a step on the 0..10 scale, not the old 0..1 slider.
  */
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {
-  const merged = { ...DEFAULT_SETTINGS, ...partial };
+  const merged: Settings = { ...DEFAULT_SETTINGS };
+  for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
+    const value: unknown = partial?.[key];
+    if (sameType(value, DEFAULT_SETTINGS[key]))
+      (merged as Record<keyof Settings, unknown>)[key] = value;
+  }
   const stored = partial?.strictness;
   merged.strictness =
     typeof stored === 'number' && Number.isInteger(stored)
@@ -49,38 +48,22 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
   return merged;
 }
 
+const sameType = (value: unknown, fallback: unknown): boolean =>
+  Array.isArray(fallback)
+    ? Array.isArray(value) && value.every((item) => typeof item === 'string')
+    : typeof value === typeof fallback;
+
 /**
- * On, welcome on this host, and with nothing to do. It is the one inactive state
- * that is not a choice the reader made, so it is the only one worth interrupting
- * them about: everything looks installed and nothing happens.
+ * On, with nothing to do. It is the one inactive state that is not a choice the
+ * reader made, so it is the only one worth interrupting them about: everything
+ * looks installed and nothing happens.
  */
-export function needsTopics(settings: Settings, hostname: string): boolean {
-  return (
-    settings.enabled &&
-    settings.topics.length === 0 &&
-    !settings.disabledHosts.includes(hostname)
-  );
+export function needsTopics(settings: Settings): boolean {
+  return settings.enabled && settings.topics.length === 0;
 }
 
-export function isActiveOn(settings: Settings, hostname: string): boolean {
-  return (
-    settings.enabled &&
-    settings.topics.length > 0 &&
-    !settings.disabledHosts.includes(hostname)
-  );
-}
-
-/** Overrides win over the model; empty terms never match. */
-export function overrideFor(
-  settings: Settings,
-  text: string,
-): 'keep' | 'blur' | undefined {
-  const haystack = text.toLowerCase();
-  const hit = (terms: string[]) =>
-    terms.some((t) => t.trim() !== '' && haystack.includes(t.toLowerCase()));
-  if (hit(settings.alwaysKeep)) return 'keep';
-  if (hit(settings.alwaysBlur)) return 'blur';
-  return undefined;
+export function isActive(settings: Settings): boolean {
+  return settings.enabled && settings.topics.length > 0;
 }
 
 /** One topic per line; blanks and duplicates dropped. */

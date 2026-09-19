@@ -11,7 +11,7 @@ import {
   type Feedback,
   type TopicCorrections,
 } from '../core/feedback';
-import { loadFeedback, onFeedbackChanged, saveFeedback } from '../core/feedback-storage';
+import type { FeedbackStore } from './ports';
 
 /**
  * Owns the user's corrections and their persistence. Vectors only: the
@@ -21,10 +21,12 @@ export class Tuning {
   #feedback: Feedback = EMPTY_FEEDBACK;
   #onChange: () => void = () => {};
 
-  static async load(): Promise<Tuning> {
-    const tuning = new Tuning();
-    tuning.#feedback = await loadFeedback().catch(() => EMPTY_FEEDBACK);
-    onFeedbackChanged((next) => {
+  private constructor(private readonly store: FeedbackStore) {}
+
+  static async load(store: FeedbackStore): Promise<Tuning> {
+    const tuning = new Tuning(store);
+    tuning.#feedback = await store.load().catch(() => EMPTY_FEEDBACK);
+    store.onChange((next) => {
       tuning.#feedback = next;
       tuning.#onChange();
     });
@@ -76,12 +78,12 @@ export class Tuning {
     liked: boolean,
   ): Promise<void> {
     this.#feedback = rate(this.#feedback, topic, hashText(text), vector, liked);
-    await saveFeedback(this.#feedback);
+    await this.store.save(this.#feedback);
   }
 
   /** Drops corrections for lines the user has removed or rewritten. */
   async keepOnly(topics: readonly string[]): Promise<void> {
     this.#feedback = forTopics(this.#feedback, topics);
-    await saveFeedback(this.#feedback);
+    await this.store.save(this.#feedback);
   }
 }

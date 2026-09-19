@@ -23,7 +23,7 @@
 
 **Never `filter: blur()` on the container.** It creates a stacking context **and a containing block**, breaking `position: fixed` descendants and vendor overlays, and it is expensive across a long feed. Media is a leaf with no fixed descendants, so blurring it directly is safe.
 
-**`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose.
+**`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose. Its links stay focusable on purpose — `inert` would remove them from the keyboard, so a keyboard reader could never reach the post to reveal it — and focus entering a blurred post is announced instead (§Reveal).
 
 **Never nest.** Blur the outermost claimed container; effects must not stack.
 
@@ -45,7 +45,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 | Reason     | Label                              | Set when                                                                                 |
 | :--------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
-| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or `alwaysBlur`.                                     |
+| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or a near-copy of a thumbed-down post.               |
 | `media`    | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
 | `language` | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
 | `peek`     | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
@@ -58,13 +58,13 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **Solid was tried and rejected.** It is the most legible and the most foreign — the pill stops belonging to the feed. Legibility here comes from the fill being dark and the text near-white, not from removing the transparency.
 
-**The score badge stays translucent**, alone among them. It is a debug affordance sitting over the post's own first line, and it is meant to be read through — a solid pill there hides content the badge exists to explain.
+**The score badge stays translucent**, alone among them. It is a debug affordance sitting in the post's bottom-right corner, and it is meant to be read through — a solid pill there hides content the badge exists to explain.
 
 **The peek shares `::after` with the label, deliberately.** An element has two pseudo-elements and the score badge owns `::before`; putting the peek there would hide the badge on exactly the borderline posts worth debugging.
 
 **The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
 
-**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They sit with `alwaysBlur` as user policy, not as a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them plus the overrides, asked before an inference is spent: a post they claim never reaches the engine.
+**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They are user policy, not a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them, asked before an inference is spent: a post they claim never reaches the engine.
 
 **The language label carries its own colour**, indigo against the topic label's red. It is not a verdict about the subject and must not read as one — [model.md](model.md) has why the score behind it would have been noise.
 
@@ -90,10 +90,13 @@ Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with tex
 
 ## Reveal
 
-**Click only. No hover.** Scrolling drags the pointer across the feed, so hover exposed every post it passed over.
+**Click or Enter. No hover.** Scrolling drags the pointer across the feed, so hover exposed every post it passed over.
 
 - `pointer-events: none` on `.lx-blur > *` makes the first click consumable.
 - First click: reveal, `preventDefault`, `stopPropagation`. The post never navigates.
+- Enter with focus anywhere inside a blurred post does the same. X's J/K and Tab both land there; without it a keyboard reader could not reveal at all.
+- Collapsed posts hide their content with `opacity: 0`, never `visibility: hidden`: hidden content cannot take focus, which left a keyboard reader no way in. `.lx-blur:focus-within::after` rings the label, since the focused element itself is invisible.
+- Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by FeedLens: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
 - Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
@@ -154,13 +157,13 @@ Apply is disabled until the textarea differs from what is saved.
 
 **Backup is one row and one line, and never more.** Two ghost buttons; under them a single line carrying the file name, truncated with `text-overflow: ellipsis` on a `min-width: 0` flex child so a long name gives up width and the outcome never does. **The line belongs to import.** An `<a download>` reports nothing back — a cancelled save dialog is indistinguishable from a saved file without the `downloads` permission — so export says nothing and leaves the outcome to the browser's own download UI. It said "saved" once, over an open dialog the reader then cancelled. `data-state` on that line, `ok` or `bad`, is what the styling reads. No dialog, no panel, no second line: the popup is already past the 600px cap and this may not add height beyond that one line.
 
-**Import replaces on select, with no confirmation**, matching Reset, which destroys nearly as much on one click. A file is refused whole — settings included — when the schema is newer, the model does not match, or the JSON is not a backup; a refusal writes nothing. The line is transient. The durable proof an import landed is the topics box and the thumb counts re-rendering above it. Export is disabled with nothing to export.
+**Import replaces on select, with no confirmation**, matching Reset, which destroys nearly as much on one click. A file is refused whole — settings included — when the schema is newer, the model does not match, or the JSON is not a backup; a refusal writes nothing. A settings field of the wrong type falls back to its default rather than refusing the file. The line is transient. The durable proof an import landed is the topics box and the thumb counts re-rendering above it. Export is disabled with nothing to export.
 
 **Firefox imports in a tab.** Firefox closes the popup when the file picker takes focus; `change` fires into a dead page. On Firefox (`import.meta.env.FIREFOX`), Import opens `popup.html?tab` and closes the popup. The tab needs a second click: a picker opens only on user activation. Chrome keeps the in-popup picker.
 
 ## No-topics card
 
-On, allowed on this host, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
+On, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
 
 Fixed top-right, same dark chip as the thumbs bar so it reads the same on a light and a dark feed. Shows the toolbar icon, because finding that button is the actual task.
 
@@ -184,8 +187,10 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars · ℹ️ 3 topics · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). **Hovering the post** swaps `ℹ️ 3 topics` for every line's score by 1-based position (`#1 0.793 · #2 0.791 · #3 0.760`), pure CSS on `:hover`; the score is the highest of them. Absent when the post has no lines (unscored). A tooltip on the ℹ️ alone was rejected: the badge is a pseudo-element with no box of its own to hover. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when a keep/blur word, the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
+`score 0.793 / needs 0.795 · 105 chars · #1 0.793 · #2 0.791 · #3 0.760 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). Every line's score is always shown, by 1-based position; the score is the highest of them. The lines are absent when the post has none (unscored). A hover swap that hid them behind `ℹ️ 3 topics` was removed in 0.7.0: the scores are the point of the badge. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
 
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
+
+**Bottom-right corner.** Top-left sat under the thumbs bar, which is centred on the post's top edge, and pushed the peek text down. Bottom-right meets nothing on a full-height post. A collapsed row grows to 46px with its label at the top, so the badge fits underneath.
 
 **Gated solely on `settings.showScores`** (default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.

@@ -47,23 +47,20 @@ logged — counts, scores, states and errors only.
 ```
 [feedlens:content] content script started host=x.com adapter=x topics=1 active=true
 [feedlens:client]  injecting engine iframe src=chrome-extension://.../engine.html
-[feedlens:engine]  engine page loaded origin=chrome-extension://...
-[feedlens:worker]  loading model
-[feedlens:worker]  ready backend=wasm
+[feedlens:engine]  engine starting origin=chrome-extension://...
+[feedlens:embedder] loading model device=wasm model=Xenova/e5-small-v2
+[feedlens:worker]  ready
 [feedlens:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
 [feedlens:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
 ```
-
-WebGPU is tried first and rejected by the self-check on the way past — ORT
-miscomputes the q8 weights there — so `backend=wasm` is the expected steady
-state, and the rejection prints at `info`, not as a warning.
 
 The first missing line locates the failure. `content` and `client` lines appear in
 the page console; `engine` and `worker` lines come from the iframe, so pick the
 `engine.html` context in the devtools frame selector to see them.
 
-Logging is on while `VITE_FEEDLENS_DEBUG=1` is set in `.env`. Turn it off before
-any store submission.
+Logging is on in `npm run watch` and `npm run build:debug`, which set
+`VITE_FEEDLENS_DEBUG=1` themselves. `npm run build` and the release workflow never
+do, so a store build always ships without logs.
 
 ### First run
 
@@ -84,13 +81,24 @@ npm run test:model       # the real model on real feed text, ~3s
 Full check before committing:
 
 ```bash
-npm run format:check && npm run compile && npm test && npm run build
+npm run check            # format, typecheck, tests, both builds
 ```
 
 Tests never touch the network or a live feed. Site adapters run against captured
 fixture HTML, because vendor DOM changes should fail as a red test rather than a
 silent no-op in production.
 
-What no test covers: model loading, WebGPU init, and real scoring in a browser.
+What no test covers: model loading and real scoring in a browser.
 A green suite is not a working extension — load a build and watch the popup
 status. See [`wiki-llm/testing.md`](../wiki-llm/testing.md).
+
+## Release
+
+1. On the release branch, bump the version: `npm version minor --no-git-tag-version`.
+2. Merge to `main` through a pull request, with CI green.
+3. Tag the merge and push the tag: `git tag v0.7.0 && git push origin v0.7.0`.
+
+The **Release** workflow checks that the tag matches `package.json`, runs
+`npm run check`, and attaches three zips to a GitHub release: Chrome, Firefox,
+and the sources Firefox Add-ons asks for. Upload those to the stores; never a zip
+built locally.
