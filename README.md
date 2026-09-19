@@ -118,5 +118,6 @@ specs/         superseded design docs, provenance only
 
 ## License
 
-[GPL-3.0](LICENSE). Use it, change it, share it. If you distribute a modified
-version, you must publish its source under the same license.
+Copyright © 2026 Dephelion. [GPL-3.0](LICENSE). Use it, change it, share it. If
+you distribute a modified version, you must publish its source under the same
+license.

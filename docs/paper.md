@@ -1,7 +1,7 @@
 # The E5 paper, in plain language
 
 FeedLens uses **e5-small-v2**, from the paper _Text Embeddings by Weakly-Supervised
-Contrastive Pre-training_ ([PDF](2212.03533v2.pdf)). This page summarizes what the
+Contrastive Pre-training_ ([arXiv](https://arxiv.org/abs/2212.03533)). This page summarizes what the
 paper does and how FeedLens leans on it. [`how-it-works.md`](how-it-works.md) covers
 the code side.
 

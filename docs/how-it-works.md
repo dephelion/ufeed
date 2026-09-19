@@ -60,7 +60,7 @@ about X.
 ## What the model does
 
 FeedLens does not train a classifier on your topics. It uses **e5-small-v2**, a
-text _embedding_ model from Microsoft ([E5 paper](2212.03533v2.pdf); v2 is
+text _embedding_ model from Microsoft ([E5 paper](https://arxiv.org/abs/2212.03533); v2 is
 a later release by the same authors, using the same method). An embedding
 turns text into a vector, a fixed list of 384 numbers, so that texts about the
 same thing end up close together.
@@ -242,4 +242,4 @@ it, while the other lines keep theirs.
 Full reasoning in [`wiki-llm/architecture.md`](../wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](../wiki-llm/model.md), terms in
 [`wiki-llm/glossary.md`](../wiki-llm/glossary.md), and the model's origin in the
-[E5 paper](2212.03533v2.pdf).
+[E5 paper](https://arxiv.org/abs/2212.03533).
