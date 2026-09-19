@@ -1,29 +1,28 @@
 import browser from 'webextension-polyfill';
-import { feedShownAt } from '../../ml/scoring';
+import { feedShownAt } from '../../core/scoring';
 import {
   DEFAULT_SETTINGS,
-  loadSettings,
   parseTopics,
-  saveSettings,
   topicsEqual,
   topicsToText,
   type Settings,
 } from '../../core/settings';
-import {
-  EMPTY_FEEDBACK,
-  clearFeedback,
-  counts,
-  loadFeedback,
-  saveFeedback,
-} from '../../core/feedback';
+import { EMPTY_FEEDBACK, counts } from '../../core/feedback';
 import { exportConfig, importConfig } from '../../core/config-transfer';
 import {
   describeEngine,
   summarizeEngine,
   type EngineStatus,
 } from '../../core/engine-status';
-import { askEngineStatus, onEngineStatus } from '../../core/status-channel';
 import { logger } from '../../core/log';
+import { askEngineStatus, onEngineStatus } from '../../platform/status-channel';
+import {
+  clearFeedback,
+  loadFeedback,
+  loadSettings,
+  saveFeedback,
+  saveSettings,
+} from '../../platform/storage';
 
 const log = logger('popup');
 

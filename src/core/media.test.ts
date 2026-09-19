@@ -1,30 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { xAdapter } from '../adapters/x';
-import { DEFAULT_SETTINGS } from '../core/settings';
-import { MIN_BACKING_CHARS, blursAsThinMedia, hasMedia } from './media';
+import { DEFAULT_SETTINGS } from './settings';
+import { MIN_BACKING_CHARS, blursAsThinMedia } from './media';
 
 const on = { ...DEFAULT_SETTINGS, blurThinMedia: true };
 const LONG = 'x'.repeat(MIN_BACKING_CHARS);
-
-const mount = (html: string) => {
-  document.body.innerHTML = `<div id="c">${html}</div>`;
-  return document.getElementById('c') as HTMLElement;
-};
-
-describe('hasMedia', () => {
-  it('sees a photo', () => {
-    expect(hasMedia(mount('<div data-testid="tweetPhoto"></div>'), xAdapter)).toBe(true);
-  });
-
-  it('sees a video', () => {
-    expect(hasMedia(mount('<video></video>'), xAdapter)).toBe(true);
-  });
-
-  it('ignores an avatar, or every post would count as media', () => {
-    const el = mount('<div data-testid="Tweet-User-Avatar"><img src="a.jpg" /></div>');
-    expect(hasMedia(el, xAdapter)).toBe(false);
-  });
-});
 
 describe('blursAsThinMedia', () => {
   it('blurs a media post with no caption', () => {

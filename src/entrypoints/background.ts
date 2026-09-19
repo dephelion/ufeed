@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 import { defineBackground } from 'wxt/utils/define-background';
 import { adapterFor } from '../adapters';
-import { onFeedDetected } from '../core/status-channel';
+import { onFeedDetected } from '../platform/status-channel';
 
 const SIZES = ['16', '32', '48', '128'] as const;
 

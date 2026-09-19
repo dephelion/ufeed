@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS } from '../core/settings';
+import { DEFAULT_SETTINGS } from './settings';
 import { blursAsOtherLanguage, classify, type Detection } from './language';
 
 const cld = (isReliable: boolean, ...languages: [string, number][]): Detection => ({

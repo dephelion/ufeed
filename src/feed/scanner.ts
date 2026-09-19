@@ -1,5 +1,8 @@
-import type { Post, SiteAdapter } from '../adapters';
-import { hasMedia } from './media';
+import type { Post, SiteAdapter } from './ports';
+
+export function hasMedia(container: HTMLElement, adapter: SiteAdapter): boolean {
+  return container.querySelector(adapter.mediaSelector) !== null;
+}
 
 /** Scored well before it is read, so a post is rarely blurred in view. */
 const VIEWPORT_MARGIN = '150% 0px';

@@ -1,6 +1,5 @@
-import browser from 'webextension-polyfill';
-import { DEFAULT_STRICTNESS } from '../ml/models';
-import { clampStrictness } from '../ml/scoring';
+import { DEFAULT_STRICTNESS } from './models';
+import { clampStrictness } from './scoring';
 
 export interface Settings {
   enabled: boolean;
@@ -83,29 +82,4 @@ export function topicsToText(topics: readonly string[]): string {
 
 export function topicsEqual(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((topic, i) => topic === b[i]);
-}
-
-const KEY = 'settings';
-
-export async function loadSettings(): Promise<Settings> {
-  const stored = await browser.storage.local.get(KEY);
-  return withDefaults(stored[KEY] as Partial<Settings> | undefined);
-}
-
-export async function saveSettings(patch: Partial<Settings>): Promise<Settings> {
-  const next = { ...(await loadSettings()), ...patch };
-  await browser.storage.local.set({ [KEY]: next });
-  return next;
-}
-
-export function onSettingsChanged(fn: (settings: Settings) => void): () => void {
-  const listener = (
-    changes: Record<string, browser.Storage.StorageChange>,
-    area: string,
-  ) => {
-    if (area !== 'local' || !changes[KEY]) return;
-    fn(withDefaults(changes[KEY].newValue as Partial<Settings> | undefined));
-  };
-  browser.storage.onChanged.addListener(listener);
-  return () => browser.storage.onChanged.removeListener(listener);
 }

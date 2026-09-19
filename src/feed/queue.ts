@@ -1,7 +1,6 @@
-import type { Post } from '../adapters';
 import { logger } from '../core/log';
-import type { RatedMatch } from '../ml/scoring';
-import type { EngineClient } from './engine-client';
+import type { RatedMatch } from '../core/scoring';
+import type { Engine, Post } from './ports';
 
 const BATCH_SIZE = 16;
 const FLUSH_MS = 100;
@@ -29,7 +28,7 @@ export class ScoreQueue {
   #epoch = 0;
 
   constructor(
-    private readonly engine: Pick<EngineClient, 'ready' | 'status' | 'score'>,
+    private readonly engine: Pick<Engine, 'ready' | 'status' | 'score'>,
     private readonly onScored: (results: Scored[]) => void,
   ) {}
 

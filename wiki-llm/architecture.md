@@ -1,11 +1,13 @@
 # Architecture
 
-> **Maintenance Invariant:** Structure, layers, message flow only. No selectors ([adapters.md](adapters.md)), no scoring rules ([model.md](model.md)). Update in the SAME commit as any boundary or contract change. Token-optimized: imperative, no prose, no redundancy.
-> **Answers:** The three layers and why each exists. End-to-end flow. Message contract. Invalidation and races.
+> **Maintenance Invariant:** Runtime structure, execution contexts, message flow only. Code layers live in [layers.md](layers.md). No selectors ([adapters.md](adapters.md)), no scoring rules ([model.md](model.md)). Update in the SAME commit as any boundary or contract change. Token-optimized: imperative, no prose, no redundancy.
+> **Answers:** The three execution contexts and why each exists. End-to-end flow. Message contract. Invalidation and races.
 
-## Three layers
+## Three execution contexts
 
-| Layer          | Lives in                                 | Can                               | Cannot                    |
+Where code runs, not how it is layered: that is [layers.md](layers.md).
+
+| Context        | Lives in                                 | Can                               | Cannot                    |
 | :------------- | :--------------------------------------- | :-------------------------------- | :------------------------ |
 | Content script | Host page world (`x.com`)                | Read feed DOM, apply blur         | Spawn an extension worker |
 | Engine iframe  | Extension origin (`chrome-extension://`) | Spawn a same-origin module Worker | See the host DOM          |
@@ -78,7 +80,7 @@ engine  → content  { type: 'STATUS', state, progress?, message? }
 
 ## Status channel
 
-A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/core/status-channel.ts`.
+A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/platform/status-channel.ts`.
 
 ```
 popup   → content  { type: 'feedlens:status?' }            to the ACTIVE tab only

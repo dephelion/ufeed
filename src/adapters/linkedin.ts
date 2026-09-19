@@ -1,4 +1,4 @@
-import type { Post, SiteAdapter } from './types';
+import type { Post, SiteAdapter } from '../feed/ports';
 
 const CONTAINER = '[componentkey^="update-card-focus"]';
 const TEXT = '[data-testid="expandable-text-box"]';

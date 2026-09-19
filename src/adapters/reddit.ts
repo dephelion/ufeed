@@ -1,4 +1,4 @@
-import type { Post, SiteAdapter } from './types';
+import type { Post, SiteAdapter } from '../feed/ports';
 
 const CONTAINER = 'article[data-post-id]';
 const POST = 'shreddit-post';

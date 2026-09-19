@@ -1,5 +1,5 @@
-import type { Settings } from '../core/settings';
-import { verdictAt } from '../ml/scoring';
+import type { Settings } from './settings';
+import { verdictAt } from './scoring';
 import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
 

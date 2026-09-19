@@ -23,7 +23,7 @@ Four choices shape everything else. Each one gives something up.
 
 The rest of this page shows the machinery.
 
-## The three layers
+## Where it runs
 
 ```mermaid
 flowchart TB
@@ -47,7 +47,7 @@ flowchart TB
   frame == "scores" ==> cs
 ```
 
-Three layers, each for one reason. The **content script** lives inside the page,
+Three execution contexts, each for one reason. The **content script** lives inside the page,
 so it is the only part that can read the feed or blur anything. The **iframe**
 exists because a content script cannot spawn an extension-origin worker, but a
 document already on that origin can. The **worker** is a separate thread, so

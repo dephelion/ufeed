@@ -7,18 +7,19 @@ FeedLens is a browser extension that blurs off-topic posts in social feeds. The 
 
 Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
-| Page                               | Answers                                                                                                              |
-| :--------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| [architecture.md](architecture.md) | What are the three layers, why does the iframe exist, how does a post become a blur, what crosses each boundary?     |
-| [model.md](model.md)               | Which model, why that one, what do the scores mean, how is the threshold set, why does a backend get rejected?       |
-| [adapters.md](adapters.md)         | How is a post found in a vendor DOM? X selectors, virtualized recycling, what breaks when the vendor ships a change. |
-| [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                     |
-| [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                      |
-| [privacy.md](privacy.md)           | What FeedLens reads, what it stores, what leaves the device, store policy, legal posture.                            |
-| [product.md](product.md)           | What is FeedLens for, what will it never do, which words may user-facing copy claim.                                 |
-| [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                         |
-| [conventions.md](conventions.md)   | Every repo rule, stated once: hard invariants, how to work, code and doc rules, layout, definition of done.          |
-| [glossary.md](glossary.md)         | What does AUC, d-prime, embedding, retrieval model, quantization, etc. mean, in plain language.                      |
+| Page                               | Answers                                                                                                                      |
+| :--------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| [architecture.md](architecture.md) | What are the three execution contexts, why does the iframe exist, how does a post become a blur, what crosses each boundary? |
+| [layers.md](layers.md)             | Which folder does new code go in, which way may imports point, what enforces the Dependency Rule?                            |
+| [model.md](model.md)               | Which model, why that one, what do the scores mean, how is the threshold set, why does a backend get rejected?               |
+| [adapters.md](adapters.md)         | How is a post found in a vendor DOM? X selectors, virtualized recycling, what breaks when the vendor ships a change.         |
+| [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                             |
+| [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                              |
+| [privacy.md](privacy.md)           | What FeedLens reads, what it stores, what leaves the device, store policy, legal posture.                                    |
+| [product.md](product.md)           | What is FeedLens for, what will it never do, which words may user-facing copy claim.                                         |
+| [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                                 |
+| [conventions.md](conventions.md)   | Every repo rule, stated once: hard invariants, how to work, code and doc rules, layout, definition of done.                  |
+| [glossary.md](glossary.md)         | What does AUC, d-prime, embedding, retrieval model, quantization, etc. mean, in plain language.                              |
 
 ## Status
 

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Post } from '../adapters';
+import type { Post } from './ports';
 import { xAdapter } from '../adapters/x';
-import { FeedScanner } from './scanner';
+import { FeedScanner, hasMedia } from './scanner';
 
 /** happy-dom never intersects; this one reports every observed node as in view. */
 class InView {
@@ -67,5 +67,29 @@ describe('FeedScanner', () => {
     document.getElementById('body')!.insertAdjacentHTML('beforeend', '<span>6.3K</span>');
     await flush();
     expect(offered).toHaveLength(1);
+  });
+});
+
+const mountMedia = (html: string) => {
+  document.body.innerHTML = `<div id="c">${html}</div>`;
+  return document.getElementById('c') as HTMLElement;
+};
+
+describe('hasMedia', () => {
+  it('sees a photo', () => {
+    expect(hasMedia(mountMedia('<div data-testid="tweetPhoto"></div>'), xAdapter)).toBe(
+      true,
+    );
+  });
+
+  it('sees a video', () => {
+    expect(hasMedia(mountMedia('<video></video>'), xAdapter)).toBe(true);
+  });
+
+  it('ignores an avatar, or every post would count as media', () => {
+    const el = mountMedia(
+      '<div data-testid="Tweet-User-Avatar"><img src="a.jpg" /></div>',
+    );
+    expect(hasMedia(el, xAdapter)).toBe(false);
   });
 });

@@ -5,9 +5,15 @@ import {
   type SetTopicsRequest,
 } from '../../core/protocol';
 import { captureConsole, logger } from '../../core/log';
-import { Embedder } from '../../ml/embedder';
-import { MODEL, formatPost, formatTopic } from '../../ml/models';
-import { bestMatch, pooled, ratingNear, type Rated, type Vector } from '../../ml/scoring';
+import { Embedder } from '../../platform/embedder';
+import { MODEL, formatPost, formatTopic } from '../../core/models';
+import {
+  bestMatch,
+  pooled,
+  ratingNear,
+  type Rated,
+  type Vector,
+} from '../../core/scoring';
 
 // transformers.js and ORT print handled conditions through console.warn and
 // console.error, which the browser's extension Errors page collects as faults.

@@ -1,7 +1,7 @@
 import { env, pipeline, type FeatureExtractionPipeline } from '@huggingface/transformers';
 import { logger } from '../core/log';
-import { MODEL, PROBE, formatPost, formatTopic } from './models';
-import { cosine, normalize, type Vector } from './scoring';
+import { MODEL, PROBE, formatPost, formatTopic } from '../core/models';
+import { cosine, normalize, type Vector } from '../core/scoring';
 
 const log = logger('embedder');
 

@@ -6,8 +6,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { Embedder } from './embedder';
-import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from './models';
-import { bestMatch, cosine, thresholdForStrictness } from './scoring';
+import { DEFAULT_STRICTNESS, MODEL, formatPost, formatTopic } from '../core/models';
+import { bestMatch, cosine, thresholdForStrictness } from '../core/scoring';
 
 const q = formatTopic;
 const d = formatPost;

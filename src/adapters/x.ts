@@ -1,4 +1,4 @@
-import type { Post, SiteAdapter } from './types';
+import type { Post, SiteAdapter } from '../feed/ports';
 
 const CONTAINER = '[data-testid="cellInnerDiv"]';
 const TEXT = '[data-testid="tweetText"]';

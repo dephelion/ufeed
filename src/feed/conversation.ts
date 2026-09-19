@@ -1,4 +1,4 @@
-import type { Post, SiteAdapter } from '../adapters';
+import type { Post, SiteAdapter } from './ports';
 
 export type Route = 'keep' | 'judge' | 'wait';
 

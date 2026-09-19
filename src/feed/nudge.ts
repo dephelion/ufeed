@@ -1,5 +1,3 @@
-import browser from 'webextension-polyfill';
-
 /**
  * The card shown when FeedLens is on and has no topics. That state is invisible
  * otherwise — the feed looks untouched, which reads as a broken install rather
@@ -30,7 +28,8 @@ function whenBody(attach: (body: HTMLElement) => void): () => void {
   return () => clearInterval(timer);
 }
 
-export function mountNudge(): Nudge {
+/** `iconUrl` is the gray toolbar icon, resolved by the caller: this ring has no extension API. */
+export function mountNudge(iconUrl: string): Nudge {
   const card = document.createElement('div');
   card.className = 'lx-nudge';
   card.setAttribute('role', 'status');
@@ -48,7 +47,7 @@ export function mountNudge(): Nudge {
     'page load">&times;</button>';
   // Gray, not the branded color icon: this card only shows while the tab has
   // no topics, which is exactly the state that leaves the toolbar icon gray.
-  card.querySelector('img')!.src = browser.runtime.getURL('icon-gray/48.png');
+  card.querySelector('img')!.src = iconUrl;
 
   // Dismissal lives for this page load only. Persisting it would leave the
   // reader with a silent extension and no way back to the explanation.

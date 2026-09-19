@@ -14,7 +14,7 @@ topic → "query: software, programming"
 post  → "passage: <text>"
 ```
 
-`src/ml/models.ts` is the single source for the id, the prefixes, the strictness scale and the probe bounds. One constant, no registry, no runtime branching.
+`src/core/models.ts` is the single source for the id, the prefixes, the strictness scale and the probe bounds. One constant, no registry, no runtime branching.
 
 ## Why this model
 

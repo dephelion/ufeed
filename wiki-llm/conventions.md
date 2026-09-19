@@ -1,7 +1,7 @@
 # Conventions
 
 > **Maintenance Invariant:** Every repo rule, stated once: hard invariants, how to work, code and doc rules, layout, toolchain, definition of done. `AGENTS.md` points here and repeats none of it. Update in the SAME commit as any rule, layout or toolchain change. Token-optimized: imperative, no prose, no redundancy.
-> **Answers:** Hard invariants. How to work in this repo. Code, comment and doc rules. Repo layout. Toolchain. Build modes. Logging. Definition of done.
+> **Answers:** Hard invariants, the Dependency Rule among them. How to work in this repo. Code, comment and doc rules. Repo layout. Toolchain. Build modes. Logging. Definition of done.
 
 ## Hard invariants
 
@@ -10,6 +10,7 @@
 3. **Host page integrity.** All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative`. Never mutate a host element beyond class and `aria-hidden` toggles and namespaced `data-lx-*` attributes. Our own nodes (engine iframe, thumbs bar, no-topics card, `.lx-sr` announcer) carry `.lx-*` and are never inserted into a post.
 4. **Cross-browser floor.** Every API must work on Chrome MV3 **and** Firefox MV3. Promise-style polyfill only — never callbacks, never an aliased `browser ?? chrome`. Chrome-only paths are optimisations behind a fallback. Sole callback exception: `action.setIcon` in `background.ts` — Chrome logs a stale-tab error as unchecked `runtime.lastError` despite a caught promise.
 5. **Main thread.** No inference, embedding or tokenization on the page's main thread.
+6. **The Dependency Rule.** Source code dependencies point inward only: `entrypoints/` → `adapters/` · `platform/` → `feed/` → `core/`. Nothing in an inner ring names anything in an outer one. Rings, ports and where new code goes: [layers.md](layers.md). `src/architecture.test.ts` enforces it.
 
 ## Working
 
@@ -29,9 +30,9 @@
 
 **`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `filter` the decisions and what the engine last received, `scanner` what it has seen, `queue` what is in flight, `tuning` the ratings. Logic that grows in `content.ts` belongs in `feed/`.
 
-**The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
+**The blur decision is pure.** `core/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 
-**Nothing the worker imports touches the polyfill.** `ml/`, `core/protocol.ts`, `core/log.ts`: the polyfill throws outside an extension page, and the worker is not one. Tests fake the browser once in `vitest.setup.ts` (WXT's `fakeBrowser`), so storage lives in the same file as the logic it serves; a test file's own `vi.mock` still wins.
+**Nothing the worker imports touches the polyfill.** The polyfill throws outside an extension page, and the worker is not one; `architecture.test.ts` walks the worker's imports to prove it. `platform/` tests fake the browser through `vitest.setup.ts` (WXT's `fakeBrowser`); a test file's own `vi.mock` still wins.
 
 ## Docs
 
@@ -43,21 +44,10 @@
 
 ## Layout
 
+`src/` is five folders, one per ring of the Dependency Rule — which file goes where, and why: [layers.md](layers.md).
+
 ```
-src/
-  ml/           models.ts (the one model) · scoring.ts (pure) · embedder.ts (only transformers.js import)
-  core/         protocol.ts · cache.ts · settings.ts · feedback.ts · config-transfer.ts · engine-status.ts · status-channel.ts · log.ts · debug.ts
-  adapters/     types.ts · x.ts · linkedin.ts · reddit.ts · index.ts
-  feed/         runs inside the host feed
-                  filter.ts    every feed decision on the page; content.ts only wires it
-                  policy.ts    the blur decision, pure
-                  scanner.ts   finds posts, says when one nears the viewport
-                  queue.ts     batches to the engine, discards stale replies
-                  tuning.ts    corrections and their persistence
-                  language.ts  the model's language gate, and CLD detection
-                  conversation.ts  replies follow their lead post
-                  blur.ts · media.ts · nudge.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
-  entrypoints/  content.ts · engine/ · background.ts · popup/
+src/            core/ · feed/ · adapters/ · platform/ · entrypoints/ · architecture.test.ts
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
 docs/           for people
@@ -105,7 +95,8 @@ Chrome's extension Errors page collects every `console.warn` and `console.error`
 
 ## Definition of done
 
-- [ ] `npm run check` clean: format, typecheck, tests, both builds. CI runs the same script.
+- [ ] `npm run check` clean: format, typecheck, tests (the Dependency Rule included), both builds. CI runs the same script.
+- [ ] New code sits in the ring [layers.md](layers.md) names; a new folder or port updated that page.
 - [ ] Hard invariants hold; privacy and fail-open paths covered by assertions ([testing.md](testing.md)).
 - [ ] Adapter changes tested against fixture HTML, never a live fetch.
 - [ ] Verified in Chrome **and** Firefox when touching manifest, messaging, or the engine.

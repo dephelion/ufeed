@@ -11,14 +11,17 @@ reproducible.
   decision. [`wiki-llm/product.md`](wiki-llm/product.md) lists what FeedLens will
   not do.
 - **Read [`wiki-llm/architecture.md`](wiki-llm/architecture.md).** It is the
-  design doc: the three layers (content script, engine iframe, worker), the
-  messages between them, and why each exists. `wiki-llm/` is written tersely,
+  design doc: the three execution contexts (content script, engine iframe,
+  worker), the messages between them, and why each exists. `wiki-llm/` is written tersely,
   for AI coding agents first, but it is the source of truth for people too.
-- **Know the five rules every change keeps**, in
+- **Put code in the right layer.** [`wiki-llm/layers.md`](wiki-llm/layers.md)
+  says which folder new code belongs in; `npm run check` fails an import that
+  points the wrong way.
+- **Know the rules every change keeps**, in
   [`wiki-llm/conventions.md`](wiki-llm/conventions.md): post text never leaves
   the device; anything that breaks shows the feed instead of blurring it; the
   host page is never broken; Chrome and Firefox both work; no model work on the
-  page's main thread.
+  page's main thread; imports only point inward.
 
 ## Working on it
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MODEL } from '../ml/models';
+import { MODEL } from './models';
 import {
   EMPTY_FEEDBACK,
   forCurrentModel,

@@ -27,9 +27,9 @@
 
 ## Where copy lives
 
-| File                    | Holds                                                 |
-| :---------------------- | :---------------------------------------------------- |
-| `README.md`             | Pitch, install, build, layout, pointers. No runbooks. |
-| `docs/how-it-works.md`  | Design choices and their costs, then the machinery.   |
-| `docs/store-listing.md` | Store copy and review answers.                        |
-| `docs/development.md`   | Run, debug, test.                                     |
+| File                    | Holds                                                       |
+| :---------------------- | :---------------------------------------------------------- |
+| `README.md`             | Pitch, install, build, architecture, pointers. No runbooks. |
+| `docs/how-it-works.md`  | Design choices and their costs, then the machinery.         |
+| `docs/store-listing.md` | Store copy and review answers.                              |
+| `docs/development.md`   | Run, debug, test.                                           |

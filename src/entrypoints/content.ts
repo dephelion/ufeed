@@ -1,20 +1,22 @@
+import browser from 'webextension-polyfill';
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import '../feed/blur.css';
 import { adapterFor } from '../adapters';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
 import { logger } from '../core/log';
-import { loadSettings, needsTopics, onSettingsChanged } from '../core/settings';
-import {
-  publishEngineStatus,
-  publishFeedDetected,
-  serveEngineStatus,
-} from '../core/status-channel';
+import { needsTopics } from '../core/settings';
 import { listenForReveal } from '../feed/blur';
-import { EngineClient } from '../feed/engine-client';
 import { mountFeedbackBar } from '../feed/feedback-bar';
 import { FeedFilter } from '../feed/filter';
 import { mountNudge } from '../feed/nudge';
 import { Tuning } from '../feed/tuning';
+import { EngineClient } from '../platform/engine-client';
+import {
+  publishEngineStatus,
+  publishFeedDetected,
+  serveEngineStatus,
+} from '../platform/status-channel';
+import { feedbackStore, loadSettings, onSettingsChanged } from '../platform/storage';
 
 export default defineContentScript({
   matches: [
@@ -47,9 +49,15 @@ async function start(): Promise<void> {
   publishFeedDetected();
 
   const settings = await loadSettings();
-  const tuner = await Tuning.load();
+  const tuner = await Tuning.load(feedbackStore);
   const engine = new EngineClient();
-  const filter = new FeedFilter({ adapter, engine, tuner, settings });
+  const filter = new FeedFilter({
+    adapter,
+    engine,
+    tuner,
+    settings,
+    detectLanguage: (text) => browser.i18n.detectLanguage(text),
+  });
 
   // Held in memory and served on request. The popup cannot see into this tab,
   // and without an answer a first-run download looks like a broken install.
@@ -62,7 +70,7 @@ async function start(): Promise<void> {
     filter.engineChanged(next.state);
   });
 
-  const nudge = mountNudge();
+  const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'));
   nudge.setVisible(needsTopics(settings));
   onSettingsChanged((next) => {
     nudge.setVisible(needsTopics(next));

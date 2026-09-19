@@ -27,18 +27,17 @@ vi.mock('webextension-polyfill', () => ({
   },
 }));
 
-const { MODEL } = await import('../ml/models');
+const { MODEL } = await import('../core/models');
 const { hashText } = await import('../core/cache');
+const { EMPTY_FEEDBACK, count, findRating, rate } = await import('../core/feedback');
 const {
-  EMPTY_FEEDBACK,
   clearFeedback,
-  count,
-  findRating,
+  feedbackStore,
   loadFeedback,
-  rate,
+  loadSettings,
   saveFeedback,
-} = await import('../core/feedback');
-const { loadSettings, saveSettings } = await import('../core/settings');
+  saveSettings,
+} = await import('../platform/storage');
 const { exportConfig, importConfig } = await import('../core/config-transfer');
 const { Tuning } = await import('./tuning');
 
@@ -57,7 +56,7 @@ describe('a feed tab open while storage changes underneath it', () => {
       mine = rate(mine, 'software engineering', `mine${i}`, vector(i), true);
     await saveFeedback(mine);
 
-    const tuner = await Tuning.load();
+    const tuner = await Tuning.load(feedbackStore);
     const backup = exportConfig(await loadSettings(), mine, '0.0.0');
 
     await clearFeedback();
@@ -82,7 +81,7 @@ describe('a feed tab open while storage changes underneath it', () => {
 
   it('keeps a cleared set cleared', async () => {
     await saveFeedback(rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), true));
-    const tuner = await Tuning.load();
+    const tuner = await Tuning.load(feedbackStore);
 
     await clearFeedback();
     await tuner.record('topic', 'a post rated after the clear', vector(2), true);
@@ -92,7 +91,7 @@ describe('a feed tab open while storage changes underneath it', () => {
 
   it('tells the tab when a clear elsewhere changed what its lines hold', async () => {
     await saveFeedback(rate(EMPTY_FEEDBACK, 'topic', 'old', vector(1), false));
-    const tuner = await Tuning.load();
+    const tuner = await Tuning.load(feedbackStore);
     const before = tuner.signature(['topic']);
     let told = 0;
     tuner.onChange(() => (told += 1));

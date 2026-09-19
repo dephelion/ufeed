@@ -1,9 +1,9 @@
-import type { Post, SiteAdapter } from '../adapters';
 import { ScoreCache } from '../core/cache';
 import { logger } from '../core/log';
 import type { EngineState } from '../core/protocol';
 import { isActive, topicsEqual, type Settings } from '../core/settings';
-import { thresholdForStrictness, type RatedMatch } from '../ml/scoring';
+import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
+import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
 import {
   blur,
   clearPending,
@@ -15,13 +15,11 @@ import {
   revealAll,
 } from './blur';
 import { Conversation } from './conversation';
-import type { EngineClient } from './engine-client';
 import type { PostRef } from './feedback-bar';
-import { LanguageCache } from './language';
-import { hasMedia } from './media';
-import { decide as decideAction, decideWithoutScore, type Action } from './policy';
+import { LanguageCache } from './language-cache';
+import type { DetectLanguage, Engine, Post, SiteAdapter } from './ports';
 import { ScoreQueue, forEngine, type Scored } from './queue';
-import { FeedScanner } from './scanner';
+import { FeedScanner, hasMedia } from './scanner';
 import { clearAllScores, clearScore, stampScore } from './score-badge';
 import type { Tuning } from './tuning';
 
@@ -33,16 +31,12 @@ const REASONS = {
   blur: 'topic',
 } as const;
 
-export type Engine = Pick<
-  EngineClient,
-  'ready' | 'status' | 'connect' | 'setTopics' | 'score' | 'feedback'
->;
-
 export interface FeedFilterOptions {
   adapter: SiteAdapter;
   engine: Engine;
   tuner: Tuning;
   settings: Settings;
+  detectLanguage: DetectLanguage;
 }
 
 /**
@@ -55,18 +49,19 @@ export class FeedFilter {
   readonly #tuner: Tuning;
   #settings: Settings;
   readonly #cache = new ScoreCache();
-  readonly #languages = new LanguageCache();
+  readonly #languages: LanguageCache;
   readonly #conversation: Conversation | undefined;
   readonly #queue: ScoreQueue;
   readonly #scanner: FeedScanner;
   /** What the worker last received, so a stored change it already has is not re-sent. */
   #sentRatings = '';
 
-  constructor({ adapter, engine, tuner, settings }: FeedFilterOptions) {
+  constructor({ adapter, engine, tuner, settings, detectLanguage }: FeedFilterOptions) {
     this.#adapter = adapter;
     this.#engine = engine;
     this.#tuner = tuner;
     this.#settings = settings;
+    this.#languages = new LanguageCache(detectLanguage);
     this.#conversation = Conversation.for(adapter);
     this.#queue = new ScoreQueue(engine, (results) => this.#applyBatch(results));
     this.#scanner = new FeedScanner({

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, type Settings } from '../core/settings';
-import { PEEK_BAND } from '../ml/scoring';
+import { DEFAULT_SETTINGS, type Settings } from './settings';
+import { PEEK_BAND } from './scoring';
 import { decide, decideWithoutScore, type Judgement } from './policy';
 
 const THR = 0.784;

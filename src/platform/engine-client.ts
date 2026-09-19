@@ -8,18 +8,13 @@ import {
   type StatusEvent,
   type TopicCorrections,
 } from '../core/protocol';
-import type { RatedMatch } from '../ml/scoring';
+import type { RatedMatch } from '../core/scoring';
+import type { Correction, Engine } from '../feed/ports';
 
 const REQUEST_TIMEOUT_MS = 8000;
 const CONNECT_WATCHDOG_MS = 15000;
 
 const log = logger('client');
-
-/** A correction with the topic line it belongs to; topic -1 means nowhere to file it. */
-export interface Correction {
-  vector: number[];
-  topic: number;
-}
 
 /** What a reply can carry. Each caller maps it to its own shape. */
 interface Payload {
@@ -34,7 +29,7 @@ type Pending = {
 };
 
 /** Owns the hidden extension-origin iframe and the private port into it. */
-export class EngineClient {
+export class EngineClient implements Engine {
   #port: MessagePort | undefined;
   #frame: HTMLIFrameElement | undefined;
   #extension = '';
@@ -156,7 +151,6 @@ export class EngineClient {
     this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, corrections });
   }
 
-  /** Resolves empty on timeout or error, so callers fail open. */
   score(texts: string[]): Promise<RatedMatch[]> {
     if (texts.length === 0) return Promise.resolve([]);
     const id = nextRequestId();
@@ -173,7 +167,6 @@ export class EngineClient {
     });
   }
 
-  /** Resolves empty when the engine cannot answer, so feedback is dropped, never guessed. */
   feedback(text: string, liked: boolean): Promise<Correction> {
     const id = nextRequestId();
     return new Promise<Correction>((resolve) => {

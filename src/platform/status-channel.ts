@@ -15,7 +15,7 @@
  * content script is already covered by the feed host permissions.
  */
 import browser from 'webextension-polyfill';
-import type { EngineStatus } from './engine-status';
+import type { EngineStatus } from '../core/engine-status';
 
 const ASK = 'feedlens:status?';
 const TELL = 'feedlens:status';

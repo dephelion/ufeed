@@ -1,9 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { xAdapter } from '../adapters/x';
 import { DEFAULT_SETTINGS, type Settings } from '../core/settings';
-import type { RatedMatch } from '../ml/scoring';
+import { EMPTY_FEEDBACK } from '../core/feedback';
+import type { RatedMatch } from '../core/scoring';
 import { isBlurred } from './blur';
-import { FeedFilter, type Engine } from './filter';
+import { FeedFilter } from './filter';
+import type { Engine, FeedbackStore } from './ports';
 import { Tuning } from './tuning';
 
 /** happy-dom never intersects; this one reports every observed node as in view. */
@@ -47,6 +49,12 @@ const post = (word: string): HTMLElement =>
     el.textContent?.includes(word),
   )!;
 
+const store: FeedbackStore = {
+  load: async () => EMPTY_FEEDBACK,
+  save: async () => {},
+  onChange: () => {},
+};
+
 let filter: FeedFilter | undefined;
 
 async function run(
@@ -63,12 +71,13 @@ async function run(
     score: vi.fn(score),
     feedback: vi.fn(),
   };
-  const tuner = await Tuning.load();
+  const tuner = await Tuning.load(store);
   filter = new FeedFilter({
     adapter: xAdapter,
     engine: engine as Engine,
     tuner,
     settings,
+    detectLanguage: async () => ({ isReliable: false, languages: [] }),
   });
   filter.start();
   await vi.advanceTimersByTimeAsync(200);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { EngineClient } from './engine-client';
+import type { Engine } from './ports';
 import { ScoreQueue, type Scored } from './queue';
 
 const sent: string[][] = [];
@@ -10,7 +10,7 @@ const engine = {
     sent.push(texts);
     return texts.map(() => ({ score: 0.8, topic: 0, lines: [0.8], rating: undefined }));
   },
-} as unknown as EngineClient;
+} as unknown as Engine;
 
 describe('ScoreQueue', () => {
   it('embeds a long post capped, but hands back the whole post it was given', async () => {
