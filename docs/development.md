@@ -59,8 +59,9 @@ the page console; `engine` and `worker` lines come from the iframe, so pick the
 `engine.html` context in the devtools frame selector to see them.
 
 Logging is on in `npm run watch` and `npm run build:debug`, which set
-`VITE_FEEDLENS_DEBUG=1` themselves. `npm run build` and the release workflow never
-do, so a store build always ships without logs.
+`VITE_FEEDLENS_DEBUG=1` themselves; `npm run build` and `npm run zip` never do.
+Keep the flag out of `.env`: Vite reads that file into every build, store zips
+included.
 
 ### First run
 
@@ -94,16 +95,13 @@ status. See [`wiki-llm/testing.md`](../wiki-llm/testing.md).
 
 ## Release
 
-**Bumping the version in a pull request is the decision to release.**
-
 1. On the branch, bump the version: `npm version minor --no-git-tag-version`.
 2. Merge it to `main` through a pull request, with CI green.
+3. From an up-to-date `main`, build the store zips:
 
-On every push to `main`, the **Release** workflow reads the version from
-`package.json`. If that version has no GitHub release yet, it runs
-`npm run check`, tags the merged commit `v<version>`, and attaches three zips to
-a new GitHub release: Chrome, Firefox, and the sources Firefox Add-ons asks for.
-A merge that keeps the version releases nothing.
+```bash
+npm run zip && npm run zip:firefox   # .output/feedlens-<version>-{chrome,firefox,sources}.zip
+```
 
-The workflow never touches the stores. Upload the release's zips to each store
-by hand; never a zip built locally.
+Upload the Chrome zip to the Chrome Web Store, and the Firefox zip plus the
+sources zip to Firefox Add-ons.
