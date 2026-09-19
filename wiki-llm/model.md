@@ -43,6 +43,14 @@ Measured distribution, topic `tech, software, ai`: on-topic mean **0.806**, off-
 
 **Length does not shift e5.** On-topic mean by post length: 0.804 / 0.800 / 0.814 / 0.810 across 0-80 / 80-150 / 150-250 / 250+ chars. MiniLM ran 0.096 → 0.233 over the same buckets and needed a length penalty; e5 does not. The penalty was deleted.
 
+## Determinism
+
+**A post's score depends on the post alone.** q8 quantizes activations per batch, so the same post scored beside different neighbours moved: **0.7961 – 0.8025** across 24 random batches (spread 0.006); over 210 feed posts, batched-by-16 vs alone gave median **0.002**, p90 **0.005**, max **0.012**. The strip is 0.035 wide and `PEEK_BAND` is 0.01. `ScoreCache` froze whichever batch came first.
+
+`Embedder.embed` runs one text per model call, so a score is a function of the post. Cost **4.0 vs 3.5 ms/post** (281 posts, node CPU; WASM in a browser not measured). The thumb and the scoring path now produce the same vector.
+
+Guard: `embedder.model.test.ts` compares a post alone against the same post in a batch to six digits. Harness: `.local/spikes/topic-viability/batch-probe.mjs`.
+
 ## Language
 
 **e5-small-v2 reads English only.** Text in another language still gets a score, and that score is noise — drawn from across the usable band with no relation to the topic. No threshold fixes it.
@@ -109,6 +117,18 @@ Base rate 13%: that is the precision a filter has to beat to be worth anything.
 
 Default **step 7**: best F1 (0.55) on the labelled set.
 
+**The table is calibrated to one topic phrasing, and broader lines run looser.** Measured 2026-09-19 on two feeds pooled, English only (281 posts: the 205 above plus 210 from a second X timeline labelled by eye, 23 ambiguous dropped), scored alone, topic lines `programming, code, developers, software, hardware` / `linux, open source` / `AI, agents`:
+
+| Step | Threshold | Feed shown | Junk share | Recall |
+| ---: | --------: | ---------: | ---------: | -----: |
+|    7 |     0.790 |        53% |        34% |    93% |
+|    8 |     0.800 |        43% |        22% |    88% |
+|    9 |     0.810 |        29% |        12% |    66% |
+
+Junk share is the share of unwanted posts that clear the cut. Step 7 shows 53% of that feed, not 30%: the first line's five broad words lift the whole scale, and each extra line is another draw at the max (line 1 alone: 48% shown, 28% junk, 90% recall). The second feed is tech-heavy (43% wanted against 13-20%), which also raises the share shown.
+
+Two off-topic political posts cleared step 7 at **0.797** and **0.796** alone (the extension showed 0.808 for the first, from batching). Both sit inside the uncertain strip: **no phrasing tried that keeps recall moves them below 0.79** — single lines and sets, broad and narrow; only narrow ones (`AI agents`, 46% recall) do. Step 8 peeks them, step 9 blurs them.
+
 **Recall alone is not a reason to pick a step, and picking on it once shipped a bad default.** Step 5 reads well — 96% of what was wanted survives — and hides that **73% of what survives is junk**, 27.6 unwanted posts per 10 wanted. Recall is nearly free at a loose threshold, because a loose threshold shows everything: step 0 keeps 100% by showing 100%. Only precision says whether the filter did anything.
 
 **The asymmetry runs toward strictness, not away from it.** The earlier default argued that a false blur costs a click and a false pass costs a scroll, so be forgiving. That undercounts twice. A false blur is **labelled and recoverable** — it announces itself, the peek tier shows the opening words, one click undoes it. A false pass is **invisible**: nothing marks it, there is nothing to recover, the reader simply reads it. And at step 5 false passes outnumber hits 27 to 10. The cheap error is the one the reader can see.
@@ -163,7 +183,7 @@ No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pai
 
 **Rocchio's measured gain was a holdout artifact.** The table it shipped with (AUC 0.881 → 0.936 at 32 corrections) scored the held-out set, which excludes the rated posts — the base score's hardest mistakes. The **uncorrected** score on the same held-out sets reaches **0.943** at 32 (Rocchio 0.936; at 8 Rocchio led, 0.902 vs 0.896). At equal feed volume, 32 corrections fixed 7.5 verdicts and broke 8.2. Any future feedback measurement must compare against the base score on the same held-out set.
 
-**Ratings are filed per line, checked across all lines.** A rating is stored under the line whose topic vector is closest (`bestMatch()`), so editing a line discards only that line's ratings; a re-click reuses the stored line. The near-identical check pools every line's ratings (`pooled()`). **Per-line checking failed in use**: an off-topic post scores near-equal on every line (measured 0.7985 vs 0.7990 on two lines), and embedding it alone (thumb) vs in a batch (scoring) moved scores by up to 0.003 (cosine 0.9976 between the two vectors), so a near-copy often landed on a different line than its rating and was never overridden. Pooling cannot shift a topic: no topic vector or score changes, only near-copies of a rated post are decided.
+**Ratings are filed per line, checked across all lines.** A rating is stored under the line whose topic vector is closest (`bestMatch()`), so editing a line discards only that line's ratings; a re-click reuses the stored line. The near-identical check pools every line's ratings (`pooled()`). **Per-line checking failed in use**: an off-topic post scores near-equal on every line (measured 0.7985 vs 0.7990 on two lines), and embedding it alone (thumb) vs in a batch (scoring) moved scores by up to 0.003 (cosine 0.9976 between the two vectors; batching was the cause, see §Determinism), so a near-copy often landed on a different line than its rating and was never overridden. Pooling cannot shift a topic: no topic vector or score changes, only near-copies of a rated post are decided.
 
 **The whole post is one vector; no word is attributable.** The adapter's extracted text goes over as one string, tagged `passage:`. **Scored and thumbed text are the same text.** Both pass through `forEngine()` in `queue.ts`, capped at `MAX_CHARS = 1200`. **The rating key stays the whole post** (`hashText`).
 
@@ -202,5 +222,9 @@ Two third-party messages used to appear on every load and neither meant anything
 - **Relative "blur the bottom N%".** Immune to phrasing, but blurs a fixed fraction even when the whole feed is on topic. Revived in v2 for Rocchio-corrected queries, removed with Rocchio: the window went stale after every correction.
 - **Rocchio relevance feedback.** Moved the whole score scale and measured no gain once compared against the base score on the same held-out set. See §Relevance feedback.
 - **Multi-anchor topic averaging.** Lost to a plain short list on AUC.
+- **Centering by a feed mean.** Mean taken from the other feed: AUC 0.861 → 0.814 on the 205-post feed, 0.894 → 0.904 on the second. The in-sample gain was the mean seeing its own posts.
+- **Per-line offset or z-score from a second feed.** AUC 0.838 / 0.831 against 0.861 on the first feed; 0.895 / 0.892 against 0.894 on the second.
+- **Shifting the cut by the topic's score on a neutral background** (62 generic posts). The background mean moves only 0.722 – 0.739 across phrasings; the spread in junk share at 0.790 (5% – 36%) comes from how broad the words are, and the shift narrows it only to 4% – 24%.
+- **Subtracting the closest neutral text's similarity** (`score - β·max`). AUC +0.013 / +0.017 at β = 0.25, worse from 0.5. The two leaked political posts sit at 0.821 / 0.832 from their closest neutral text against a skip median of 0.817: no signal. A hidden penalty is also a blocklist, which [product.md](product.md) rules out.
 - **`multilingual-e5-small` to fix the language problem.** Scores other languages correctly, and that is the wrong outcome twice: ~33MB q8 becomes ~120MB (250k vocab), and every measured number on this page — band, `PEEK_BAND`, the `estimateFeedShown` curve, the probe bounds — is calibrated to e5-small-v2 and would have to be re-measured. It would also correctly surface on-topic posts in languages the reader does not want, which is the opposite of what the gate is for.
 - **A model registry.** One model, chosen by measurement. The comparison is the reason for the choice, not a runtime branch.
