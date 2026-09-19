@@ -80,7 +80,7 @@ npm run test:model       # the real model on real feed text, ~3s
 Full check before committing:
 
 ```bash
-npm run format:check && npm run compile && npm test && npm run build
+npm run check            # format, typecheck, tests, both builds
 ```
 
 Tests never touch the network or a live feed. Site adapters run against captured

@@ -17,7 +17,7 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 | [privacy.md](privacy.md)           | What FeedLens reads, what it stores, what leaves the device, store policy, legal posture.                            |
 | [product.md](product.md)           | What is FeedLens for, what will it never do, which words may user-facing copy claim.                                 |
 | [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                         |
-| [conventions.md](conventions.md)   | Repo layout, toolchain, hard invariants, definition of done, debug builds.                                           |
+| [conventions.md](conventions.md)   | Every repo rule, stated once: hard invariants, how to work, code and doc rules, layout, definition of done.          |
 | [glossary.md](glossary.md)         | What does AUC, d-prime, embedding, retrieval model, quantization, etc. mean, in plain language.                      |
 
 ## Status
@@ -27,9 +27,5 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model, so WASM is the only backend.
 
 Not built: Chrome offscreen singleton, multilingual model, mobile.
-
-**Nothing in flight.** v1-v4 are delivered and superseded; `specs/` is provenance only. v2 amended Hard Invariant 1 (on-device persistence of correction vectors), authorised for the testing phase and still in force.
-
-Superseded design docs: [v1](../specs/v1-spec.md), [v2](../specs/v2-spec.md), [v3](../specs/v3-spec.md), [v4](../specs/v4-spec.md), kept for provenance only. This wiki is authoritative.
 
 Every number in these pages came from a measurement harness run against a captured timeline. Both live in gitignored `.local/`: the data is personal, and the method is described where the number is used.

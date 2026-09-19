@@ -84,7 +84,7 @@ Working on it? Use `npm run watch` instead of `npm run dev`, and see
 [`docs/development.md`](docs/development.md) for why.
 
 ```bash
-npm run format:check && npm run compile && npm test && npm run build
+npm run check            # format, typecheck, tests, both builds
 ```
 
 Tests never touch the network or a live feed. Site adapters run against captured
@@ -103,7 +103,6 @@ src/
 public/ort/    ONNX runtime, synced from node_modules by scripts/sync-ort.mjs
 docs/          for people: how it works, development, privacy policy, store copy
 wiki-llm/      source of truth for agents
-specs/         superseded design docs, provenance only
 ```
 
 ## Read more

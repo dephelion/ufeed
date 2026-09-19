@@ -4,7 +4,7 @@
 
 ## Checklist
 
-- [ ] `npm run format:check && npm run compile && npm test && npm run build` passes
+- [ ] `npm run check` passes
 - [ ] Tried in a browser if it touches the model, an adapter or the popup
 - [ ] No post text leaves the device or reaches a log
 - [ ] `wiki-llm/` updated if architecture, permissions, model or UI behaviour changed

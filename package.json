@@ -13,6 +13,7 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
+    "check": "npm run format:check && npm run compile && npm test && npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
