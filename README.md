@@ -67,7 +67,7 @@ Nothing blurs until it has loaded.
 
 ## Build from source
 
-Node 20+ and npm. Nothing else.
+Node 22+ and npm. Nothing else.
 
 ```bash
 npm install
@@ -113,6 +113,8 @@ wiki-llm/      source of truth for agents
 - [`docs/android.md`](docs/android.md) — Firefox for Android.
 - [`docs/privacy-policy.md`](docs/privacy-policy.md) — what it reads, stores and sends.
 - Found a bug or have an idea? [Open an issue](https://github.com/dephelion/feedlens/issues/new/choose).
+  Want to change the code? Read [`CONTRIBUTING.md`](CONTRIBUTING.md). Security or
+  privacy problem? [`SECURITY.md`](SECURITY.md) says how to report it privately.
 - [`wiki-llm/`](wiki-llm/index.md) — the authoritative model of the code. Start at
   the index. Agent rules are in [`AGENTS.md`](AGENTS.md).
 

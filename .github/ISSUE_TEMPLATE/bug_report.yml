@@ -38,5 +38,5 @@ body:
     id: logs
     attributes:
       label: Console output
-      description: Optional. Lines starting with `[feedlens:`.
+      description: Optional. Store builds print only real errors, so this is often empty. Open the page's developer console (F12) and copy any red lines starting with `[feedlens:`.
       render: text

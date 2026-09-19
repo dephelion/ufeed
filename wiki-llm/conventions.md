@@ -14,7 +14,7 @@
 ## Working
 
 - **Wiki first.** Read [index.md](index.md) before any code, architecture, model, selector, UI, permission or testing task; open only the page it names.
-- **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. A release bumps the minor version (`npm version minor --no-git-tag-version`).
+- **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. A release bumps the minor version (`npm version minor --no-git-tag-version`); pushing tag `vX.Y.Z` builds the store zips in CI ([development.md](../docs/development.md) §Release).
 - **Explain plainly.** A human reads every explanation, summary, PR body and review. Point first, short sentences, define a term the first time it appears.
 - **Confirm costs the owner has not weighed** — model size, dependency weight, new permissions. Never ask before a `wiki-llm/` edit.
 - **Cheap validation first.** Prove the cheap version before proposing the expensive one, and quantify the expensive path.
@@ -66,7 +66,7 @@ docs/           for people
 
 | Concern     | Choice                                                        |
 | :---------- | :------------------------------------------------------------ |
-| Runtime     | Node 20+                                                      |
+| Runtime     | Node 22+ (`engines`), CI on 22                                |
 | Language    | TypeScript, `strict`, `noUncheckedIndexedAccess`, ESM         |
 | Framework   | **WXT** — generates both manifests, owns entrypoint discovery |
 | Tests       | **Vitest**, `happy-dom` for DOM tiers                         |
