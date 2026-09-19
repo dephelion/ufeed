@@ -301,11 +301,45 @@ footer {
   margin: 0;
 }
 
-/* Last line in the popup, which is where a reader looks for a way to reply. */
+/* Last line in the popup, which is where a reader looks for a way to reply.
+   The GitHub mark shares the row so the popup gets no taller. */
 .contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin: 2px 0 0;
   padding-top: 8px;
   border-top: 1px solid var(--line);
+}
+
+.contact p {
+  margin: 0;
+}
+
+.contact p a {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.contact p a:hover,
+.contact p a:focus-visible {
+  text-decoration: underline;
+}
+
+.github {
+  display: flex;
+  flex: none;
+  color: var(--muted);
+}
+
+.github:hover {
+  color: var(--fg);
+}
+
+.github:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
 }
 
 a {

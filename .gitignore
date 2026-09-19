@@ -5,3 +5,8 @@ node_modules/
 .wxt/
 public/ort/
 stats.html
+.env
+.env.*
+.DS_Store
+spikes/
+.claude/settings.local.json

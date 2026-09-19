@@ -1,0 +1,42 @@
+name: Bug report
+description: A post is blurred (or shown) wrongly, or FeedLens is not working.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FeedLens never logs post text, so console lines starting with `[feedlens:` are safe to paste. Leave anything private out of screenshots.
+  - type: dropdown
+    id: site
+    attributes:
+      label: Site
+      options: [X, LinkedIn, Reddit, Other]
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Browser and FeedLens version
+      placeholder: Chrome 128, FeedLens 0.6.0
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Your topics and strictness
+      description: Wrong calls depend on them.
+      placeholder: |
+        software engineering, programming
+        Strictness 7
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console output
+      description: Optional. Lines starting with `[feedlens:`.
+      render: text

@@ -1,8 +1,9 @@
 {
   "name": "feedlens",
-  "description": "On-device semantic focus for social feeds.",
+  "description": "Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.",
   "private": true,
-  "version": "0.5.6",
+  "license": "GPL-3.0-or-later",
+  "version": "0.6.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",

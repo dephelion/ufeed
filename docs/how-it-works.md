@@ -1,5 +1,30 @@
 # How it works
 
+FeedLens compares each post in your feed with the topics you wrote, and blurs the
+ones that do not match. This page explains how, and why it is built the way it is.
+
+## Why it is built this way
+
+Four choices shape everything else. Each one gives something up.
+
+- **You name what you want, not what you hate.** A list of topics to keep is short
+  and finite. A list of topics to avoid never is. The cost: a post that is about
+  none of your topics is blurred, even if it is harmless.
+- **Blur, never delete.** Every blurred post is one click from readable, so a wrong
+  call costs a click, not a missed post.
+- **An embedding model, not a chat model.** FeedLens turns text into numbers and
+  compares them. It does not reason about a post. That is what keeps the model at
+  33 MB, lets it run in your browser, and makes it give the same answer every time
+  for the same post. The cost: it cannot weigh sarcasm or "this topic, but not the
+  hype" the way a large cloud model can.
+- **Nothing to trust.** There is no server, so there is no cloud mode and no
+  account. The model is small enough that private is the only mode, not a slower
+  option behind a setting.
+
+The rest of this page shows the machinery.
+
+## The three layers
+
 ```mermaid
 flowchart TB
   subgraph host["Host page — https://x.com"]
@@ -35,7 +60,7 @@ about X.
 ## What the model does
 
 FeedLens does not train a classifier on your topics. It uses **e5-small-v2**, a
-text _embedding_ model from Microsoft ([E5 paper](2212.03533v2.pdf); v2 is
+text _embedding_ model from Microsoft ([E5 paper](https://arxiv.org/abs/2212.03533); v2 is
 a later release by the same authors, using the same method). An embedding
 turns text into a vector, a fixed list of 384 numbers, so that texts about the
 same thing end up close together.
@@ -217,4 +242,4 @@ it, while the other lines keep theirs.
 Full reasoning in [`wiki-llm/architecture.md`](../wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](../wiki-llm/model.md), terms in
 [`wiki-llm/glossary.md`](../wiki-llm/glossary.md), and the model's origin in the
-[E5 paper](2212.03533v2.pdf).
+[E5 paper](https://arxiv.org/abs/2212.03533).

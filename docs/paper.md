@@ -1,27 +1,57 @@
-Here's the plain-language rundown of that paper — it's the E5 paper ("Text Embeddings by Weakly-Supervised Contrastive Pre-training"), and it's very likely the model doing the heavy lifting in your extension.
+# The E5 paper, in plain language
 
-**What problem it's solving**
+FeedLens uses **e5-small-v2**, from the paper _Text Embeddings by Weakly-Supervised
+Contrastive Pre-training_ ([arXiv](https://arxiv.org/abs/2212.03533)). This page summarizes what the
+paper does and how FeedLens leans on it. [`how-it-works.md`](how-it-works.md) covers
+the code side.
 
-Computers don't understand words the way we do — they need numbers. An "embedding" is a way of turning a piece of text into a list of numbers (a vector) such that texts with similar meaning end up with similar-looking vectors. Once you have that, you can compare any two pieces of text just by checking how close their vectors are — no keyword matching, no hand-written rules. This is exactly what you need for "is this post on-topic or not": you turn the post into a vector, turn your topic description into a vector, and check how close they are.
+## The problem
 
-The problem before E5 was that making a good general-purpose embedding model usually required tons of human-labeled example pairs ("these two sentences mean the same thing," "these two don't"), which are expensive to create at scale.
+Computers need numbers, not words. An **embedding** turns a piece of text into a
+list of numbers (a vector) so that texts with similar meaning get similar vectors.
+Compare two vectors and you know how close two texts are, with no keyword matching
+and no hand-written rules.
 
-**How they solved it**
+That is exactly the question FeedLens asks of a post: how close is it to the topics
+you wrote? The catch, before E5, was that a good general-purpose embedding model
+needed a huge set of human-labeled pairs ("these two sentences mean the same
+thing", "these two don't"), which is expensive to make.
 
-Instead of relying on labeled data, they scraped roughly 270 million naturally occurring text pairs from the internet — things like a Reddit post and its comment, a question and its answer, a title and its body text — on the theory that if two pieces of text naturally appear together like that, they're probably related. This is the "weakly-supervised" part: it's supervision, but it's free/cheap and a bit noisy rather than hand-labeled.
+## How E5 solves it
 
-They fed these pairs into a training process called contrastive learning: the model is repeatedly shown "this pair belongs together" versus "this pair doesn't" (using other random pairs in the same batch as the "doesn't belong" examples), and it adjusts itself until it reliably pulls related pairs' vectors close together and pushes unrelated ones apart. After this first big, cheap phase, they did a second, smaller fine-tuning pass on a few actual labeled datasets to sharpen accuracy further.
+The authors skipped the labels. They collected about 270 million text pairs that
+already belong together on the web: a Reddit post and its comment, a question and
+its answer, a title and its article. This is the "weakly-supervised" part: cheap,
+a little noisy, and no one had to label anything.
 
-Under the hood it's a standard BERT-style transformer (nothing exotic architecturally) — it just reads the text and averages the output into one fixed-size vector per input. They released three sizes: small (33M parameters), base (110M), and large (330M) — bigger means more accurate but slower and heavier, which matters a lot for something running client-side in a browser extension.
+They trained the model with **contrastive learning**. It is shown which pairs
+belong together, and it treats the other pairs in the same batch as the ones that
+don't. It adjusts until related texts land close together and unrelated ones far
+apart. A second, smaller pass on a few labeled datasets then sharpens it.
 
-**One practical quirk relevant to your extension:** E5 expects you to prefix your text before embedding it — "query: " for the thing you're searching with and "passage: " for the thing being searched/compared. This asymmetry actually helped accuracy in their tests. If your extension is comparing "user's topic of interest" against "post content," you'd typically treat the topic as the "query" and each post as the "passage."
+Under the hood it is a standard BERT-style transformer. It reads the text and
+averages its output into one fixed-size vector. The paper releases three sizes:
+small (33M parameters), base (110M) and large (330M). Bigger is more accurate and
+heavier, which is why FeedLens uses the small one: it has to run inside a browser.
 
-**Results**
+## Results
 
-The headline result: without using any labeled training data for the target task (zero-shot), E5 was the first embedding model to beat BM25 (the classic decades-old keyword-search algorithm) on a standard retrieval benchmark. After fine-tuning, it also outperformed embedding models 40 times its size. In short: strong quality-per-compute, which is exactly why it's a sane choice for something that has to run efficiently.
+Without any labeled training data for the task (zero-shot), E5 was the first
+embedding model to beat BM25, the decades-old keyword-search standard, on a
+well-known retrieval benchmark. After fine-tuning, it also outperformed embedding
+models about 40 times its size. Strong quality for its cost is why it suits an
+extension.
 
-**How this maps to your use case**
+## How FeedLens uses it
 
-For your topic filter, the pipeline is probably: embed each incoming post, embed a description of what "on-topic" looks like (or embed a few example on-topic posts), compute cosine similarity (a similarity score between -1 and 1, basically "how aligned are these two vectors"), and filter out anything below a threshold. The paper's contribution is really just "here's a well-trained, efficient function that turns text into a vector such that semantic closeness = vector closeness" — everything else (your threshold, your topic definitions, your UI) is the part you built on top.
+- Each topic line is embedded as `query: <topic>`, and each post as
+  `passage: <text>`. E5 was trained with those two tags, and its scores get worse
+  without them.
+- A post's score is its highest cosine similarity against any topic line.
+- Everything after that — the strictness thresholds, the peek strip, thumbs — is
+  FeedLens, not the paper.
 
-One thing worth double-checking in your extension: whether you're actually applying the `query:`/`passage:` prefixes at inference time, since skipping them typically degrades accuracy noticeably for this specific model family.
+The paper also explains what the model cannot do: it trails keyword search when a
+match depends on exact wording, it was trained on English, and it reads words
+only. Those limits show up as FeedLens's limits. See
+[What the model does](how-it-works.md#what-the-model-does).
