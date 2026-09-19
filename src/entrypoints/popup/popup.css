@@ -317,6 +317,15 @@ footer {
   margin: 0;
 }
 
+.contact p a {
+  text-decoration: none;
+}
+
+.contact p a:hover,
+.contact p a:focus-visible {
+  text-decoration: underline;
+}
+
 .github {
   display: flex;
   flex: none;
