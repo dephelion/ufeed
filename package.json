@@ -3,7 +3,7 @@
   "description": "Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.",
   "private": true,
   "license": "GPL-3.0-or-later",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "engines": {
     "node": ">=22.12"
