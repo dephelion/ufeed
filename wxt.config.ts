@@ -24,6 +24,8 @@ export default defineConfig({
   }),
   manifestVersion: 3,
   webExt: { disabled: true },
+  // The AMO sources zip is for rebuilding the extension; design docs are not.
+  zip: { excludeSources: ['wiki-llm/**', 'docs/**', 'specs/**'] },
   manifest: ({ browser }) => ({
     name: 'FeedLens: Feed Cleaner for Social Networks',
     description:
