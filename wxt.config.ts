@@ -29,7 +29,7 @@ export default defineConfig({
   manifest: ({ browser }) => ({
     name: 'FeedLens: Feed Cleaner for Social Networks',
     description:
-      'FeedLens uses on-device AI to clean distracting posts on X, LinkedIn, and Reddit while you control the topics you want to focus on.',
+      'Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
     /**
