@@ -23,7 +23,7 @@ reproducible.
 ## Working on it
 
 ```bash
-npm install
+npm install              # Node 22.12+
 npm run watch            # debug build on every change; not `npm run dev`
 npm run check            # format, typecheck, tests, both builds
 ```

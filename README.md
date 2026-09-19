@@ -67,7 +67,7 @@ Nothing blurs until it has loaded.
 
 ## Build from source
 
-Node 22+ and npm. Nothing else.
+Node 22.12+ and npm. Nothing else.
 
 ```bash
 npm install

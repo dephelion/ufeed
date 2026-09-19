@@ -101,6 +101,7 @@ describe('FeedFilter', () => {
 
   it('reveals every blurred post when the engine fails', async () => {
     const { filter } = await run(SETTINGS, ['a chocolate cake recipe']);
+    expect(isBlurred(post('cake'))).toBe(true);
     filter.engineChanged('error');
     expect(isBlurred(post('cake'))).toBe(false);
   });
@@ -140,6 +141,7 @@ describe('FeedFilter', () => {
     const { filter } = await run({ ...SETTINGS, showScores: true }, [
       'a chocolate cake recipe',
     ]);
+    expect(isBlurred(post('cake'))).toBe(true);
     expect(post('cake').dataset.lxScore).toBeDefined();
 
     filter.applySettings({ ...SETTINGS, showScores: true, enabled: false });

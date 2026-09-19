@@ -74,7 +74,7 @@ engine  → content  { type: 'STATUS', state, progress?, message? }
 
 **Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
 
-**The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too.
+**The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and FeedLens fails open.
 
 ## Status channel
 

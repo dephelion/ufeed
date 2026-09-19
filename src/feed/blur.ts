@@ -95,9 +95,11 @@ const SPOKEN: Record<BlurReason, string> = {
 
 /**
  * One polite live region of our own. Blurred posts are `aria-hidden`, yet their
- * links stay focusable (Invariant 3 rules out `inert`), so focus needs a voice.
+ * links stay focusable (`inert` would lock the keyboard out), so focus needs a voice.
  */
 function mountAnnouncer(root: Document): { say(text: string): void; remove(): void } {
+  // Firefox keeps a dead content script's nodes on extension update.
+  for (const stale of root.querySelectorAll('.lx-sr')) stale.remove();
   const region = root.createElement('div');
   region.className = 'lx-sr';
   region.setAttribute('role', 'status');

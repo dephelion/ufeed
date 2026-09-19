@@ -1,8 +1,8 @@
 /* Keeps bundled ORT binaries in step with the installed onnxruntime-web. */
 import { copyFileSync, mkdirSync } from 'node:fs';
 
-/* jsep only: it serves both WebGPU and the CPU fallback. Threads are unusable
-   anyway (no cross-origin isolation, wiki-llm/manifest.md). */
+/* jsep only: the onnxruntime-web entry transformers.js imports asks for it by name.
+   Threads are unusable anyway (no cross-origin isolation, wiki-llm/manifest.md). */
 const FILES = ['ort-wasm-simd-threaded.jsep.wasm', 'ort-wasm-simd-threaded.jsep.mjs'];
 
 mkdirSync('public/ort', { recursive: true });

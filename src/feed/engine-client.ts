@@ -37,6 +37,7 @@ type Pending = {
 export class EngineClient {
   #port: MessagePort | undefined;
   #frame: HTMLIFrameElement | undefined;
+  #extension = '';
   readonly #pending = new Map<string, Pending>();
   readonly #outbox: EngineRequest[] = [];
   #status: StatusEvent = { type: 'STATUS', state: 'idle' };
@@ -76,6 +77,7 @@ export class EngineClient {
   connect(): void {
     if (this.#frame) return;
     const frame = document.createElement('iframe');
+    this.#extension = browser.runtime.getURL('/');
     frame.src = browser.runtime.getURL('engine.html');
     frame.setAttribute('aria-hidden', 'true');
     frame.setAttribute('tabindex', '-1');
@@ -104,8 +106,9 @@ export class EngineClient {
     channel.port1.onmessage = (event: MessageEvent<unknown>) => this.#receive(event.data);
     channel.port1.start();
     // The frame sits in the host DOM: a page that navigates it must not receive the port.
-    const extension = browser.runtime.getURL('/');
-    frame.contentWindow?.postMessage({ type: HANDSHAKE }, extension, [channel.port2]);
+    frame.contentWindow?.postMessage({ type: HANDSHAKE }, this.#extension, [
+      channel.port2,
+    ]);
     log.info('handshake sent', { buffered: this.#outbox.length });
     for (const request of this.#outbox.splice(0)) channel.port1.postMessage(request);
   }

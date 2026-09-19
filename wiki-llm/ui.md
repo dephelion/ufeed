@@ -23,7 +23,7 @@
 
 **Never `filter: blur()` on the container.** It creates a stacking context **and a containing block**, breaking `position: fixed` descendants and vendor overlays, and it is expensive across a long feed. Media is a leaf with no fixed descendants, so blurring it directly is safe.
 
-**`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose. Its links stay focusable — `inert` would mutate host DOM (Invariant 3) — so focus entering a blurred post is announced instead (§Reveal).
+**`aria-hidden` toggles with the class.** Blurred content is otherwise fully present to screen readers, which defeats the purpose. Its links stay focusable on purpose — `inert` would remove them from the keyboard, so a keyboard reader could never reach the post to reveal it — and focus entering a blurred post is announced instead (§Reveal).
 
 **Never nest.** Blur the outermost claimed container; effects must not stack.
 

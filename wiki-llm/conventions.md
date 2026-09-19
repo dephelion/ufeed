@@ -7,7 +7,7 @@
 
 1. **Privacy.** Post text never leaves the device, never reaches a log, never persists. Zero analytics. The only network request is the model weights from the CDN. Embeddings of posts the reader explicitly rated persist in `storage.local` — vectors only, never text, never transmitted. See [privacy.md](privacy.md).
 2. **Fail-open.** Every error, timeout and unready state reveals. No path may leave a post blurred because something broke; assert it directly. A backend that loads but miscomputes is rejected, not trusted ([model.md](model.md)).
-3. **Host page integrity.** All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative`. Never mutate host DOM beyond class and `aria-hidden` toggles and namespaced `data-lx-*` attributes.
+3. **Host page integrity.** All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative`. Never mutate a host element beyond class and `aria-hidden` toggles and namespaced `data-lx-*` attributes. Our own nodes (engine iframe, thumbs bar, no-topics card, `.lx-sr` announcer) carry `.lx-*` and are never inserted into a post.
 4. **Cross-browser floor.** Every API must work on Chrome MV3 **and** Firefox MV3. Promise-style polyfill only — never callbacks, never an aliased `browser ?? chrome`. Chrome-only paths are optimisations behind a fallback. Sole callback exception: `action.setIcon` in `background.ts` — Chrome logs a stale-tab error as unchecked `runtime.lastError` despite a caught promise.
 5. **Main thread.** No inference, embedding or tokenization on the page's main thread.
 
@@ -55,7 +55,8 @@ src/
                   queue.ts     batches to the engine, discards stale replies
                   tuning.ts    corrections and their persistence
                   language.ts  the model's language gate, and CLD detection
-                  blur.ts · media.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
+                  conversation.ts  replies follow their lead post
+                  blur.ts · media.ts · nudge.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
   entrypoints/  content.ts · engine/ · background.ts · popup/
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
@@ -66,7 +67,7 @@ docs/           for people
 
 | Concern     | Choice                                                        |
 | :---------- | :------------------------------------------------------------ |
-| Runtime     | Node 22+ (`engines`), CI on 22                                |
+| Runtime     | Node 22.12+ (`engines`; vite needs it), CI on 22              |
 | Language    | TypeScript, `strict`, `noUncheckedIndexedAccess`, ESM         |
 | Framework   | **WXT** — generates both manifests, owns entrypoint discovery |
 | Tests       | **Vitest**, `happy-dom` for DOM tiers                         |
