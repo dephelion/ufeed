@@ -13,7 +13,7 @@ const { HANDSHAKE } = await import('../core/protocol');
 
 describe('the engine handshake', () => {
   it('offers the port to the extension origin only, never to whatever the frame shows', () => {
-    const client = new EngineClient(() => {});
+    const client = new EngineClient();
     client.connect();
     const frame = document.querySelector('iframe')!;
     const postMessage = vi.fn();

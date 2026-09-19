@@ -22,6 +22,7 @@ src/
   core/         protocol.ts · cache.ts · settings.ts · feedback.ts · config-transfer.ts · engine-status.ts · status-channel.ts · log.ts · debug.ts
   adapters/     types.ts · x.ts · linkedin.ts · reddit.ts · index.ts
   feed/         runs inside the host feed
+                  filter.ts    every feed decision on the page; content.ts only wires it
                   policy.ts    the blur decision, pure
                   scanner.ts   finds posts, says when one nears the viewport
                   queue.ts     batches to the engine, discards stale replies
@@ -46,7 +47,7 @@ timeline data they ran against. The harnesses are reproducible from
 
 **Validate anything read back from `storage.local`.** It outlives the shape that wrote it. `normalizeFeedback()` drops what no longer parses instead of trusting it — a stale correction shape reached `.filter` and took the whole content script down before it could blur anything. Spreading defaults over stored JSON (`{ ...DEFAULTS, ...stored }`) checks nothing.
 
-**`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `scanner` what it has seen, `queue` what is in flight, `tuning` the ratings. Logic that grows there belongs in `feed/`.
+**`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `filter` the decisions and what the engine last received, `scanner` what it has seen, `queue` what is in flight, `tuning` the ratings. Logic that grows in `content.ts` belongs in `feed/`.
 
 **The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 

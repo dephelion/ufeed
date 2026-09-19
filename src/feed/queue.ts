@@ -29,7 +29,7 @@ export class ScoreQueue {
   #epoch = 0;
 
   constructor(
-    private readonly engine: EngineClient,
+    private readonly engine: Pick<EngineClient, 'ready' | 'status' | 'score'>,
     private readonly onScored: (results: Scored[]) => void,
   ) {}
 

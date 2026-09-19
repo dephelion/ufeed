@@ -42,8 +42,11 @@ export class EngineClient {
   #status: StatusEvent = { type: 'STATUS', state: 'idle' };
   #busy = true;
   #onBusy: (busy: boolean) => void = () => {};
+  #onStatus: (status: StatusEvent) => void = () => {};
 
-  constructor(private readonly onStatus: (status: StatusEvent) => void) {}
+  onStatus(fn: (status: StatusEvent) => void): void {
+    this.#onStatus = fn;
+  }
 
   /** Not ready, or a request is waiting on the worker. A thumb sent now would queue behind it. */
   get busy(): boolean {
@@ -114,7 +117,7 @@ export class EngineClient {
         log.info('engine status', { state: data.state, reason: data.message });
       }
       this.#status = data;
-      this.onStatus(data);
+      this.#onStatus(data);
       this.#updateBusy();
       return;
     }

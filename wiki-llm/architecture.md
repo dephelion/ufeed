@@ -31,10 +31,12 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 
 1. `MutationObserver` on `document.documentElement` → `sweep(node)`.
 2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo or first text mounts later is offered again: X can mount a cell before either. Other inner mutations never re-offer.
-3. On intersection: cache hit or override decides immediately; otherwise queue.
+3. On intersection: a cache hit, a kept conversation, or the media or language rule decides immediately; otherwise queue.
 4. Queue flushes at 16 posts or a 100ms debounce.
 5. Worker embeds, scores against topic vectors, replies with **raw scores**.
 6. `decide()` blurs or reveals; the score is cached by text hash.
+
+Steps 1–6 live in `FeedFilter` (`src/feed/filter.ts`). `content.ts` only wires it to storage, the engine client, the popup and the page.
 
 Background service worker: nothing on the hot path. Settings propagate through `storage.onChanged`.
 
@@ -46,7 +48,7 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 
 **The model stamp is the gate.** A missing one reads as `Xenova/e5-small-v2`, which is what every install that predates the stamp holds. On any other id or width, `forCurrentModel()` drops the vectors at load and keeps the settings: another model's embeddings are in another coordinate space, and the post text they came from was discarded at rating time, so there is nothing to re-embed. Shipping a new model therefore costs every reader their corrections — weigh it in the release, and say so in the popup.
 
-**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`, and the content script requeries when the ratings on its lines differ from what the worker last received (`Tuning.signature`) — a clear, an import or a thumb in another tab. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
+**Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`, and `FeedFilter` requeries when the ratings on its lines differ from what the worker last received (`Tuning.signature`) — a clear, an import or a thumb in another tab. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
 
 ## Message contract
 
@@ -100,7 +102,7 @@ content → popup    { type: 'feedlens:status', status }     pushed on change
 
 - `Conversation` (`src/feed/conversation.ts`) is generic: verdicts per container, replies per lead post. It never reads vendor DOM.
 - The adapter supplies the site part: `SiteAdapter.leadPost(container)`. Only X has one ([adapters.md](adapters.md)). `Conversation.for(adapter)` returns undefined without `leadPost`.
-- Content script touches it at three points: `route` before scoring, `settle` after every verdict and reveal click, `reset` on requery. Without one, no hook runs.
+- `FeedFilter` touches it at three points: `route` before scoring, `settle` after every verdict and reveal click, `reset` on requery. Without one, no hook runs.
 - **The post the reader opened is never filtered, on every site.** An adapter enforces it only where it breaks: X's `leadPost` returns the opened post itself (a reveal does not survive X's redraw). Reddit stands down on threads; LinkedIn already holds, checked by hand.
 - `route`: post leads itself → `keep`; lead post kept → `keep` (revealed, never scored); blurred or peeked → `judge` (as any post); undecided → `wait` (held with `markPending`).
 - `settle`: a changed verdict hands back the lead post's replies, re-routed through `enqueue`. Covers waiting replies, a reader reveal, and a rescore flip.
