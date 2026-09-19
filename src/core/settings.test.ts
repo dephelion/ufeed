@@ -102,3 +102,21 @@ describe('strictness read back from storage', () => {
     expect(withDefaults({ strictness: 0 }).strictness).toBe(0);
   });
 });
+
+describe('a settings value of the wrong type', () => {
+  it('falls back to the default, as a hand-edited backup can hold anything', () => {
+    const read = withDefaults({ topics: 'rust', enabled: 'yes' } as never);
+    expect(read.topics).toEqual([]);
+    expect(read.enabled).toBe(true);
+  });
+
+  it('drops a topic list holding anything but strings', () => {
+    expect(withDefaults({ topics: ['rust', null] } as never).topics).toEqual([]);
+  });
+
+  it('keeps every field that has the right type', () => {
+    const read = withDefaults({ topics: ['rust'], showScores: true });
+    expect(read.topics).toEqual(['rust']);
+    expect(read.showScores).toBe(true);
+  });
+});

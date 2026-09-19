@@ -30,12 +30,17 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 /**
- * Spreading defaults over stored JSON checks nothing, and `strictness` outlived
- * a scale change: a stored 0.35 from the old 0..1 slider is step 0 here, which
- * would silently unblur a feed. Anything off the scale lands on the nearest step.
+ * Stored JSON and backup files outlive the shape that wrote them, and a hand-edited
+ * backup can hold anything. A field of the wrong type falls back to its default;
+ * `strictness` must also be a step on the 0..10 scale, not the old 0..1 slider.
  */
 export function withDefaults(partial: Partial<Settings> | undefined): Settings {
-  const merged = { ...DEFAULT_SETTINGS, ...partial };
+  const merged: Settings = { ...DEFAULT_SETTINGS };
+  for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof Settings)[]) {
+    const value: unknown = partial?.[key];
+    if (sameType(value, DEFAULT_SETTINGS[key]))
+      (merged as Record<keyof Settings, unknown>)[key] = value;
+  }
   const stored = partial?.strictness;
   merged.strictness =
     typeof stored === 'number' && Number.isInteger(stored)
@@ -43,6 +48,11 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
       : DEFAULT_STRICTNESS;
   return merged;
 }
+
+const sameType = (value: unknown, fallback: unknown): boolean =>
+  Array.isArray(fallback)
+    ? Array.isArray(value) && value.every((item) => typeof item === 'string')
+    : typeof value === typeof fallback;
 
 /**
  * On, with nothing to do. It is the one inactive state that is not a choice the

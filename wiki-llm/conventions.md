@@ -25,7 +25,7 @@
 
 **Comments default to none.** Write one only for a WHY the code cannot express: a browser bug, a vendor DOM quirk, deliberately counterintuitive logic. Never narrate an edit or restate a name. **Two lines maximum**; a longer WHY is a wiki page, cited (`see adapters.md §X`). Delete adjacent comments an edit makes obsolete.
 
-**Validate anything read back from `storage.local`.** It outlives the shape that wrote it. `normalizeFeedback()` drops what no longer parses instead of trusting it — a stale correction shape reached `.filter` and took the whole content script down before it could blur anything. Spreading defaults over stored JSON (`{ ...DEFAULTS, ...stored }`) checks nothing.
+**Validate anything read back from `storage.local`.** It outlives the shape that wrote it. `normalizeFeedback()` drops what no longer parses instead of trusting it — a stale correction shape reached `.filter` and took the whole content script down before it could blur anything. Spreading defaults over stored JSON (`{ ...DEFAULTS, ...stored }`) checks nothing; `withDefaults()` keeps a field only when its type matches the default's, which also covers a hand-edited backup.
 
 **`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `filter` the decisions and what the engine last received, `scanner` what it has seen, `queue` what is in flight, `tuning` the ratings. Logic that grows in `content.ts` belongs in `feed/`.
 
