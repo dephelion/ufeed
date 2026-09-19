@@ -7,7 +7,7 @@ changing things.
 ## Run it
 
 ```bash
-npm run watch            # build on change -> .output/chrome-mv3
+npm run watch            # debug build on change -> .output/chrome-mv3-debug
 ```
 
 Load the build once, then hit reload in the browser after each rebuild.
@@ -18,7 +18,7 @@ npm run build:firefox    # one-off, Firefox only -> .output/firefox-mv3
 ```
 
 **Chrome** — `chrome://extensions`, turn on Developer mode, _Load unpacked_, pick
-`.output/chrome-mv3`.
+`.output/chrome-mv3-debug` (from `watch`) or `.output/chrome-mv3`.
 
 **Firefox** — `about:debugging#/runtime/this-firefox`, _Load Temporary Add-on_,
 pick `.output/firefox-mv3/manifest.json`.
@@ -58,10 +58,11 @@ The first missing line locates the failure. `content` and `client` lines appear 
 the page console; `engine` and `worker` lines come from the iframe, so pick the
 `engine.html` context in the devtools frame selector to see them.
 
-Logging is on in `npm run watch` and `npm run build:debug`, which set
-`VITE_FEEDLENS_DEBUG=1` themselves; `npm run build` and `npm run zip` never do.
-Keep the flag out of `.env`: Vite reads that file into every build, store zips
-included.
+Logging is on only in debug builds: `npm run watch` and `npm run build:debug`.
+The build mode alone decides it, never an environment variable or a
+`.env` file, so `npm run build` and `npm run zip` never log. Debug builds go to
+their own folder (`.output/chrome-mv3-debug`), apart from the one the store zip
+is made from.
 
 ### First run
 

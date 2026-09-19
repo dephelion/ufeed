@@ -66,14 +66,14 @@ docs/           for people
 
 ## Build modes
 
-| Command                 | Output                | Logs | Readable source       |
-| :---------------------- | :-------------------- | :--- | :-------------------- |
-| `npm run watch`         | `.output/chrome-mv3`  | on   | yes, inline sourcemap |
-| `npm run build:debug`   | `.output/chrome-mv3`  | on   | yes, inline sourcemap |
-| `npm run build`         | `.output/chrome-mv3`  | off  | no, minified          |
-| `npm run build:firefox` | `.output/firefox-mv3` | off  | no, minified          |
+| Command                 | Output                     | Logs | Readable source       |
+| :---------------------- | :------------------------- | :--- | :-------------------- |
+| `npm run watch`         | `.output/chrome-mv3-debug` | on   | yes, inline sourcemap |
+| `npm run build:debug`   | `.output/chrome-mv3-debug` | on   | yes, inline sourcemap |
+| `npm run build`         | `.output/chrome-mv3`       | off  | no, minified          |
+| `npm run build:firefox` | `.output/firefox-mv3`      | off  | no, minified          |
 
-**`VITE_FEEDLENS_DEBUG` turns off minification too**, in `wxt.config.ts`. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
+**Debug is the WXT mode, never an env var.** `--mode debug` (`npm run watch`, `npm run build:debug`) turns on logs and turns off minification; nothing else logs, `npm run dev` included; `core/debug.ts` and `wxt.config.ts` read the mode and nothing else. WXT loads `.env` into `process.env` and Vite reads `NODE_ENV`, so an env-based flag let a stray `.env` ship logs in a store build. Debug output lands in `*-debug/`, never the production folder that `npm run zip` packs. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
 
 **The score badge is a setting, not a build flag.** It ships in every build behind `showScores`; only console logs are compiled out. See [ui.md](ui.md).
 

@@ -9,17 +9,14 @@ const FEED_HOSTS = [
   '*://*.reddit.com/*',
 ];
 
-/** Same flag that turns on logging; a build you read is a build you can debug. */
-const DEBUG = process.env.VITE_FEEDLENS_DEBUG === '1';
-
 export default defineConfig({
   srcDir: 'src',
-  vite: () => ({
+  // Debug is the CLI mode (`--mode debug`), never an env var: WXT loads `.env` into
+  // process.env, and a store build must not log whatever that file says.
+  vite: ({ mode }) => ({
     build: {
-      // Production shape is what makes `npm run watch` usable for the worker,
-      // but minified output turns every stack trace into `content.js:1`.
-      minify: !DEBUG,
-      sourcemap: DEBUG ? 'inline' : false,
+      minify: mode !== 'debug',
+      sourcemap: mode === 'debug' ? 'inline' : false,
     },
   }),
   manifestVersion: 3,

@@ -1,6 +1,6 @@
 /**
- * Single source of truth for debug mode: console logs from every layer. Off in
- * `npm run build`, so no release ships them. Turn on with `npm run watch` or
- * `npm run build:debug`. The score badge is a setting, not a build flag.
+ * Single source of truth for debug mode: console logs from every layer. Only
+ * `--mode debug` turns it on (`npm run watch`, `npm run build:debug`); no env var
+ * or `.env` file can, so every other build, store zips included, never logs.
  */
-export const DEBUG = import.meta.env.DEV || import.meta.env.VITE_FEEDLENS_DEBUG === '1';
+export const DEBUG = import.meta.env.MODE === 'debug';

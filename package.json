@@ -3,7 +3,7 @@
   "description": "Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.",
   "private": true,
   "license": "GPL-3.0-or-later",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "module",
   "engines": {
     "node": ">=22.12"
@@ -25,8 +25,8 @@
     "sync:ort": "node scripts/sync-ort.mjs",
     "watch": "node scripts/watch-build.mjs",
     "test:model": "vitest run --config vitest.model.config.ts",
-    "build:debug": "VITE_FEEDLENS_DEBUG=1 wxt build",
-    "build:debug:firefox": "VITE_FEEDLENS_DEBUG=1 wxt build -b firefox"
+    "build:debug": "wxt build --mode debug",
+    "build:debug:firefox": "wxt build -b firefox --mode debug"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.7.6",
