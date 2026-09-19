@@ -5,7 +5,7 @@
 
 ## The blur
 
-`.lx-blur`, applied to the post container. `src/ui/blur.css`, shipped via `content_scripts[].css` so it applies before first paint.
+`.lx-blur`, applied to the post container. `src/feed/blur.css`, shipped via `content_scripts[].css` so it applies before first paint.
 
 | Target    | Treatment                                                   |
 | :-------- | :---------------------------------------------------------- |
@@ -131,7 +131,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                              |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                        |
 | Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                                                                    |
-| Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin dark row instead of leaving it full height.                                                            |
+| Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                  |
 | Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                                                  |
 | Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                      |
 | Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                  |
