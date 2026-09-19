@@ -144,7 +144,7 @@ Concrete beats abstract: posts write about code, not about categories. `tech` sc
 
 ## Relevance feedback
 
-**The topic score is the source of truth; a thumb never moves a topic vector.** A rating overrides the verdict only for a near-identical post: `ratingNear()` in `scoring.ts`, cosine against the rated post's vector `>= MODEL.ratingNear = 0.92`. Closest rating wins; liked shows, disliked blurs. Everything else is judged by the fixed strictness threshold alone, so "shown means above this score" holds with or without ratings.
+**The topic score is the source of truth; a thumb never moves a topic vector.** A rating overrides the verdict only for a near-identical post: `ratingNear()` in `scoring.ts`, cosine against the rated post's vector `>= MODEL.ratingNear = 0.90`. Closest rating wins; liked shows, disliked blurs. Everything else is judged by the fixed strictness threshold alone, so "shown means above this score" holds with or without ratings.
 
 **Why no query update.** Rocchio (`q + 0.6·mean(liked) − 0.4·mean(disliked)`) shipped through v0.4.1 and moved every score on the corrected line, junk included: a like added a typical-post direction and lifted the baseline, a dislike subtracted it. That forced a relative (quantile) threshold, which went stale after each correction, and a shared window let one line's correction hide another line's posts. Measured, it bought nothing (below).
 
@@ -153,11 +153,13 @@ Concrete beats abstract: posts write about code, not about categories. `tech` sc
 | Override at | Fixed | Broken |
 | ----------: | ----: | -----: |
 |        0.88 |   8.6 |    3.3 |
-|        0.90 |   3.2 |    1.0 |
-|    **0.92** |   1.6 |    0.0 |
+|    **0.90** |   3.2 |    1.0 |
+|        0.92 |   1.6 |    0.0 |
 |        0.94 |   0.0 |    0.0 |
 
 No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pairs do. **Close to a no-op on this sample**: 32 ratings fix 1.6 verdicts, because most rated posts have no near-duplicate in a feed. **The margin is thin and fitted on the same 205 posts it is judged on** — 0.004 above the closest opposite-label pair — so "0 broken" is optimistic; re-measure on a second feed before lowering it. The sample was deduplicated at collection, so an exact repost of a rated post (cosine ~1) is not in it and always overrides.
+
+**Lowered to 0.90 in 0.7.0, the owner's call:** 0.92 was too timid to clear disliked content. On the sample it doubles the fixes (1.6 → 3.2) at the cost of one broken verdict per 32 ratings. The cut is shared, so near-copies of liked posts are matched more broadly too.
 
 **Rocchio's measured gain was a holdout artifact.** The table it shipped with (AUC 0.881 → 0.936 at 32 corrections) scored the held-out set, which excludes the rated posts — the base score's hardest mistakes. The **uncorrected** score on the same held-out sets reaches **0.943** at 32 (Rocchio 0.936; at 8 Rocchio led, 0.902 vs 0.896). At equal feed volume, 32 corrections fixed 7.5 verdicts and broke 8.2. Any future feedback measurement must compare against the base score on the same held-out set.
 

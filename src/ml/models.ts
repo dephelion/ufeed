@@ -20,7 +20,7 @@ export const MODEL = {
   probeMinNear: 0.78,
   probeMinGap: 0.06,
   /** Similarity at which a rated post overrides the topic score. See wiki-llm/model.md. */
-  ratingNear: 0.92,
+  ratingNear: 0.9,
 } as const;
 
 /**
