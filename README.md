@@ -113,7 +113,7 @@ specs/         superseded design docs, provenance only
 - [`docs/development.md`](docs/development.md) — running, debugging and testing.
 - [`docs/android.md`](docs/android.md) — Firefox for Android.
 - [`docs/privacy-policy.md`](docs/privacy-policy.md) — what it reads, stores and sends.
-- Found a bug or have an idea? [Open an issue](https://github.com/dephelion/feedlens/issues/new).
+- Found a bug or have an idea? [Open an issue](https://github.com/dephelion/feedlens/issues/new/choose).
 - [`wiki-llm/`](wiki-llm/index.md) — the authoritative model of the code. Start at
   the index. Agent rules are in [`AGENTS.md`](AGENTS.md).
 
