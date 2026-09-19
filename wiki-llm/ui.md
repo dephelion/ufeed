@@ -138,7 +138,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm. |
 | Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics.                                  |
 | Engine chip                       | Header, beside the title. Two or three words plus a light.                                                                  |
-| Footer                            | Settings line, engine line, contact address.                                                                                |
+| Footer                            | Settings line, engine line, contact address, GitHub mark linking to the repo (same row, no added height).                   |
 
 **Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
