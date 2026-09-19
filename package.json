@@ -2,7 +2,7 @@
   "name": "feedlens",
   "description": "On-device semantic focus for social feeds.",
   "private": true,
-  "version": "0.5.5",
+  "version": "0.5.6",
   "type": "module",
   "scripts": {
     "dev": "wxt",
