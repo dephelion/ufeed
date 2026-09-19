@@ -1,5 +1,30 @@
 # How it works
 
+FeedLens compares each post in your feed with the topics you wrote, and blurs the
+ones that do not match. This page explains how, and why it is built the way it is.
+
+## Why it is built this way
+
+Four choices shape everything else. Each one gives something up.
+
+- **You name what you want, not what you hate.** A list of topics to keep is short
+  and finite. A list of topics to avoid never is. The cost: a post that is about
+  none of your topics is blurred, even if it is harmless.
+- **Blur, never delete.** Every blurred post is one click from readable, so a wrong
+  call costs a click, not a missed post.
+- **An embedding model, not a chat model.** FeedLens turns text into numbers and
+  compares them. It does not reason about a post. That is what keeps the model at
+  33 MB, lets it run in your browser, and makes it give the same answer every time
+  for the same post. The cost: it cannot weigh sarcasm or "this topic, but not the
+  hype" the way a large cloud model can.
+- **Nothing to trust.** There is no server, so there is no cloud mode and no
+  account. The model is small enough that private is the only mode, not a slower
+  option behind a setting.
+
+The rest of this page shows the machinery.
+
+## The three layers
+
 ```mermaid
 flowchart TB
   subgraph host["Host page — https://x.com"]

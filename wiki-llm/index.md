@@ -5,7 +5,7 @@
 
 FeedLens is a browser extension that blurs off-topic posts in social feeds. The user names topics; an embedding model scores each post on-device; anything below the threshold is blurred, never removed, and one click reveals it. No backend, no account, no post text leaves the device.
 
-Chrome and Firefox, MV3, built with WXT. v1 targets X; v3 adds LinkedIn.
+Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
 | Page                               | Answers                                                                                                              |
 | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
@@ -15,6 +15,7 @@ Chrome and Firefox, MV3, built with WXT. v1 targets X; v3 adds LinkedIn.
 | [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                     |
 | [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                      |
 | [privacy.md](privacy.md)           | What FeedLens reads, what it stores, what leaves the device, store policy, legal posture.                            |
+| [product.md](product.md)           | What is FeedLens for, what will it never do, which words may user-facing copy claim.                                 |
 | [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                         |
 | [conventions.md](conventions.md)   | Repo layout, toolchain, hard invariants, definition of done, debug builds.                                           |
 | [glossary.md](glossary.md)         | What does AUC, d-prime, embedding, retrieval model, quantization, etc. mean, in plain language.                      |

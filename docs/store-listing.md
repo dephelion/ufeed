@@ -8,7 +8,7 @@ asks for. Kept in the repo so the listing and the code change together.
 | Field          | Value                                                                     |
 | :------------- | :------------------------------------------------------------------------ |
 | Name           | FeedLens: Feed Cleaner for Social Networks                                |
-| Version        | 0.5.6 — pre-1.0 while it is in friends' hands                             |
+| Version        | 0.6.0 — pre-1.0 while it is finding its first users                       |
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
@@ -22,37 +22,40 @@ before anything can be published.
 
 ## Short description (132 char max)
 
-FeedLens uses on-device AI to clean distracting posts on X, LinkedIn, and Reddit while you control the topics you want to focus on.
+Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.
 
 ## Detailed description
 
-Social networks are deciding what you see. FeedLens lets you decide instead.
+Most feed filters ask what you want to block. FeedLens asks what you want to see.
 
-📝 Write the topics you want. FeedLens AI reads each post locally as you scroll
-and hides the ones that are not about them. Nothing is deleted: a blurred
-post is always one click away, so you never lose the choice, you just stop
-making it by accident.
+📝 Write the topics you care about, one per line. FeedLens reads each post as you
+scroll and blurs the ones that are not about them. Nothing is deleted: a blurred
+post is always one click away, so a wrong call costs you a click, not a missed
+post.
 
 🧹 Works on X, LinkedIn and Reddit.
 
-It runs on your device. A small language model is downloaded once, then
-everything happens inside your browser. No account, no server, no analytics.
-The text of your feed is never uploaded, never stored, and never logged — we
-could not see it if we wanted to.
+🔒 Private by design. A small AI model (about 33 MB) is downloaded once, then
+everything happens inside your browser. No account, no server, no cloud AI, no
+analytics. The text of your feed is never uploaded, never stored, and never
+logged — we could not see it if we wanted to. The code is open source, so you can
+check.
 
-🧑🏽‍💻 You set how strict it is. A 0–10 slider, where every step is a measured
-threshold rather than a guess. Stricter hides more, including some posts you'd
-want, so pick what suits your feed. It is not going to be perfect and it does
-not pretend to be.
+🎚️ You can see why, and steer it. A 0–10 strictness slider, where every step is a
+measured threshold rather than a guess. Turn on scores to see what each post got
+and what it needed. Stricter hides more, including some posts you'd want, so pick
+what suits your feed. It is not going to be perfect and it does not pretend to be.
 
-It takes corrections, if you ask it to. Turn on thumbs and mark a post on or off
+👍 It takes corrections, if you ask it to. Turn on thumbs and mark a post on or off
 topic; the next time a near-copy of it shows up, such as a repost or a quote, it
-follows your call. Your topics never change. Ratings stay on your device, and
-this is off by default.
+follows your call. Your topics never change. Ratings stay on your device, and this
+is off by default.
 
-What it cannot do. It reads words, not pictures, so a photo with no caption
-cannot be judged on content. It understands English. It matches subjects, not
-quality: a great post and a poor one about the same thing both stay.
+What it cannot do. It reads words, not pictures, so a photo with no caption cannot
+be judged on content. It understands English. It matches subjects, not quality: a
+great post and a poor one about the same thing both stay. And because it compares
+meaning rather than reasoning about a post, it can miss sarcasm or "this topic,
+but not the hype".
 
 ❓Bugs, ideas, or a feed it does not work on: contact us with the email below.
 

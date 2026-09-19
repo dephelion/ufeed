@@ -2,113 +2,94 @@
 
 [![CI](https://github.com/dephelion/feedlens/actions/workflows/ci.yml/badge.svg)](https://github.com/dephelion/feedlens/actions/workflows/ci.yml)
 
-Pick your topics. Everything else in your feed gets blurred — still there, one
-click away. The model runs entirely on your device; no post text ever leaves it.
+**Name the topics you want. FeedLens blurs the rest of your feed.**
 
-Chrome and Firefox, MV3, no backend.
+A browser extension for X, LinkedIn and Reddit, on Chrome and Firefox. The model
+runs on your device. No account, no server, no cloud AI, and no post text ever
+leaves your browser.
 
-## Requirements
+## The idea
 
-Node 20+ and npm. Nothing else — the ONNX runtime is copied out of
-`node_modules` on install, and the model downloads itself on first use.
+Most feed filters ask what you want to get rid of. That list never ends: there is
+always one more thing to block.
+
+FeedLens asks the opposite question. You write a few topics, one per line:
+
+```
+software engineering, programming
+machine learning research
+video games, game design
+```
+
+Each post is compared with them as you scroll. Posts about your topics stay.
+Everything else is blurred, not deleted, and one click reveals it.
+
+## Why FeedLens
+
+- **Start from what you want.** Three lines is a full setup. There is no
+  blocklist to keep up with.
+- **Nothing leaves your device.** A 33 MB model runs inside your browser. There is
+  no cloud mode, because there is no server. The only network request is the
+  one-time model download, and the source is here so you can check that.
+- **You can see why, and steer it.** A 0–10 strictness slider, an option to show
+  every post's score, a peek strip that keeps close calls readable, and thumbs
+  that correct near-copies of posts you rated.
+- **You stay in charge.** A blurred post is always one click away. If anything
+  breaks, the feed shows instead of staying blurred.
+
+## What it cannot do
+
+- **It reads English words, not pictures.** A photo with no caption cannot be
+  judged on content, and a post in another language gets a meaningless score.
+- **It matches subjects, not quality.** A great post and a poor one about the same
+  thing both stay.
+- **It is not perfect.** Stricter settings blur more, including some posts you
+  would have wanted.
+
+### The trade-off
+
+FeedLens compares the meaning of a post with your topics. It does not reason about
+the post. A large model in the cloud can judge things like sarcasm or "AI news but
+not hype" better than a 33 MB model on your laptop can. FeedLens gives up some of
+that in exchange for privacy, speed, and a filter that behaves the same way every
+time, so a wrong call can be explained and corrected.
+[How it works](docs/how-it-works.md) has the reasoning.
+
+## Install
+
+**Chrome** — [Chrome Web Store](https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck).
+
+**Firefox** — build from source for now (below).
+
+Then open the toolbar popup, add a topic, and visit x.com, linkedin.com or
+reddit.com. The model downloads once (~33 MB) and is cached by the browser.
+Nothing blurs until it has loaded.
+
+## Build from source
+
+Node 20+ and npm. Nothing else.
 
 ```bash
 npm install
+npm run build            # -> .output/chrome-mv3 and .output/firefox-mv3
 ```
 
-## Run it
-
-```bash
-npm run watch            # build on change -> .output/chrome-mv3
-```
-
-Then load the build and hit reload in the browser after each rebuild.
-
-```bash
-npm run build            # one-off -> .output/chrome-mv3 and .output/firefox-mv3
-npm run build:firefox    # one-off, Firefox only -> .output/firefox-mv3
-```
-
-### Why not `npm run dev`
-
-WXT's dev server serves entrypoint modules from `http://localhost:3001`. The
-engine page then creates its worker from that origin, which is **cross-origin to
-the extension**, so `new Worker()` throws and the engine never starts — silently,
-because nothing else fails. `npm run watch` produces a real production build on
-every change instead. Slower by about a second, and it actually runs.
-
-`npm run dev` is still useful for popup-only work, where no worker is involved.
-
-**Chrome** — `chrome://extensions`, turn on Developer mode, _Load unpacked_,
-pick `.output/chrome-mv3`.
+**Chrome** — `chrome://extensions`, turn on Developer mode, _Load unpacked_, pick
+`.output/chrome-mv3`.
 
 **Firefox** — `about:debugging#/runtime/this-firefox`, _Load Temporary Add-on_,
 pick `.output/firefox-mv3/manifest.json`.
 
-**Firefox for Android** — see [`docs/android.md`](docs/android.md); it needs
-Nightly on both ends and a different loading path.
-
-Then open the toolbar popup, add a topic (`tech, software, ai` — one per line),
-and visit x.com.
-
-### Watching it work
-
-Every layer logs to the console, prefixed `[feedlens:*]`. Post text is never
-logged — counts, scores, states and errors only.
-
-```
-[feedlens:content] content script started host=x.com adapter=x topics=1 active=true
-[feedlens:client]  injecting engine iframe src=chrome-extension://.../engine.html
-[feedlens:engine]  engine page loaded origin=chrome-extension://...
-[feedlens:worker]  loading model
-[feedlens:worker]  ready backend=wasm
-[feedlens:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
-[feedlens:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
-```
-
-WebGPU is tried first and rejected by the self-check on the way past — ORT
-miscomputes the q8 weights there — so `backend=wasm` is the expected steady
-state, and the rejection prints at `info`, not as a warning.
-
-The first missing line locates the failure. `content` and `client` lines appear in
-the page console; `engine` and `worker` lines come from the iframe, so pick the
-`engine.html` context in the devtools frame selector to see them.
-
-Logging is on while `VITE_FEEDLENS_DEBUG=1` is set in `.env`. Turn it off before
-any store submission.
-
-### First run
-
-The model is ~33MB and downloads once, then lives in the browser's cache.
-Nothing blurs until it is loaded: a broken or slow engine always reveals rather
-than leaving you with a blurred wall. Check the popup's status dot to see where
-it is.
-
-## Test
-
-```bash
-npm test                 # unit tests, no browser, no network
-npm run test:watch
-npm run compile          # tsc --noEmit
-```
-
-Full check before committing:
+Working on it? Use `npm run watch` instead of `npm run dev`, and see
+[`docs/development.md`](docs/development.md) for why.
 
 ```bash
 npm run format:check && npm run compile && npm test && npm run build
 ```
 
-```bash
-npm run test:model       # the real model on real feed text, ~3s
-```
-
 Tests never touch the network or a live feed. Site adapters run against captured
-fixture HTML, because vendor DOM changes should fail as a red test rather than a
-silent no-op in production.
-
-What no test covers: model loading, WebGPU init, and real scoring in a browser.
-A green suite is not a working extension — load a build and watch the popup
-status. See [`wiki-llm/testing.md`](wiki-llm/testing.md).
+fixture HTML, so a vendor DOM change fails as a red test instead of a silent
+no-op in production.
 
 ## Layout
 
@@ -116,74 +97,26 @@ status. See [`wiki-llm/testing.md`](wiki-llm/testing.md).
 src/
   ml/          the model, scoring (pure), and the only transformers.js import
   core/        message protocol, score cache, settings, logging
-  adapters/    per-site DOM knowledge; X today
-  content/     host-page logic: blur controller, engine client
+  adapters/    per-site DOM knowledge: X, LinkedIn, Reddit
+  feed/        host-page logic: scanner, blur, engine client
   entrypoints/ content script, engine iframe + worker, background, popup
-  ui/          blur stylesheet
 public/ort/    ONNX runtime, synced from node_modules by scripts/sync-ort.mjs
-wiki-llm/      source of truth
+docs/          for people: how it works, development, privacy policy, store copy
+wiki-llm/      source of truth for agents
 specs/         superseded design docs, provenance only
 ```
 
-Inference runs in a hidden extension-origin iframe — not the page, not the
-service worker. `wiki-llm/architecture.md` explains why that is the only
-portable option.
+## Read more
 
-## How it works
+- [`docs/how-it-works.md`](docs/how-it-works.md) — the three layers, the model, and
+  every control, in plain language.
+- [`docs/development.md`](docs/development.md) — running, debugging and testing.
+- [`docs/android.md`](docs/android.md) — Firefox for Android.
+- [`docs/privacy-policy.md`](docs/privacy-policy.md) — what it reads, stores and sends.
+- [`wiki-llm/`](wiki-llm/index.md) — the authoritative model of the code. Start at
+  the index. Agent rules are in [`AGENTS.md`](AGENTS.md).
 
-FeedLens has three layers, and each has one job. The **content script** runs in
-the page: it reads posts and applies the blur. A **hidden extension iframe**
-passes messages along. A **worker thread** runs the model, so scoring never
-blocks scrolling. Only strings go in and scores come out, which keeps post text
-on your device. The full version, with diagrams, is in
-[`docs/how-it-works.md`](docs/how-it-works.md).
+## License
 
-### What the model does
-
-**e5-small-v2** is a text embedding model from Microsoft
-([E5 paper](docs/2212.03533v2.pdf)). It turns text into a vector, so that texts
-about the same thing end up close together. Each topic line is embedded as
-`query:` and each post as `passage:`, and a post's score is its highest cosine
-against any topic line. E5 learned from web pairs such as a question and its
-answer, so it needs no training on your topics. Its training also packs scores
-into a narrow band. It reads English only, and it never sees images.
-[Full section](docs/how-it-works.md#what-the-model-does).
-
-### Inside the worker
-
-transformers.js splits the text into tokens and averages the model's output
-into one vector of length 1. The ONNX Runtime executes the model on its WASM
-backend. WebGPU is tried first, but a self-check rejects it because it
-miscomputes the quantized weights. The model weights download once from the
-hub CDN and are then cached. The runtime WASM ships inside the extension and is
-never fetched. [Full section](docs/how-it-works.md#inside-the-worker).
-
-### Tuning it yourself
-
-The model never changes. Every control moves either the query vector or the
-threshold, and thumbs move neither. **Topic words** set the query, and plain words beat category names.
-**Strictness** picks a measured threshold within that narrow score band. A
-**peek strip** just below the threshold keeps close calls readable. **Thumbs**
-(off by default) only decide posts that are nearly identical to one you rated;
-everything else is judged by its score alone.
-[Full section](docs/how-it-works.md#tuning-it-yourself).
-
-### What a thumb changes
-
-A thumb only affects new posts that are nearly identical to the rated one, on
-any topic line; it never changes a topic's scores. Rating the same post again
-removes the rating, and the other thumb flips it. No single word is picked out:
-the whole post is one vector. Rewriting a line discards its ratings, and the
-other lines keep theirs.
-[Full section](docs/how-it-works.md#what-a-thumb-changes).
-
-Full reasoning in [`wiki-llm/architecture.md`](wiki-llm/architecture.md), model
-detail in [`wiki-llm/model.md`](wiki-llm/model.md), terms in
-[`wiki-llm/glossary.md`](wiki-llm/glossary.md).
-
-## Source of truth
-
-[`wiki-llm/`](wiki-llm/index.md) — start at the index, which routes to the page
-that answers your question. Agent rules are in [`AGENTS.md`](AGENTS.md).
-[`specs/v1-spec.md`](specs/v1-spec.md) is the superseded design doc, kept for
-provenance; several of its decisions were overturned by measurement.
+[GPL-3.0](LICENSE). Use it, change it, share it. If you distribute a modified
+version, you must publish its source under the same license.
