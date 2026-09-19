@@ -322,9 +322,9 @@ lands is not overwritten by an open tab.** That is a decision, not a rendering.
    - [`docs/privacy-policy.md`](../docs/privacy-policy.md) — the export sentence
      from §7.
    - **`dephelion.com`**, the published policy at
-     `src/app/lensing-browser-extension/privacy/page.tsx` — same sentence, beside
+     `src/app/feedlens-browser-extension/privacy/page.tsx` — same sentence, beside
      the existing "Thumb ratings" and Clear-tuning paragraphs, plus
-     `LENSING_POLICY_DATE` in `src/lib/lensing.ts` bumped in the same commit. It
+     `FEEDLENS_POLICY_DATE` in `src/lib/feedlens.ts` bumped in the same commit. It
      is a separate repo, so it is a separate commit that ships with the release,
      not after it: the extension must not offer an export the live policy does
      not describe.

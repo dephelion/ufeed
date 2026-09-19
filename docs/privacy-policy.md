@@ -1,7 +1,7 @@
 # FeedLens — Privacy Policy
 
 > Source of record for the page published at
-> <https://dephelion.com/lensing-browser-extension/privacy/>. Edit both together.
+> <https://dephelion.com/feedlens-browser-extension/privacy/>. Edit both together.
 
 **Effective 13 September 2026.** Contact: contact@dephelion.com
 

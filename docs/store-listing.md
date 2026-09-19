@@ -5,17 +5,17 @@ asks for. Kept in the repo so the listing and the code change together.
 
 ## Identity
 
-| Field          | Value                                                                             |
-| :------------- | :-------------------------------------------------------------------------------- |
-| Name           | FeedLens: Feed Cleaner for Social Networks                                        |
-| Version        | 0.5.4 — pre-1.0 while it is in friends' hands                                     |
-| Category       | Productivity                                                                      |
-| Language       | English                                                                           |
-| Support email  | contact@dephelion.com                                                             |
-| Support URL    | https://dephelion.com/lensing-browser-extension/contact/                          |
-| Privacy policy | https://dephelion.com/lensing-browser-extension/privacy/                          |
-| Visibility     | Public — listed in search and category browsing                                   |
-| Store URL      | https://chromewebstore.google.com/detail/lensing/ahlojbckjlffcfdhmkjepaglnhhpmdck |
+| Field          | Value                                                                     |
+| :------------- | :------------------------------------------------------------------------ |
+| Name           | FeedLens: Feed Cleaner for Social Networks                                |
+| Version        | 0.5.4 — pre-1.0 while it is in friends' hands                             |
+| Category       | Productivity                                                              |
+| Language       | English                                                                   |
+| Support email  | contact@dephelion.com                                                     |
+| Support URL    | https://dephelion.com/feedlens-browser-extension/contact/                 |
+| Privacy policy | https://dephelion.com/feedlens-browser-extension/privacy/                 |
+| Visibility     | Public — listed in search and category browsing                           |
+| Store URL      | https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
 A Chrome Web Store developer account requires a one-time 5 USD registration fee
 before anything can be published.
@@ -110,7 +110,7 @@ page.
       revealed by clicking, the strictness slider with its hint, the no-topics
       card.
 - [ ] Small promo tile, 440×280. Optional, but listings without one look unfinished.
-- [ ] Privacy policy live at https://dephelion.com/lensing-browser-extension/privacy/ (ship the dephelion.com PR first).
+- [ ] Privacy policy live at https://dephelion.com/feedlens-browser-extension/privacy/ (ship the dephelion.com PR first).
 
 ## Before each submission
 
