@@ -17,7 +17,7 @@ body:
     id: versions
     attributes:
       label: Browser and FeedLens version
-      placeholder: Chrome 128, FeedLens 0.7.0
+      placeholder: Chrome 128, FeedLens 0.7.1
     validations:
       required: true
   - type: textarea

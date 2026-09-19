@@ -15,7 +15,7 @@
 ## Working
 
 - **Wiki first.** Read [index.md](index.md) before any code, architecture, model, selector, UI, permission or testing task; open only the page it names.
-- **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. A release bumps the minor version (`npm version minor --no-git-tag-version`); pushing tag `vX.Y.Z` builds the store zips in CI ([development.md](../docs/development.md) §Release).
+- **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. A release bumps the minor version (`npm version minor --no-git-tag-version`); store zips are built from `main` ([development.md](../docs/development.md) §Release).
 - **Explain plainly.** A human reads every explanation, summary, PR body and review. Point first, short sentences, define a term the first time it appears.
 - **Confirm costs the owner has not weighed** — model size, dependency weight, new permissions. Never ask before a `wiki-llm/` edit.
 - **Cheap validation first.** Prove the cheap version before proposing the expensive one, and quantify the expensive path.
@@ -66,14 +66,14 @@ docs/           for people
 
 ## Build modes
 
-| Command                 | Output                | Logs | Readable source       |
-| :---------------------- | :-------------------- | :--- | :-------------------- |
-| `npm run watch`         | `.output/chrome-mv3`  | on   | yes, inline sourcemap |
-| `npm run build:debug`   | `.output/chrome-mv3`  | on   | yes, inline sourcemap |
-| `npm run build`         | `.output/chrome-mv3`  | off  | no, minified          |
-| `npm run build:firefox` | `.output/firefox-mv3` | off  | no, minified          |
+| Command                 | Output                     | Logs | Readable source       |
+| :---------------------- | :------------------------- | :--- | :-------------------- |
+| `npm run watch`         | `.output/chrome-mv3-debug` | on   | yes, inline sourcemap |
+| `npm run build:debug`   | `.output/chrome-mv3-debug` | on   | yes, inline sourcemap |
+| `npm run build`         | `.output/chrome-mv3`       | off  | no, minified          |
+| `npm run build:firefox` | `.output/firefox-mv3`      | off  | no, minified          |
 
-**`VITE_FEEDLENS_DEBUG` turns off minification too**, in `wxt.config.ts`. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
+**Debug is the WXT mode, never an env var.** `--mode debug` (`npm run watch`, `npm run build:debug`) turns on logs and turns off minification; nothing else logs, `npm run dev` included; `core/debug.ts` and `wxt.config.ts` read the mode and nothing else. WXT loads `.env` into `process.env` and Vite reads `NODE_ENV`, so an env-based flag let a stray `.env` ship logs in a store build. Debug output lands in `*-debug/`, never the production folder that `npm run zip` packs. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
 
 **The score badge is a setting, not a build flag.** It ships in every build behind `showScores`; only console logs are compiled out. See [ui.md](ui.md).
 

@@ -14,10 +14,8 @@ function build() {
   }
   running = true;
   const started = Date.now();
-  spawn('npx', ['wxt', 'build'], {
-    stdio: 'inherit',
-    env: { ...process.env, VITE_FEEDLENS_DEBUG: '1' },
-  }).on('close', (code) => {
+  const child = spawn('npx', ['wxt', 'build', '--mode', 'debug'], { stdio: 'inherit' });
+  child.on('close', (code) => {
     running = false;
     console.log(
       code === 0

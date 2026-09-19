@@ -8,7 +8,7 @@ asks for. Kept in the repo so the listing and the code change together.
 | Field          | Value                                                                     |
 | :------------- | :------------------------------------------------------------------------ |
 | Name           | FeedLens: Feed Cleaner for Social Networks                                |
-| Version        | 0.7.0 — pre-1.0 while it is finding its first users                       |
+| Version        | 0.7.1 — pre-1.0 while it is finding its first users                       |
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
