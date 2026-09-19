@@ -1,6 +1,6 @@
 # FeedLens
 
-[![CI](https://github.com/dephelion/lensing/actions/workflows/ci.yml/badge.svg)](https://github.com/dephelion/lensing/actions/workflows/ci.yml)
+[![CI](https://github.com/dephelion/feedlens/actions/workflows/ci.yml/badge.svg)](https://github.com/dephelion/feedlens/actions/workflows/ci.yml)
 
 Pick your topics. Everything else in your feed gets blurred — still there, one
 click away. The model runs entirely on your device; no post text ever leaves it.
