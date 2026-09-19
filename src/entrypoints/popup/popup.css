@@ -317,10 +317,6 @@ footer {
   margin: 0;
 }
 
-.contact p a {
-  display: block;
-}
-
 .github {
   display: flex;
   flex: none;
