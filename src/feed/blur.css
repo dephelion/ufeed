@@ -101,12 +101,6 @@
     monospace;
 }
 
-/* The score badge sits over the same top-left corner — drop the peek text
-   below it so the two don't overlap. */
-.lx-blur[data-lx-reason='peek'][data-lx-score]::after {
-  top: 26px;
-}
-
 /* Borderline text is dimmed, not erased: the peek is the point. */
 .lx-blur[data-lx-reason='peek'] :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
   text-shadow: 0 0 7px currentColor;
@@ -183,13 +177,13 @@
   line-height: 1.4;
 }
 
-/* The peek drops below the score badge; the row grows so it is not clipped. */
-.lx-collapse[data-lx-reason='peek'][data-lx-score] {
+/* The label rises to the top so the score badge fits under it; the row grows to hold both. */
+.lx-collapse[data-lx-score] {
   max-height: 46px;
 }
 
-.lx-collapse[data-lx-reason='peek'][data-lx-score]::after {
-  top: 22px;
+.lx-collapse[data-lx-score]::after {
+  top: 4px;
   transform: none;
 }
 
@@ -203,8 +197,8 @@
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
     attr(data-lx-chars) ' chars';
   position: absolute;
-  top: 2px;
-  left: 2px;
+  right: 2px;
+  bottom: 2px;
   z-index: 3;
   padding: 2px 6px;
   border-radius: 4px;

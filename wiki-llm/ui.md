@@ -58,7 +58,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **Solid was tried and rejected.** It is the most legible and the most foreign — the pill stops belonging to the feed. Legibility here comes from the fill being dark and the text near-white, not from removing the transparency.
 
-**The score badge stays translucent**, alone among them. It is a debug affordance sitting over the post's own first line, and it is meant to be read through — a solid pill there hides content the badge exists to explain.
+**The score badge stays translucent**, alone among them. It is a debug affordance sitting in the post's bottom-right corner, and it is meant to be read through — a solid pill there hides content the badge exists to explain.
 
 **The peek shares `::after` with the label, deliberately.** An element has two pseudo-elements and the score badge owns `::before`; putting the peek there would hide the badge on exactly the borderline posts worth debugging.
 
@@ -190,5 +190,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 `score 0.793 / needs 0.795 · 105 chars · ℹ️ 3 topics · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). **Hovering the post** swaps `ℹ️ 3 topics` for every line's score by 1-based position (`#1 0.793 · #2 0.791 · #3 0.760`), pure CSS on `:hover`; the score is the highest of them. Absent when the post has no lines (unscored). A tooltip on the ℹ️ alone was rejected: the badge is a pseudo-element with no box of its own to hover. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
 
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
+
+**Bottom-right corner.** Top-left sat under the thumbs bar, which is centred on the post's top edge, and pushed the peek text down. Bottom-right meets nothing on a full-height post. A collapsed row grows to 46px with its label at the top, so the badge fits underneath.
 
 **Gated solely on `settings.showScores`** (default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.
