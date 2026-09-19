@@ -15,7 +15,7 @@
 ## Working
 
 - **Wiki first.** Read [index.md](index.md) before any code, architecture, model, selector, UI, permission or testing task; open only the page it names.
-- **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. A release bumps the minor version (`npm version minor --no-git-tag-version`); `npm run release` tags that version on `main`, and the tag builds the store zips in CI ([development.md](../docs/development.md) §Release).
+- **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. Bumping the version in a PR is the decision to release (`npm version minor --no-git-tag-version`): merging it to `main` makes CI tag it and publish the store zips ([development.md](../docs/development.md) §Release).
 - **Explain plainly.** A human reads every explanation, summary, PR body and review. Point first, short sentences, define a term the first time it appears.
 - **Confirm costs the owner has not weighed** — model size, dependency weight, new permissions. Never ask before a `wiki-llm/` edit.
 - **Cheap validation first.** Prove the cheap version before proposing the expensive one, and quantify the expensive path.

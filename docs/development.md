@@ -94,13 +94,16 @@ status. See [`wiki-llm/testing.md`](../wiki-llm/testing.md).
 
 ## Release
 
-1. On the release branch, bump the version: `npm version minor --no-git-tag-version`.
-2. Merge to `main` through a pull request, with CI green.
-3. Run `npm run release`. It switches to `main`, pulls, tags the version in
-   `package.json` (`v0.7.0`) and pushes the tag. It stops if that tag already
-   exists.
+**Bumping the version in a pull request is the decision to release.**
 
-The tag starts the **Release** workflow. It checks that the tag matches `package.json`, runs
-`npm run check`, and attaches three zips to a GitHub release: Chrome, Firefox,
-and the sources Firefox Add-ons asks for. Upload those to the stores; never a zip
-built locally.
+1. On the branch, bump the version: `npm version minor --no-git-tag-version`.
+2. Merge it to `main` through a pull request, with CI green.
+
+On every push to `main`, the **Release** workflow reads the version from
+`package.json`. If that version has no GitHub release yet, it runs
+`npm run check`, tags the merged commit `v<version>`, and attaches three zips to
+a new GitHub release: Chrome, Firefox, and the sources Firefox Add-ons asks for.
+A merge that keeps the version releases nothing.
+
+The workflow never touches the stores. Upload the release's zips to each store
+by hand; never a zip built locally.
