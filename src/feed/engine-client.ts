@@ -100,7 +100,9 @@ export class EngineClient {
     this.#port = channel.port1;
     channel.port1.onmessage = (event: MessageEvent<unknown>) => this.#receive(event.data);
     channel.port1.start();
-    frame.contentWindow?.postMessage({ type: HANDSHAKE }, '*', [channel.port2]);
+    // The frame sits in the host DOM: a page that navigates it must not receive the port.
+    const extension = browser.runtime.getURL('/');
+    frame.contentWindow?.postMessage({ type: HANDSHAKE }, extension, [channel.port2]);
     log.info('handshake sent', { buffered: this.#outbox.length });
     for (const request of this.#outbox.splice(0)) channel.port1.postMessage(request);
   }
