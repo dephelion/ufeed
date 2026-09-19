@@ -166,8 +166,14 @@
   transform: translateY(-50%);
 }
 
+/* The peek is a pill like the other labels, sized to its words and pinned right;
+   only its text differs. */
 .lx-collapse[data-lx-reason='peek']::after {
-  font-size: 10.5px;
+  left: auto;
+  max-width: calc(100% - 16px);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 /* The peek drops below the score badge; the row grows so it is not clipped. */
