@@ -156,6 +156,8 @@ Apply is disabled until the textarea differs from what is saved.
 
 **Import replaces on select, with no confirmation**, matching Reset, which destroys nearly as much on one click. A file is refused whole — settings included — when the schema is newer, the model does not match, or the JSON is not a backup; a refusal writes nothing. The line is transient. The durable proof an import landed is the topics box and the thumb counts re-rendering above it. Export is disabled with nothing to export.
 
+**Firefox imports in a tab.** Firefox closes the popup when the file picker takes focus; `change` fires into a dead page. On Firefox (`import.meta.env.FIREFOX`), Import opens `popup.html?tab` and closes the popup. The tab needs a second click: a picker opens only on user activation. Chrome keeps the in-popup picker.
+
 ## No-topics card
 
 On, allowed on this host, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
@@ -167,6 +169,8 @@ Fixed top-right, same dark chip as the thumbs bar so it reads the same on a ligh
 **Turning FeedLens off is the second option, offered on the card.** The `x` hides it for this page load only — persisting a dismissal leaves a silent extension and no route back to the explanation.
 
 **Mounted outside the active gate**, and it polls briefly for `document.body`: the content script runs at `document_start`.
+
+**Mount removes any existing `.lx-nudge`.** Firefox kills the old content script on extension reload/update but keeps its DOM: a card with a dead `x` and stale "no topics".
 
 ## Debug mode
 

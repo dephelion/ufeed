@@ -267,7 +267,21 @@ exportButton.addEventListener('click', () => {
   })();
 });
 
+// Firefox closes a popup when the file picker opens; import from a tab instead (see ui.md §Popup).
+const IN_TAB = new URLSearchParams(location.search).has('tab');
+if (IN_TAB) {
+  document.documentElement.dataset['tab'] = '';
+  say('Import', '— choose your backup file', 'ok');
+  importButton.focus();
+}
+
 importButton.addEventListener('click', () => {
+  if (import.meta.env.FIREFOX && !IN_TAB) {
+    void browser.tabs
+      .create({ url: browser.runtime.getURL('/popup.html?tab') })
+      .then(() => window.close());
+    return;
+  }
   importFile.value = '';
   importFile.click();
 });

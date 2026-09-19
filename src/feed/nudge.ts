@@ -64,7 +64,11 @@ export function mountNudge(): Nudge {
     paint();
   });
 
-  const stopWaiting = whenBody((body) => body.append(card));
+  // Firefox leaves a dead content script's card behind on reload (see ui.md §No-topics card).
+  const stopWaiting = whenBody((body) => {
+    for (const stale of body.querySelectorAll('.lx-nudge')) stale.remove();
+    body.append(card);
+  });
 
   return {
     setVisible(visible: boolean): void {

@@ -31,6 +31,11 @@ body {
     monospace;
 }
 
+/* Opened in a tab to import (see popup.ts): a popup-wide column, centered. */
+:root[data-tab] body {
+  margin: 32px auto;
+}
+
 header {
   display: flex;
   align-items: center;
