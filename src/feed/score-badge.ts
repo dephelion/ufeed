@@ -1,12 +1,4 @@
-const ATTRS = [
-  'lxScore',
-  'lxNeeds',
-  'lxChars',
-  'lxPass',
-  'lxTopics',
-  'lxLines',
-  'lxRated',
-] as const;
+const ATTRS = ['lxScore', 'lxNeeds', 'lxChars', 'lxPass', 'lxLines', 'lxRated'] as const;
 
 export interface Badge {
   score: number | undefined;
@@ -25,13 +17,8 @@ export function stampScore(container: HTMLElement, badge: Badge): void {
   data.lxNeeds = needs.toFixed(3);
   data.lxChars = String(chars);
   data.lxPass = String(rating ?? (score !== undefined && score >= needs));
-  if (lines === undefined || lines.length === 0) {
-    delete data.lxTopics;
-    delete data.lxLines;
-  } else {
-    data.lxTopics = lines.length === 1 ? '1 topic' : `${lines.length} topics`;
-    data.lxLines = lines.map((s, i) => `#${i + 1} ${s.toFixed(3)}`).join(' · ');
-  }
+  if (lines === undefined || lines.length === 0) delete data.lxLines;
+  else data.lxLines = lines.map((s, i) => `#${i + 1} ${s.toFixed(3)}`).join(' · ');
   if (rating === undefined) delete data.lxRated;
   else data.lxRated = rating ? 'on' : 'off';
 }
