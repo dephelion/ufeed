@@ -68,7 +68,7 @@ export default defineConfig({
       ? {
           browser_specific_settings: {
             gecko: {
-              id: 'feedlens@juliomatcom.dev',
+              id: 'feedlens@dephelion.com',
               strict_min_version: '115.0',
               data_collection_permissions: { required: ['none'] },
             },
