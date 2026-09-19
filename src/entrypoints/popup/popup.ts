@@ -2,14 +2,20 @@ import browser from 'webextension-polyfill';
 import { feedShownAt } from '../../ml/scoring';
 import {
   DEFAULT_SETTINGS,
+  loadSettings,
   parseTopics,
+  saveSettings,
   topicsEqual,
   topicsToText,
   type Settings,
 } from '../../core/settings';
-import { loadSettings, saveSettings } from '../../core/settings-storage';
-import { EMPTY_FEEDBACK, counts } from '../../core/feedback';
-import { clearFeedback, loadFeedback, saveFeedback } from '../../core/feedback-storage';
+import {
+  EMPTY_FEEDBACK,
+  clearFeedback,
+  counts,
+  loadFeedback,
+  saveFeedback,
+} from '../../core/feedback';
 import { exportConfig, importConfig } from '../../core/config-transfer';
 import {
   describeEngine,

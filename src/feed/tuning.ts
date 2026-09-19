@@ -6,12 +6,14 @@ import {
   counts,
   findRating,
   forTopics,
+  loadFeedback,
+  onFeedbackChanged,
   rate,
   ratingsFor,
+  saveFeedback,
   type Feedback,
   type TopicCorrections,
 } from '../core/feedback';
-import { loadFeedback, onFeedbackChanged, saveFeedback } from '../core/feedback-storage';
 
 /**
  * Owns the user's corrections and their persistence. Vectors only: the

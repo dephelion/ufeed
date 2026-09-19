@@ -3,7 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 const EXTENSION = 'chrome-extension://feedlens/';
 
 vi.mock('webextension-polyfill', () => ({
-  default: { runtime: { getURL: (path: string) => EXTENSION + path.replace(/^\//, '') } },
+  default: {
+    runtime: { getURL: (path: string) => (path === '/' ? EXTENSION : 'about:blank') },
+  },
 }));
 
 const { EngineClient } = await import('./engine-client');

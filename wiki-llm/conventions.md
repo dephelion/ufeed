@@ -19,15 +19,15 @@
 ```
 src/
   ml/           models.ts (the one model) · scoring.ts (pure) · embedder.ts (only transformers.js import)
-  core/         protocol.ts · cache.ts · settings.ts (pure) · settings-storage.ts · log.ts · debug.ts
-  adapters/     types.ts · x.ts · index.ts
+  core/         protocol.ts · cache.ts · settings.ts · feedback.ts · config-transfer.ts · engine-status.ts · status-channel.ts · log.ts · debug.ts
+  adapters/     types.ts · x.ts · linkedin.ts · reddit.ts · index.ts
   feed/         runs inside the host feed
                   policy.ts    the blur decision, pure
                   scanner.ts   finds posts, says when one nears the viewport
                   queue.ts     batches to the engine, discards stale replies
                   tuning.ts    corrections and their persistence
-                  language.ts  the model's language gate, pure
-                  blur.ts · media.ts · language-detector.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
+                  language.ts  the model's language gate, and CLD detection
+                  blur.ts · media.ts · score-badge.ts · feedback-bar.ts · engine-client.ts · blur.css
   entrypoints/  content.ts · engine/ · background.ts · popup/
 public/ort/     ONNX runtime, synced by scripts/sync-ort.mjs
 wiki-llm/       source of truth
@@ -50,7 +50,7 @@ timeline data they ran against. The harnesses are reproducible from
 
 **The blur decision is pure.** `feed/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 
-**`core/` and `ml/scoring.ts` import no browser API.** That split is why the logic that can be wrong tests in milliseconds. `settings.ts` was split from `settings-storage.ts` for exactly this — the polyfill throws on import outside an extension. `language.ts` is split from `language-detector.ts` on the same line, and for the same reason.
+**Nothing the worker imports touches the polyfill.** `ml/`, `core/protocol.ts`, `core/log.ts`: the polyfill throws outside an extension page, and the worker is not one. Tests fake the browser once in `vitest.setup.ts` (WXT's `fakeBrowser`), so storage lives in the same file as the logic it serves; a test file's own `vi.mock` still wins.
 
 ## Hard invariants
 

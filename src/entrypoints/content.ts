@@ -4,8 +4,14 @@ import { logger } from '../core/log';
 
 import { adapterFor, type Post } from '../adapters';
 import { ScoreCache } from '../core/cache';
-import { isActive, needsTopics, topicsEqual, type Settings } from '../core/settings';
-import { loadSettings, onSettingsChanged } from '../core/settings-storage';
+import {
+  isActive,
+  loadSettings,
+  needsTopics,
+  onSettingsChanged,
+  topicsEqual,
+  type Settings,
+} from '../core/settings';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
 import {
   publishEngineStatus,
@@ -25,7 +31,7 @@ import {
 } from '../feed/blur';
 import { clearAllScores, clearScore, stampScore } from '../feed/score-badge';
 import { hasMedia } from '../feed/media';
-import { LanguageCache } from '../feed/language-detector';
+import { LanguageCache } from '../feed/language';
 import { decide as decideAction, decideWithoutScore, type Action } from '../feed/policy';
 import { FeedScanner } from '../feed/scanner';
 import { Conversation } from '../feed/conversation';

@@ -29,10 +29,16 @@ vi.mock('webextension-polyfill', () => ({
 
 const { MODEL } = await import('../ml/models');
 const { hashText } = await import('../core/cache');
-const { EMPTY_FEEDBACK, count, findRating, rate } = await import('../core/feedback');
-const { clearFeedback, loadFeedback, saveFeedback } =
-  await import('../core/feedback-storage');
-const { loadSettings, saveSettings } = await import('../core/settings-storage');
+const {
+  EMPTY_FEEDBACK,
+  clearFeedback,
+  count,
+  findRating,
+  loadFeedback,
+  rate,
+  saveFeedback,
+} = await import('../core/feedback');
+const { loadSettings, saveSettings } = await import('../core/settings');
 const { exportConfig, importConfig } = await import('../core/config-transfer');
 const { Tuning } = await import('./tuning');
 
