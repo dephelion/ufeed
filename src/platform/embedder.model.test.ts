@@ -83,6 +83,14 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
     expect(cosine(rich!, tech!) - cosine(rich!, politics!)).toBeGreaterThan(0);
   });
 
+  it('scores a post the same alone and among other posts', async () => {
+    const [topic] = await vectorsFor([q('tech, software, ai')]);
+    const [alone] = await vectorsFor([d(POLITICS)]);
+    const among = await vectorsFor([d(TECH), d(HOUSING), d(POLITICS)]);
+    // Batched q8 moved this by 0.002-0.006; six digits catches any return of that.
+    expect(cosine(topic!, among[2]!)).toBeCloseTo(cosine(topic!, alone!), 6);
+  });
+
   it('self-check passes on a backend that computes correctly', async () => {
     await embedder.load(undefined, 'cpu');
     const probe = await embedder.selfCheck();

@@ -86,18 +86,16 @@ export class Embedder {
     };
   }
 
+  /**
+   * One text per model call: q8 quantizes activations per batch, so a batched
+   * score moves with its neighbours. See wiki-llm/model.md §Determinism.
+   */
   async embed(texts: readonly string[]): Promise<Vector[]> {
     if (!this.#pipe) throw new Error('embedder used before load()');
-    if (texts.length === 0) return [];
-    const output = await this.#pipe(texts as string[], {
-      pooling: 'mean',
-      normalize: true,
-    });
-    const [rows, dims] = output.dims as [number, number];
-    const flat = output.data as Float32Array;
     const vectors: Vector[] = [];
-    for (let r = 0; r < rows; r++) {
-      vectors.push(normalize(flat.slice(r * dims, (r + 1) * dims)));
+    for (const text of texts) {
+      const output = await this.#pipe([text], { pooling: 'mean', normalize: true });
+      vectors.push(normalize((output.data as Float32Array).slice()));
     }
     return vectors;
   }
