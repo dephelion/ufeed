@@ -36,11 +36,8 @@ export function mountNudge(): Nudge {
   card.setAttribute('role', 'status');
   card.hidden = true;
 
-  // Gray, not the branded color icon: this card only shows while the tab has
-  // no topics, which is exactly the state that leaves the toolbar icon gray.
-  const icon = browser.runtime.getURL('icon-gray/48.png');
   card.innerHTML =
-    `<img class="lx-nudge-icon" src="${icon}" alt="" width="28" height="28">` +
+    '<img class="lx-nudge-icon" alt="" width="28" height="28">' +
     '<div class="lx-nudge-body">' +
     '<b>FeedLens has no topics yet</b>' +
     '<p>It is on, but it does not know what you want to see, so nothing is ' +
@@ -49,6 +46,9 @@ export function mountNudge(): Nudge {
     '</div>' +
     '<button type="button" class="lx-nudge-x" aria-label="Hide until the next ' +
     'page load">&times;</button>';
+  // Gray, not the branded color icon: this card only shows while the tab has
+  // no topics, which is exactly the state that leaves the toolbar icon gray.
+  card.querySelector('img')!.src = browser.runtime.getURL('icon-gray/48.png');
 
   // Dismissal lives for this page load only. Persisting it would leave the
   // reader with a silent extension and no way back to the explanation.
