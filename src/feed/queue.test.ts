@@ -53,4 +53,52 @@ describe('ScoreQueue', () => {
   it('gives the slower model a smaller batch, so a verdict is not a whole second away', () => {
     expect(MODELS.gemma.batchSize).toBeLessThan(MODELS['e5-small'].batchSize);
   });
+
+  it('sends one request at a time, so a queued post never waits out its own timeout', async () => {
+    let release: (() => void) | undefined;
+    const inFlight: string[][] = [];
+    const slow = {
+      ready: true,
+      status: { type: 'STATUS', state: 'ready' },
+      score: (texts: string[]) =>
+        new Promise((resolve) => {
+          inFlight.push(texts);
+          release = () => resolve(texts.map(() => undefined));
+        }),
+    } as unknown as Engine;
+
+    const queue = new ScoreQueue(
+      slow,
+      () => {},
+      () => 2,
+    );
+    for (let i = 0; i < 6; i++)
+      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    await Promise.resolve();
+
+    // Six posts, a batch of two: without the guard all three went out at once and
+    // the last two spent the engine's timeout waiting on the first.
+    expect(inFlight).toHaveLength(1);
+
+    release?.();
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(inFlight).toHaveLength(2);
+  });
+
+  it('keeps the posts it could not send yet, rather than dropping them', async () => {
+    const seen: Scored[] = [];
+    const queue = new ScoreQueue(
+      engine,
+      (r) => seen.push(...r),
+      () => 2,
+    );
+    for (let i = 0; i < 4; i++)
+      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+
+    await queue.flush();
+    for (let i = 0; i < 8; i++) await Promise.resolve();
+
+    expect(seen).toHaveLength(4);
+  });
 });

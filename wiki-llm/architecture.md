@@ -134,4 +134,6 @@ content → popup    { type: 'feedlens:status', status }     pushed on change
 
 ## Failure posture
 
+**One `SCORE` request is in flight at a time.** The worker embeds one post after another on a single thread, so a second request does not start sooner — it waits, while its 8s timeout counts that wait against it. Without the guard, scrolling fast put a request out every time the queue refilled (the batch leaves `#pending` synchronously, before the await), and the later ones timed out on a healthy engine and revealed batches it had never reached. Posts wait in `#pending` instead, where waiting is free, and the timeout measures the engine rather than the queue behind it. `ScoreQueue` drains straight into the next batch rather than waiting out `FLUSH_MS`.
+
 Fail-open everywhere. Unknown score, request timeout (8s), engine `ERROR`, or worker crash all **reveal**. A 15s watchdog logs (debug builds) if the engine never reports in. The worker keeps the last `SET_TOPICS` past a failed load and embeds it on the next request; a `SCORE` with no topics replies `ERROR`, never a score against nothing. No path may leave a post blurred because something broke.

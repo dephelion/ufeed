@@ -224,6 +224,14 @@
     ' topic';
 }
 
+/* No score at all: the engine timed out, errored, or never answered, and the post
+   was revealed rather than held. "score none / needs 0.188" read as a post that
+   fell short of the threshold, which is the one thing it does not mean. Last of
+   the content rules so it wins: an unscored post carries no lines or rating. */
+[data-lx-score='none']::before {
+  content: 'not scored — engine did not answer · ' attr(data-lx-chars) ' chars';
+}
+
 /* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */
 [data-lx-score][data-lx-pass='true']::before {
   background: color-mix(in srgb, #14532d 50%, transparent);
