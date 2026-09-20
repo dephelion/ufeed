@@ -86,6 +86,8 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 
 **Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never lifts and re-holds on its way to the front.
 
+**A settings change leaves held posts alone.** `rescore()` re-applies verdicts, and a held post has none: its missing score reads as unscored, which fails open and reveals it. Unchecking _Show each post's score_ did exactly that to every post waiting on the engine, which then showed in full until the next flush held it again. The verdict lands under whatever the settings are by then.
+
 **The skeleton is the blur pushed further, in its own file.** Same targets as `.lx-blur`, which holds up on X, LinkedIn and Reddit, only heavier. It carries a centred "Classifying…". No verdict colour, and **clicks still reach the post**. Radius does the hiding; opacity stays at the blur's values, because lower opacity multiplies down and the feed goes black (§The blur).
 
 **Flat bars and flattened media were tried and rejected** (owner, 2026-09-20). Every text element and icon became a grey block, and on LinkedIn the post read as a broken page. On X the bars were invisible: `currentColor` on an element whose own `color` is transparent is transparent, so the post read as black. Reuse what the blur does; do not add rules that depend on host markup the blur does not already touch.

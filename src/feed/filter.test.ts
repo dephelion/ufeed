@@ -211,6 +211,34 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(false);
   });
 
+  it('leaves posts still waiting on the engine alone when a setting changes', async () => {
+    // Twelve posts, a batch of five: one batch scored and blurred, the other seven
+    // held behind an engine that never answers again.
+    const stalled = new Promise<RatedMatch[]>(() => {});
+    let calls = 0;
+    const texts = Array.from({ length: 12 }, (_, i) => `a chocolate cake recipe ${i}`);
+    const { engine, filter } = await run(
+      { ...SETTINGS, showScores: true },
+      texts,
+      async (t) => (calls++ === 0 ? scored(t) : stalled),
+    );
+    const cells = [
+      ...document.querySelectorAll<HTMLElement>('[data-testid="cellInnerDiv"]'),
+    ];
+    const before = cells.map((cell) => cell.className);
+    const asked = engine.score.mock.calls.length;
+    expect(before.filter((c) => c.includes('lx-blur'))).toHaveLength(5);
+    expect(before.filter((c) => c.includes('lx-pending'))).toHaveLength(7);
+
+    filter.applySettings({ ...SETTINGS, showScores: false });
+    await vi.advanceTimersByTimeAsync(200);
+
+    expect(cells.map((cell) => cell.className)).toEqual(before);
+    expect(engine.score).toHaveBeenCalledTimes(asked);
+    expect(engine.setTopics).toHaveBeenCalledTimes(1);
+    expect(cells.some((cell) => cell.dataset.lxScore !== undefined)).toBe(false);
+  });
+
   it('reveals everything and drops the score badges when turned off', async () => {
     const { filter } = await run({ ...SETTINGS, showScores: true }, [
       'a chocolate cake recipe',
