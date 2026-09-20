@@ -102,13 +102,13 @@ describe('ScoreQueue', () => {
     expect(seen).toHaveLength(4);
   });
 
-  it('announces each batch as it goes out, so its posts can be held while judged', async () => {
-    const sentOut: string[][] = [];
+  it('holds the posts still waiting, not only the batch going out', async () => {
+    const held: string[][] = [];
     const queue = new ScoreQueue(
       engine,
       () => {},
       () => 2,
-      (posts) => sentOut.push(posts.map((p) => p.text)),
+      (posts) => held.push(posts.map((p) => p.text)),
     );
     for (let i = 0; i < 4; i++)
       queue.add({ container: document.createElement('div'), text: `post ${i}` });
@@ -116,26 +116,59 @@ describe('ScoreQueue', () => {
     await queue.flush();
     for (let i = 0; i < 8; i++) await Promise.resolve();
 
-    // Per batch, not per enqueue: a post queued now may not be judged for a while.
-    expect(sentOut).toEqual([
+    // A post waiting its turn is no more judged than the one in front of the
+    // engine, so the first flush names all four, not just the two it sends.
+    // The first flush fires before posts 2 and 3 are queued, so it names only
+    // what it holds then; the second names the batch plus what is still waiting.
+    expect(held).toEqual([
       ['post 0', 'post 1'],
       ['post 2', 'post 3'],
     ]);
   });
 
-  it('announces a batch before awaiting it, never after the verdict', async () => {
+  it('holds before awaiting the engine, never after the verdict', async () => {
     const order: string[] = [];
     const queue = new ScoreQueue(
       engine,
       () => order.push('scored'),
       () => 2,
-      () => order.push('sending'),
+      () => order.push('holding'),
     );
     queue.add({ container: document.createElement('div'), text: 'a' });
     queue.add({ container: document.createElement('div'), text: 'b' });
     await queue.flush();
     for (let i = 0; i < 4; i++) await Promise.resolve();
 
-    expect(order).toEqual(['sending', 'scored']);
+    expect(order).toEqual(['holding', 'scored']);
+  });
+
+  it('holds the posts still waiting behind the batch, not just the batch', async () => {
+    let release: (() => void) | undefined;
+    const held: string[][] = [];
+    const blocked = {
+      ready: true,
+      status: { type: 'STATUS', state: 'ready' },
+      score: (texts: string[]) =>
+        new Promise((resolve) => {
+          release = () => resolve(texts.map(() => undefined));
+        }),
+    } as unknown as Engine;
+
+    const queue = new ScoreQueue(
+      blocked,
+      () => {},
+      () => 2,
+      (posts) => held.push(posts.map((p) => p.text)),
+    );
+    // Two go out and block; four more pile up behind them.
+    for (let i = 0; i < 6; i++)
+      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    await Promise.resolve();
+
+    release?.();
+    for (let i = 0; i < 8; i++) await Promise.resolve();
+
+    // A post waiting its turn is no more judged than the one at the engine.
+    expect(held.at(-1)).toEqual(['post 2', 'post 3', 'post 4', 'post 5']);
   });
 });

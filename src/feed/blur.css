@@ -106,39 +106,6 @@
   text-shadow: 0 0 7px currentColor;
 }
 
-/* Held while the detector and the engine answer. Deliberately unlike a blur:
-   no label, no verdict colour, and clicks still reach the post — nothing has
-   been decided yet. Soft enough that the eye passes over rather than settling,
-   which is the whole point of showing it at all. */
-.lx-pending {
-  opacity: 0.72;
-  transition: opacity 0.2s ease;
-}
-
-.lx-pending :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
-  color: transparent !important;
-  text-shadow: 0 0 6px currentColor;
-}
-
-.lx-pending :is(img, canvas, svg, video),
-.lx-pending [style*='background-image'] {
-  filter: blur(20px) saturate(0.5);
-  opacity: 0.6;
-}
-
-/* Reduced motion gets the same state without the breathing. */
-@media (prefers-reduced-motion: no-preference) {
-  .lx-pending {
-    animation: lx-pulse 1.2s ease-in-out infinite;
-  }
-}
-
-@keyframes lx-pulse {
-  50% {
-    opacity: 0.55;
-  }
-}
-
 /* Collapses a blurred post into a thin, glanceable row instead of a full-height
    blur. max-height/overflow work on any host markup — no per-site layout code —
    and cap the box even when the host has set its own inline height (e.g. a

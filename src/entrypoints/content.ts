@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import '../feed/blur.css';
+import '../feed/skeleton.css';
 import { adapterFor } from '../adapters';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
 import { logger } from '../core/log';

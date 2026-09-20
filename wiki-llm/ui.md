@@ -78,13 +78,17 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 ## While a post is being judged
 
-`.lx-pending`, set by `markPending()` when a post is handed to the detector or the engine, cleared by `blur()`, `reveal()` and `revealAll()`.
+`.lx-pending`, set by `showSkeleton()` when a post is queued or re-held, lifted by `hideSkeleton()` when a verdict lands.
+
+**A skeleton and a blur are separate concepts and separate code.** `skeleton.ts` and `skeleton.css` own the loading state; `blur.ts` and `blur.css` own verdicts; neither imports the other, and `FeedFilter` is the only place that knows both — it lifts the skeleton as it applies a verdict. They were one module once, and the skeleton was literally the blur's own ghosting with smaller numbers (`text-shadow` at 6px against 10px, media blurred 20px against 64px), so a held post read as a blur that had not finished landing. Keeping the two apart in code is what stops that drifting back.
 
 Detection and inference take a moment, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
 
-**Held per batch, not per enqueue.** Since the queue sends one request at a time ([architecture.md](architecture.md)), "queued" and "being judged" stopped being the same moment — a post can wait behind several batches first. `ScoreQueue` announces each batch as it goes out and `FeedFilter` re-holds its posts, so whatever is actually in front of the engine carries the pending state for as long as that takes.
+**Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never un-dims and re-dims on its way to the front.
 
-Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with text at `6px` and media at `20px`, a slow pulse, and **clicks still reach the post**. It reads as working, not as hidden.
+**A blur hides content that is there; a skeleton says there is nothing to show yet.** The blur keeps the post legible-but-frosted on purpose, because the reader is meant to know something is being withheld and can click for it. The skeleton replaces the content instead: text goes to flat bars (`color: transparent` with no `text-shadow`, so nothing of the real words survives to be read as an obscured post) and media flattens to one neutral block rather than a blurred photograph. No label, no verdict colour, a slow pulse, and **clicks still reach the post**. It reads as working, not as hidden.
+
+**The bars take their colour from `currentColor`**, so they carry the host's own contrast on X's dark feed and LinkedIn's white one with no per-site colour. Only the outermost text element paints: feed markup nests spans inside spans, and translucent bars stacked two or three deep turn patchy exactly where the markup happens to be deepest.
 
 **It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed dimmed — Invariant 2 applies to this state exactly as it applies to a blur.
 

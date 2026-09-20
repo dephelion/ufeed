@@ -6,16 +6,8 @@ import type { EngineState } from '../core/protocol';
 import { isActive, topicsEqual, type Settings } from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
-import {
-  blur,
-  clearPending,
-  isBlurred,
-  isRevealed,
-  markPending,
-  peek,
-  reveal,
-  revealAll,
-} from './blur';
+import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
+import { hideAllSkeletons, hideSkeleton, showSkeleton } from './skeleton';
 import { Conversation } from './conversation';
 import type { PostRef } from './feedback-bar';
 import { LanguageCache } from './language-cache';
@@ -69,8 +61,8 @@ export class FeedFilter {
       engine,
       (results) => this.#applyBatch(results),
       () => this.#model().batchSize,
-      // Re-held as the batch goes out, so the posts actually being judged carry
-      // the pending state for as long as that takes, however long they queued.
+      // Held on enqueue and re-held on every flush: a post waiting its turn is
+      // no more judged than the one in front of the engine, so it looks the same.
       (posts) => posts.forEach((post) => this.#hold(post)),
     );
     this.#scanner = new FeedScanner({
@@ -102,7 +94,10 @@ export class FeedFilter {
       this.#scanner.sweep(document);
       void this.#queue.flush();
     }
-    if (state === 'error') revealAll(document);
+    if (state === 'error') {
+      revealAll(document);
+      hideAllSkeletons(document);
+    }
   }
 
   applySettings(next: Settings): void {
@@ -114,6 +109,7 @@ export class FeedFilter {
     if (!this.active) {
       this.#queue.invalidate();
       revealAll(document);
+      hideAllSkeletons(document);
       clearAllScores(document);
       return;
     }
@@ -238,6 +234,8 @@ export class FeedFilter {
   }
 
   #apply(post: Post, action: Action): Action {
+    // The verdict landed, so the loading state is over whichever way it went.
+    hideSkeleton(post.container);
     const collapse = this.#settings.collapseBlurred;
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, post.text, collapse);
@@ -290,13 +288,20 @@ export class FeedFilter {
       this.#queue.add(post);
       return;
     }
-    clearPending(post.container);
+    hideSkeleton(post.container);
     this.#apply(post, settled);
   }
 
   /** Nothing is softened while the engine is still warming — that is a download. */
+  /**
+   * The one place the two states meet. A blurred or revealed post has a verdict,
+   * so it is not loading; nothing is held while the engine is warming either,
+   * because that wait is a model download rather than a judgement.
+   */
   #hold(post: Post): void {
-    if (this.#engine.ready) markPending(post.container);
+    if (!this.#engine.ready) return;
+    if (isBlurred(post.container) || isRevealed(post.container)) return;
+    showSkeleton(post.container);
   }
 
   /** Threshold changes re-apply from cache: raw scores mean no re-inference. */
