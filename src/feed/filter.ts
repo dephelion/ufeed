@@ -7,7 +7,7 @@ import { isActive, topicsEqual, type Settings } from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
 import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
-import { hideAllSkeletons, hideSkeleton, showSkeleton } from './skeleton';
+import { hideAllSkeletons, hideSkeleton, isSkeleton, showSkeleton } from './skeleton';
 import { Conversation } from './conversation';
 import type { PostRef } from './feedback-bar';
 import { LanguageCache } from './language-cache';
@@ -339,10 +339,15 @@ export class FeedFilter {
     showSkeleton(post.container);
   }
 
-  /** Threshold changes re-apply from cache: raw scores mean no re-inference. */
+  /**
+   * Threshold changes re-apply from cache: raw scores mean no re-inference. A held
+   * post is still waiting on the engine; no score yet would fail open and reveal it.
+   */
   #rescore(): void {
-    for (const post of this.#adapter.findPosts(document))
+    for (const post of this.#adapter.findPosts(document)) {
+      if (isSkeleton(post.container)) continue;
       this.#decide(post, this.#cache.get(post.text));
+    }
   }
 
   /** Topics and corrections both change the query, so both force a re-embed. */
