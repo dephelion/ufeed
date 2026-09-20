@@ -1,6 +1,7 @@
 import { hashText } from '../core/cache';
 import { classify, type Language } from '../core/language';
 import { logger } from '../core/log';
+import type { ModelSpec } from '../core/models';
 import type { DetectLanguage } from './ports';
 
 const log = logger('language');
@@ -23,15 +24,20 @@ export class LanguageCache {
     return this.#known.get(hashText(text));
   }
 
+  /** A verdict is against one model's language; another model's is not the same. */
+  clear(): void {
+    this.#known.clear();
+  }
+
   /** Deduped by content: a virtualized feed offers the same post repeatedly. */
-  detect(text: string): Promise<Language | undefined> {
+  detect(text: string, spec: ModelSpec): Promise<Language | undefined> {
     const key = hashText(text);
     const known = this.#known.get(key);
     if (known !== undefined) return Promise.resolve(known);
     const running = this.#inFlight.get(key);
     if (running) return running;
 
-    const pending = this.#run(text)
+    const pending = this.#run(text, spec)
       .then((language) => {
         if (language !== undefined) this.#remember(key, language);
         return language;
@@ -41,9 +47,9 @@ export class LanguageCache {
     return pending;
   }
 
-  async #run(text: string): Promise<Language | undefined> {
+  async #run(text: string, spec: ModelSpec): Promise<Language | undefined> {
     try {
-      return classify(await this.detectLanguage(text));
+      return classify(await this.detectLanguage(text), spec);
     } catch (error) {
       log.warn('detection unavailable, scoring alone from here', {
         reason: error instanceof Error ? error.message : String(error),

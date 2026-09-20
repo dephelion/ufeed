@@ -4,6 +4,7 @@
  */
 import type { Feedback } from '../core/feedback';
 import type { Detection } from '../core/language';
+import type { ModelKey } from '../core/models';
 import type { StatusEvent, TopicCorrections } from '../core/protocol';
 import type { RatedMatch } from '../core/scoring';
 
@@ -37,7 +38,9 @@ export interface Correction {
 export interface Engine {
   readonly ready: boolean;
   readonly status: StatusEvent;
-  connect(): void;
+  connect(model: ModelKey): void;
+  /** Tears the engine down and brings it back on another model. */
+  restart(model: ModelKey): void;
   setTopics(topics: string[], corrections?: TopicCorrections[]): void;
   /** Resolves empty on timeout or error, so callers fail open. */
   score(texts: string[]): Promise<RatedMatch[]>;

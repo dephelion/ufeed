@@ -1,0 +1,38 @@
+/* The loading state: the blur's own treatment pushed further, in its own file.
+   Clicks still reach the post. See ui.md §While a post is being judged. */
+.lx-pending {
+  position: relative;
+}
+
+.lx-pending > * {
+  opacity: 0.55;
+}
+
+/* No colour of our own: it inherits the host's text colour, which contrasts with the
+   host's background, so it is white on a dark feed and black on a light one. */
+.lx-pending::after {
+  content: 'Classifying…';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%);
+  font:
+    600 12px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.lx-pending :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
+  color: transparent !important;
+  text-shadow: 0 0 18px currentColor;
+}
+
+.lx-pending :is(img, canvas, svg, video),
+.lx-pending [style*='background-image'] {
+  filter: blur(96px) saturate(0.25);
+  opacity: 0.45;
+}

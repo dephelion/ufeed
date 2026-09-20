@@ -106,39 +106,6 @@
   text-shadow: 0 0 7px currentColor;
 }
 
-/* Held while the detector and the engine answer. Deliberately unlike a blur:
-   no label, no verdict colour, and clicks still reach the post — nothing has
-   been decided yet. Soft enough that the eye passes over rather than settling,
-   which is the whole point of showing it at all. */
-.lx-pending {
-  opacity: 0.72;
-  transition: opacity 0.2s ease;
-}
-
-.lx-pending :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
-  color: transparent !important;
-  text-shadow: 0 0 6px currentColor;
-}
-
-.lx-pending :is(img, canvas, svg, video),
-.lx-pending [style*='background-image'] {
-  filter: blur(20px) saturate(0.5);
-  opacity: 0.6;
-}
-
-/* Reduced motion gets the same state without the breathing. */
-@media (prefers-reduced-motion: no-preference) {
-  .lx-pending {
-    animation: lx-pulse 1.2s ease-in-out infinite;
-  }
-}
-
-@keyframes lx-pulse {
-  50% {
-    opacity: 0.55;
-  }
-}
-
 /* Collapses a blurred post into a thin, glanceable row instead of a full-height
    blur. max-height/overflow work on any host markup — no per-site layout code —
    and cap the box even when the host has set its own inline height (e.g. a
@@ -224,6 +191,14 @@
     ' topic';
 }
 
+/* No score at all: the engine timed out, errored, or never answered, and the post
+   was revealed rather than held. "score none / needs 0.188" read as a post that
+   fell short of the threshold, which is the one thing it does not mean. Last of
+   the content rules so it wins: an unscored post carries no lines or rating. */
+[data-lx-score='none']::before {
+  content: 'not scored — engine did not answer · ' attr(data-lx-chars) ' chars';
+}
+
 /* Score cleared the threshold: dark green. Fell short (or unscored): dark red. */
 [data-lx-score][data-lx-pass='true']::before {
   background: color-mix(in srgb, #14532d 50%, transparent);
@@ -293,6 +268,49 @@
 
 .lx-fb-done {
   border-color: color-mix(in srgb, #4ade80 60%, transparent);
+}
+
+/* Posts-hidden counter, styled after the score badge. */
+.lx-count {
+  all: unset;
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, #14532d 50%, transparent);
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+  backdrop-filter: blur(6px);
+  color: #f0fdf4;
+  font:
+    600 11px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
+  cursor: pointer;
+}
+
+.lx-count[hidden] {
+  display: none;
+}
+
+.lx-count:hover {
+  background: color-mix(in srgb, #14532d 70%, transparent);
+}
+
+.lx-count:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.lx-count img {
+  flex: none;
+  width: 14px;
+  height: 14px;
 }
 
 /* First-run card: on, but no topics. Same dark chip as the thumbs bar, because

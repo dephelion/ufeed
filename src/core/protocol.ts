@@ -1,4 +1,20 @@
+import { isModelKey, type ModelKey } from './models';
+
 export type EngineState = 'idle' | 'downloading' | 'warming' | 'ready' | 'error';
+
+/**
+ * Engine document to its own worker, before anything else: which model to load.
+ * Never crosses the port — a host page must not be able to choose the model — so
+ * it is not part of `EngineRequest` and has no request id to answer.
+ */
+export interface InitRequest {
+  type: 'INIT';
+  model: ModelKey;
+}
+
+export function isInitRequest(data: unknown): data is InitRequest {
+  return isRecord(data) && data.type === 'INIT' && isModelKey(data.model);
+}
 
 export interface ScoreRequest {
   id: string;

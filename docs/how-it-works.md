@@ -13,12 +13,12 @@ Four choices shape everything else. Each one gives something up.
 - **Blur, never delete.** Every blurred post is one click (or Enter, from the
   keyboard) from readable, so a wrong call costs a click, not a missed post.
 - **An embedding model, not a chat model.** FeedLens turns text into numbers and
-  compares them. It does not reason about a post. That is what keeps the model at
-  33 MB, lets it run in your browser, and makes it give the same answer every time
-  for the same post. The cost: it cannot weigh sarcasm or "this topic, but not the
-  hype" the way a large cloud model can.
+  compares them. It does not reason about a post. That is what keeps the model
+  small (33 MB by default), lets it run in your browser, and makes it give the same
+  answer every time for the same post. The cost: it cannot weigh sarcasm or "this
+  topic, but not the hype" the way a large cloud model can.
 - **Nothing to trust.** There is no server, so there is no cloud mode and no
-  account. The model is small enough that private is the only mode, not a slower
+  account. The models are small enough that private is the only mode, not a slower
   option behind a setting.
 
 The rest of this page shows the machinery.
@@ -37,7 +37,7 @@ flowchart TB
   subgraph ext["Extension origin — chrome-extension://"]
     frame["hidden iframe<br/>routes messages"]
     subgraph thr["worker thread"]
-      wk["e5-small-v2<br/>topic = query, post = passage<br/>embed, then cosine<br/>stack detailed below"]
+      wk["the model you picked<br/>topic = query, post = passage<br/>embed, then cosine<br/>stack detailed below"]
     end
     frame -- "texts" --> wk
     wk -- "scores" --> frame
@@ -59,16 +59,25 @@ about X.
 
 ## What the model does
 
-FeedLens does not train a classifier on your topics. It uses **e5-small-v2**, a
-text _embedding_ model from Microsoft ([E5 paper](https://arxiv.org/abs/2212.03533); v2 is
-a later release by the same authors, using the same method). An embedding
-turns text into a vector, a fixed list of 384 numbers, so that texts about the
-same thing end up close together.
+FeedLens does not train a classifier on your topics. It uses a text _embedding_
+model, and you pick which one under _Model_ in the popup:
+
+| Model                         | Reads          | Download | Work per post         |
+| :---------------------------- | :------------- | :------- | :-------------------- |
+| **e5-small-v2** (the default) | English only   | 33 MB    | small                 |
+| **EmbeddingGemma** (opt-in)   | Every language | 197 MB   | about nine times more |
+
+e5-small-v2 comes from Microsoft ([E5 paper](https://arxiv.org/abs/2212.03533); v2 is
+a later release by the same authors, using the same method). EmbeddingGemma is
+Google's 300-million-parameter retrieval model, run at 4-bit precision. An
+embedding turns text into a vector, a fixed list of numbers (384 for e5, 768 for
+EmbeddingGemma), so that texts about the same thing end up close together.
 
 Scoring a post takes three steps:
 
-1. The topic line becomes `query: tech, software, ai`, and the post becomes
-   `passage: <text>`.
+1. Each side gets a tag saying which it is. For e5, the topic line becomes
+   `query: tech, software, ai` and the post becomes `passage: <text>`;
+   EmbeddingGemma has its own tags for the same job.
 2. The same model turns both into vectors.
 3. The score is the cosine between the two vectors: how closely they point the
    same way. With several topic lines, a post keeps its best score.
@@ -81,11 +90,13 @@ A short topic against a longer post has the same shape as a question against its
 answer, so the model can already match them. The paper handles zero-shot
 classification the same way: it embeds the label and the input, then picks the
 closest.
+EmbeddingGemma is a retrieval model too, so the same argument holds for it.
 
 **Why the prefixes matter.** One model encodes both sides. `query:` and
 `passage:` tell it which side of the pair a text is on, because a three-word
 topic and a paragraph of post are different kinds of text. The model was trained
-with these tags, and its scores get worse without them.
+with these tags, and its scores get worse without them. Each model has its own
+tags, and FeedLens uses the right ones for the model you picked.
 
 **Why scores sit in a narrow band.** Cosine can run from −1 to 1, but that is not
 how e5 uses the range. During training, every similarity was divided by a
@@ -94,12 +105,16 @@ not for spreading scores out. As a result, almost any English text scores well
 above zero against almost any topic, and on-topic and off-topic posts are only a
 few hundredths apart. That is why strictness is a step on a measured scale rather
 than a raw cosine, and why this model's scores mean nothing to a different model.
+EmbeddingGemma lands on a different, lower range altogether, so each model has its
+own scale.
 
 **What it cannot do.**
 
-- **Read other languages.** It was trained and evaluated on English. Text in
-  another language still gets a score, but that score is noise. FeedLens checks a
-  post's language before trusting its score.
+- **Read other languages, on the default model.** e5 was trained and evaluated on
+  English. Text in another language still gets a score, but that score is noise.
+  FeedLens checks a post's language before trusting its score. EmbeddingGemma reads
+  every language, so it has no such check and the popup's language option switches
+  itself off.
 - **Match exact strings reliably.** The paper notes that embedding models still
   trail keyword search when a match depends on exact wording or a niche domain. A
   topic that is only a product name or a ticker matches less reliably than plain
@@ -133,15 +148,17 @@ flowchart TB
   frame == "SCORE texts<br/>worker.postMessage" ==> tj
   out == "SCORES, STATUS<br/>self.postMessage" ==> frame
 
-  weights[("hub CDN<br/>e5-small-v2 q8 weights<br/>fetched once, then cached")] -. "model" .-> tj
+  weights[("hub CDN<br/>weights of the model you picked<br/>fetched once, then cached")] -. "model" .-> tj
   runtime[("bundled /ort/*.wasm<br/>never fetched at runtime")] -. "engine" .-> ort
 ```
 
 The model produces one vector for each token, where a token is a word or part of
 a word. transformers.js averages those vectors into one vector for the whole
 text; this is the **mean pool**. E5 was trained with that averaging, so a
-different pooling method would produce vectors the model never learned. The
-result is then scaled to length 1, which makes the cosine a plain dot product.
+different pooling method would produce vectors the model never learned.
+EmbeddingGemma is the exception: its graph pools inside itself and returns one
+vector already, so FeedLens reads that output rather than averaging. Either way
+the result is then scaled to length 1, which makes the cosine a plain dot product.
 
 **ONNX** is the model's file format — graph plus weights, framework-independent.
 **ORT** is Microsoft's engine that executes it, and an **execution provider** is a
@@ -151,23 +168,41 @@ save. That is all its `VerifyEachNodeIsAssignedToAnEp` line means, which is why
 the runtime is configured to log errors only.
 
 The two supply lines are deliberately different. **Weights** come from the hub CDN
-on first load and live in the browser cache after that. The **runtime WASM** is
+on first load, only for the model you picked, and live in the browser cache after
+that. (EmbeddingGemma's come from the `onnx-community` mirror, because Google's own
+repository is gated.) The **runtime WASM** is
 bundled in the extension and never fetched — remote WASM is reviewed as remote
 code execution, and that is not a review this extension needs to pass.
 
 The model runs on the CPU, through WASM. WebGPU was tried and dropped: ORT's
-WebGPU backend misreads the q8 weights and returns confident nonsense rather than
-failing. A self-check probe still runs on every load, so a runtime that
+WebGPU backend misreads the quantized weights of both models and returns confident
+nonsense rather than failing. A self-check probe still runs on every load, so a runtime that
 miscomputes on some machine is refused rather than trusted, and the feed stays
 unblurred.
+
+## While a post is being judged
+
+Scoring takes a moment, and longer on the multilingual model. From the instant a
+post is found until its verdict lands, it sits under a heavier blur with
+"Classifying…" in the middle, so you never read a post and then watch it blur under
+you. The blur lifts when the verdict does, whichever way it went, and clicks still
+reach the post.
+
+Two things end it early. If nothing answers for ten seconds, the hold lifts on its
+own and the post shows. And while a model is still downloading for the first time,
+nothing is held at all: the feed shows as normal rather than waiting on a download.
 
 ## Tuning it yourself
 
 The model itself never changes. You do not retrain it, and no weights move.
-Every control except thumbs changes one of two things:
+Every control except thumbs and the model picker changes one of two things:
 
 - **The query vector:** what "on topic" means.
 - **The threshold:** how close a post has to be to count.
+
+**The model picker swaps the whole engine.** Choosing the other model starts a
+fresh engine and scores the page again. Your topics, strictness step and toggles
+carry over, and each model keeps its own thumb ratings.
 
 **Topic words change the query.** Each topic line is embedded as one `query:`.
 It is the only text you write, so it has the largest effect. E5 learned to match
@@ -178,12 +213,18 @@ actually use:
   as "posts about" gets matched too.
 - Put separate interests on separate lines. A post keeps its best score across
   lines, so it only has to match one of them.
+- With EmbeddingGemma, phrasing matters much less and one word is enough. Language
+  still matters: write topics in the language of the posts you want to keep, one
+  line each if your feed mixes languages.
 
 **Strictness changes the threshold.** A post is shown when its score reaches the
 threshold. e5 packs all scores into a narrow band (see above), so a slider that
 moved the cosine evenly would do nothing for half its travel. Each of the 11
 steps is a threshold measured, on one sample feed, to hide about another tenth
-of it. Your feed will differ.
+of it. Your feed will differ. Each model has its own 11 steps, set so a step
+spends about the same share of the feed on either, which is why your step survives
+a switch. EmbeddingGemma's were derived the same way but not measured as
+carefully, so treat them as approximate.
 Higher steps hide more noise, and also more of what you wanted.
 
 **The peek strip marks the close calls.** Just below the threshold is a thin
@@ -210,9 +251,14 @@ An earlier version moved the topic itself toward posts marked on topic and away
 from posts marked off topic. It shifted every score on that topic, including posts that had
 nothing to do with the rated one, and measured no better than not moving it.
 
-**Vectors only make sense to the model that made them.** A model update
-therefore deletes every rating. The post text is already gone, so nothing
-can be embedded again.
+**Vectors only make sense to the model that made them.** Ratings are therefore
+kept per model: each model reads only its own, switching to the other one loses
+nothing, and switching back restores them. If a model is ever replaced, the
+ratings made with it are dropped, because the post text is already gone and
+nothing can be embedded again.
+
+A small green badge in the bottom-left corner counts the posts FeedLens is hiding
+on the page, and clicking it opens the popup.
 
 To see all of this at work, turn on _Show each post's score_ in the popup. Each
 post then shows the score it got and the score it needed. Hover a post to see
@@ -239,5 +285,6 @@ it, while the other lines keep theirs.
 
 Full reasoning in [`wiki-llm/architecture.md`](../wiki-llm/architecture.md), model
 detail in [`wiki-llm/model.md`](../wiki-llm/model.md), terms in
-[`wiki-llm/glossary.md`](../wiki-llm/glossary.md), and the model's origin in the
-[E5 paper](https://arxiv.org/abs/2212.03533).
+[`wiki-llm/glossary.md`](../wiki-llm/glossary.md). The default model's origin is the
+[E5 paper](https://arxiv.org/abs/2212.03533); the multilingual one is
+[EmbeddingGemma](https://huggingface.co/onnx-community/embeddinggemma-300m-ONNX).

@@ -1,4 +1,5 @@
 import type { Settings } from './settings';
+import { modelFor } from './models';
 import { verdictAt } from './scoring';
 import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
@@ -46,7 +47,7 @@ export function decide(judgement: Judgement): Action {
   const { score, threshold, rating } = judgement;
   if (rating !== undefined) return rating ? 'reveal' : 'blur';
   if (score === undefined) return 'reveal';
-  const verdict = verdictAt(score, threshold);
+  const verdict = verdictAt(score, threshold, modelFor(judgement.settings.model));
   if (verdict === 'show') return 'reveal';
   return verdict === 'peek' ? 'peek' : 'blur';
 }

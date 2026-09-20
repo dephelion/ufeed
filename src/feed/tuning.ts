@@ -38,6 +38,15 @@ export class Tuning {
     this.#onChange = fn;
   }
 
+  /**
+   * Re-reads the store. Needed when the answer changed without the stored value
+   * changing — a model switch moves which ratings this tab is reading.
+   */
+  async reload(): Promise<void> {
+    this.#feedback = await this.store.load().catch(() => EMPTY_FEEDBACK);
+    this.#onChange();
+  }
+
   /** Which posts are rated which way on these lines; equal means nothing to re-send. */
   signature(topics: readonly string[]): string {
     return topics

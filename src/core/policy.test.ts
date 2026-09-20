@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS, type Settings } from './settings';
-import { PEEK_BAND } from './scoring';
+import { DEFAULT_MODEL, modelFor } from './models';
 import { decide, decideWithoutScore, type Judgement } from './policy';
 
+const PEEK_BAND = modelFor(DEFAULT_MODEL).peekBand;
 const THR = 0.784;
 const base = (over: Partial<Judgement> = {}): Judgement => ({
   settings: { ...DEFAULT_SETTINGS, topics: ['software'] },

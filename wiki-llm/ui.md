@@ -78,15 +78,27 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 ## While a post is being judged
 
-`.lx-pending`, set by `markPending()` when a post is handed to the detector or the engine, cleared by `blur()`, `reveal()` and `revealAll()`.
+`.lx-pending`, set by `showSkeleton()` when a post is found or re-held, lifted by `hideSkeleton()` when a verdict lands.
 
-Detection and inference take milliseconds, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
+**A skeleton and a blur are separate code.** `skeleton.ts` and `skeleton.css` own the loading state; `blur.ts` and `blur.css` own verdicts; neither imports the other, and `FeedFilter` is the only place that knows both — it lifts the skeleton as it applies a verdict. Either can change without the other.
 
-Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with text at `6px` and media at `20px`, a slow pulse, and **clicks still reach the post**. It reads as working, not as hidden.
+Detection and inference take a moment, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
 
-**It clears itself after 1500ms**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed dimmed — Invariant 2 applies to this state exactly as it applies to a blur.
+**Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never lifts and re-holds on its way to the front.
 
-**Nothing is held while the engine is warming.** That wait is a model download, not milliseconds, and dimming a feed through it would be the bug this state exists to prevent.
+**The skeleton is the blur pushed further, in its own file.** Same targets as `.lx-blur`, which holds up on X, LinkedIn and Reddit, only heavier. It carries a centred "Classifying…". No verdict colour, and **clicks still reach the post**. Radius does the hiding; opacity stays at the blur's values, because lower opacity multiplies down and the feed goes black (§The blur).
+
+**Flat bars and flattened media were tried and rejected** (owner, 2026-09-20). Every text element and icon became a grey block, and on LinkedIn the post read as a broken page. On X the bars were invisible: `currentColor` on an element whose own `color` is transparent is transparent, so the post read as black. Reuse what the blur does; do not add rules that depend on host markup the blur does not already touch.
+
+**No dimming of the container, no pulse.** Opacity on the container darkens the whole post on a dark feed and drags the host's own surface with it. The blur dims children, never the container, for the same reason.
+
+**It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed held — Invariant 2 applies to this state exactly as it applies to a blur.
+
+**That failsafe must outlast the engine's own timeout, and at 1500ms it did not.** Every verdict clears the state, and the engine answers or fails open within 8s, so the timer should only ever fire when nothing answers at all. Sized for e5's milliseconds, it expired mid-batch on the slower model: the post showed in full and blurred a moment later, which is the exact flash this state exists to prevent. Any future per-request timeout change moves this with it.
+
+**Held from the moment a post is found, through warm-up.** `FeedScanner.onFound` fires in the mutation callback, before the next paint; waiting for the viewport observer paints the real post once first. Waiting for the engine to be ready showed every post on load, then held it, then blurred it — the flash this state exists to prevent.
+
+**Not held through a download.** A first-run download (`downloading`) is minutes, so the skeleton lifts when it starts and nothing is held until it ends; that first load shows one skeleton flash before the worker reports which it is. A cached load reports `warming` and is held through. The opened post (`route` says keep) is never held.
 
 ## Reveal
 
@@ -132,8 +144,9 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | On                                | Global switch. Off reveals everything.                                                                                                                           |
 | Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                 |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                 |
+| Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                             |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                           |
-| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection.                                                                                       |
+| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection. **Disabled** while a multilingual model runs.                                         |
 | Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                     |
 | Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                                                     |
 | Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                         |
@@ -161,19 +174,39 @@ Apply is disabled until the textarea differs from what is saved.
 
 **Firefox imports in a tab.** Firefox closes the popup when the file picker takes focus; `change` fires into a dead page. On Firefox (`import.meta.env.FIREFOX`), Import opens `popup.html?tab` and closes the popup. The tab needs a second click: a picker opens only on user activation. Chrome keeps the in-popup picker.
 
+**The model selector sits directly under the strictness slider**, above every checkbox: it changes what the other controls mean, so it is read before them and not buried in the block of toggles.
+
+**A disabled control must say why, and keep the reader's setting.** With a multilingual model there is nothing for the language checkbox to gate, so it is disabled and a line appears saying it is off because the model reads every language and that the setting is kept for a switch back. Silently unchecking it would look like FeedLens overrode a choice; leaving it live would be a lie.
+
+**Say the download size on the option itself**, not only in the details. 197MB is the whole cost of the choice, and a reader deciding between two options should not have to open anything to see it.
+
+**A switch keeps everything.** Topics, strictness and every checkbox survive; ratings are kept per model and come back on a switch back ([architecture.md](architecture.md)). The details text says so, because "switching models" otherwise reads as a thing that might cost the reader their work.
+
 ## No-topics card
 
 On, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
 
 Fixed top-right, same dark chip as the thumbs bar so it reads the same on a light and a dark feed. Shows the toolbar icon, because finding that button is the actual task.
 
-**It cannot open the popup.** `action.openPopup` is unreachable from a content script, so the card points at the icon instead.
+**It cannot open the popup itself.** `action.openPopup` is unreachable from a content script, so the card points at the icon instead. The counter asks the background to do it (§Posts-hidden counter).
 
 **Turning FeedLens off is the second option, offered on the card.** The `x` hides it for this page load only — persisting a dismissal leaves a silent extension and no route back to the explanation.
 
 **Mounted outside the active gate**, and it polls briefly for `document.body`: the content script runs at `document_start`.
 
 **Mount removes any existing `.lx-nudge`.** Firefox kills the old content script on extension reload/update but keeps its DOM: a card with a dead `x` and stale "no topics".
+
+## Posts-hidden counter
+
+A badge, bottom-left: the toolbar icon and "Posts hidden: N". A click opens the popup. `src/feed/hidden-badge.ts`, wired in `content.ts`.
+
+**It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning FeedLens off, or an engine error clears it. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
+
+**Shown while FeedLens is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with no topics (the nudge's state), it is hidden.
+
+**The click asks the background.** `platform/open-popup.ts` sends `feedlens:open-popup` and the background calls `action.openPopup()`. Chrome allows that from 127 and the manifest floor is 111; Firefox documents it as user-action-only and this path is unverified there. Where it refuses, the click does nothing and debug builds log why.
+
+**Mount removes any existing `.lx-count`**, for the same Firefox reason as the card. It attaches to `<html>`, like the thumbs bar, so it does not wait for `<body>`.
 
 ## Debug mode
 
@@ -188,6 +221,12 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 ## Score badge
 
 `score 0.793 / needs 0.795 · 105 chars · #1 0.793 · #2 0.791 · #3 0.760 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). Every line's score is always shown, by 1-based position; the score is the highest of them. The lines are absent when the post has none (unscored). A hover swap that hid them behind `ℹ️ 3 topics` was removed in 0.7.0: the scores are the point of the badge. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
+
+**"Downloading" must mean bandwidth, and only transformers.js knows — so ask the cache instead.** A cache hit is streamed through the same `progress` events as a real fetch (Chrome; Firefox fires a single 100%), and the callback never says which it was, so **every page refresh claimed to be downloading the model again**. `Embedder` now checks `caches.open('transformers-cache')` for a key carrying the model id before loading, and reports `warming` rather than `downloading` when the weights are already there. A cached load is not instant — a few hundred MB off disk plus session startup — so the reader is still told the engine is working: "Starting the model up — already downloaded". An unreadable cache reads as "not cached", which is the old behaviour and never blocks a load.
+
+**The log line answers "is it really re-downloading?"** `loading model … cached=true|false` on every load. Repeated `cached=false` on the same site is eviction or storage partitioning, not this labelling bug.
+
+**An unscored post says so, and never borrows the threshold's words.** When the engine times out, errors, or never answers, the post is revealed (fail-open) and the badge reads `not scored — engine did not answer · 105 chars`. It kept the normal template before — `score none / needs 0.188` in red — which states the one thing that did not happen: the post did not fall short of the threshold, it was never measured against it. The red stays, because something did go wrong; only the claim changes. `[data-lx-score='none']` is the last content rule so it wins, which is safe because an unscored post carries no lines and no rating.
 
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 

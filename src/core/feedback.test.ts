@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { MODEL } from './models';
+import { DEFAULT_MODEL, modelFor } from './models';
 import {
   EMPTY_FEEDBACK,
+  emptyFor,
+  feedbackFor,
   forCurrentModel,
+  normalizeStore,
+  withFeedback,
   MAX_PER_CLASS,
   correctionsFor,
   count,
@@ -121,9 +125,13 @@ describe('normalizeFeedback', () => {
   });
 
   it('survives nothing stored at all', () => {
-    expect(normalizeFeedback(undefined)).toEqual(EMPTY_FEEDBACK);
-    expect(normalizeFeedback(null)).toEqual(EMPTY_FEEDBACK);
-    expect(normalizeFeedback('garbage')).toEqual(EMPTY_FEEDBACK);
+    // Nothing stored reads as the pre-stamp assumption: e5-small-v2's empty set.
+    expect(normalizeFeedback(undefined).byTopic).toEqual({});
+    expect(normalizeFeedback(undefined).model).toBe('Xenova/e5-small-v2');
+    for (const junk of [null, 'garbage']) {
+      expect(normalizeFeedback(junk).byTopic).toEqual({});
+      expect(normalizeFeedback(junk).model).toBe('Xenova/e5-small-v2');
+    }
   });
 
   it('keeps the good ratings and drops only the malformed ones', () => {
@@ -166,30 +174,62 @@ describe('counts', () => {
 });
 
 describe('the model stamp', () => {
+  const spec = modelFor(DEFAULT_MODEL);
+  const mine = () => emptyFor(spec);
+
   it('reads corrections written before the stamp existed as e5-small-v2', () => {
     const legacy = { byTopic: { software: [{ key: 'a', vector: v(1), liked: true }] } };
     expect(normalizeFeedback(legacy).model).toBe('Xenova/e5-small-v2');
-    expect(forCurrentModel(normalizeFeedback(legacy)).byTopic).not.toEqual({});
+    expect(forCurrentModel(normalizeFeedback(legacy), spec).byTopic).not.toEqual({});
   });
 
   it('keeps what the running model wrote', () => {
-    const mine = rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true);
-    expect(forCurrentModel(mine)).toBe(mine);
+    const rated = rate(mine(), 'software', 'a', v(1), true);
+    expect(forCurrentModel(rated, spec)).toBe(rated);
   });
 
-  it('drops vectors from another model, since there is no text to re-embed', () => {
-    const foreign = {
-      ...rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true),
-      model: 'other',
-    };
-    expect(forCurrentModel(foreign)).toEqual(EMPTY_FEEDBACK);
+  it("reads another model's vectors as none of its own", () => {
+    const foreign = { ...rate(mine(), 'software', 'a', v(1), true), model: 'other' };
+    expect(forCurrentModel(foreign, spec)).toEqual(emptyFor(spec));
   });
 
-  it('drops vectors of another width', () => {
-    const wide = {
-      ...rate(EMPTY_FEEDBACK, 'software', 'a', v(1), true),
-      dim: MODEL.dim * 2,
-    };
-    expect(forCurrentModel(wide)).toEqual(EMPTY_FEEDBACK);
+  it('reads vectors of another width as none of its own', () => {
+    const wide = { ...rate(mine(), 'software', 'a', v(1), true), dim: spec.dim * 2 };
+    expect(forCurrentModel(wide, spec)).toEqual(emptyFor(spec));
+  });
+});
+
+describe('ratings kept per model', () => {
+  const e5 = modelFor('e5-small');
+  const gemma = modelFor('gemma');
+
+  it("files each model's ratings under its own id", () => {
+    const store = withFeedback({}, e5, rate(emptyFor(e5), 't', 'a', v(1), true));
+    const both = withFeedback(store, gemma, rate(emptyFor(gemma), 't', 'b', v(2), false));
+    expect(count(feedbackFor(both, e5))).toBe(1);
+    expect(count(feedbackFor(both, gemma))).toBe(1);
+  });
+
+  it('leaves the other model untouched when one is written', () => {
+    const store = withFeedback({}, e5, rate(emptyFor(e5), 't', 'a', v(1), true));
+    const after = withFeedback(store, gemma, emptyFor(gemma));
+    expect(count(feedbackFor(after, e5))).toBe(1);
+  });
+
+  it("reads a pre-0.8 flat blob as e5-small-v2's, not the current model's", () => {
+    const legacy = { byTopic: { t: [{ key: 'a', vector: v(1), liked: true }] } };
+    const store = normalizeStore(legacy);
+    expect(count(feedbackFor(store, e5))).toBe(1);
+    expect(count(feedbackFor(store, gemma))).toBe(0);
+  });
+
+  it('survives a round trip through the stored shape', () => {
+    const store = withFeedback({}, gemma, rate(emptyFor(gemma), 't', 'a', v(3), true));
+    expect(count(feedbackFor(normalizeStore(store), gemma))).toBe(1);
+  });
+
+  it('reads junk as no ratings rather than trusting it', () => {
+    expect(feedbackFor(normalizeStore(null), e5).byTopic).toEqual({});
+    expect(feedbackFor(normalizeStore({ 'x/y': 7 }), e5).byTopic).toEqual({});
   });
 });

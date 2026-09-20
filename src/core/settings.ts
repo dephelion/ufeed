@@ -1,9 +1,11 @@
-import { DEFAULT_STRICTNESS } from './models';
+import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './models';
 import { clampStrictness } from './scoring';
 
 export interface Settings {
   enabled: boolean;
   topics: string[];
+  /** Which model scores the feed. Changing it restarts the engine. */
+  model: ModelKey;
   /** Step 0..10, not a score: scores differ per model. */
   strictness: number;
   showScores: boolean;
@@ -20,6 +22,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   topics: [],
+  model: DEFAULT_MODEL,
   strictness: DEFAULT_STRICTNESS,
   showScores: false,
   blurThinMedia: false,
@@ -45,6 +48,9 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
     typeof stored === 'number' && Number.isInteger(stored)
       ? clampStrictness(stored)
       : DEFAULT_STRICTNESS;
+  // A model this build does not have is not a model: a stale or hand-edited key
+  // would otherwise reach modelFor() and silently score with the wrong scale.
+  if (!isModelKey(merged.model)) merged.model = DEFAULT_MODEL;
   return merged;
 }
 

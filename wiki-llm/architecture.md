@@ -48,7 +48,11 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 
 **Both are a file format now**, readable and writable through the popup's backup row — `src/core/config-transfer.ts` owns it, pure, with the base64 float32 vector encoding. Adding a third key means deciding whether it belongs in a backup.
 
-**The model stamp is the gate.** A missing one reads as `Xenova/e5-small-v2`, which is what every install that predates the stamp holds. On any other id or width, `forCurrentModel()` drops the vectors at load and keeps the settings: another model's embeddings are in another coordinate space, and the post text they came from was discarded at rating time, so there is nothing to re-embed. Shipping a new model therefore costs every reader their corrections — weigh it in the release, and say so in the popup.
+**The model stamp is the gate, and ratings are filed under it.** `feedback` is a map keyed by model id, one entry per model that has any. A model reads only its own (`feedbackFor()`); a stamp or width that disagrees reads as none rather than being trusted. A pre-0.8 flat blob is read as `Xenova/e5-small-v2`'s, which is what every install that predates the map holds.
+
+**A model switch destroys nothing.** Each model keeps its own ratings and a switch back restores them; writing one model's never touches another's (read-modify-write in `saveFeedback`). "Clear tuning" clears the running model's, "Reset" clears them all. The engine frame is replaced rather than the model swapped under it — a worker loads one model for its whole life — and `Tuning.reload()` re-reads the store, because the stored value did not change, only which part of it this tab is reading.
+
+Settings never depended on a model and are kept whole across a switch, the language checkbox included — it is ignored while a multilingual model runs, never overwritten.
 
 **Feedback propagates through `storage.onChanged` like settings do.** `onFeedbackChanged` -> `Tuning`, and `FeedFilter` requeries when the ratings on its lines differ from what the worker last received (`Tuning.signature`) — a clear, an import or a thumb in another tab. Without it a feed tab keeps the corrections it loaded at startup and the next thumb writes that copy back over a clear or an import.
 
@@ -57,6 +61,7 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 `src/core/protocol.ts` owns the types and the guards. Both sides validate; a host page posts its own messages constantly.
 
 ```
+engine  → worker   { type: 'INIT', model }              engine document to its own worker, first message, never over the port
 content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
 content → engine   { id, type: 'FEEDBACK',   text, liked }
@@ -67,6 +72,10 @@ engine  → content  { id, type: 'ACK' }                  no pending entry by de
 engine  → content  { id, type: 'ERROR',      message }
 engine  → content  { type: 'STATUS', state, progress?, message? }
 ```
+
+**The model rides in the frame's URL** (`engine.html?model=<key>`), and the engine document forwards it to the worker as `INIT` before any port exists. It is not part of `EngineRequest` and never crosses the port: the worker must know before the first request, and a host page sharing the parent window must not get a say in which model runs. An unknown key falls back to the default rather than failing.
+
+**Switching models replaces the frame** (`EngineClient.restart()`): pending requests resolve empty so the feed fails open, the port closes, the iframe is removed, and a new one connects on the new model. Anything in flight would otherwise answer in the old model's score space. The score cache and the language cache are cleared with it.
 
 **The worker embeds a correction, the content script stores it.** Vectors live where the model lives; persistence lives where `storage.local` is reachable. The content script never embeds and the worker never persists.
 
@@ -87,6 +96,8 @@ popup   → content  { type: 'feedlens:status?' }            to the ACTIVE tab o
 content → popup    EngineStatus (the reply)
 content → popup    { type: 'feedlens:status', status }     pushed on change
 ```
+
+**The posts-hidden badge asks the background to open the popup** — `content → background { type: 'feedlens:open-popup' }`, `src/platform/open-popup.ts` — because `action.openPopup` is unreachable from a content script. The background honours it only from a tab (`sender.tab`).
 
 **Asked per tab, never stored.** Each feed tab runs its own engine. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.
 
@@ -124,5 +135,7 @@ content → popup    { type: 'feedlens:status', status }     pushed on change
 **Epoch guards the race.** A batch in flight when topics change returns scores measured against the old vectors; replies from a previous epoch are discarded.
 
 ## Failure posture
+
+**One `SCORE` request is in flight at a time.** The worker embeds one post after another on a single thread, so a second request does not start sooner — it waits, while its 8s timeout counts that wait against it. Without the guard, scrolling fast put a request out every time the queue refilled (the batch leaves `#pending` synchronously, before the await), and the later ones timed out on a healthy engine and revealed batches it had never reached. Posts wait in `#pending` instead, where waiting is free, and the timeout measures the engine rather than the queue behind it. `ScoreQueue` drains straight into the next batch rather than waiting out `FLUSH_MS`.
 
 Fail-open everywhere. Unknown score, request timeout (8s), engine `ERROR`, or worker crash all **reveal**. A 15s watchdog logs (debug builds) if the engine never reports in. The worker keeps the last `SET_TOPICS` past a failed load and embeds it on the next request; a `SCORE` with no topics replies `ERROR`, never a score against nothing. No path may leave a post blurred because something broke.

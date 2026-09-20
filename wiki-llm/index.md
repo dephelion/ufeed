@@ -27,6 +27,8 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
 Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model, so WASM is the only backend.
 
-Not built: Chrome offscreen singleton, multilingual model, mobile.
+Two models, picked in the popup: `e5-small-v2` (33MB, English only, default) and EmbeddingGemma-300m (197MB, every language). The multilingual one is opt-in until its cost is measured in a browser rather than in node, and its strictness scale is provisional.
+
+Not built: Chrome offscreen singleton, worker pool, mobile.
 
 Every number in these pages came from a measurement harness run against a captured timeline. Both live in gitignored `.local/`: the data is personal, and the method is described where the number is used.

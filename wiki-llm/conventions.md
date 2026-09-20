@@ -7,7 +7,7 @@
 
 1. **Privacy.** Post text never leaves the device, never reaches a log, never persists. Zero analytics. The only network request is the model weights from the CDN. Embeddings of posts the reader explicitly rated persist in `storage.local` — vectors only, never text, never transmitted. See [privacy.md](privacy.md).
 2. **Fail-open.** Every error, timeout and unready state reveals. No path may leave a post blurred because something broke; assert it directly. A backend that loads but miscomputes is rejected, not trusted ([model.md](model.md)).
-3. **Host page integrity.** All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative`. Never mutate a host element beyond class and `aria-hidden` toggles and namespaced `data-lx-*` attributes. Our own nodes (engine iframe, thumbs bar, no-topics card, `.lx-sr` announcer) carry `.lx-*` and are never inserted into a post.
+3. **Host page integrity.** All injected CSS namespaced `.lx-*`. No layout side effects beyond the documented `position: relative`. Never mutate a host element beyond class and `aria-hidden` toggles and namespaced `data-lx-*` attributes. Our own nodes (engine iframe, thumbs bar, no-topics card, posts-hidden badge, `.lx-sr` announcer) carry `.lx-*` and are never inserted into a post.
 4. **Cross-browser floor.** Every API must work on Chrome MV3 **and** Firefox MV3. Promise-style polyfill only — never callbacks, never an aliased `browser ?? chrome`. Chrome-only paths are optimisations behind a fallback. Sole callback exception: `action.setIcon` in `background.ts` — Chrome logs a stale-tab error as unchecked `runtime.lastError` despite a caught promise.
 5. **Main thread.** No inference, embedding or tokenization on the page's main thread.
 6. **The Dependency Rule.** Source code dependencies point inward only: `entrypoints/` → `adapters/` · `platform/` → `feed/` → `core/`. Nothing in an inner ring names anything in an outer one. Rings, ports and where new code goes: [layers.md](layers.md). `src/architecture.test.ts` enforces it.
@@ -66,12 +66,12 @@ docs/           for people
 
 ## Build modes
 
-| Command                 | Output                     | Logs | Readable source       |
-| :---------------------- | :------------------------- | :--- | :-------------------- |
-| `npm run watch`         | `.output/chrome-mv3-debug` | on   | yes, inline sourcemap |
-| `npm run build:debug`   | `.output/chrome-mv3-debug` | on   | yes, inline sourcemap |
-| `npm run build`         | `.output/chrome-mv3`       | off  | no, minified          |
-| `npm run build:firefox` | `.output/firefox-mv3`      | off  | no, minified          |
+| Command                 | Output                                                  | Logs | Readable source       |
+| :---------------------- | :------------------------------------------------------ | :--- | :-------------------- |
+| `npm run watch`         | `.output/chrome-mv3-debug`, `.output/firefox-mv3-debug` | on   | yes, inline sourcemap |
+| `npm run build:debug`   | `.output/chrome-mv3-debug`                              | on   | yes, inline sourcemap |
+| `npm run build`         | `.output/chrome-mv3`                                    | off  | no, minified          |
+| `npm run build:firefox` | `.output/firefox-mv3`                                   | off  | no, minified          |
 
 **Debug is the WXT mode, never an env var.** `--mode debug` (`npm run watch`, `npm run build:debug`) turns on logs and turns off minification; nothing else logs, `npm run dev` included; `core/debug.ts` and `wxt.config.ts` read the mode and nothing else. WXT loads `.env` into `process.env` and Vite reads `NODE_ENV`, so an env-based flag let a stray `.env` ship logs in a store build. Debug output lands in `*-debug/`, never the production folder that `npm run zip` packs. `watch` builds production-shaped output on purpose — that is what keeps `new Worker()` same-origin — but minified output reports every failure as `content.js:1`, which is useless for a stack trace.
 

@@ -8,7 +8,7 @@ asks for. Kept in the repo so the listing and the code change together.
 | Field          | Value                                                                     |
 | :------------- | :------------------------------------------------------------------------ |
 | Name           | FeedLens: Feed Cleaner for Social Networks                                |
-| Version        | 0.7.2 — pre-1.0 while it is finding its first users                       |
+| Version        | 0.8.1 — pre-1.0 while it is finding its first users                       |
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
@@ -36,7 +36,8 @@ post.
 🧹 Works on X, LinkedIn and Reddit.
 
 🔒 Private by design. A small AI model (about 33 MB) is downloaded once, then
-everything happens inside your browser. No account, no server, no cloud AI, no
+everything happens inside your browser. (An optional multilingual model, about
+197 MB, is downloaded only if you choose it.) No account, no server, no cloud AI, no
 analytics. The text of your feed is never uploaded, never stored, and never
 logged — we could not see it if we wanted to. The code is open source, so you can
 check.
@@ -46,13 +47,20 @@ measured threshold rather than a guess. Turn on scores to see what each post got
 and what it needed. Stricter hides more, including some posts you'd want, so pick
 what suits your feed. It is not going to be perfect and it does not pretend to be.
 
+🌍 English by default, every language if you ask. The default model is small and
+fast and reads English. If your feed is in another language, or mixed, switch to the
+multilingual model in the popup: it reads every language and sorts more accurately,
+for a one-time 197 MB download and more work on every post. Your topics, strictness
+and thumb ratings carry over, and each model keeps its own ratings.
+
 👍 It takes corrections, if you ask it to. Turn on thumbs and mark a post on or off
 topic; the next time a near-copy of it shows up, such as a repost or a quote, it
 follows your call. Your topics never change. Ratings stay on your device, and this
 is off by default.
 
 What it cannot do. It reads words, not pictures, so a photo with no caption cannot
-be judged on content. It understands English. It matches subjects, not quality: a
+be judged on content. The default model understands English only; the optional
+multilingual model reads every language. It matches subjects, not quality: a
 great post and a poor one about the same thing both stay. And because it compares
 meaning rather than reasoning about a post, it can miss sarcasm or "this topic,
 but not the hype".
@@ -85,7 +93,9 @@ FeedLens executes no remote code. The ONNX Runtime WebAssembly binary is
 bundled in the package and loaded from an extension-relative path. The only
 network request is a one-time download of the model **weights** (a data file,
 not code) from Hugging Face (`huggingface.co`, redirecting to its `hf.co`
-CDN), which the browser then caches.
+CDN), which the browser then caches. Only the model the user has chosen is
+requested: about 33 MB for the default, about 197 MB for the optional multilingual
+one.
 
 ## Data usage disclosure
 
@@ -110,8 +120,8 @@ page.
 
 - [ ] Screenshots, 1280×800 or 640×400, at least one and up to five.
       Suggested: a feed mid-blur, the popup with topics set, a blurred post
-      revealed by clicking, the strictness slider with its hint, the no-topics
-      card.
+      revealed by clicking, the strictness slider with its hint, the model picker,
+      the no-topics card.
 - [ ] Small promo tile, 440×280. Optional, but listings without one look unfinished.
 - [ ] Privacy policy live at https://dephelion.com/feedlens-browser-extension/privacy/ (ship the dephelion.com PR first).
 

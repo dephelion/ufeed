@@ -28,9 +28,15 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 - **Start from what you want.** Three lines is a full setup. There is no
   blocklist to keep up with.
-- **Nothing leaves your device.** A 33 MB model runs inside your browser. There is
-  no cloud mode, because there is no server. The only network request is the
-  one-time model download, and the source is here so you can check that.
+- **Nothing leaves your device.** A small model (33 MB by default) runs inside your
+  browser. There is no cloud mode, because there is no server. The only network
+  request is the one-time model download, and the source is here so you can check
+  that.
+- **English by default, every language if you ask.** The default model reads
+  English. Pick the multilingual one in the popup and it reads every language and
+  sorts more accurately, for a one-time 197 MB download and more work on every
+  post. Your topics and settings carry over, and each model keeps its own thumb
+  ratings.
 - **You can see why, and steer it.** A 0–10 strictness slider, an option to show
   every post's score, a peek strip that keeps close calls readable, and thumbs
   that correct near-copies of posts you rated.
@@ -39,8 +45,9 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 ## What it cannot do
 
-- **It reads English words, not pictures.** A photo with no caption cannot be
-  judged on content, and a post in another language gets a meaningless score.
+- **It reads words, not pictures.** A photo with no caption cannot be judged on
+  content. The default model also reads English only, so a post in another
+  language gets a meaningless score; the multilingual model reads every language.
 - **It matches subjects, not quality.** A great post and a poor one about the same
   thing both stay.
 - **It is not perfect.** Stricter settings blur more, including some posts you
@@ -50,7 +57,7 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 FeedLens compares the meaning of a post with your topics. It does not reason about
 the post. A large model in the cloud can judge things like sarcasm or "AI news but
-not hype" better than a 33 MB model on your laptop can. FeedLens gives up some of
+not hype" better than a model small enough for your laptop can. FeedLens gives up some of
 that in exchange for privacy, speed, and a filter that behaves the same way every
 time, so a wrong call can be explained and corrected.
 [How it works](docs/how-it-works.md) has the reasoning.
@@ -63,7 +70,8 @@ time, so a wrong call can be explained and corrected.
 
 Then open the toolbar popup, add a topic, and visit x.com, linkedin.com or
 reddit.com. The model downloads once (~33 MB) and is cached by the browser.
-Nothing blurs until it has loaded.
+Nothing blurs until it has loaded. If your feed is not in English, choose _Every
+language_ under _Model_ in the popup instead (a one-time ~197 MB download).
 
 ## Build from source
 
@@ -131,3 +139,7 @@ The rules in `core/` know nothing of the browser, and the page logic in `feed/` 
 Copyright © 2026 Dephelion. [GPL-3.0](LICENSE). Use it, change it, share it. If
 you distribute a modified version, you must publish its source under the same
 license.
+
+The models are not part of this repository and carry their own terms. Your browser
+downloads the one you pick from Hugging Face: e5-small-v2 is MIT-licensed, and
+EmbeddingGemma is under Google's [Gemma Terms of Use](https://ai.google.dev/gemma/terms).

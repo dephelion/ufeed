@@ -7,26 +7,39 @@ let timer;
 let running = false;
 let queued = false;
 
-function build() {
+// One after the other: both builds regenerate .wxt/, so running them together races.
+const TARGETS = [[], ['-b', 'firefox']];
+
+function run(args) {
+  return new Promise((resolve) => {
+    spawn('npx', ['wxt', 'build', ...args, '--mode', 'debug'], { stdio: 'inherit' }).on(
+      'close',
+      resolve,
+    );
+  });
+}
+
+async function build() {
   if (running) {
     queued = true;
     return;
   }
   running = true;
   const started = Date.now();
-  const child = spawn('npx', ['wxt', 'build', '--mode', 'debug'], { stdio: 'inherit' });
-  child.on('close', (code) => {
-    running = false;
-    console.log(
-      code === 0
-        ? `\n  rebuilt in ${Date.now() - started}ms — reload the extension\n`
-        : `\n  build failed (${code})\n`,
-    );
-    if (queued) {
-      queued = false;
-      build();
-    }
-  });
+  let failed = 0;
+  for (const args of TARGETS) {
+    failed ||= await run(args);
+  }
+  running = false;
+  console.log(
+    failed === 0
+      ? `\n  rebuilt in ${Date.now() - started}ms — reload the extension\n`
+      : `\n  build failed (${failed})\n`,
+  );
+  if (queued) {
+    queued = false;
+    build();
+  }
 }
 
 for (const dir of ['src', 'public']) {
@@ -40,5 +53,5 @@ watch('wxt.config.ts', () => {
   timer = setTimeout(build, 250);
 });
 
-console.log('watching src/ — debug build on change');
+console.log('watching src/ — debug build (chrome + firefox) on change');
 build();

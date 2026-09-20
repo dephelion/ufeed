@@ -1,6 +1,5 @@
 const BLUR_CLASS = 'lx-blur';
 const COLLAPSE_CLASS = 'lx-collapse';
-const PENDING_CLASS = 'lx-pending';
 
 /**
  * Node-level, deliberately: a reveal lost to virtualized recycling is an
@@ -10,24 +9,6 @@ const revealed = new WeakSet<HTMLElement>();
 
 /** Drives the label: only 'topic' means the model actually judged the post. */
 export type BlurReason = 'topic' | 'media' | 'language' | 'peek';
-
-/**
- * Judging a post costs a language detection and an inference. Softened until
- * the answer lands, so the few milliseconds cannot catch the eye and then blur
- * under it. Self-clearing: a held batch or a dead engine must never leave the
- * feed dimmed, so the timeout reveals without waiting for a verdict.
- */
-const PENDING_MS = 1500;
-
-export function markPending(element: HTMLElement): void {
-  if (revealed.has(element) || element.classList.contains(BLUR_CLASS)) return;
-  element.classList.add(PENDING_CLASS);
-  setTimeout(() => clearPending(element), PENDING_MS);
-}
-
-export function clearPending(element: HTMLElement): void {
-  element.classList.remove(PENDING_CLASS);
-}
 
 /** Enough to judge the subject, short enough not to become the distraction. */
 const PEEK_CHARS = 50;
@@ -45,7 +26,6 @@ export function blur(
   collapse = false,
 ): void {
   if (revealed.has(element)) return;
-  clearPending(element);
   element.classList.add(BLUR_CLASS);
   element.classList.toggle(COLLAPSE_CLASS, collapse);
   element.dataset.lxReason = reason;
@@ -64,7 +44,6 @@ export function peek(element: HTMLElement, text: string, collapse = false): void
 }
 
 export function reveal(element: HTMLElement): void {
-  clearPending(element);
   element.classList.remove(BLUR_CLASS, COLLAPSE_CLASS);
   delete element.dataset.lxReason;
   delete element.dataset.lxPeek;
@@ -165,6 +144,5 @@ export function listenForReveal(
 }
 
 export function revealAll(root: ParentNode = document): void {
-  const stuck = `.${BLUR_CLASS}, .${PENDING_CLASS}`;
-  for (const el of root.querySelectorAll<HTMLElement>(stuck)) reveal(el);
+  for (const el of root.querySelectorAll<HTMLElement>(`.${BLUR_CLASS}`)) reveal(el);
 }

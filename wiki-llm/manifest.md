@@ -11,7 +11,7 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `permissions`               | `storage`                                                                                                                  | Settings only.                                                                                                                                      |
 | `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`, `*://linkedin.com/*`, `*://*.linkedin.com/*`, `*://reddit.com/*`, `*://*.reddit.com/*` | Default, not optional — installing FeedLens implies wanting it on the sites you use. Both patterns per site: `*.reddit.com` misses the bare domain. |
-| `web_accessible_resources`  | `engine.html`, `icon-gray/48.png`                                                                                          | The iframe the content script injects, plus the toolbar icon the no-topics card shows — an `<img>` in the page cannot load an unlisted file.        |
+| `web_accessible_resources`  | `engine.html`, `icon-gray/48.png`, `icon/32.png`                                                                           | The iframe the content script injects, plus the icons the no-topics card and the badge show — an `<img>` cannot load an unlisted file.              |
 | `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`                                                                                     | **Mandatory** or ONNX Runtime will not instantiate.                                                                                                 |
 | `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`, `data_collection_permissions: { required: ['none'] }`                             | Required to install on Firefox. AMO rejects a new upload without `data_collection_permissions`; Firefox < 140 ignores it (lint warning, harmless).  |
 | `content_scripts[].css`     | `blur.css`                                                                                                                 | Declared CSS applies before first paint; injected does not.                                                                                         |
@@ -25,7 +25,7 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 | Background | `service_worker`, `type: module` | `scripts` (non-persistent event page) |
 | Output     | `.output/chrome-mv3`             | `.output/firefox-mv3`                 |
 
-Both reach WebGPU `requestDevice()` from a Worker inside the injected iframe (measured, macOS), and `allow="webgpu"` is not needed. Unused: WebGPU miscomputes the q8 model ([model.md](model.md) §Backend self-check).
+Both reach WebGPU `requestDevice()` from a Worker inside the injected iframe (measured, macOS), and `allow="webgpu"` is not needed. Neither model uses it: WebGPU miscomputes e5's q8 weights and EmbeddingGemma's q4 weights, and the probe rejects both ([model.md](model.md) §Backend self-check).
 
 ## Icons
 

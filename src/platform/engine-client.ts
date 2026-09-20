@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import { logger } from '../core/log';
+import type { ModelKey } from '../core/models';
 import {
   HANDSHAKE,
   isEngineReply,
@@ -69,11 +70,36 @@ export class EngineClient implements Engine {
     return this.#status.state === 'ready';
   }
 
-  connect(): void {
+  /**
+   * Replaces the engine with one on another model. The worker loads a single
+   * model for its whole life, so the frame goes rather than the model changing
+   * under it: anything in flight would answer in the old model's score space.
+   */
+  restart(model: ModelKey): void {
+    for (const [id, pending] of this.#pending) {
+      clearTimeout(pending.timer);
+      log.info('dropping request, engine restarting', { id });
+      pending.resolve({});
+    }
+    this.#pending.clear();
+    this.#outbox.length = 0;
+    this.#port?.close();
+    this.#port = undefined;
+    this.#frame?.remove();
+    this.#frame = undefined;
+    this.#status = { type: 'STATUS', state: 'idle' };
+    this.#onStatus(this.#status);
+    this.#updateBusy();
+    this.connect(model);
+  }
+
+  connect(model: ModelKey): void {
     if (this.#frame) return;
     const frame = document.createElement('iframe');
     this.#extension = browser.runtime.getURL('/');
-    frame.src = browser.runtime.getURL('engine.html');
+    // The model rides in the URL: the worker has to know it before the first
+    // request, and a frame per model keeps one model per worker.
+    frame.src = `${browser.runtime.getURL('engine.html')}?model=${encodeURIComponent(model)}`;
     frame.setAttribute('aria-hidden', 'true');
     frame.setAttribute('tabindex', '-1');
     frame.style.cssText =
