@@ -3,6 +3,10 @@ import type { RatedMatch } from '../core/scoring';
 import type { Engine, Post } from './ports';
 
 const FLUSH_MS = 100;
+/** Quiet time after the last scroll before a batch is chosen. */
+const SETTLE_MS = 150;
+/** The longest one scroll can hold a batch back. */
+const MAX_WAIT_MS = 1000;
 /**
  * Long posts cost tokens without adding signal; e5 does not shift with length.
  * Lowering it was measured and rejected as a speed lever: see wiki-llm/model.md.
@@ -30,6 +34,9 @@ export class ScoreQueue {
   #timer: ReturnType<typeof setTimeout> | undefined;
   #epoch = 0;
   #inFlight = false;
+  #movedAt = 0;
+  /** When the current scroll began: a pause longer than SETTLE_MS ends one. */
+  #movingSince = 0;
 
   constructor(
     private readonly engine: Pick<Engine, 'ready' | 'status' | 'score'>,
@@ -56,6 +63,13 @@ export class ScoreQueue {
     this.#epoch += 1;
   }
 
+  /** The viewport moved, so the posts nearest it are about to change. */
+  moved(): void {
+    const now = Date.now();
+    if (now - this.#movedAt > SETTLE_MS) this.#movingSince = now;
+    this.#movedAt = now;
+  }
+
   /**
    * One request at a time. The worker embeds one post after another on a single
    * thread, so a second request in flight does not run sooner — it only waits,
@@ -74,6 +88,8 @@ export class ScoreQueue {
       });
       return;
     }
+
+    if (this.#scrolling()) return;
 
     const issuedAt = this.#epoch;
     const batch = this.#nearest(this.batchSize());
@@ -102,15 +118,29 @@ export class ScoreQueue {
   }
 
   /**
+   * A batch stays committed for seconds, so it waits for the page to stop moving,
+   * except that one scroll can hold it back for MAX_WAIT_MS at most.
+   */
+  #scrolling(): boolean {
+    const now = Date.now();
+    const quiet = this.#movedAt + SETTLE_MS - now;
+    if (quiet <= 0 || now - this.#movingSince >= MAX_WAIT_MS) return false;
+    this.#timer = setTimeout(() => void this.flush(), quiet);
+    return true;
+  }
+
+  /**
    * Closest to the viewport first, ties in arrival order. A post the page has
    * removed is dropped: nobody will see its verdict, so it is not worth a turn.
    */
   #nearest(count: number): [HTMLElement, Post][] {
-    for (const element of this.#pending.keys()) {
+    const waiting = [...this.#pending.entries()];
+    for (const [element] of waiting) {
       if (!element.isConnected) this.#pending.delete(element);
     }
     const height = window.innerHeight;
-    return [...this.#pending.entries()]
+    return waiting
+      .filter(([element]) => element.isConnected)
       .map((entry) => ({ entry, gap: gapToViewport(entry[0], height) }))
       .sort((a, b) => a.gap - b.gap)
       .slice(0, count)

@@ -54,6 +54,8 @@ export class FeedFilter {
   /** Content hashes of the posts being hidden: a virtualized feed remounts one post as a new node. */
   readonly #hidden = new Set<string>();
   readonly #onHiddenChange: (count: number) => void;
+  /** Any scroll, in any container: the queue waits for it to settle before choosing. */
+  readonly #moved = (): void => this.#queue.moved();
 
   constructor({
     adapter,
@@ -95,6 +97,7 @@ export class FeedFilter {
 
   start(): void {
     this.#scanner.start();
+    document.addEventListener('scroll', this.#moved, { capture: true, passive: true });
     if (!this.active) return;
     this.#engine.connect(this.#settings.model);
     void this.#persist(this.#tuner.keepOnly(this.#settings.topics));
@@ -102,6 +105,7 @@ export class FeedFilter {
   }
 
   stop(): void {
+    document.removeEventListener('scroll', this.#moved, { capture: true });
     this.#scanner.stop();
     this.#queue.invalidate();
   }

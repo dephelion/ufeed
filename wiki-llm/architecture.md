@@ -34,7 +34,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 1. `MutationObserver` on `document.documentElement` → `sweep(node)`.
 2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo or first text mounts later is offered again: X can mount a cell before either. Other inner mutations never re-offer.
 3. On intersection: a cache hit, a kept conversation, or the media or language rule decides immediately; otherwise queue.
-4. Queue flushes when the model's batch is full or after a 100ms debounce. The batch is the posts nearest the viewport, ties in arrival order; a post whose node the page has removed is dropped, not scored.
+4. Queue flushes when the model's batch is full or after a 100ms debounce. The batch is the posts nearest the viewport, ties in arrival order; a post whose node the page has removed is dropped, not scored. A batch stays committed for seconds on the slow model, so while the page is scrolling it waits for the scroll to settle, bounded so a scroll that never stops cannot starve the engine. `FeedFilter` reports every scroll, in any container.
 5. Worker embeds, scores against topic vectors, replies with **raw scores**.
 6. `decide()` blurs or reveals; the score is cached by text hash.
 

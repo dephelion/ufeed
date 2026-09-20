@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Engine, Post } from './ports';
 import { ScoreQueue, type Scored } from './queue';
 
@@ -252,5 +252,58 @@ describe('ScoreQueue', () => {
     queue.add(mount('next post'));
     await queue.flush();
     expect(asked).toEqual([['next post']]);
+  });
+});
+
+describe('ScoreQueue while the page is moving', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('waits for the page to stop, then aims where the reader ended up', async () => {
+    const asked: string[][] = [];
+    const queue = new ScoreQueue(
+      recording(asked),
+      () => {},
+      () => 1,
+    );
+    const h = window.innerHeight;
+    const first = mount('was on screen', { top: 100, bottom: 400 });
+    const second = mount('far below', { top: h * 5, bottom: h * 5 + 300 });
+
+    queue.moved();
+    queue.add(first);
+    queue.add(second);
+    await vi.advanceTimersByTimeAsync(100);
+    expect(asked).toEqual([]);
+
+    // The reader flew down: what was on screen is now far above it.
+    first.container.getBoundingClientRect = () =>
+      ({ top: -h * 5, bottom: -h * 5 + 300 }) as DOMRect;
+    second.container.getBoundingClientRect = () => ({ top: 100, bottom: 400 }) as DOMRect;
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(asked[0]).toEqual(['far below']);
+  });
+
+  it('does not hold a batch back for ever when the page never stops moving', async () => {
+    const asked: string[][] = [];
+    const queue = new ScoreQueue(
+      recording(asked),
+      () => {},
+      () => 4,
+    );
+    queue.add(mount('a post'));
+
+    for (let t = 0; t < 800; t += 50) {
+      queue.moved();
+      await vi.advanceTimersByTimeAsync(50);
+    }
+    expect(asked).toEqual([]);
+
+    for (let t = 0; t < 700; t += 50) {
+      queue.moved();
+      await vi.advanceTimersByTimeAsync(50);
+    }
+    expect(asked).toEqual([['a post']]);
   });
 });
