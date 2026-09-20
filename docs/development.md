@@ -51,7 +51,7 @@ logged — counts, scores, states and errors only.
 [feedlens:embedder] loading model device=wasm model=Xenova/e5-small-v2
 [feedlens:worker]  ready
 [feedlens:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
-[feedlens:content] batch applied posts=16 blurred=11 rated=0 threshold=0.790
+[feedlens:content] batch applied posts=5 blurred=3 rated=0 threshold=0.790
 ```
 
 The first missing line locates the failure. `content` and `client` lines appear in

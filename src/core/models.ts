@@ -86,7 +86,7 @@ const E5_SMALL: ModelSpec = {
   ],
   // Measured to miscompute q8 on WebGPU: every load paid for a session it threw away.
   tryWebGPU: false,
-  batchSize: 16,
+  batchSize: 5,
 };
 
 /**
@@ -126,9 +126,7 @@ const GEMMA: ModelSpec = {
   // Measured to miscompute q4 on WebGPU too (near 0.353, far 0.375, against 0.597 and
   // 0.138 on WASM), unchanged by onnxruntime-web 1.30 or by turning the optimizer off.
   tryWebGPU: false,
-  // Smaller than e5's: at this model's cost a batch of 16 is over a second before
-  // anything unblurs, and leaves too little room under the engine's 8s timeout.
-  batchSize: 6,
+  batchSize: 5,
 };
 
 export const MODELS: Record<ModelKey, ModelSpec> = {

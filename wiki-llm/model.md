@@ -280,7 +280,7 @@ WASM is the only backend either model gets, so its cost is the product's cost. M
 
 **q4 beats q8 on speed by more than it loses on accuracy**, which was not the expectation: 4-bit weights usually cost dequantization work. Both land in the same band (cosine between a post's q4 and q8 vectors: mean 0.965), so the calibrated table holds either way. The model card forbids fp16 and its derivatives — EmbeddingGemma's activations do not support them — so `q4f16` is not an option however tempting its 175MB is.
 
-**`batchSize` is per model and buys latency, not throughput.** Since batching is measured to be no faster, a large batch only delays the first verdict and eats head-room under the engine's 8s timeout — and a timeout fails the whole batch open. e5-small keeps 16; Gemma takes **6**, which at its cost is a few hundred ms to the first unblur and leaves the request several times clear of the timeout.
+**`batchSize` buys latency, not throughput.** Since batching is measured to be no faster, a large batch only delays the first verdict and eats head-room under the engine's 8s timeout — and a timeout fails the whole batch open. Both models take **5** (`spec.batchSize` stays per model): e5-small was 16 and Gemma 6, and the owner lowered both so the first verdict lands sooner. On Gemma that is a few hundred ms to the first unblur, several times clear of the timeout.
 
 After load, `Embedder.selfCheck()` embeds a fixed probe pair and rejects the model unless both hold:
 

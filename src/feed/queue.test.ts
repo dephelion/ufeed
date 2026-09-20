@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import type { Engine } from './ports';
-import { MODELS } from '../core/models';
 import { ScoreQueue, type Scored } from './queue';
 
 const sent: string[][] = [];
@@ -30,7 +29,7 @@ describe('ScoreQueue', () => {
     expect(results[0]?.post).toBe(post);
   });
 
-  it("flushes as soon as the running model's batch is full, not a fixed 16", async () => {
+  it("flushes as soon as the running model's batch is full, not a fixed number", async () => {
     let size = 3;
     const queue = new ScoreQueue(
       engine,
@@ -48,10 +47,6 @@ describe('ScoreQueue', () => {
       queue.add({ container: document.createElement('div'), text: `later ${i}` });
     await Promise.resolve();
     expect(sent.at(-1)).toHaveLength(2);
-  });
-
-  it('gives the slower model a smaller batch, so a verdict is not a whole second away', () => {
-    expect(MODELS.gemma.batchSize).toBeLessThan(MODELS['e5-small'].batchSize);
   });
 
   it('sends one request at a time, so a queued post never waits out its own timeout', async () => {
