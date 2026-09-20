@@ -67,7 +67,7 @@ export function summarizeEngine(status: EngineStatus | undefined): {
             : `Downloading ${status.progress}%`,
       };
     case 'warming':
-      return { tone: 'busy', text: 'Checking' };
+      return { tone: 'busy', text: 'Starting up' };
     case 'ready':
       return { tone: 'ready', text: 'Ready' };
     case 'error':
@@ -101,7 +101,9 @@ export function describeEngine(status: EngineStatus | undefined): {
             : `Downloading the model — ${status.progress}%, one time only`,
       };
     case 'warming':
-      return { tone: 'busy', text: 'Checking the model before trusting it' };
+      // Also the whole of a cached load: reading ~200MB off disk and starting a
+      // session is not instant, and it is emphatically not a second download.
+      return { tone: 'busy', text: 'Starting the model up — already downloaded' };
     case 'ready':
       return { tone: 'ready', text: 'Model ready' };
     case 'error':

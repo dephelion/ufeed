@@ -71,12 +71,15 @@ export class Embedder {
         ? ['webgpu', 'wasm']
         : ['wasm'];
 
+    // Asked once, before any attempt: a fallback backend reloads the same weights.
+    const cached = await this.#isCached(spec);
+
     let last: unknown;
     for (const device of order) {
       const started = Date.now();
       try {
-        log.info('loading model', { device, model: spec.id, dtype: spec.dtype });
-        const embed = await this.#build(spec, device, onProgress);
+        log.info('loading model', { device, model: spec.id, dtype: spec.dtype, cached });
+        const embed = await this.#build(spec, device, onProgress, cached);
 
         onProgress?.({ state: 'warming' });
         const probe = await this.#probe(spec, embed);
@@ -116,9 +119,14 @@ export class Embedder {
     spec: ModelSpec,
     device: Device,
     onProgress?: (p: EmbedderProgress) => void,
+    cached = false,
   ): Promise<EmbedOne> {
+    // A cached load is not a download, however it reports itself. Reading the
+    // weights is still the slow part, so the reader is told the engine is
+    // working — just not that it is spending their bandwidth again.
+    if (cached) onProgress?.({ state: 'warming' });
     const progress_callback = (item: { status?: string; progress?: number }) => {
-      if (item.status === 'progress') {
+      if (item.status === 'progress' && !cached) {
         onProgress?.({ state: 'downloading', progress: item.progress });
       }
     };
@@ -153,6 +161,29 @@ export class Embedder {
       const output = await pipe([text], { pooling: 'mean', normalize: true });
       return normalize((output.data as Float32Array).slice());
     };
+  }
+
+  /**
+   * Whether the weights are already in the browser's cache.
+   *
+   * transformers.js streams a cache hit through the same `progress` events as a
+   * real download and never says which it was, so every refresh looked like it
+   * was fetching the model again. Only the cache name and the fact that keys are
+   * URLs carrying the model id are relied on; anything unexpected reads as "not
+   * cached", which is the old behaviour and never blocks a load.
+   */
+  async #isCached(spec: ModelSpec): Promise<boolean> {
+    try {
+      if (typeof caches === 'undefined') return false;
+      const cache = await caches.open('transformers-cache');
+      const keys = await cache.keys();
+      return keys.some((request) => request.url.includes(spec.id));
+    } catch (error: unknown) {
+      log.warn('could not read the model cache', {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      return false;
+    }
   }
 
   /**
