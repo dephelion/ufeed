@@ -17,9 +17,11 @@
   left: 50%;
   z-index: 2;
   transform: translate(-50%, -50%);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.4;
+  font:
+    600 12px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
   white-space: nowrap;
   pointer-events: none;
 }
