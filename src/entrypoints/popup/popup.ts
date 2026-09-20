@@ -80,17 +80,19 @@ function describeStrictness(step: number, key: ModelKey): string {
 
 /**
  * The language checkbox belongs to a model that reads one language. With a
- * multilingual model there is nothing to gate, so it is disabled and says why
- * rather than sitting there looking like it still does something.
+ * multilingual model there is nothing to gate, so it is shown off and disabled and
+ * says why. Only what is shown changes: the stored choice returns on a switch back.
  */
-function renderModel(key: ModelKey): void {
+function renderModel(key: ModelKey, blurOther: boolean): void {
   const spec = modelFor(key);
   model.value = key;
   const monolingual = spec.language !== undefined;
   modelHint.textContent = monolingual
     ? 'Reads English only. Small and fast.'
     : 'Reads every language. Downloads once, then it is cached.';
+  blurOtherLanguages.checked = monolingual && blurOther;
   blurOtherLanguages.disabled = !monolingual;
+  blurOtherLanguages.parentElement?.classList.toggle('disabled', !monolingual);
   languageHint.hidden = !monolingual;
   const note = el<HTMLElement>('language-off');
   note.hidden = monolingual;
@@ -107,10 +109,9 @@ function render(settings: Settings): void {
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
   strictnessHint.textContent = describeStrictness(settings.strictness, settings.model);
-  renderModel(settings.model);
+  renderModel(settings.model, settings.blurOtherLanguages);
   showScores.checked = settings.showScores;
   blurThinMedia.checked = settings.blurThinMedia;
-  blurOtherLanguages.checked = settings.blurOtherLanguages;
   collapseBlurred.checked = settings.collapseBlurred;
   tuneFeedback.checked = settings.tuneFromFeedback;
   refreshApply();
@@ -207,10 +208,10 @@ strictness.addEventListener('input', () => {
 
 model.addEventListener('change', () => {
   const next = model.value as ModelKey;
-  renderModel(next);
+  renderModel(next, saved.blurOtherLanguages);
   void update({ model: next }).then((ok) => {
     if (ok) void renderTuning();
-    else renderModel(saved.model);
+    else renderModel(saved.model, saved.blurOtherLanguages);
   });
 });
 

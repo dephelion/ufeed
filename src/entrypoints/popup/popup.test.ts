@@ -116,3 +116,31 @@ describe('the backup row in a rendered popup', () => {
     expect(JSON.stringify(store['settings'])).toBe(before);
   });
 });
+
+describe('the language checkbox in a rendered popup', () => {
+  const box = () => document.getElementById('blur-other-languages') as HTMLInputElement;
+  const pick = async (key: string) => {
+    const select = document.getElementById('model') as HTMLSelectElement;
+    select.value = key;
+    select.dispatchEvent(new Event('change'));
+    await tick();
+  };
+
+  it('is shown off and disabled on the multilingual model, and comes back after', async () => {
+    box().checked = true;
+    box().dispatchEvent(new Event('change'));
+    await tick();
+    expect(box().disabled).toBe(false);
+
+    await pick('gemma');
+    expect(box().disabled).toBe(true);
+    expect(box().checked).toBe(false);
+    expect(
+      (store['settings'] as { blurOtherLanguages: boolean }).blurOtherLanguages,
+    ).toBe(true);
+
+    await pick('e5-small');
+    expect(box().disabled).toBe(false);
+    expect(box().checked).toBe(true);
+  });
+});

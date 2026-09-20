@@ -271,6 +271,11 @@ summary {
   cursor: pointer;
 }
 
+.check.disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 ul.hint {
   margin: 8px 0 4px;
   padding-left: 16px;

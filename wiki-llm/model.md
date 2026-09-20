@@ -96,7 +96,7 @@ Measured on the same 205 posts, topic `tech, software, ai`: **68 of them are Spa
 
 Reproduce with the harness in `.local/`: classify each post's language, then compare the score distribution against the English posts'.
 
-`spec.language` is the single source. The gate compares against it, never a literal `en`, so a model swap moves it. **A spec with no `language` gates nothing**: `gatesLanguage()` returns false, detection never runs, and the popup disables the checkbox and says why rather than leaving it looking live. The reader's setting is kept for a switch back.
+`spec.language` is the single source. The gate compares against it, never a literal `en`, so a model swap moves it. **A spec with no `language` gates nothing**: `gatesLanguage()` returns false, detection never runs, and the popup shows the checkbox off and disabled and says why rather than leaving it looking live. The reader's setting is kept for a switch back.
 
 **The multilingual model therefore costs more inference than its per-post figure says.** The gate currently settles foreign posts before they reach the engine — 79 of the 205 labelled posts are Spanish — so turning it off takes the share of a feed needing inference from ~62% to 100%: about 38% more posts scored, on top of the per-post cost.
 
