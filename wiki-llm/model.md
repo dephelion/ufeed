@@ -274,6 +274,8 @@ WASM is the only backend either model gets, so its cost is the product's cost. M
 | Batching         | none (0.93×)                 | breaks determinism                   | Closed, see §Determinism.                  |
 | WASM threads     | —                            | impossible                           | Closed, no cross-origin isolation.         |
 | Smaller batch    | 0% throughput                | none                                 | **Adopted**, `spec.batchSize`.             |
+| Vector cache     | not measured                 | post vectors in memory               | Rejected: rare changes, latency is fine.   |
+| Nearest-first    | order, not throughput        | none                                 | **Adopted**, `queue.ts`.                   |
 | 2 workers        | 45%                          | a second copy of the weights per tab | Open. Needs the engine singleton first.    |
 
 **Truncation looked far better than it is.** The per-post figures (80 chars runs at 0.40× the cost of 320) are for the _longest_ posts. Across the real length distribution — mean 174 chars, median 182, max 325 — a cap at 240 touches 125 of 415 posts and saves under 4%. Short posts cannot be made shorter, and `MAX_CHARS = 1200` never binds on a feed at all.

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import type { Engine } from './ports';
+import { afterEach, describe, expect, it } from 'vitest';
+import type { Engine, Post } from './ports';
 import { ScoreQueue, type Scored } from './queue';
 
 const sent: string[][] = [];
@@ -12,6 +12,28 @@ const engine = {
   },
 } as unknown as Engine;
 
+/** A post in the page, optionally at a place on screen: the queue asks where it is. */
+function mount(text: string, at?: { top: number; bottom: number }): Post {
+  const container = document.createElement('div');
+  document.body.append(container);
+  if (at) container.getBoundingClientRect = () => ({ ...at }) as DOMRect;
+  return { container, text };
+}
+
+/** An engine that only records what it was asked, answering nothing. */
+function recording(asked: string[][]): Engine {
+  return {
+    ready: true,
+    status: { type: 'STATUS', state: 'ready' },
+    score: async (texts: string[]) => {
+      asked.push(texts);
+      return texts.map(() => undefined);
+    },
+  } as unknown as Engine;
+}
+
+afterEach(() => document.body.replaceChildren());
+
 describe('ScoreQueue', () => {
   it('embeds a long post capped, but hands back the whole post it was given', async () => {
     const results: Scored[] = [];
@@ -20,7 +42,7 @@ describe('ScoreQueue', () => {
       (r) => results.push(...r),
       () => 16,
     );
-    const post = { container: document.createElement('div'), text: 'x'.repeat(5000) };
+    const post = mount('x'.repeat(5000));
 
     queue.add(post);
     await queue.flush();
@@ -36,15 +58,13 @@ describe('ScoreQueue', () => {
       () => {},
       () => size,
     );
-    for (let i = 0; i < 3; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 3; i++) queue.add(mount(`post ${i}`));
     await Promise.resolve();
     expect(sent.at(-1)).toHaveLength(3);
 
     // A model switch changes it under a live queue, so it is read per flush.
     size = 2;
-    for (let i = 0; i < 2; i++)
-      queue.add({ container: document.createElement('div'), text: `later ${i}` });
+    for (let i = 0; i < 2; i++) queue.add(mount(`later ${i}`));
     await Promise.resolve();
     expect(sent.at(-1)).toHaveLength(2);
   });
@@ -67,8 +87,7 @@ describe('ScoreQueue', () => {
       () => {},
       () => 2,
     );
-    for (let i = 0; i < 6; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 6; i++) queue.add(mount(`post ${i}`));
     await Promise.resolve();
 
     // Six posts, a batch of two: without the guard all three went out at once and
@@ -88,8 +107,7 @@ describe('ScoreQueue', () => {
       (r) => seen.push(...r),
       () => 2,
     );
-    for (let i = 0; i < 4; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 4; i++) queue.add(mount(`post ${i}`));
 
     await queue.flush();
     for (let i = 0; i < 8; i++) await Promise.resolve();
@@ -105,8 +123,7 @@ describe('ScoreQueue', () => {
       () => 2,
       (posts) => held.push(posts.map((p) => p.text)),
     );
-    for (let i = 0; i < 4; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 4; i++) queue.add(mount(`post ${i}`));
 
     await queue.flush();
     for (let i = 0; i < 8; i++) await Promise.resolve();
@@ -129,8 +146,8 @@ describe('ScoreQueue', () => {
       () => 2,
       () => order.push('holding'),
     );
-    queue.add({ container: document.createElement('div'), text: 'a' });
-    queue.add({ container: document.createElement('div'), text: 'b' });
+    queue.add(mount('a'));
+    queue.add(mount('b'));
     await queue.flush();
     for (let i = 0; i < 4; i++) await Promise.resolve();
 
@@ -156,8 +173,7 @@ describe('ScoreQueue', () => {
       (posts) => held.push(posts.map((p) => p.text)),
     );
     // Two go out and block; four more pile up behind them.
-    for (let i = 0; i < 6; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 6; i++) queue.add(mount(`post ${i}`));
     await Promise.resolve();
 
     release?.();
@@ -165,5 +181,76 @@ describe('ScoreQueue', () => {
 
     // A post waiting its turn is no more judged than the one at the engine.
     expect(held.at(-1)).toEqual(['post 2', 'post 3', 'post 4', 'post 5']);
+  });
+
+  it('sends the posts nearest the viewport first, whatever order they arrived in', async () => {
+    const asked: string[][] = [];
+    let ready = false;
+    const late = {
+      get ready() {
+        return ready;
+      },
+      status: { type: 'STATUS', state: 'ready' },
+      score: recording(asked).score,
+    } as unknown as Engine;
+    const h = window.innerHeight;
+
+    const queue = new ScoreQueue(
+      late,
+      () => {},
+      () => 2,
+    );
+    // Arrival order is the worst case: the two nearest are the last two to come.
+    queue.add(mount('far below', { top: h * 5, bottom: h * 5 + 300 }));
+    queue.add(mount('just above', { top: -350, bottom: -50 }));
+    queue.add(mount('on screen', { top: 100, bottom: 400 }));
+    queue.add(mount('just below', { top: h + 130, bottom: h + 430 }));
+
+    ready = true;
+    await queue.flush();
+    for (let i = 0; i < 8; i++) await Promise.resolve();
+
+    expect(asked).toEqual([
+      ['on screen', 'just above'],
+      ['just below', 'far below'],
+    ]);
+  });
+
+  it('drops a post the page has removed instead of scoring it', async () => {
+    const asked: string[][] = [];
+    const queue = new ScoreQueue(
+      recording(asked),
+      () => {},
+      () => 4,
+    );
+    const gone = mount('scrolled away');
+    queue.add(gone);
+    queue.add(mount('still here'));
+    gone.container.remove();
+
+    await queue.flush();
+    for (let i = 0; i < 8; i++) await Promise.resolve();
+
+    expect(asked).toEqual([['still here']]);
+  });
+
+  it('sends nothing, and stays usable, when every waiting post has been removed', async () => {
+    const asked: string[][] = [];
+    const queue = new ScoreQueue(
+      recording(asked),
+      () => {},
+      () => 4,
+    );
+    const gone = mount('scrolled away');
+    queue.add(gone);
+    gone.container.remove();
+
+    await queue.flush();
+    expect(asked).toEqual([]);
+
+    // The guard against overlapping requests must not have been left set.
+    queue.add(mount('next post'));
+    await queue.flush();
+    expect(asked).toEqual([['next post']]);
   });
 });

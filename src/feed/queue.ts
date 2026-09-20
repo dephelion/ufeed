@@ -20,9 +20,10 @@ export interface Scored {
 }
 
 /**
- * Batches posts to the engine. Holds the batch rather than dropping it while the
- * engine is warming, and discards replies issued against a query that has since
- * changed — a score means nothing once the topics or ratings move.
+ * Batches posts to the engine, nearest the viewport first. Holds the batch rather
+ * than dropping it while the engine is warming, and discards replies issued
+ * against a query that has since changed — a score means nothing once the topics
+ * or ratings move.
  */
 export class ScoreQueue {
   readonly #pending = new Map<HTMLElement, Post>();
@@ -75,7 +76,8 @@ export class ScoreQueue {
     }
 
     const issuedAt = this.#epoch;
-    const batch = [...this.#pending.entries()].slice(0, this.batchSize());
+    const batch = this.#nearest(this.batchSize());
+    if (batch.length === 0) return;
     for (const [element] of batch) this.#pending.delete(element);
 
     this.#inFlight = true;
@@ -99,8 +101,31 @@ export class ScoreQueue {
     if (this.#pending.size > 0) void this.flush();
   }
 
+  /**
+   * Closest to the viewport first, ties in arrival order. A post the page has
+   * removed is dropped: nobody will see its verdict, so it is not worth a turn.
+   */
+  #nearest(count: number): [HTMLElement, Post][] {
+    for (const element of this.#pending.keys()) {
+      if (!element.isConnected) this.#pending.delete(element);
+    }
+    const height = window.innerHeight;
+    return [...this.#pending.entries()]
+      .map((entry) => ({ entry, gap: gapToViewport(entry[0], height) }))
+      .sort((a, b) => a.gap - b.gap)
+      .slice(0, count)
+      .map(({ entry }) => entry);
+  }
+
   #schedule(): void {
     clearTimeout(this.#timer);
     this.#timer = setTimeout(() => void this.flush(), FLUSH_MS);
   }
+}
+
+/** Zero for a post any part of which is on screen. */
+function gapToViewport(element: HTMLElement, height: number): number {
+  const { top, bottom } = element.getBoundingClientRect();
+  if (top > height) return top - height;
+  return bottom < 0 ? -bottom : 0;
 }

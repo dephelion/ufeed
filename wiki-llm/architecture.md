@@ -34,7 +34,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 1. `MutationObserver` on `document.documentElement` → `sweep(node)`.
 2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo or first text mounts later is offered again: X can mount a cell before either. Other inner mutations never re-offer.
 3. On intersection: a cache hit, a kept conversation, or the media or language rule decides immediately; otherwise queue.
-4. Queue flushes at 16 posts or a 100ms debounce.
+4. Queue flushes when the model's batch is full or after a 100ms debounce. The batch is the posts nearest the viewport, ties in arrival order; a post whose node the page has removed is dropped, not scored.
 5. Worker embeds, scores against topic vectors, replies with **raw scores**.
 6. `decide()` blurs or reveals; the score is cached by text hash.
 
@@ -137,5 +137,7 @@ content → popup    { type: 'feedlens:status', status }     pushed on change
 ## Failure posture
 
 **One `SCORE` request is in flight at a time.** The worker embeds one post after another on a single thread, so a second request does not start sooner — it waits, while its 8s timeout counts that wait against it. Without the guard, scrolling fast put a request out every time the queue refilled (the batch leaves `#pending` synchronously, before the await), and the later ones timed out on a healthy engine and revealed batches it had never reached. Posts wait in `#pending` instead, where waiting is free, and the timeout measures the engine rather than the queue behind it. `ScoreQueue` drains straight into the next batch rather than waiting out `FLUSH_MS`.
+
+**A dropped post fails open.** A queued post whose node the page removes is dropped so nodes do not pile up behind a slow model. If that same node returns, the scanner has already offered it and does not offer it again; the skeleton failsafe reveals it unscored.
 
 Fail-open everywhere. Unknown score, request timeout (8s), engine `ERROR`, or worker crash all **reveal**. A 15s watchdog logs (debug builds) if the engine never reports in. The worker keeps the last `SET_TOPICS` past a failed load and embeds it on the next request; a `SCORE` with no topics replies `ERROR`, never a score against nothing. No path may leave a post blurred because something broke.
