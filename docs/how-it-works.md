@@ -257,6 +257,9 @@ nothing, and switching back restores them. If a model is ever replaced, the
 ratings made with it are dropped, because the post text is already gone and
 nothing can be embedded again.
 
+A small green badge in the bottom-left corner counts the posts FeedLens is hiding
+on the page, and clicking it opens the popup.
+
 To see all of this at work, turn on _Show each post's score_ in the popup. Each
 post then shows the score it got and the score it needed. Hover a post to see
 its score against every topic line, and a post decided by a thumb says

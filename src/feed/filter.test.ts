@@ -63,6 +63,7 @@ async function run(
   texts: string[],
   score: (texts: string[]) => Promise<RatedMatch[]> = async (t) => scored(t),
   state: EngineState = 'ready',
+  onHiddenChange?: (count: number) => void,
 ) {
   document.body.innerHTML = texts.map(cell).join('');
   const engine = {
@@ -81,6 +82,7 @@ async function run(
     tuner,
     settings,
     detectLanguage: async () => ({ isReliable: false, languages: [] }),
+    onHiddenChange,
   });
   filter.start();
   await vi.advanceTimersByTimeAsync(200);
@@ -130,6 +132,45 @@ describe('FeedFilter', () => {
   it('does not hold a post found during a first-run download', async () => {
     await run(SETTINGS, ['a chocolate cake recipe'], undefined, 'downloading');
     expect(post('cake').classList.contains('lx-pending')).toBe(false);
+  });
+
+  it('counts the posts it hides, and stops counting one the reader reveals', async () => {
+    const counts: number[] = [];
+    const { filter } = await run(
+      SETTINGS,
+      ['rust ships a new borrow checker', 'a chocolate cake recipe'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    expect(counts.at(-1)).toBe(1);
+    filter.revealed(post('cake'));
+    expect(counts.at(-1)).toBe(0);
+  });
+
+  it('counts a post once however many nodes carry it', async () => {
+    const counts: number[] = [];
+    await run(
+      SETTINGS,
+      ['a chocolate cake recipe', 'a chocolate cake recipe'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    expect(counts.at(-1)).toBe(1);
+  });
+
+  it('counts nothing once the engine fails', async () => {
+    const counts: number[] = [];
+    const { filter } = await run(
+      SETTINGS,
+      ['a chocolate cake recipe'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    filter.engineChanged('error');
+    expect(counts.at(-1)).toBe(0);
   });
 
   it('reveals every blurred post when the engine fails', async () => {

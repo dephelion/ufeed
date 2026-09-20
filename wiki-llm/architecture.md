@@ -97,6 +97,8 @@ content → popup    EngineStatus (the reply)
 content → popup    { type: 'feedlens:status', status }     pushed on change
 ```
 
+**The posts-hidden badge asks the background to open the popup** — `content → background { type: 'feedlens:open-popup' }`, `src/platform/open-popup.ts` — because `action.openPopup` is unreachable from a content script. The background honours it only from a tab (`sender.tab`).
+
 **Asked per tab, never stored.** Each feed tab runs its own engine. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.
 
 **Pushes are filtered by `sender.tab.id`.** Every feed tab broadcasts; without the check a background tab's download overwrites the foreground tab's reading.

@@ -86,7 +86,7 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 
 **Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never lifts and re-holds on its way to the front.
 
-**The skeleton is the blur pushed further, in its own file.** Same targets as `.lx-blur`, which holds up on X, LinkedIn and Reddit: text-shadow 18px against 10px, media `blur(96px)` against 64px. A centred "Classifying…" on the container's `::after`, in the popup's mono font (`JetBrainsMono Nerd Font`, then `JetBrains Mono`, from the reader's machine — nothing is bundled) and in no colour of its own: it inherits the host's text colour, which contrasts with the host's background, so it is white on a dark feed and black on a light one. No verdict colour, and **clicks still reach the post** (`pointer-events: none` on the label). Radius does the hiding; opacity stays at the blur's values, because lower opacity multiplies down and the feed goes black (§The blur).
+**The skeleton is the blur pushed further, in its own file.** Same targets as `.lx-blur`, which holds up on X, LinkedIn and Reddit, only heavier. It carries a centred "Classifying…". No verdict colour, and **clicks still reach the post**. Radius does the hiding; opacity stays at the blur's values, because lower opacity multiplies down and the feed goes black (§The blur).
 
 **Flat bars and flattened media were tried and rejected** (owner, 2026-09-20). Every text element and icon became a grey block, and on LinkedIn the post read as a broken page. On X the bars were invisible: `currentColor` on an element whose own `color` is transparent is transparent, so the post read as black. Reuse what the blur does; do not add rules that depend on host markup the blur does not already touch.
 
@@ -188,13 +188,25 @@ On, and no topics — the one inactive state the reader did not choose. The feed
 
 Fixed top-right, same dark chip as the thumbs bar so it reads the same on a light and a dark feed. Shows the toolbar icon, because finding that button is the actual task.
 
-**It cannot open the popup.** `action.openPopup` is unreachable from a content script, so the card points at the icon instead.
+**It cannot open the popup itself.** `action.openPopup` is unreachable from a content script, so the card points at the icon instead. The counter asks the background to do it (§Posts-hidden counter).
 
 **Turning FeedLens off is the second option, offered on the card.** The `x` hides it for this page load only — persisting a dismissal leaves a silent extension and no route back to the explanation.
 
 **Mounted outside the active gate**, and it polls briefly for `document.body`: the content script runs at `document_start`.
 
 **Mount removes any existing `.lx-nudge`.** Firefox kills the old content script on extension reload/update but keeps its DOM: a card with a dead `x` and stale "no topics".
+
+## Posts-hidden counter
+
+A badge, bottom-left: the toolbar icon and "Posts hidden: N". A click opens the popup. `src/feed/hidden-badge.ts`, wired in `content.ts`.
+
+**It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning FeedLens off, or an engine error clears it. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
+
+**Shown while FeedLens is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with no topics (the nudge's state), it is hidden.
+
+**The click asks the background.** `platform/open-popup.ts` sends `feedlens:open-popup` and the background calls `action.openPopup()`. Chrome allows that from 127 and the manifest floor is 111; Firefox documents it as user-action-only and this path is unverified there. Where it refuses, the click does nothing and debug builds log why.
+
+**Mount removes any existing `.lx-count`**, for the same Firefox reason as the card. It attaches to `<html>`, like the thumbs bar, so it does not wait for `<body>`.
 
 ## Debug mode
 

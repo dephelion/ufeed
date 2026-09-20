@@ -1,7 +1,11 @@
 import browser from 'webextension-polyfill';
 import { defineBackground } from 'wxt/utils/define-background';
 import { adapterFor } from '../adapters';
+import { logger } from '../core/log';
+import { onPopupRequested } from '../platform/open-popup';
 import { onFeedDetected } from '../platform/status-channel';
+
+const log = logger('background');
 
 const SIZES = ['16', '32', '48', '128'] as const;
 
@@ -40,6 +44,17 @@ function setIcon(tabId: number, path: Record<string, string>): void {
   callbackApi.action.setIcon({ tabId, path }, () => void callbackApi.runtime.lastError);
 }
 
+/** Chrome opens it from 127 and Firefox only from a user action; elsewhere it refuses. */
+async function openPopup(): Promise<void> {
+  try {
+    await browser.action.openPopup();
+  } catch (error) {
+    log.warn('popup did not open', {
+      reason: error instanceof Error ? error.message : String(error),
+    });
+  }
+}
+
 /**
  * Colored the moment a tab confirms it has a feed FeedLens knows how to read —
  * whatever happens after that (still loading, warming up, failing outright)
@@ -50,6 +65,7 @@ export default defineBackground(() => {
   onFeedDetected((tabId) => {
     setIcon(tabId, COLOR);
   });
+  onPopupRequested(() => void openPopup());
 
   // A tab that goes color on x.com and then navigates to a plain page keeps
   // that per-tab icon forever otherwise — setIcon does not revert on its own.

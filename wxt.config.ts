@@ -48,7 +48,11 @@ export default defineConfig({
       // state the nudge card appears in, so a new reader knows which (gray)
       // button to look for. An <img> in the page cannot load an extension file
       // that is not listed here.
-      { resources: ['engine.html', 'icon-gray/48.png'], matches: FEED_HOSTS },
+      // icon/32.png is the posts-hidden badge's icon, for the same reason.
+      {
+        resources: ['engine.html', 'icon-gray/48.png', 'icon/32.png'],
+        matches: FEED_HOSTS,
+      },
     ],
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",

@@ -1,4 +1,4 @@
-import { ScoreCache } from '../core/cache';
+import { ScoreCache, hashText } from '../core/cache';
 import { logger } from '../core/log';
 import { gatesLanguage } from '../core/language';
 import { modelFor } from '../core/models';
@@ -31,6 +31,8 @@ export interface FeedFilterOptions {
   tuner: Tuning;
   settings: Settings;
   detectLanguage: DetectLanguage;
+  /** Told whenever the number of posts being hidden changes. */
+  onHiddenChange?: (count: number) => void;
 }
 
 /**
@@ -49,8 +51,19 @@ export class FeedFilter {
   readonly #scanner: FeedScanner;
   /** What the worker last received, so a stored change it already has is not re-sent. */
   #sentRatings = '';
+  /** Content hashes of the posts being hidden: a virtualized feed remounts one post as a new node. */
+  readonly #hidden = new Set<string>();
+  readonly #onHiddenChange: (count: number) => void;
 
-  constructor({ adapter, engine, tuner, settings, detectLanguage }: FeedFilterOptions) {
+  constructor({
+    adapter,
+    engine,
+    tuner,
+    settings,
+    detectLanguage,
+    onHiddenChange = () => {},
+  }: FeedFilterOptions) {
+    this.#onHiddenChange = onHiddenChange;
     this.#adapter = adapter;
     this.#engine = engine;
     this.#tuner = tuner;
@@ -99,7 +112,10 @@ export class FeedFilter {
       void this.#queue.flush();
     }
     if (state === 'downloading' || state === 'error') hideAllSkeletons(document);
-    if (state === 'error') revealAll(document);
+    if (state === 'error') {
+      revealAll(document);
+      this.#untrackAll();
+    }
   }
 
   applySettings(next: Settings): void {
@@ -111,6 +127,7 @@ export class FeedFilter {
     if (!this.active) {
       this.#queue.invalidate();
       revealAll(document);
+      this.#untrackAll();
       hideAllSkeletons(document);
       clearAllScores(document);
       return;
@@ -171,6 +188,8 @@ export class FeedFilter {
 
   /** A reader's reveal click hands the post's replies back to be routed again. */
   revealed(container: HTMLElement): void {
+    const text = this.#adapter.findPosts(container)[0]?.text;
+    if (text !== undefined) this.#track(text, false);
     this.#settle(container, true);
   }
 
@@ -238,12 +257,27 @@ export class FeedFilter {
   #apply(post: Post, action: Action): Action {
     // The verdict landed, so the loading state is over whichever way it went.
     hideSkeleton(post.container);
+    this.#track(post.text, action !== 'reveal');
     const collapse = this.#settings.collapseBlurred;
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, post.text, collapse);
     else blur(post.container, REASONS[action], collapse);
     this.#settle(post.container, action === 'reveal');
     return action;
+  }
+
+  #track(text: string, hidden: boolean): void {
+    const key = hashText(text);
+    const before = this.#hidden.size;
+    if (hidden) this.#hidden.add(key);
+    else this.#hidden.delete(key);
+    if (this.#hidden.size !== before) this.#onHiddenChange(this.#hidden.size);
+  }
+
+  #untrackAll(): void {
+    if (this.#hidden.size === 0) return;
+    this.#hidden.clear();
+    this.#onHiddenChange(0);
   }
 
   #settle(container: HTMLElement, kept: boolean): void {
@@ -321,6 +355,7 @@ export class FeedFilter {
     );
     this.#queue.invalidate();
     this.#cache.clear();
+    this.#untrackAll();
     this.#conversation?.reset();
     this.#scanner.reset();
   }

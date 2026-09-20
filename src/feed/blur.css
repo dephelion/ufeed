@@ -270,6 +270,49 @@
   border-color: color-mix(in srgb, #4ade80 60%, transparent);
 }
 
+/* Posts-hidden counter, styled after the score badge. */
+.lx-count {
+  all: unset;
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, #14532d 50%, transparent);
+  border: 1px solid color-mix(in srgb, #fff 22%, transparent);
+  backdrop-filter: blur(6px);
+  color: #f0fdf4;
+  font:
+    600 11px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
+  cursor: pointer;
+}
+
+.lx-count[hidden] {
+  display: none;
+}
+
+.lx-count:hover {
+  background: color-mix(in srgb, #14532d 70%, transparent);
+}
+
+.lx-count:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.lx-count img {
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
 /* First-run card: on, but no topics. Same dark chip as the thumbs bar, because
    it has to read the same on a light and a dark feed. */
 .lx-nudge {

@@ -9,9 +9,11 @@ import { needsTopics } from '../core/settings';
 import { listenForReveal } from '../feed/blur';
 import { mountFeedbackBar } from '../feed/feedback-bar';
 import { FeedFilter } from '../feed/filter';
+import { mountHiddenBadge } from '../feed/hidden-badge';
 import { mountNudge } from '../feed/nudge';
 import { Tuning } from '../feed/tuning';
 import { EngineClient } from '../platform/engine-client';
+import { requestPopup } from '../platform/open-popup';
 import {
   publishEngineStatus,
   publishFeedDetected,
@@ -54,12 +56,17 @@ async function start(): Promise<void> {
   let settings = await loadSettings();
   const tuner = await Tuning.load(feedbackStoreFor(() => settings.model));
   const engine = new EngineClient();
+  const badge = mountHiddenBadge({
+    iconUrl: browser.runtime.getURL('icon/32.png'),
+    onClick: requestPopup,
+  });
   const filter = new FeedFilter({
     adapter,
     engine,
     tuner,
     settings,
     detectLanguage: (text) => browser.i18n.detectLanguage(text),
+    onHiddenChange: (count) => badge.setCount(count),
   });
 
   // Held in memory and served on request. The popup cannot see into this tab,
@@ -83,6 +90,7 @@ async function start(): Promise<void> {
     // is the old model's ratings until it is told to read again.
     if (modelChanged) void tuner.reload();
     filter.applySettings(next);
+    badge.setVisible(filter.active);
   });
   tuner.onChange(() => filter.tuningChanged());
 
@@ -94,6 +102,7 @@ async function start(): Promise<void> {
   listenForReveal(document, (element) => filter.revealed(element));
 
   filter.start();
+  badge.setVisible(filter.active);
   log.info('content script started', {
     host: location.hostname,
     adapter: adapter.id,
