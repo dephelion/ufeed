@@ -40,6 +40,20 @@ describe('FeedScanner', () => {
     vi.unstubAllGlobals();
   });
 
+  it('announces a post when it is found, ahead of it entering view', () => {
+    const events: string[] = [];
+    const own = new FeedScanner({
+      adapter: xAdapter,
+      isActive: () => true,
+      onFound: () => events.push('found'),
+      onEnterView: () => events.push('view'),
+    });
+    document.body.innerHTML = cell('x');
+    own.sweep(document);
+    own.stop();
+    expect(events).toEqual(['found', 'view']);
+  });
+
   it('offers a post again when its photo mounts after it was judged', async () => {
     document.body.innerHTML = cell('');
     await flush();

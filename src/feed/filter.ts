@@ -68,6 +68,10 @@ export class FeedFilter {
     this.#scanner = new FeedScanner({
       adapter,
       isActive: () => this.active,
+      // Held when found, before the next paint: one frame of the real post is the flash.
+      onFound: (post) => {
+        if (this.#conversation?.route(post) !== 'keep') this.#hold(post);
+      },
       onEnterView: (post) => this.#enqueue(post),
     });
   }
@@ -94,10 +98,8 @@ export class FeedFilter {
       this.#scanner.sweep(document);
       void this.#queue.flush();
     }
-    if (state === 'error') {
-      revealAll(document);
-      hideAllSkeletons(document);
-    }
+    if (state === 'downloading' || state === 'error') hideAllSkeletons(document);
+    if (state === 'error') revealAll(document);
   }
 
   applySettings(next: Settings): void {
@@ -292,14 +294,13 @@ export class FeedFilter {
     this.#apply(post, settled);
   }
 
-  /** Nothing is softened while the engine is still warming — that is a download. */
   /**
-   * The one place the two states meet. A blurred or revealed post has a verdict,
-   * so it is not loading; nothing is held while the engine is warming either,
-   * because that wait is a model download rather than a judgement.
+   * The one place the two states meet. A blurred or revealed post has a verdict, so
+   * it is not loading. Held through warm-up, not a download: that wait is minutes.
    */
   #hold(post: Post): void {
-    if (!this.#engine.ready) return;
+    const { state } = this.#engine.status;
+    if (state === 'downloading' || state === 'error') return;
     if (isBlurred(post.container) || isRevealed(post.container)) return;
     showSkeleton(post.container);
   }

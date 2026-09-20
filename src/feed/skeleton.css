@@ -1,66 +1,16 @@
-/* The loading state. Not a blur, and deliberately not built like one.
-
-   A blur is a verdict: the content stays there behind frosted glass, labelled
-   and coloured, one click away. A skeleton is the absence of a verdict — there
-   is nothing to show yet — so it replaces the content instead of obscuring it.
-   The two used to share a technique (this was the blur's own ghosting with
-   smaller numbers), which made a held post read as a blur mid-transition.
-
-   See blur.css for the verdict styles; the two never mix. */
-
-/* Held while the detector and the engine answer. A loading state, not a verdict,
-   and it must not read as one: no label, no verdict colour, and clicks still
-   reach the post — nothing has been decided yet.
-
-   A blur and this say opposite things, so they may not share a technique. A blur
-   keeps the content there behind frosted glass, because the reader is meant to
-   know something is being withheld and can click for it. A skeleton says there
-   is nothing to show yet. Softening the blur's own ghosting (text-shadow, a
-   smaller blur radius) made the two a matter of degree, and a held post read as
-   a blur that had not finished landing. Now the content is replaced rather than
-   obscured. */
-.lx-pending {
-  opacity: 0.85;
-  transition: opacity 0.2s ease;
+/* The loading state: the blur's own treatment pushed further, in its own file.
+   No label, and clicks still reach the post. See ui.md §While a post is being judged. */
+.lx-pending > * {
+  opacity: 0.55;
 }
 
-/* Bars, never a ghost of the real words: no text-shadow, so nothing survives to
-   be mistaken for an obscured post. currentColor carries the host's own contrast,
-   so this reads on X's dark feed and LinkedIn's white one with no per-site colour. */
 .lx-pending :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
   color: transparent !important;
-  text-shadow: none !important;
-  background: color-mix(in srgb, currentColor 16%, transparent) !important;
-  border-radius: 4px;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
+  text-shadow: 0 0 18px currentColor;
 }
 
-/* Only the outermost text element paints. Feed markup nests spans inside spans,
-   and translucent bars stacked two or three deep turn patchy exactly where the
-   markup happens to be deepest. */
-.lx-pending
-  :is(p, span, h1, h2, h3, h4, a, time, strong, em)
-  :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
-  background: none !important;
-}
-
-/* Media flattens to one neutral block rather than a blurred photograph: a
-   recognisable-but-obscured image is the blur's statement, not this one. */
 .lx-pending :is(img, canvas, svg, video),
 .lx-pending [style*='background-image'] {
-  filter: grayscale(1) contrast(0) opacity(0.28);
-}
-
-/* Reduced motion gets the same state without the breathing. */
-@media (prefers-reduced-motion: no-preference) {
-  .lx-pending {
-    animation: lx-pulse 1.2s ease-in-out infinite;
-  }
-}
-
-@keyframes lx-pulse {
-  50% {
-    opacity: 0.55;
-  }
+  filter: blur(96px) saturate(0.25);
+  opacity: 0.45;
 }

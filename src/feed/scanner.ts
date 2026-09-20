@@ -11,6 +11,8 @@ export interface ScannerOptions {
   adapter: SiteAdapter;
   /** Nothing is observed while inactive; the feed is left untouched. */
   isActive(): boolean;
+  /** The moment a post is found, before it nears the viewport and before the next paint. */
+  onFound?(post: Post): void;
   onEnterView(post: Post): void;
 }
 
@@ -78,6 +80,7 @@ export class FeedScanner {
     for (const post of this.options.adapter.findPosts(root)) {
       if (this.#seen.has(post.container)) continue;
       this.#seen.add(post.container);
+      this.options.onFound?.(post);
       this.#viewport.observe(post.container);
     }
   }

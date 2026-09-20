@@ -78,23 +78,27 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 ## While a post is being judged
 
-`.lx-pending`, set by `showSkeleton()` when a post is queued or re-held, lifted by `hideSkeleton()` when a verdict lands.
+`.lx-pending`, set by `showSkeleton()` when a post is found or re-held, lifted by `hideSkeleton()` when a verdict lands.
 
-**A skeleton and a blur are separate concepts and separate code.** `skeleton.ts` and `skeleton.css` own the loading state; `blur.ts` and `blur.css` own verdicts; neither imports the other, and `FeedFilter` is the only place that knows both — it lifts the skeleton as it applies a verdict. They were one module once, and the skeleton was literally the blur's own ghosting with smaller numbers (`text-shadow` at 6px against 10px, media blurred 20px against 64px), so a held post read as a blur that had not finished landing. Keeping the two apart in code is what stops that drifting back.
+**A skeleton and a blur are separate code.** `skeleton.ts` and `skeleton.css` own the loading state; `blur.ts` and `blur.css` own verdicts; neither imports the other, and `FeedFilter` is the only place that knows both — it lifts the skeleton as it applies a verdict. Either can change without the other.
 
 Detection and inference take a moment, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
 
-**Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never un-dims and re-dims on its way to the front.
+**Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never lifts and re-holds on its way to the front.
 
-**A blur hides content that is there; a skeleton says there is nothing to show yet.** The blur keeps the post legible-but-frosted on purpose, because the reader is meant to know something is being withheld and can click for it. The skeleton replaces the content instead: text goes to flat bars (`color: transparent` with no `text-shadow`, so nothing of the real words survives to be read as an obscured post) and media flattens to one neutral block rather than a blurred photograph. No label, no verdict colour, a slow pulse, and **clicks still reach the post**. It reads as working, not as hidden.
+**The skeleton is the blur pushed further, in its own file.** Same targets as `.lx-blur`, which holds up on X, LinkedIn and Reddit: text-shadow 18px against 10px, media `blur(96px)` against 64px. No label, no verdict colour, and **clicks still reach the post**. Radius does the hiding; opacity stays at the blur's values, because lower opacity multiplies down and the feed goes black (§The blur).
 
-**The bars take their colour from `currentColor`**, so they carry the host's own contrast on X's dark feed and LinkedIn's white one with no per-site colour. Only the outermost text element paints: feed markup nests spans inside spans, and translucent bars stacked two or three deep turn patchy exactly where the markup happens to be deepest.
+**Flat bars and flattened media were tried and rejected** (owner, 2026-09-20). Every text element and icon became a grey block, and on LinkedIn the post read as a broken page. On X the bars were invisible: `currentColor` on an element whose own `color` is transparent is transparent, so the post read as black. Reuse what the blur does; do not add rules that depend on host markup the blur does not already touch.
 
-**It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed dimmed — Invariant 2 applies to this state exactly as it applies to a blur.
+**No dimming of the container, no pulse.** Opacity on the container darkens the whole post on a dark feed and drags the host's own surface with it. The blur dims children, never the container, for the same reason.
 
-**That failsafe must outlast the engine's own timeout, and at 1500ms it did not.** Every verdict clears the state, and the engine answers or fails open within 8s, so the timer should only ever fire when nothing answers at all. Sized for e5's milliseconds, it expired mid-batch on the slower model: the post un-dimmed to full opacity and blurred a moment later, which is the exact flash this state exists to prevent. Any future per-request timeout change moves this with it.
+**It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed held — Invariant 2 applies to this state exactly as it applies to a blur.
 
-**Nothing is held while the engine is warming.** That wait is a model download, not milliseconds, and dimming a feed through it would be the bug this state exists to prevent.
+**That failsafe must outlast the engine's own timeout, and at 1500ms it did not.** Every verdict clears the state, and the engine answers or fails open within 8s, so the timer should only ever fire when nothing answers at all. Sized for e5's milliseconds, it expired mid-batch on the slower model: the post showed in full and blurred a moment later, which is the exact flash this state exists to prevent. Any future per-request timeout change moves this with it.
+
+**Held from the moment a post is found, through warm-up.** `FeedScanner.onFound` fires in the mutation callback, before the next paint; waiting for the viewport observer paints the real post once first. Waiting for the engine to be ready showed every post on load, then held it, then blurred it — the flash this state exists to prevent.
+
+**Not held through a download.** A first-run download (`downloading`) is minutes, so the skeleton lifts when it starts and nothing is held until it ends; that first load shows one skeleton flash before the worker reports which it is. A cached load reports `warming` and is held through. The opened post (`route` says keep) is never held.
 
 ## Reveal
 
