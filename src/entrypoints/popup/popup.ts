@@ -88,8 +88,8 @@ function renderModel(key: ModelKey, blurOther: boolean): void {
   model.value = key;
   const monolingual = spec.language !== undefined;
   modelHint.textContent = monolingual
-    ? 'Reads English only. Small and fast.'
-    : 'Reads every language. Downloads once, then it is cached.';
+    ? 'Reads English only. Small, and quick on every post.'
+    : 'Reads every language and sorts more accurately, even in English. Slower on every post; downloads once.';
   blurOtherLanguages.checked = monolingual && blurOther;
   blurOtherLanguages.disabled = !monolingual;
   blurOtherLanguages.parentElement?.classList.toggle('disabled', !monolingual);

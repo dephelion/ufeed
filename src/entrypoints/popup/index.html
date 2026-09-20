@@ -19,7 +19,7 @@
       </label>
     </header>
 
-    <label class="field" for="topics">Topics</label>
+    <label class="field" for="topics">Topics I want to see</label>
     <textarea
       id="topics"
       rows="3"
@@ -76,16 +76,20 @@
 
     <label class="field" for="model">Model</label>
     <select id="model">
-      <option value="e5-small">English only — 33 MB</option>
-      <option value="gemma">Every language — 197 MB download</option>
+      <option value="e5-small">🇬🇧 English · Fast — 33 MB</option>
+      <option value="gemma">🌍 Multilingual · Accurate — 197 MB</option>
     </select>
     <p class="hint" id="model-hint"></p>
     <details class="hint-details">
       <summary>Details</summary>
       <p class="hint">
-        The English model is small and fast, and it cannot read anything else. The
-        multilingual one reads every language and sorts your feed more accurately, but it
-        is a 197 MB one-time download and it is slower on every post.
+        <b>English · Fast.</b> Small and quick on every post, and it only reads English.
+        It is also more particular about how a topic is worded, so keep topics to a few
+        keywords.
+        <br />
+        <b>Multilingual · Accurate.</b> Reads every language and sorts your feed more
+        accurately, even in English. It is more forgiving of how a topic is worded. The
+        cost is a 197 MB one-time download and more work on every post.
         <br />
         Your topics, strictness and thumb ratings are all kept when you switch. Ratings
         are stored per model, so each model keeps its own and switching back restores

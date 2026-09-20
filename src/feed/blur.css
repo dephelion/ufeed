@@ -298,6 +298,13 @@
   display: none;
 }
 
+/* A narrow window gets the host's bottom navigation, which would sit on the badge. */
+@media (max-width: 600px) {
+  .lx-count {
+    display: none;
+  }
+}
+
 .lx-count:hover {
   background: color-mix(in srgb, #14532d 70%, transparent);
 }
