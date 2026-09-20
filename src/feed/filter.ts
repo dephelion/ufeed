@@ -69,6 +69,9 @@ export class FeedFilter {
       engine,
       (results) => this.#applyBatch(results),
       () => this.#model().batchSize,
+      // Re-held as the batch goes out, so the posts actually being judged carry
+      // the pending state for as long as that takes, however long they queued.
+      (posts) => posts.forEach((post) => this.#hold(post)),
     );
     this.#scanner = new FeedScanner({
       adapter,

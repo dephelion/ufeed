@@ -101,4 +101,41 @@ describe('ScoreQueue', () => {
 
     expect(seen).toHaveLength(4);
   });
+
+  it('announces each batch as it goes out, so its posts can be held while judged', async () => {
+    const sentOut: string[][] = [];
+    const queue = new ScoreQueue(
+      engine,
+      () => {},
+      () => 2,
+      (posts) => sentOut.push(posts.map((p) => p.text)),
+    );
+    for (let i = 0; i < 4; i++)
+      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+
+    await queue.flush();
+    for (let i = 0; i < 8; i++) await Promise.resolve();
+
+    // Per batch, not per enqueue: a post queued now may not be judged for a while.
+    expect(sentOut).toEqual([
+      ['post 0', 'post 1'],
+      ['post 2', 'post 3'],
+    ]);
+  });
+
+  it('announces a batch before awaiting it, never after the verdict', async () => {
+    const order: string[] = [];
+    const queue = new ScoreQueue(
+      engine,
+      () => order.push('scored'),
+      () => 2,
+      () => order.push('sending'),
+    );
+    queue.add({ container: document.createElement('div'), text: 'a' });
+    queue.add({ container: document.createElement('div'), text: 'b' });
+    await queue.flush();
+    for (let i = 0; i < 4; i++) await Promise.resolve();
+
+    expect(order).toEqual(['sending', 'scored']);
+  });
 });

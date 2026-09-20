@@ -80,11 +80,15 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 `.lx-pending`, set by `markPending()` when a post is handed to the detector or the engine, cleared by `blur()`, `reveal()` and `revealAll()`.
 
-Detection and inference take milliseconds, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
+Detection and inference take a moment, and for that long a post is legible. **Left alone it draws the eye and then blurs under it** — the one moment the extension is most visible is the moment it has decided nothing.
+
+**Held per batch, not per enqueue.** Since the queue sends one request at a time ([architecture.md](architecture.md)), "queued" and "being judged" stopped being the same moment — a post can wait behind several batches first. `ScoreQueue` announces each batch as it goes out and `FeedFilter` re-holds its posts, so whatever is actually in front of the engine carries the pending state for as long as that takes.
 
 Deliberately unlike a blur: no label, no verdict colour, `opacity: .72` with text at `6px` and media at `20px`, a slow pulse, and **clicks still reach the post**. It reads as working, not as hidden.
 
-**It clears itself after 1500ms**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed dimmed — Invariant 2 applies to this state exactly as it applies to a blur.
+**It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed dimmed — Invariant 2 applies to this state exactly as it applies to a blur.
+
+**That failsafe must outlast the engine's own timeout, and at 1500ms it did not.** Every verdict clears the state, and the engine answers or fails open within 8s, so the timer should only ever fire when nothing answers at all. Sized for e5's milliseconds, it expired mid-batch on the slower model: the post un-dimmed to full opacity and blurred a moment later, which is the exact flash this state exists to prevent. Any future per-request timeout change moves this with it.
 
 **Nothing is held while the engine is warming.** That wait is a model download, not milliseconds, and dimming a feed through it would be the bug this state exists to prevent.
 

@@ -35,6 +35,12 @@ export class ScoreQueue {
     private readonly onScored: (results: Scored[]) => void,
     /** Read per flush, not captured: a model switch changes it under a live queue. */
     private readonly batchSize: () => number,
+    /**
+     * This batch is going to the engine now. Fires per batch rather than per
+     * enqueue, because a serialized queue means "queued" and "being judged" are
+     * no longer the same moment — a post can wait behind several batches first.
+     */
+    private readonly onSending: (posts: Post[]) => void = () => {},
   ) {}
 
   add(post: Post): void {
@@ -72,6 +78,7 @@ export class ScoreQueue {
     for (const [element] of batch) this.#pending.delete(element);
 
     this.#inFlight = true;
+    this.onSending(batch.map(([, post]) => post));
     try {
       const matches = await this.engine.score(
         batch.map(([, post]) => forEngine(post.text)),

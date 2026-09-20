@@ -13,11 +13,17 @@ export type BlurReason = 'topic' | 'media' | 'language' | 'peek';
 
 /**
  * Judging a post costs a language detection and an inference. Softened until
- * the answer lands, so the few milliseconds cannot catch the eye and then blur
- * under it. Self-clearing: a held batch or a dead engine must never leave the
- * feed dimmed, so the timeout reveals without waiting for a verdict.
+ * the answer lands, so the wait cannot catch the eye and then blur under it.
+ *
+ * **A last resort, not the normal path.** Every verdict clears this — `blur()`,
+ * `peek()` and `reveal()` all do — and the engine answers or fails open within
+ * its own request timeout, so this only fires when nothing answers at all. It
+ * must therefore outlast that timeout (8s in `engine-client.ts`, which this ring
+ * may not import): at 1500ms it was expiring mid-batch on the slower model,
+ * un-dimming a post and then blurring it a moment later — the exact flash the
+ * pending state exists to prevent.
  */
-const PENDING_MS = 1500;
+const PENDING_MS = 10_000;
 
 export function markPending(element: HTMLElement): void {
   if (revealed.has(element) || element.classList.contains(BLUR_CLASS)) return;
