@@ -3,7 +3,7 @@
 > Source of record for the page published at
 > <https://dephelion.com/feedlens-browser-extension/privacy/>. Edit both together.
 
-**Effective 13 September 2026.** Contact: contact@dephelion.com
+**Effective 20 September 2026.** Contact: contact@dephelion.com
 
 FeedLens blurs posts in your social feed that are not about topics you chose. It
 does this on your own device. This policy describes everything it reads, stores
@@ -35,7 +35,7 @@ not synced to other devices, and is never transmitted.
 
 | What          | Details                                                                                        |
 | :------------ | :--------------------------------------------------------------------------------------------- |
-| Your settings | Topics, strictness, and the on/off toggles in the popup.                                       |
+| Your settings | Topics, strictness, which model you chose, and the on/off toggles in the popup.                |
 | Thumb ratings | Only if you turn on "Learn from my thumbs", which is **off** unless you turn it on. See below. |
 
 **About thumb ratings.** When that option is on and you rate a post, FeedLens
@@ -46,10 +46,12 @@ derived from the post's content, and research has shown embeddings can be
 partially reversed toward the original text. Treat it as a compact, lossy trace
 of a post you rated, not as an anonymous number. It never leaves your device, at
 most 50 up-ratings and 50 down-ratings are kept per topic line, and the oldest
-fall off first.
+fall off first. Each model keeps its own ratings: ones made with one model are
+never read by the other, and they are kept when you switch.
 
 **Exporting and importing.** The Backup row in the popup writes your settings
-and your thumb ratings to a file you choose, and reads one back. That file
+and your thumb ratings (for every model that has any) to a file you choose, and
+reads one back. That file
 contains the same embeddings described above, so treat it as personal: anyone
 who opens it sees your topics, and holds a lossy trace of the posts you rated.
 FeedLens only ever writes that file when you click Export — there is no automatic
@@ -61,15 +63,18 @@ file replaces the settings and ratings already stored.
 **One kind of network request exists: downloading the language model.**
 
 The first time FeedLens needs to score a feed, it downloads the model that does
-the comparison (about 30 MB) from Hugging Face at `huggingface.co`, which
-redirects the larger files to its storage CDN at `hf.co`. Your browser then
-caches it, and later sessions use the cached copy.
+the comparison from Hugging Face at `huggingface.co`, which redirects the larger
+files to its storage CDN at `hf.co`. That is about 33 MB for the default English
+model. If you choose the multilingual model in the popup, it downloads that one
+instead, about 197 MB, the first time you use it. Only the model you have chosen
+is ever requested. Your browser then caches it, and later sessions use the cached
+copy.
 
 Be aware of what this request implies: like any file download, it tells Hugging
-Face's servers your IP address and that a file was requested. It carries none of
-your topics, none of your feed, and no identifier for you or for FeedLens. Their
-handling of that request is governed by their own privacy policy. This is the
-only time FeedLens contacts any server.
+Face's servers your IP address and which file was requested, so which model you
+chose. It carries none of your topics, none of your feed, and no identifier for
+you or for FeedLens. Their handling of that request is governed by their own
+privacy policy. These downloads are the only times FeedLens contacts any server.
 
 FeedLens sends nothing to us. We operate no server that FeedLens talks to.
 
@@ -85,10 +90,10 @@ other tabs, your bookmarks, your passwords, or your identity.
 
 ## Deleting your data
 
-- **Clear tuning**, under "Learn from my thumbs" in the popup, deletes every
-  thumb rating.
-- **Reset**, under "Start over" in the popup, deletes every thumb rating and
-  restores default settings.
+- **Clear tuning**, under "Learn from my thumbs" in the popup, deletes the thumb
+  ratings made with the model you are using.
+- **Reset**, under "Start over" in the popup, deletes every thumb rating, for
+  every model, and restores default settings.
 - **Uninstalling FeedLens** deletes everything it stored, including your topics.
 
 You do not need to contact us to delete anything, and there is nothing held

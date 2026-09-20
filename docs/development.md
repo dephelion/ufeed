@@ -50,9 +50,13 @@ logged — counts, scores, states and errors only.
 [feedlens:engine]  engine starting origin=chrome-extension://...
 [feedlens:embedder] loading model device=wasm model=Xenova/e5-small-v2
 [feedlens:worker]  ready
-[feedlens:worker]  scored posts=16 msPerPost=12 max=0.812 rated=0
+[feedlens:worker]  scored posts=5 msPerPost=12 max=0.812 rated=0
 [feedlens:content] batch applied posts=5 blurred=3 rated=0 threshold=0.790
 ```
+
+The `embedder` line names the model: `Xenova/e5-small-v2` by default,
+`onnx-community/embeddinggemma-300m-ONNX` once you pick _Every language_ in the
+popup.
 
 The first missing line locates the failure. `content` and `client` lines appear in
 the page console; `engine` and `worker` lines come from the iframe, so pick the
@@ -66,10 +70,12 @@ is made from.
 
 ### First run
 
-The model is ~33MB and downloads once, then lives in the browser's cache.
-Nothing blurs until it is loaded: a broken or slow engine always reveals rather
-than leaving you with a blurred wall. Check the popup's status dot to see where
-it is.
+The default model is ~33MB and the multilingual one ~197MB; whichever you pick
+downloads once, then lives in the browser's cache. Nothing blurs until it is
+loaded: a broken or slow engine always reveals rather than leaving you with a
+blurred wall. Loading from the cache takes a few seconds, and posts wait under a
+heavier blur marked "Classifying…" meanwhile; a first download holds nothing back
+and shows the feed as normal. Check the popup's status dot to see where it is.
 
 ## Test
 
@@ -77,8 +83,11 @@ it is.
 npm test                 # unit tests, no browser, no network
 npm run test:watch
 npm run compile          # tsc --noEmit
-npm run test:model       # the real model on real feed text, ~3s
+npm run test:model       # both real models on real feed text, ~6s
 ```
+
+The first `test:model` run downloads ~197MB for the multilingual model on top of
+the default's 33MB. `npm run check` never does.
 
 Full check before committing:
 

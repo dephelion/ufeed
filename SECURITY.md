@@ -22,7 +22,9 @@ Include the browser, the FeedLens version and the steps to reproduce.
   worker and the message port between them.
 - FeedLens breaking the page it runs on, or leaving the feed blurred after an
   error.
-- The supply chain: the bundled ONNX runtime and the model download.
+- The supply chain: the bundled ONNX runtime and the model downloads
+  (EmbeddingGemma comes from the `onnx-community` mirror on Hugging Face, because
+  Google's own repository is gated).
 
 ## Out of scope
 
