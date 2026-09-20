@@ -14,9 +14,17 @@ interface Open {
 const isOpen = (m: unknown): m is Open =>
   typeof m === 'object' && m !== null && (m as Open).type === OPEN;
 
-/** Content side. A missing receiver is not a fault, so a rejection is dropped. */
+/**
+ * Content side. A missing receiver is not a fault, so a rejection is dropped. So is
+ * a throw: after the extension reloads, a page keeps the old script and its badge,
+ * and `sendMessage` throws "Extension context invalidated" instead of rejecting.
+ */
 export function requestPopup(): void {
-  void browser.runtime.sendMessage({ type: OPEN } satisfies Open).catch(() => {});
+  try {
+    void browser.runtime.sendMessage({ type: OPEN } satisfies Open).catch(() => {});
+  } catch {
+    // Orphaned script: a page reload brings a live one.
+  }
 }
 
 /** Background side. Only a tab's content script is honoured, never another extension page. */
