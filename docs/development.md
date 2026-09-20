@@ -7,7 +7,7 @@ changing things.
 ## Run it
 
 ```bash
-npm run watch            # debug build on change -> .output/chrome-mv3-debug
+npm run watch            # debug build on change -> .output/chrome-mv3-debug and firefox-mv3-debug
 ```
 
 Load the build once, then hit reload in the browser after each rebuild.

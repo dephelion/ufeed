@@ -38,14 +38,14 @@ adb.
 ```bash
 adb devices                              # confirm the phone shows up
 npx web-ext run \
-  --source-dir=.output/firefox-mv3 \
+  --source-dir=.output/firefox-mv3-debug \
   --target=firefox-android \
   --android-device=<id-from-adb-devices> \
   --firefox-apk=org.mozilla.fenix
 ```
 
 `--source-dir` points at a build output, not `src/` — `web-ext` reloads when
-that directory changes, not on a source edit. Rebuild before it'll pick
-anything up: `npm run build:firefox` (or `npm run build`, which covers both
-browsers). Nothing currently watches and rebuilds `.output/firefox-mv3` on
-save, so that manual rebuild step is required each time for now.
+that directory changes, not on a source edit. `npm run watch` rebuilds
+`.output/firefox-mv3-debug` on save, so point `--source-dir` there and it
+picks changes up on its own. For a production build, run `npm run build:firefox`
+(or `npm run build`, which covers both browsers) and use `.output/firefox-mv3`.
