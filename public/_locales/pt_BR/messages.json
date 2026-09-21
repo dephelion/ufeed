@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Escolha seus tópicos. O FeedLens desfoca o resto do seu feed no X, LinkedIn e Reddit. Privado, no dispositivo, sem conta."
+    "message": "Escolha seus tópicos. O uFeed desfoca o resto do seu feed no X, LinkedIn e Reddit. Privado, no dispositivo, sem conta."
   },
   "labelTopic": {
     "message": "Fora do tema — clique para ler"
@@ -18,19 +18,19 @@
     "message": "Classificando…"
   },
   "spokenTopic": {
-    "message": "Publicação desfocada pelo FeedLens: fora do tema. Pressione Enter para lê-la."
+    "message": "Publicação desfocada pelo uFeed: fora do tema. Pressione Enter para lê-la."
   },
   "spokenMedia": {
-    "message": "Publicação desfocada pelo FeedLens: sem texto para analisar. Pressione Enter para vê-la."
+    "message": "Publicação desfocada pelo uFeed: sem texto para analisar. Pressione Enter para vê-la."
   },
   "spokenLanguage": {
-    "message": "Publicação desfocada pelo FeedLens: outro idioma. Pressione Enter para lê-la."
+    "message": "Publicação desfocada pelo uFeed: outro idioma. Pressione Enter para lê-la."
   },
   "spokenPeek": {
-    "message": "Publicação desfocada pelo FeedLens: caso duvidoso. Pressione Enter para lê-la."
+    "message": "Publicação desfocada pelo uFeed: caso duvidoso. Pressione Enter para lê-la."
   },
   "nudgeTitle": {
-    "message": "O FeedLens ainda não tem tópicos"
+    "message": "O uFeed ainda não tem tópicos"
   },
   "nudgeBody": {
     "message": "Ele está ativado, mas não sabe o que você quer ver, então nada está sendo desfocado. Abra o ícone acima, na barra de ferramentas do navegador, e adicione um ou dois tópicos."
@@ -39,7 +39,7 @@
     "message": "Ocultar até o próximo carregamento da página"
   },
   "badgeOpen": {
-    "message": "Abrir o FeedLens"
+    "message": "Abrir o uFeed"
   },
   "badgeCount": {
     "message": "Publicações desfocadas: $COUNT$",
@@ -198,7 +198,7 @@
     "message": "Ele reconhece assuntos, não qualidade."
   },
   "tipQualityBody": {
-    "message": "Uma publicação ótima e uma ruim sobre a mesma coisa ficam as duas. O FeedLens não consegue distingui-las."
+    "message": "Uma publicação ótima e uma ruim sobre a mesma coisa ficam as duas. O uFeed não consegue distingui-las."
   },
   "saveTopics": {
     "message": "Salvar tópicos"
@@ -252,13 +252,13 @@
     "message": "Desfocar imagens e vídeos sem texto"
   },
   "blurMediaDetails": {
-    "message": "O FeedLens lê palavras, não imagens. Quando uma foto ou um vídeo vem com apenas uma ou duas palavras, não há nada para comparar com seus tópicos. Ative para desfocar essas publicações em vez de deixá-las passar."
+    "message": "O uFeed lê palavras, não imagens. Quando uma foto ou um vídeo vem com apenas uma ou duas palavras, não há nada para comparar com seus tópicos. Ative para desfocar essas publicações em vez de deixá-las passar."
   },
   "blurLanguageLabel": {
     "message": "Desfocar publicações que não estão em inglês"
   },
   "blurLanguageDetails": {
-    "message": "O FeedLens só entende inglês. Ele não sabe dizer se uma publicação em outro idioma trata dos seus tópicos ou não, então deixa algumas passarem e desfoca outras ao acaso. Ative para desfocar todas — inclusive as que são do tema."
+    "message": "O uFeed só entende inglês. Ele não sabe dizer se uma publicação em outro idioma trata dos seus tópicos ou não, então deixa algumas passarem e desfoca outras ao acaso. Ative para desfocar todas — inclusive as que são do tema."
   },
   "blurLanguageRefresh": {
     "message": "As publicações que já estão na tela ficam como estão. Continue rolando ou recarregue a página para ver a mudança."
@@ -339,7 +339,7 @@
     "message": "— escolha seu arquivo de backup"
   },
   "importNotBackup": {
-    "message": "— não é um backup do FeedLens"
+    "message": "— não é um backup do uFeed"
   },
   "importNewer": {
     "message": "— criado por uma versão mais recente"
@@ -376,7 +376,7 @@
     "message": "📥 Relatar um problema ou compartilhar uma ideia"
   },
   "githubLabel": {
-    "message": "FeedLens no GitHub"
+    "message": "uFeed no GitHub"
   },
   "languageLabel": {
     "message": "Idioma"

@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Nenne deine Themen. FeedLens verwischt den Rest deines Feeds auf X, LinkedIn und Reddit. Privat, auf dem Gerät, ohne Konto."
+    "message": "Nenne deine Themen. uFeed verwischt den Rest deines Feeds auf X, LinkedIn und Reddit. Privat, auf dem Gerät, ohne Konto."
   },
   "labelTopic": {
     "message": "Themenfremd — zum Lesen klicken"
@@ -18,28 +18,28 @@
     "message": "Wird klassifiziert…"
   },
   "spokenTopic": {
-    "message": "Von FeedLens verwischt: themenfremd. Zum Lesen die Eingabetaste drücken."
+    "message": "Von uFeed verwischt: themenfremd. Zum Lesen die Eingabetaste drücken."
   },
   "spokenMedia": {
-    "message": "Von FeedLens verwischt: kein Text zum Prüfen. Zum Ansehen die Eingabetaste drücken."
+    "message": "Von uFeed verwischt: kein Text zum Prüfen. Zum Ansehen die Eingabetaste drücken."
   },
   "spokenLanguage": {
-    "message": "Von FeedLens verwischt: andere Sprache. Zum Lesen die Eingabetaste drücken."
+    "message": "Von uFeed verwischt: andere Sprache. Zum Lesen die Eingabetaste drücken."
   },
   "spokenPeek": {
-    "message": "Von FeedLens verwischt: Grenzfall. Zum Lesen die Eingabetaste drücken."
+    "message": "Von uFeed verwischt: Grenzfall. Zum Lesen die Eingabetaste drücken."
   },
   "nudgeTitle": {
-    "message": "FeedLens hat noch keine Themen"
+    "message": "uFeed hat noch keine Themen"
   },
   "nudgeBody": {
-    "message": "FeedLens ist eingeschaltet, weiß aber nicht, was du sehen möchtest, und verwischt deshalb nichts. Öffne oben in der Symbolleiste deines Browsers das Symbol und füge ein oder zwei Themen hinzu."
+    "message": "uFeed ist eingeschaltet, weiß aber nicht, was du sehen möchtest, und verwischt deshalb nichts. Öffne oben in der Symbolleiste deines Browsers das Symbol und füge ein oder zwei Themen hinzu."
   },
   "nudgeDismiss": {
     "message": "Bis zum nächsten Laden der Seite ausblenden"
   },
   "badgeOpen": {
-    "message": "FeedLens öffnen"
+    "message": "uFeed öffnen"
   },
   "badgeCount": {
     "message": "Verwischte Beiträge: $COUNT$",
@@ -198,7 +198,7 @@
     "message": "Es passt zu Themen, nicht zu Qualität."
   },
   "tipQualityBody": {
-    "message": "Ein toller und ein schlechter Beitrag zum selben Thema bleiben beide sichtbar. FeedLens kann sie nicht unterscheiden."
+    "message": "Ein toller und ein schlechter Beitrag zum selben Thema bleiben beide sichtbar. uFeed kann sie nicht unterscheiden."
   },
   "saveTopics": {
     "message": "Themen speichern"
@@ -252,13 +252,13 @@
     "message": "Bilder und Videos ohne Text verwischen"
   },
   "blurMediaDetails": {
-    "message": "FeedLens liest Wörter, keine Bilder. Wenn ein Foto oder Video nur ein oder zwei Wörter begleiten, gibt es nichts, was sich mit deinen Themen vergleichen ließe. Schalte das ein, um solche Beiträge zu verwischen, statt sie durchzulassen."
+    "message": "uFeed liest Wörter, keine Bilder. Wenn ein Foto oder Video nur ein oder zwei Wörter begleiten, gibt es nichts, was sich mit deinen Themen vergleichen ließe. Schalte das ein, um solche Beiträge zu verwischen, statt sie durchzulassen."
   },
   "blurLanguageLabel": {
     "message": "Beiträge verwischen, die nicht auf Englisch sind"
   },
   "blurLanguageDetails": {
-    "message": "FeedLens versteht nur Englisch. Es kann nicht erkennen, ob ein Beitrag in einer anderen Sprache zu deinen Themen passt, und lässt deshalb manche durch und verwischt andere nach Zufall. Schalte das ein, um sie alle zu verwischen — auch die, die zum Thema passen."
+    "message": "uFeed versteht nur Englisch. Es kann nicht erkennen, ob ein Beitrag in einer anderen Sprache zu deinen Themen passt, und lässt deshalb manche durch und verwischt andere nach Zufall. Schalte das ein, um sie alle zu verwischen — auch die, die zum Thema passen."
   },
   "blurLanguageRefresh": {
     "message": "Beiträge, die schon auf dem Bildschirm sind, bleiben unverändert. Scrolle weiter oder lade die Seite neu, um die Änderung zu sehen."
@@ -339,7 +339,7 @@
     "message": "— wähle deine Sicherungsdatei"
   },
   "importNotBackup": {
-    "message": "— keine FeedLens-Sicherung"
+    "message": "— keine uFeed-Sicherung"
   },
   "importNewer": {
     "message": "— von einer neueren Version erstellt"
@@ -376,7 +376,7 @@
     "message": "📥 Problem melden oder Idee teilen"
   },
   "githubLabel": {
-    "message": "FeedLens auf GitHub"
+    "message": "uFeed auf GitHub"
   },
   "languageLabel": {
     "message": "Sprache"

@@ -1,7 +1,7 @@
 import type { Translate } from '../core/messages';
 
 /**
- * A corner counter of the posts FeedLens is hiding on this page. Once the feed
+ * A corner counter of the posts uFeed is hiding on this page. Once the feed
  * looks calmer it is the one sign the extension is working, and a way back to the
  * popup without hunting for the toolbar icon. See ui.md §Posts-hidden counter.
  */

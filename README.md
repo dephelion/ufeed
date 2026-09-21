@@ -1,8 +1,8 @@
-# FeedLens
+# uFeed
 
-[![CI](https://github.com/dephelion/feedlens/actions/workflows/ci.yml/badge.svg)](https://github.com/dephelion/feedlens/actions/workflows/ci.yml)
+[![CI](https://github.com/dephelion/ufeed/actions/workflows/ci.yml/badge.svg)](https://github.com/dephelion/ufeed/actions/workflows/ci.yml)
 
-**Name the topics you want. FeedLens blurs the rest of your feed.**
+**Name the topics you want. uFeed blurs the rest of your feed.**
 
 A browser extension for X, LinkedIn and Reddit, on Chrome and Firefox. The model
 runs on your device. No account, no server, no cloud AI, and no post text ever
@@ -13,7 +13,7 @@ leaves your browser.
 Most feed filters ask what you want to get rid of. That list never ends: there is
 always one more thing to block.
 
-FeedLens asks the opposite question. You write a few topics, one per line:
+uFeed asks the opposite question. You write a few topics, one per line:
 
 ```
 software engineering, programming
@@ -24,7 +24,7 @@ video games, game design
 Each post is compared with them as you scroll. Posts about your topics stay.
 Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
-## Why FeedLens
+## Why uFeed
 
 - **Start from what you want.** Three lines is a full setup. There is no
   blocklist to keep up with.
@@ -59,9 +59,9 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 ### The trade-off
 
-FeedLens compares the meaning of a post with your topics. It does not reason about
+uFeed compares the meaning of a post with your topics. It does not reason about
 the post. A large model in the cloud can judge things like sarcasm or "AI news but
-not hype" better than a model small enough for your laptop can. FeedLens gives up some of
+not hype" better than a model small enough for your laptop can. uFeed gives up some of
 that in exchange for privacy, speed, and a filter that behaves the same way every
 time, so a wrong call can be explained and corrected.
 [How it works](docs/how-it-works.md) has the reasoning.
@@ -121,7 +121,7 @@ no-op in production.
                           imports point inward only
 ```
 
-FeedLens follows the Dependency Rule from [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html): imports only point inward.
+uFeed follows the Dependency Rule from [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html): imports only point inward.
 The rules in `core/` know nothing of the browser, and the page logic in `feed/` knows nothing of the extension, so a new site never touches the filter.
 `npm run check` fails any import that points outward; [`wiki-llm/layers.md`](wiki-llm/layers.md) says where new code goes.
 
@@ -132,7 +132,7 @@ The rules in `core/` know nothing of the browser, and the page logic in `feed/` 
 - [`docs/development.md`](docs/development.md) — running, debugging and testing.
 - [`docs/android.md`](docs/android.md) — Firefox for Android.
 - [`docs/privacy-policy.md`](docs/privacy-policy.md) — what it reads, stores and sends.
-- Found a bug or have an idea? [Open an issue](https://github.com/dephelion/feedlens/issues/new/choose).
+- Found a bug or have an idea? [Open an issue](https://github.com/dephelion/ufeed/issues/new/choose).
   Want to change the code? Read [`CONTRIBUTING.md`](CONTRIBUTING.md). Security or
   privacy problem? [`SECURITY.md`](SECURITY.md) says how to report it privately.
 - [`wiki-llm/`](wiki-llm/index.md) — the authoritative model of the code. Start at

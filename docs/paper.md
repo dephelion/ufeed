@@ -1,8 +1,8 @@
 # The E5 paper, in plain language
 
-FeedLens uses **e5-small-v2**, from the paper _Text Embeddings by Weakly-Supervised
+uFeed uses **e5-small-v2**, from the paper _Text Embeddings by Weakly-Supervised
 Contrastive Pre-training_ ([arXiv](https://arxiv.org/abs/2212.03533)). This page summarizes what the
-paper does and how FeedLens leans on it. [`how-it-works.md`](how-it-works.md) covers
+paper does and how uFeed leans on it. [`how-it-works.md`](how-it-works.md) covers
 the code side.
 
 ## The problem
@@ -12,7 +12,7 @@ list of numbers (a vector) so that texts with similar meaning get similar vector
 Compare two vectors and you know how close two texts are, with no keyword matching
 and no hand-written rules.
 
-That is exactly the question FeedLens asks of a post: how close is it to the topics
+That is exactly the question uFeed asks of a post: how close is it to the topics
 you wrote? The catch, before E5, was that a good general-purpose embedding model
 needed a huge set of human-labeled pairs ("these two sentences mean the same
 thing", "these two don't"), which is expensive to make.
@@ -32,7 +32,7 @@ apart. A second, smaller pass on a few labeled datasets then sharpens it.
 Under the hood it is a standard BERT-style transformer. It reads the text and
 averages its output into one fixed-size vector. The paper releases three sizes:
 small (33M parameters), base (110M) and large (330M). Bigger is more accurate and
-heavier, which is why FeedLens uses the small one: it has to run inside a browser.
+heavier, which is why uFeed uses the small one: it has to run inside a browser.
 
 ## Results
 
@@ -42,16 +42,16 @@ well-known retrieval benchmark. After fine-tuning, it also outperformed embeddin
 models about 40 times its size. Strong quality for its cost is why it suits an
 extension.
 
-## How FeedLens uses it
+## How uFeed uses it
 
 - Each topic line is embedded as `query: <topic>`, and each post as
   `passage: <text>`. E5 was trained with those two tags, and its scores get worse
   without them.
 - A post's score is its highest cosine similarity against any topic line.
 - Everything after that — the strictness thresholds, the peek strip, thumbs — is
-  FeedLens, not the paper.
+  uFeed, not the paper.
 
 The paper also explains what the model cannot do: it trails keyword search when a
 match depends on exact wording, it was trained on English, and it reads words
-only. Those limits show up as FeedLens's limits. See
+only. Those limits show up as uFeed's limits. See
 [What the model does](how-it-works.md#what-the-model-does).

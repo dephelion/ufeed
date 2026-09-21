@@ -1,5 +1,5 @@
 /**
- * The models FeedLens can score with. Every number here was measured; the
+ * The models uFeed can score with. Every number here was measured; the
  * measurements and the reasoning live in wiki-llm/model.md, never in this file.
  *
  * Both are retrieval models, so the topic and the post are tagged differently:

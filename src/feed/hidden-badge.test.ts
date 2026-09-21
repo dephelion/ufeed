@@ -45,7 +45,7 @@ describe('mountHiddenBadge', () => {
     current = spanish;
     mounted.relabel();
     expect(badge().textContent).toBe('Publicaciones ocultas: 4');
-    expect(badge().title).toBe('Abrir FeedLens');
+    expect(badge().title).toBe('Abrir uFeed');
     mounted.destroy();
   });
 

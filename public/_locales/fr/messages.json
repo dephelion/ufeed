@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Indiquez vos sujets. FeedLens floute le reste de votre fil sur X, LinkedIn et Reddit. Privé, sur l'appareil, sans compte."
+    "message": "Indiquez vos sujets. uFeed floute le reste de votre fil sur X, LinkedIn et Reddit. Privé, sur l'appareil, sans compte."
   },
   "labelTopic": {
     "message": "Hors sujet — cliquez pour lire"
@@ -18,28 +18,28 @@
     "message": "Classification…"
   },
   "spokenTopic": {
-    "message": "Publication floutée par FeedLens : hors sujet. Appuyez sur Entrée pour la lire."
+    "message": "Publication floutée par uFeed : hors sujet. Appuyez sur Entrée pour la lire."
   },
   "spokenMedia": {
-    "message": "Publication floutée par FeedLens : pas de texte à analyser. Appuyez sur Entrée pour la voir."
+    "message": "Publication floutée par uFeed : pas de texte à analyser. Appuyez sur Entrée pour la voir."
   },
   "spokenLanguage": {
-    "message": "Publication floutée par FeedLens : autre langue. Appuyez sur Entrée pour la lire."
+    "message": "Publication floutée par uFeed : autre langue. Appuyez sur Entrée pour la lire."
   },
   "spokenPeek": {
-    "message": "Publication floutée par FeedLens : cas limite. Appuyez sur Entrée pour la lire."
+    "message": "Publication floutée par uFeed : cas limite. Appuyez sur Entrée pour la lire."
   },
   "nudgeTitle": {
-    "message": "FeedLens n'a pas encore de sujets"
+    "message": "uFeed n'a pas encore de sujets"
   },
   "nudgeBody": {
-    "message": "FeedLens est activé, mais il ne sait pas ce que vous voulez voir, donc rien n'est flouté. Ouvrez l'icône ci-dessus dans la barre d'outils de votre navigateur et ajoutez un ou deux sujets."
+    "message": "uFeed est activé, mais il ne sait pas ce que vous voulez voir, donc rien n'est flouté. Ouvrez l'icône ci-dessus dans la barre d'outils de votre navigateur et ajoutez un ou deux sujets."
   },
   "nudgeDismiss": {
     "message": "Masquer jusqu'au prochain chargement de la page"
   },
   "badgeOpen": {
-    "message": "Ouvrir FeedLens"
+    "message": "Ouvrir uFeed"
   },
   "badgeCount": {
     "message": "Publications floutées : $COUNT$",
@@ -198,7 +198,7 @@
     "message": "Il repère les sujets, pas la qualité."
   },
   "tipQualityBody": {
-    "message": "Une excellente publication et une mauvaise sur le même sujet restent toutes les deux. FeedLens ne sait pas les distinguer."
+    "message": "Une excellente publication et une mauvaise sur le même sujet restent toutes les deux. uFeed ne sait pas les distinguer."
   },
   "saveTopics": {
     "message": "Enregistrer les sujets"
@@ -252,13 +252,13 @@
     "message": "Flouter les images et vidéos sans texte"
   },
   "blurMediaDetails": {
-    "message": "FeedLens lit les mots, pas les images. Quand une photo ou une vidéo n'est accompagnée que d'un mot ou deux, il n'y a rien à comparer avec vos sujets. Activez cette option pour flouter ces publications au lieu de les laisser passer."
+    "message": "uFeed lit les mots, pas les images. Quand une photo ou une vidéo n'est accompagnée que d'un mot ou deux, il n'y a rien à comparer avec vos sujets. Activez cette option pour flouter ces publications au lieu de les laisser passer."
   },
   "blurLanguageLabel": {
     "message": "Flouter les publications qui ne sont pas en anglais"
   },
   "blurLanguageDetails": {
-    "message": "FeedLens ne comprend que l'anglais. Il ne peut pas savoir si une publication dans une autre langue parle de vos sujets ou non : il en laisse passer certaines et en floute d'autres au hasard. Activez cette option pour toutes les flouter — y compris celles qui sont dans le sujet."
+    "message": "uFeed ne comprend que l'anglais. Il ne peut pas savoir si une publication dans une autre langue parle de vos sujets ou non : il en laisse passer certaines et en floute d'autres au hasard. Activez cette option pour toutes les flouter — y compris celles qui sont dans le sujet."
   },
   "blurLanguageRefresh": {
     "message": "Les publications déjà à l'écran restent telles quelles. Faites défiler ou rechargez la page pour voir le changement."
@@ -339,7 +339,7 @@
     "message": "— choisissez votre fichier de sauvegarde"
   },
   "importNotBackup": {
-    "message": "— pas une sauvegarde FeedLens"
+    "message": "— pas une sauvegarde uFeed"
   },
   "importNewer": {
     "message": "— créée par une version plus récente"
@@ -376,7 +376,7 @@
     "message": "📥 Signaler un problème ou partager une idée"
   },
   "githubLabel": {
-    "message": "FeedLens sur GitHub"
+    "message": "uFeed sur GitHub"
   },
   "languageLabel": {
     "message": "Langue"

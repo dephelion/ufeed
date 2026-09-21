@@ -106,7 +106,7 @@ Reproduce with the harness in `.local/`: classify each post's language, then com
 
 **`unclear` is not `other`.** CLD read the text and could not place it — that is a statement about how much text there is, not about which language. It feeds the thin-media rule, which already owns that claim. Only a reliable foreign placement blurs as a language.
 
-**On by default**, behind `blurOtherLanguages`. A post the model cannot read against English topics is a post FeedLens cannot judge, so the default blurs it rather than showing it unfiltered; a monolingual English feed pays nothing for the check either way.
+**On by default**, behind `blurOtherLanguages`. A post the model cannot read against English topics is a post uFeed cannot judge, so the default blurs it rather than showing it unfiltered; a monolingual English feed pays nothing for the check either way.
 
 ## The uncertain strip
 

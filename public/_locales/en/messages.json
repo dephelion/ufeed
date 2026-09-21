@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.",
+    "message": "Name the topics you want. uFeed blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.",
     "description": "Store and toolbar description. 132 characters at most."
   },
   "labelTopic": {
@@ -21,26 +21,26 @@
   },
   "labelPending": {
     "message": "Classifying…",
-    "description": "Centred over a post while FeedLens decides whether to blur it."
+    "description": "Centred over a post while uFeed decides whether to blur it."
   },
   "spokenTopic": {
-    "message": "Blurred by FeedLens: out of topic. Press Enter to read it.",
+    "message": "Blurred by uFeed: out of topic. Press Enter to read it.",
     "description": "Screen-reader announcement."
   },
   "spokenMedia": {
-    "message": "Blurred by FeedLens: no text to check. Press Enter to read it.",
+    "message": "Blurred by uFeed: no text to check. Press Enter to read it.",
     "description": "Screen-reader announcement."
   },
   "spokenLanguage": {
-    "message": "Blurred by FeedLens: another language. Press Enter to read it.",
+    "message": "Blurred by uFeed: another language. Press Enter to read it.",
     "description": "Screen-reader announcement."
   },
   "spokenPeek": {
-    "message": "Blurred by FeedLens: borderline. Press Enter to read it.",
+    "message": "Blurred by uFeed: borderline. Press Enter to read it.",
     "description": "Screen-reader announcement. Borderline means the score was close to the cut."
   },
   "nudgeTitle": {
-    "message": "FeedLens has no topics yet"
+    "message": "uFeed has no topics yet"
   },
   "nudgeBody": {
     "message": "It is on, but it does not know what you want to see, so nothing is being blurred. Open the icon above in your browser toolbar and add a topic or two."
@@ -50,7 +50,7 @@
     "description": "Accessible name of the card’s close button."
   },
   "badgeOpen": {
-    "message": "Open FeedLens"
+    "message": "Open uFeed"
   },
   "badgeCount": {
     "message": "Posts hidden: $COUNT$",
@@ -232,7 +232,7 @@
     "description": "Bold lead-in; tipQualityBody follows it."
   },
   "tipQualityBody": {
-    "message": "A great post and a poor one about the same thing both stay. FeedLens can't tell them apart."
+    "message": "A great post and a poor one about the same thing both stay. uFeed can't tell them apart."
   },
   "saveTopics": {
     "message": "Save topics"
@@ -291,14 +291,14 @@
     "message": "Blur images and videos with no text"
   },
   "blurMediaDetails": {
-    "message": "FeedLens reads words, not pictures. When a photo or video has only a word or two with it, there is nothing to compare against your topics. Turn this on to blur those posts instead of letting them through."
+    "message": "uFeed reads words, not pictures. When a photo or video has only a word or two with it, there is nothing to compare against your topics. Turn this on to blur those posts instead of letting them through."
   },
   "blurLanguageLabel": {
     "message": "Blur posts that aren't in English",
     "description": "Names the language the default model reads. Only shown with that model."
   },
   "blurLanguageDetails": {
-    "message": "FeedLens only understands English. It can't tell whether a post in another language is about your topics or not, so it lets some through and blurs others at random. Turn this on to blur them all — including ones that are on topic."
+    "message": "uFeed only understands English. It can't tell whether a post in another language is about your topics or not, so it lets some through and blurs others at random. Turn this on to blur them all — including ones that are on topic."
   },
   "blurLanguageRefresh": {
     "message": "Posts already on screen stay as they are. Scroll on, or reload the page, to see the change."
@@ -386,7 +386,7 @@
     "message": "— choose your backup file"
   },
   "importNotBackup": {
-    "message": "— not a FeedLens backup",
+    "message": "— not a uFeed backup",
     "description": "Follows the name of the file that was refused."
   },
   "importNewer": {
@@ -428,7 +428,7 @@
     "message": "📥 Report an issue or share an idea"
   },
   "githubLabel": {
-    "message": "FeedLens on GitHub",
+    "message": "uFeed on GitHub",
     "description": "Tooltip and accessible name of the GitHub icon link."
   },
   "languageLabel": {

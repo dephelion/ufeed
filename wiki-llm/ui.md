@@ -112,7 +112,7 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 - First click: reveal, `preventDefault`, `stopPropagation`. The post never navigates.
 - Enter with focus anywhere inside a blurred post does the same. X's J/K and Tab both land there; without it a keyboard reader could not reveal at all.
 - Collapsed posts hide their content with `opacity: 0`, never `visibility: hidden`: hidden content cannot take focus, which left a keyboard reader no way in. `.lx-blur:focus-within::after` rings the label, since the focused element itself is invisible.
-- Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by FeedLens: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
+- Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by uFeed: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
 - Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
@@ -165,7 +165,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 **Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
-**State the trade-off, never a measured share.** The strictness hint reads _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ at every step but 0. It once quoted the step table ("about 30% of a typical feed … about 4 in 10 … really match"); those numbers come from one feed and one topic family, and read as a promise to every reader. Let the reader judge from their own feed; the numbers stay in [model.md](model.md). Never quote only the good half: say that stricter also costs wanted posts. Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — FeedLens reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
+**State the trade-off, never a measured share.** The strictness hint reads _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ at every step but 0. It once quoted the step table ("about 30% of a typical feed … about 4 in 10 … really match"); those numbers come from one feed and one topic family, and read as a promise to every reader. Let the reader judge from their own feed; the numbers stay in [model.md](model.md). Never quote only the good half: say that stricter also costs wanted posts. Say what a control does to the feed, then what happens if it is off. Name the limitation plainly where one exists — uFeed reads words and not pictures, it understands English and not other languages, it matches subjects and not quality. Those three sentences do more than any accuracy claim.
 
 Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
@@ -183,7 +183,7 @@ Apply is disabled until the textarea differs from what is saved.
 
 **The model selector sits directly under the strictness slider**, above every checkbox: it changes what the other controls mean, so it is read before them and not buried in the block of toggles.
 
-**A disabled control must say why, and keep the reader's setting.** With a multilingual model there is nothing for the language checkbox to gate, so it is disabled and a line appears saying it is off because the model reads every language and that the setting is kept for a switch back. Silently unchecking it would look like FeedLens overrode a choice; leaving it live would be a lie.
+**A disabled control must say why, and keep the reader's setting.** With a multilingual model there is nothing for the language checkbox to gate, so it is disabled and a line appears saying it is off because the model reads every language and that the setting is kept for a switch back. Silently unchecking it would look like uFeed overrode a choice; leaving it live would be a lie.
 
 **Say the download size on the option itself**, not only in the details. 197MB is the whole cost of the choice, and a reader deciding between two options should not have to open anything to see it.
 
@@ -197,7 +197,7 @@ Fixed top-right, same dark chip as the thumbs bar so it reads the same on a ligh
 
 **It cannot open the popup itself.** `action.openPopup` is unreachable from a content script, so the card points at the icon instead. The counter asks the background to do it (§Posts-hidden counter).
 
-**Turning FeedLens off is the second option, offered on the card.** The `x` hides it for this page load only — persisting a dismissal leaves a silent extension and no route back to the explanation.
+**Turning uFeed off is the second option, offered on the card.** The `x` hides it for this page load only — persisting a dismissal leaves a silent extension and no route back to the explanation.
 
 **Mounted outside the active gate**, and it polls briefly for `document.body`: the content script runs at `document_start`.
 
@@ -207,11 +207,11 @@ Fixed top-right, same dark chip as the thumbs bar so it reads the same on a ligh
 
 A badge, bottom-left: the toolbar icon and "Posts hidden: N". A click opens the popup. `src/feed/hidden-badge.ts`, wired in `content.ts`.
 
-**It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning FeedLens off, or an engine error clears it. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
+**It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning uFeed off, or an engine error clears it. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
 
-**Shown while FeedLens is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with no topics (the nudge's state), it is hidden. **Also hidden in a narrow window**: hosts swap to a bottom navigation bar there, which would cover it. It is a width rule in `blur.css`, not a phone check, so a small desktop window behaves the same.
+**Shown while uFeed is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with no topics (the nudge's state), it is hidden. **Also hidden in a narrow window**: hosts swap to a bottom navigation bar there, which would cover it. It is a width rule in `blur.css`, not a phone check, so a small desktop window behaves the same.
 
-**The click asks the background.** `platform/open-popup.ts` sends `feedlens:open-popup` and the background calls `action.openPopup()`. Chrome allows that from 127 and the manifest floor is 111; Firefox documents it as user-action-only and this path is unverified there. Where it refuses, the click does nothing and debug builds log why.
+**The click asks the background.** `platform/open-popup.ts` sends `ufeed:open-popup` and the background calls `action.openPopup()`. Chrome allows that from 127 and the manifest floor is 111; Firefox documents it as user-action-only and this path is unverified there. Where it refuses, the click does nothing and debug builds log why.
 
 **Mount removes any existing `.lx-count`**, for the same Firefox reason as the card. It attaches to `<html>`, like the thumbs bar, so it does not wait for `<body>`.
 
@@ -219,7 +219,7 @@ A badge, bottom-left: the toolbar icon and "Posts hidden: N". A click opens the 
 
 On in `npm run watch` and `npm run build:debug`, **compiled out of `npm run build`**. Single gate: `src/core/debug.ts`.
 
-- Per-layer console logs, prefixed `[feedlens:<scope>]`.
+- Per-layer console logs, prefixed `[ufeed:<scope>]`.
 
 Debug mode does **not** turn the score badge on; the setting is its only gate.
 

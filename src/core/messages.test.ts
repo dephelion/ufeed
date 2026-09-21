@@ -6,7 +6,7 @@ const t = createTranslator(english);
 
 describe('createTranslator', () => {
   it('returns a message that has no placeholders as it is written', () => {
-    expect(t('badgeOpen')).toBe('Open FeedLens');
+    expect(t('badgeOpen')).toBe('Open uFeed');
   });
 
   it('fills a placeholder from its substitution', () => {

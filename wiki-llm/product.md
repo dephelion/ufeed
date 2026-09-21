@@ -1,7 +1,7 @@
 # Product & Positioning
 
-> **Maintenance Invariant:** Decisions about what FeedLens is and is not. Update in the SAME commit as any change to user-facing copy, the store listing, or scope. Token-optimized: imperative, no prose, no redundancy.
-> **Answers:** What is FeedLens for, what will it never do, which words may user-facing copy claim.
+> **Maintenance Invariant:** Decisions about what uFeed is and is not. Update in the SAME commit as any change to user-facing copy, the store listing, or scope. Token-optimized: imperative, no prose, no redundancy.
+> **Answers:** What is uFeed for, what will it never do, which words may user-facing copy claim.
 
 ## Position
 
@@ -9,7 +9,7 @@
 - Private by construction. Inference on-device only. No account, no server, no analytics.
 - Predictable over clever. Embedding model: same post, same score. Every control is inspectable (strictness, scores, peek strip, thumbs).
 - Blur, never delete. One click reveals.
-- Open source, GPL-3.0-or-later. Forks stay open. The name FeedLens is not licensed with the code.
+- Open source, GPL-3.0-or-later. Forks stay open. The name uFeed is not licensed with the code.
 
 ## Non-goals
 
@@ -21,7 +21,7 @@
 ## Copy rules
 
 - Claim only what is true today. "Nothing leaves the device" carries one exception: the one-time model weights download.
-- State limits plainly: English only on the default model, words not images, subjects not quality, not perfect. Say which model a limit belongs to — "FeedLens only understands English" stops being true when the reader picks the multilingual one.
+- State limits plainly: English only on the default model, words not images, subjects not quality, not perfect. Say which model a limit belongs to — "uFeed only understands English" stops being true when the reader picks the multilingual one.
 - Lead store copy with privacy and open source before features. Link the repo. Never name the license in store copy.
 - Name no competitor in user-facing text.
 - One short description, three places, identical: `public/_locales/en/messages.json` (`extDescription`, which the manifest reads), `package.json`, `docs/store-listing.md`. Store limit 132 chars. A change means every other locale's `extDescription` changes with it.

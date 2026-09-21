@@ -9,7 +9,7 @@ describe('localizePage', () => {
     document.body.innerHTML =
       '<h1 data-i18n="details">old</h1>' +
       '<textarea data-i18n-placeholder="topicsLabel"></textarea>' +
-      '<a data-i18n-title="githubLabel" data-i18n-aria-label="githubLabel">FeedLens</a>' +
+      '<a data-i18n-title="githubLabel" data-i18n-aria-label="githubLabel">uFeed</a>' +
       '<p>untouched</p>';
 
     localizePage(document, shout);
@@ -19,7 +19,7 @@ describe('localizePage', () => {
     const link = document.querySelector('a')!;
     expect(link.title).toBe('GITHUBLABEL');
     expect(link.getAttribute('aria-label')).toBe('GITHUBLABEL');
-    expect(link.textContent).toBe('FeedLens');
+    expect(link.textContent).toBe('uFeed');
     expect(document.querySelector('p')!.textContent).toBe('untouched');
   });
 });

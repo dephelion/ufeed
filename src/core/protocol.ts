@@ -90,7 +90,7 @@ export interface StatusEvent {
 
 export type EngineReply = ScoresReply | VectorReply | AckReply | ErrorReply | StatusEvent;
 
-export const HANDSHAKE = 'feedlens:port';
+export const HANDSHAKE = 'ufeed:port';
 
 export interface Handshake {
   type: typeof HANDSHAKE;

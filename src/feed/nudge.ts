@@ -1,7 +1,7 @@
 import type { Translate } from '../core/messages';
 
 /**
- * The card shown when FeedLens is on and has no topics. That state is invisible
+ * The card shown when uFeed is on and has no topics. That state is invisible
  * otherwise — the feed looks untouched, which reads as a broken install rather
  * than an unfinished setup, and a reader who cannot tell will just uninstall.
  *

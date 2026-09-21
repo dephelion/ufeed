@@ -1,9 +1,9 @@
-# wiki-llm — FeedLens Source of Truth & Routing Index
+# wiki-llm — uFeed Source of Truth & Routing Index
 
 > **Maintenance Invariant:** Routing table only. One row per page. Prohibit orphan pages. Prohibit content here — content lives in the page. Update this row set in the SAME commit as any new/renamed page.
 > **Answers:** Which wiki page answers my question?
 
-FeedLens is a browser extension that blurs off-topic posts in social feeds. The user names topics; an embedding model scores each post on-device; anything below the threshold is blurred, never removed, and one click reveals it. No backend, no account, no post text leaves the device.
+uFeed is a browser extension that blurs off-topic posts in social feeds. The user names topics; an embedding model scores each post on-device; anything below the threshold is blurred, never removed, and one click reveals it. No backend, no account, no post text leaves the device.
 
 Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
@@ -16,8 +16,8 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 | [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                             |
 | [i18n.md](i18n.md)                 | Where UI text lives, which language a reader gets, how text reaches each surface, what stays English, how to add a language. |
 | [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                              |
-| [privacy.md](privacy.md)           | What FeedLens reads, what it stores, what leaves the device, store policy, legal posture.                                    |
-| [product.md](product.md)           | What is FeedLens for, what will it never do, which words may user-facing copy claim.                                         |
+| [privacy.md](privacy.md)           | What uFeed reads, what it stores, what leaves the device, store policy, legal posture.                                       |
+| [product.md](product.md)           | What is uFeed for, what will it never do, which words may user-facing copy claim.                                            |
 | [testing.md](testing.md)           | Test tiers, what each covers, what no test covers, commands.                                                                 |
 | [conventions.md](conventions.md)   | Every repo rule, stated once: hard invariants, how to work, code and doc rules, layout, definition of done.                  |
 | [glossary.md](glossary.md)         | What does AUC, d-prime, embedding, retrieval model, quantization, etc. mean, in plain language.                              |

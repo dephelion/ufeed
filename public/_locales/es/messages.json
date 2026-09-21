@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "Indica tus temas. FeedLens difumina el resto de tu feed de X, LinkedIn y Reddit. Privado, en tu dispositivo, sin cuenta."
+    "message": "Indica tus temas. uFeed difumina el resto de tu feed de X, LinkedIn y Reddit. Privado, en tu dispositivo, sin cuenta."
   },
   "labelTopic": {
     "message": "Fuera de tema — clic para leer"
@@ -18,19 +18,19 @@
     "message": "Clasificando…"
   },
   "spokenTopic": {
-    "message": "Publicación difuminada por FeedLens: fuera de tema. Pulsa Intro para leerla."
+    "message": "Publicación difuminada por uFeed: fuera de tema. Pulsa Intro para leerla."
   },
   "spokenMedia": {
-    "message": "Publicación difuminada por FeedLens: sin texto que analizar. Pulsa Intro para verla."
+    "message": "Publicación difuminada por uFeed: sin texto que analizar. Pulsa Intro para verla."
   },
   "spokenLanguage": {
-    "message": "Publicación difuminada por FeedLens: otro idioma. Pulsa Intro para leerla."
+    "message": "Publicación difuminada por uFeed: otro idioma. Pulsa Intro para leerla."
   },
   "spokenPeek": {
-    "message": "Publicación difuminada por FeedLens: dudosa. Pulsa Intro para leerla."
+    "message": "Publicación difuminada por uFeed: dudosa. Pulsa Intro para leerla."
   },
   "nudgeTitle": {
-    "message": "FeedLens aún no tiene temas"
+    "message": "uFeed aún no tiene temas"
   },
   "nudgeBody": {
     "message": "Está activado, pero no sabe qué quieres ver, así que no se difumina nada. Abre el icono de arriba, en la barra de herramientas del navegador, y añade uno o dos temas."
@@ -39,7 +39,7 @@
     "message": "Ocultar hasta la próxima carga de página"
   },
   "badgeOpen": {
-    "message": "Abrir FeedLens"
+    "message": "Abrir uFeed"
   },
   "badgeCount": {
     "message": "Publicaciones ocultas: $COUNT$",
@@ -198,7 +198,7 @@
     "message": "Coincide con temas, no con calidad."
   },
   "tipQualityBody": {
-    "message": "Una publicación excelente y una mala sobre lo mismo se quedan las dos. FeedLens no puede distinguirlas."
+    "message": "Una publicación excelente y una mala sobre lo mismo se quedan las dos. uFeed no puede distinguirlas."
   },
   "saveTopics": {
     "message": "Guardar temas"
@@ -252,13 +252,13 @@
     "message": "Difuminar imágenes y vídeos sin texto"
   },
   "blurMediaDetails": {
-    "message": "FeedLens lee palabras, no imágenes. Cuando una foto o un vídeo lleva solo una palabra o dos, no hay nada que comparar con tus temas. Actívalo para difuminar esas publicaciones en lugar de dejarlas pasar."
+    "message": "uFeed lee palabras, no imágenes. Cuando una foto o un vídeo lleva solo una palabra o dos, no hay nada que comparar con tus temas. Actívalo para difuminar esas publicaciones en lugar de dejarlas pasar."
   },
   "blurLanguageLabel": {
     "message": "Difuminar publicaciones que no estén en inglés"
   },
   "blurLanguageDetails": {
-    "message": "FeedLens solo entiende inglés. No puede saber si una publicación en otro idioma trata de tus temas o no, así que deja pasar algunas y difumina otras al azar. Actívalo para difuminarlas todas, incluso las que sí son de tu interés."
+    "message": "uFeed solo entiende inglés. No puede saber si una publicación en otro idioma trata de tus temas o no, así que deja pasar algunas y difumina otras al azar. Actívalo para difuminarlas todas, incluso las que sí son de tu interés."
   },
   "blurLanguageRefresh": {
     "message": "Las publicaciones que ya están en pantalla se quedan como están. Sigue desplazándote o recarga la página para ver el cambio."
@@ -339,7 +339,7 @@
     "message": "— elige tu archivo de copia"
   },
   "importNotBackup": {
-    "message": "— no es una copia de FeedLens"
+    "message": "— no es una copia de uFeed"
   },
   "importNewer": {
     "message": "— creada con una versión más reciente"
@@ -376,7 +376,7 @@
     "message": "📥 Informar de un problema o compartir una idea"
   },
   "githubLabel": {
-    "message": "FeedLens en GitHub"
+    "message": "uFeed en GitHub"
   },
   "languageLabel": {
     "message": "Idioma"

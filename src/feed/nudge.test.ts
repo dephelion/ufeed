@@ -28,7 +28,7 @@ describe('mountNudge', () => {
     current = spanish;
     nudge.relabel();
     const card = document.querySelector<HTMLElement>('.lx-nudge')!;
-    expect(card.querySelector('b')!.textContent).toBe('FeedLens aún no tiene temas');
+    expect(card.querySelector('b')!.textContent).toBe('uFeed aún no tiene temas');
     expect(card.querySelector('.lx-nudge-x')!.getAttribute('aria-label')).toBe(
       spanish('nudgeDismiss'),
     );

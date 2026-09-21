@@ -1,6 +1,6 @@
 # Development
 
-How to run, debug and test FeedLens locally. For a first build, the
+How to run, debug and test uFeed locally. For a first build, the
 [README](../README.md#build-from-source) is enough; this page is for when you are
 changing things.
 
@@ -41,17 +41,17 @@ every change instead. Slower by about a second, and it actually runs.
 
 ## Watching it work
 
-Every layer logs to the console, prefixed `[feedlens:*]`. Post text is never
+Every layer logs to the console, prefixed `[ufeed:*]`. Post text is never
 logged — counts, scores, states and errors only.
 
 ```
-[feedlens:content] content script started host=x.com adapter=x topics=1 active=true
-[feedlens:client]  injecting engine iframe src=chrome-extension://.../engine.html
-[feedlens:engine]  engine starting origin=chrome-extension://...
-[feedlens:embedder] loading model device=wasm model=Xenova/e5-small-v2
-[feedlens:worker]  ready
-[feedlens:worker]  scored posts=5 msPerPost=12 max=0.812 rated=0
-[feedlens:content] batch applied posts=5 blurred=3 rated=0 threshold=0.790
+[ufeed:content] content script started host=x.com adapter=x topics=1 active=true
+[ufeed:client]  injecting engine iframe src=chrome-extension://.../engine.html
+[ufeed:engine]  engine starting origin=chrome-extension://...
+[ufeed:embedder] loading model device=wasm model=Xenova/e5-small-v2
+[ufeed:worker]  ready
+[ufeed:worker]  scored posts=5 msPerPost=12 max=0.812 rated=0
+[ufeed:content] batch applied posts=5 blurred=3 rated=0 threshold=0.790
 ```
 
 The `embedder` line names the model: `Xenova/e5-small-v2` by default,
@@ -131,7 +131,7 @@ purpose. The reasons are in [`wiki-llm/i18n.md`](../wiki-llm/i18n.md).
 3. From an up-to-date `main`, build the store zips:
 
 ```bash
-npm run zip && npm run zip:firefox   # .output/feedlens-<version>-{chrome,firefox,sources}.zip
+npm run zip && npm run zip:firefox   # .output/ufeed-<version>-{chrome,firefox,sources}.zip
 ```
 
 Upload the Chrome zip to the Chrome Web Store, and the Firefox zip plus the

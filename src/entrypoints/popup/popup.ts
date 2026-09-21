@@ -328,7 +328,7 @@ exportButton.addEventListener('click', () => {
         () => EMPTY_FEEDBACK,
       );
       const day = new Date().toISOString().slice(0, 10);
-      const name = `feedlens-backup-${day}.json`;
+      const name = `ufeed-backup-${day}.json`;
       download(
         name,
         exportConfig(saved, feedback, browser.runtime.getManifest().version),

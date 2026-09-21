@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "只要說出你想看的主題，FeedLens 就會將 X、LinkedIn 和 Reddit 動態消息中的其餘內容模糊處理。注重隱私，在裝置上運作，無需帳號。"
+    "message": "只要說出你想看的主題，uFeed 就會將 X、LinkedIn 和 Reddit 動態消息中的其餘內容模糊處理。注重隱私，在裝置上運作，無需帳號。"
   },
   "labelTopic": {
     "message": "主題無關 — 點擊查看"
@@ -18,28 +18,28 @@
     "message": "分類中…"
   },
   "spokenTopic": {
-    "message": "FeedLens 已模糊此貼文：主題無關。按 Enter 鍵查看。"
+    "message": "uFeed 已模糊此貼文：主題無關。按 Enter 鍵查看。"
   },
   "spokenMedia": {
-    "message": "FeedLens 已模糊此貼文：無文字可判斷。按 Enter 鍵查看。"
+    "message": "uFeed 已模糊此貼文：無文字可判斷。按 Enter 鍵查看。"
   },
   "spokenLanguage": {
-    "message": "FeedLens 已模糊此貼文：其他語言。按 Enter 鍵查看。"
+    "message": "uFeed 已模糊此貼文：其他語言。按 Enter 鍵查看。"
   },
   "spokenPeek": {
-    "message": "FeedLens 已模糊此貼文：判斷不確定。按 Enter 鍵查看。"
+    "message": "uFeed 已模糊此貼文：判斷不確定。按 Enter 鍵查看。"
   },
   "nudgeTitle": {
-    "message": "FeedLens 還沒有主題"
+    "message": "uFeed 還沒有主題"
   },
   "nudgeBody": {
-    "message": "FeedLens 已啟用，但不知道你想看什麼，所以沒有模糊任何內容。請點擊瀏覽器工具列上方的圖示，新增一兩個主題。"
+    "message": "uFeed 已啟用，但不知道你想看什麼，所以沒有模糊任何內容。請點擊瀏覽器工具列上方的圖示，新增一兩個主題。"
   },
   "nudgeDismiss": {
     "message": "隱藏，直到下次載入頁面"
   },
   "badgeOpen": {
-    "message": "開啟 FeedLens"
+    "message": "開啟 uFeed"
   },
   "badgeCount": {
     "message": "已模糊的貼文：$COUNT$",
@@ -198,7 +198,7 @@
     "message": "它比對的是話題，而不是品質。"
   },
   "tipQualityBody": {
-    "message": "同一話題下，好貼文和差貼文都會保留。FeedLens 無法區分它們。"
+    "message": "同一話題下，好貼文和差貼文都會保留。uFeed 無法區分它們。"
   },
   "saveTopics": {
     "message": "儲存主題"
@@ -252,13 +252,13 @@
     "message": "模糊沒有文字的圖片和影片"
   },
   "blurMediaDetails": {
-    "message": "FeedLens 讀取的是文字，而不是圖片。當照片或影片只附有一兩個詞時，就沒有可與你的主題比對的內容。開啟後，這類貼文會被模糊，而不是直接放行。"
+    "message": "uFeed 讀取的是文字，而不是圖片。當照片或影片只附有一兩個詞時，就沒有可與你的主題比對的內容。開啟後，這類貼文會被模糊，而不是直接放行。"
   },
   "blurLanguageLabel": {
     "message": "模糊非英文的貼文"
   },
   "blurLanguageDetails": {
-    "message": "FeedLens 只懂英文。它無法判斷其他語言的貼文是否與你的主題相關，所以會隨機放行一些、模糊另一些。開啟後會全部模糊 — 包括與主題相關的貼文。"
+    "message": "uFeed 只懂英文。它無法判斷其他語言的貼文是否與你的主題相關，所以會隨機放行一些、模糊另一些。開啟後會全部模糊 — 包括與主題相關的貼文。"
   },
   "blurLanguageRefresh": {
     "message": "已在畫面上的貼文保持原樣。繼續捲動或重新載入頁面即可看到變化。"
@@ -339,7 +339,7 @@
     "message": "— 請選擇你的備份檔案"
   },
   "importNotBackup": {
-    "message": "— 不是 FeedLens 備份"
+    "message": "— 不是 uFeed 備份"
   },
   "importNewer": {
     "message": "— 由較新的版本建立"
@@ -376,7 +376,7 @@
     "message": "📥 回報問題或分享想法"
   },
   "githubLabel": {
-    "message": "GitHub 上的 FeedLens"
+    "message": "GitHub 上的 uFeed"
   },
   "languageLabel": {
     "message": "語言"
