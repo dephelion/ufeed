@@ -25,8 +25,9 @@ export default defineConfig({
   zip: { excludeSources: ['wiki-llm/**', 'docs/**', 'AGENTS.md'] },
   manifest: ({ browser }) => ({
     name: 'FeedLens: Feed Cleaner for Social Networks',
-    description:
-      'Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.',
+    // Text lives in public/_locales; the browser picks the locale (wiki-llm/i18n.md).
+    default_locale: 'en',
+    description: '__MSG_extDescription__',
     permissions: ['storage'],
     host_permissions: FEED_HOSTS,
     /**
@@ -49,8 +50,14 @@ export default defineConfig({
       // button to look for. An <img> in the page cannot load an extension file
       // that is not listed here.
       // icon/32.png is the posts-hidden badge's icon, for the same reason.
+      // The catalogs let a feed tab read the language the reader picked in the popup.
       {
-        resources: ['engine.html', 'icon-gray/48.png', 'icon/32.png'],
+        resources: [
+          'engine.html',
+          'icon-gray/48.png',
+          'icon/32.png',
+          '_locales/*/messages.json',
+        ],
         matches: FEED_HOSTS,
       },
     ],

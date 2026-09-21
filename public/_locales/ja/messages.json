@@ -1,0 +1,384 @@
+{
+  "extDescription": {
+    "message": "見たいトピックを指定するだけ。FeedLens は X・LinkedIn・Reddit のフィードの残りをぼかします。プライバシー重視、端末内で動作、アカウント不要。"
+  },
+  "labelTopic": {
+    "message": "トピック外 — クリックで表示"
+  },
+  "labelMedia": {
+    "message": "判定できる文章なし — クリックで表示"
+  },
+  "labelLanguage": {
+    "message": "別の言語 — クリックで表示"
+  },
+  "labelPeek": {
+    "message": "… — クリックで表示"
+  },
+  "labelPending": {
+    "message": "分類中…"
+  },
+  "spokenTopic": {
+    "message": "FeedLens がぼかした投稿: トピック外。Enter キーで表示します。"
+  },
+  "spokenMedia": {
+    "message": "FeedLens がぼかした投稿: 判定できる文章なし。Enter キーで表示します。"
+  },
+  "spokenLanguage": {
+    "message": "FeedLens がぼかした投稿: 別の言語。Enter キーで表示します。"
+  },
+  "spokenPeek": {
+    "message": "FeedLens がぼかした投稿: 判定が微妙。Enter キーで表示します。"
+  },
+  "nudgeTitle": {
+    "message": "FeedLens にはまだトピックがありません"
+  },
+  "nudgeBody": {
+    "message": "FeedLens は有効ですが、何を見たいのかわからないため、何もぼかしていません。ブラウザーのツールバーにある上のアイコンを開き、トピックをひとつかふたつ追加してください。"
+  },
+  "nudgeDismiss": {
+    "message": "次にページを読み込むまで非表示"
+  },
+  "badgeOpen": {
+    "message": "FeedLens を開く"
+  },
+  "badgeCount": {
+    "message": "ぼかした投稿: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      }
+    }
+  },
+  "thumbUp": {
+    "message": "トピックに合っている"
+  },
+  "thumbDown": {
+    "message": "トピック外"
+  },
+  "thumbBusy": {
+    "message": "投稿を確認中です。少々お待ちください"
+  },
+  "chipInitial": {
+    "message": "待機中"
+  },
+  "chipNone": {
+    "message": "フィードなし"
+  },
+  "chipIdle": {
+    "message": "未開始"
+  },
+  "chipDownloading": {
+    "message": "ダウンロード中"
+  },
+  "chipDownloadingPercent": {
+    "message": "ダウンロード $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "chipStarting": {
+    "message": "起動中"
+  },
+  "chipReady": {
+    "message": "準備完了"
+  },
+  "chipFailed": {
+    "message": "失敗"
+  },
+  "engineInitial": {
+    "message": "エンジンを確認中…"
+  },
+  "engineNone": {
+    "message": "このタブにはエンジンがありません — X、LinkedIn、Reddit を開いてください"
+  },
+  "engineIdle": {
+    "message": "このタブではエンジンがまだ起動していません"
+  },
+  "engineDownloading": {
+    "message": "モデルをダウンロード中 — 初回のみで、その後はキャッシュされます"
+  },
+  "engineDownloadingPercent": {
+    "message": "モデルをダウンロード中 — $PERCENT$%、初回のみ",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "engineWarming": {
+    "message": "モデルを起動中 — ダウンロード済み"
+  },
+  "engineReady": {
+    "message": "モデルの準備完了"
+  },
+  "engineFailed": {
+    "message": "モデルを読み込めませんでした"
+  },
+  "engineFailedWhy": {
+    "message": "モデルを読み込めませんでした — $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "out of memory"
+      }
+    }
+  },
+  "statusInitial": {
+    "message": "設定を確認中…"
+  },
+  "switchOn": {
+    "message": "オン"
+  },
+  "switchOff": {
+    "message": "オフ"
+  },
+  "statusNoTopics": {
+    "message": "上でトピックを追加すると開始します"
+  },
+  "statusTopicsOne": {
+    "message": "1 件のトピックでフィルタリング中"
+  },
+  "statusTopicsMany": {
+    "message": "$COUNT$ 件のトピックでフィルタリング中",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "topicsLabel": {
+    "message": "見たいトピック"
+  },
+  "topicsPlaceholder": {
+    "message": "ソフトウェア開発, プログラミング\n機械学習の研究\nビデオゲーム, ゲームデザイン"
+  },
+  "topicsHint": {
+    "message": "1 行に 1 トピック、数語で書きます。それ以外の投稿はぼかされます。ぼかされた投稿は、いつでもクリックして読めます。"
+  },
+  "tipsSummary": {
+    "message": "よいトピックの書き方"
+  },
+  "tipWordsTitle": {
+    "message": "2〜5 語で書く。"
+  },
+  "tipWordsBody": {
+    "message": "1 語だけでは漠然としすぎます。5 語を超えると、1 語ごとの影響が小さくなります。"
+  },
+  "tipKeywordsTitle": {
+    "message": "文ではなくキーワード。"
+  },
+  "tipKeywordsBody": {
+    "message": "すべての語が判定に影響するため、「と」や「についての投稿」のような小さな語は、見たい投稿までぼかす原因になります。"
+  },
+  "tipCommasTitle": {
+    "message": "カンマは気にしなくて大丈夫。"
+  },
+  "tipCommasBody": {
+    "message": "「ソフトウェア, プログラミング」と「ソフトウェア プログラミング」は同じ結果になります。好きなほうを使ってください。"
+  },
+  "tipLinesTitle": {
+    "message": "1 行に 1 つの話題。"
+  },
+  "tipLinesBody": {
+    "message": "別の話題は別の行に書きます。どれか 1 行に一致する投稿は表示されたままになります。"
+  },
+  "tipVocabTitle": {
+    "message": "投稿で使われる言葉を使う。"
+  },
+  "tipVocabBody": {
+    "message": "人はカテゴリーではなく対象そのものについて書くので、「テック」より「ソフトウェア」のほうがうまく働きます。"
+  },
+  "tipQualityTitle": {
+    "message": "一致するのは話題で、質ではありません。"
+  },
+  "tipQualityBody": {
+    "message": "同じ話題なら、優れた投稿も質の低い投稿も表示されたままです。FeedLens には区別できません。"
+  },
+  "saveTopics": {
+    "message": "トピックを保存"
+  },
+  "saved": {
+    "message": "保存しました"
+  },
+  "strictnessLabel": {
+    "message": "厳しさ"
+  },
+  "strictnessOff": {
+    "message": "何もぼかしません — すべての投稿が表示されます。"
+  },
+  "strictnessTradeoff": {
+    "message": "厳しくするほどぼかす投稿が増え、見たかった投稿も含まれます。ぼかされた投稿は 1 クリックで読めます。"
+  },
+  "modelLabel": {
+    "message": "モデル"
+  },
+  "modelOptionEnglish": {
+    "message": "🇬🇧 英語 · 高速 — 33 MB"
+  },
+  "modelOptionMultilingual": {
+    "message": "🌍 多言語 · 高精度 — 197 MB"
+  },
+  "modelHintEnglish": {
+    "message": "英語のみ対応。小さく、どの投稿にも素早く反応します。"
+  },
+  "modelHintMultilingual": {
+    "message": "すべての言語を読み取り、英語でもより正確に振り分けます。投稿ごとの処理は遅くなります。ダウンロードは 1 回だけです。"
+  },
+  "details": {
+    "message": "詳細"
+  },
+  "modelDetailsEnglishTitle": {
+    "message": "英語 · 高速。"
+  },
+  "modelDetailsEnglishBody": {
+    "message": "小さく、どの投稿にも素早く反応しますが、英語しか読めません。トピックの書き方にもやや敏感なので、トピックは数個のキーワードにとどめてください。"
+  },
+  "modelDetailsMultilingualTitle": {
+    "message": "多言語 · 高精度。"
+  },
+  "modelDetailsMultilingualBody": {
+    "message": "すべての言語を読み取り、英語でもフィードをより正確に振り分けます。トピックの書き方にも寛容です。代わりに、197 MB の初回ダウンロードと、投稿ごとの処理量の増加が必要です。"
+  },
+  "modelDetailsKept": {
+    "message": "切り替えても、トピック、厳しさ、👍/👎 の評価はすべて保持されます。評価はモデルごとに保存されるため、それぞれのモデルが自分の評価を持ち、元に戻すと復元されます。"
+  },
+  "blurMediaLabel": {
+    "message": "文章のない画像や動画をぼかす"
+  },
+  "blurMediaDetails": {
+    "message": "FeedLens が読むのは文章で、画像は読みません。写真や動画に 1〜2 語しか付いていない場合、トピックと比べる材料がありません。オンにすると、そうした投稿をそのまま通さずにぼかします。"
+  },
+  "blurLanguageLabel": {
+    "message": "英語以外の投稿をぼかす"
+  },
+  "blurLanguageDetails": {
+    "message": "FeedLens が理解できるのは英語だけです。他の言語の投稿がトピックに合うかどうか判断できないため、通すものとぼかすものがランダムに分かれます。オンにすると、トピックに合うものも含め、すべてぼかします。"
+  },
+  "blurLanguageRefresh": {
+    "message": "すでに画面にある投稿はそのままです。スクロールするか、ページを再読み込みすると変更が反映されます。"
+  },
+  "blurLanguageOff": {
+    "message": "多言語モデルはすべての言語を読み取るため、ぼかす対象がなくなり、オフになっています。設定は保持され、元のモデルに戻すと再び使えます。"
+  },
+  "collapseLabel": {
+    "message": "ぼかした投稿を細い行に折りたたむ"
+  },
+  "collapseDetails": {
+    "message": "ぼかした投稿を元の高さのまま残す代わりに、細い行まで縮めます。スクロールで通り過ぎるときにほとんど場所を取りません。ラベルは表示されたままで、クリックすると他のぼかした投稿と同じように表示されます。"
+  },
+  "scoresLabel": {
+    "message": "各投稿のスコアを表示"
+  },
+  "scoresDetails": {
+    "message": "各投稿に小さなラベルを追加し、得られたスコア、表示され続けるために必要なスコア、投稿の長さを表示します。なぜぼかされたのかを調べるのに役立ちます。ラベルは常に英語で表示されます。"
+  },
+  "thumbsLabel": {
+    "message": "👍/👎 の評価から学習する"
+  },
+  "thumbsIntro": {
+    "message": "投稿にカーソルを合わせると、👍 または 👎 を付けられます。"
+  },
+  "thumbsUpMeans": {
+    "message": "👍 は、この内容がトピックに合っているという意味です。"
+  },
+  "thumbsDownMeans": {
+    "message": "👎 は、この内容がトピックに合っていないという意味です。"
+  },
+  "thumbsCorrect": {
+    "message": "ぼかす・表示するの判定が正しければ、修正は不要です。"
+  },
+  "thumbsScope": {
+    "message": "評価が影響するのは、評価した投稿とほぼ同じ投稿（リポストや引用など）だけです。それ以外はこれまでどおりトピックで判定されるため、評価によって良い投稿が誤って隠れることはありません。"
+  },
+  "thumbsPrivacy": {
+    "message": "評価はこの端末にとどまります。注意点: 比較するのは投稿の文章だけです。本当の内容が画像や動画にあり、文章が印象に残らない場合は、評価しないでください。オフのままなら、ボタンは表示されません。"
+  },
+  "statKept": {
+    "message": "👍 残した"
+  },
+  "statBlurred": {
+    "message": "👎 ぼかした"
+  },
+  "statRated": {
+    "message": "評価済み"
+  },
+  "tuningNone": {
+    "message": "まだ投稿を評価していません。"
+  },
+  "clearTuning": {
+    "message": "学習をクリア"
+  },
+  "backupTitle": {
+    "message": "バックアップ"
+  },
+  "backupExport": {
+    "message": "エクスポート"
+  },
+  "backupImport": {
+    "message": "インポート"
+  },
+  "backupHint": {
+    "message": "設定と 👍/👎 の評価をファイルに保存します。インポートすると、現在の内容が置き換わります。"
+  },
+  "exportFailed": {
+    "message": "エクスポートに失敗しました"
+  },
+  "exportFailedTail": {
+    "message": "何も書き込まれていません"
+  },
+  "importPrompt": {
+    "message": "インポート"
+  },
+  "importPromptTail": {
+    "message": "— バックアップファイルを選んでください"
+  },
+  "importNotBackup": {
+    "message": "— FeedLens のバックアップではありません"
+  },
+  "importNewer": {
+    "message": "— 新しいバージョンで作成されています"
+  },
+  "importOtherModel": {
+    "message": "— 別のモデルで作成されています"
+  },
+  "importSaveFailed": {
+    "message": "— 保存できませんでした"
+  },
+  "importDone": {
+    "message": "✓ トピック: $TOPICS$ · 評価: $RATINGS$",
+    "placeholders": {
+      "topics": {
+        "content": "$1",
+        "example": "3"
+      },
+      "ratings": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
+  },
+  "resetTitle": {
+    "message": "最初からやり直す"
+  },
+  "resetButton": {
+    "message": "リセット"
+  },
+  "resetHint": {
+    "message": "設定を初期値に戻し、👍/👎 の評価を削除します。トピックと言語は保持されます。"
+  },
+  "reportIssue": {
+    "message": "📥 問題を報告、またはアイデアを共有"
+  },
+  "githubLabel": {
+    "message": "GitHub の FeedLens"
+  },
+  "languageLabel": {
+    "message": "言語"
+  }
+}

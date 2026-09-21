@@ -1,0 +1,384 @@
+{
+  "extDescription": {
+    "message": "只需说出你想看的主题，FeedLens 会将 X、LinkedIn 和 Reddit 信息流中的其余内容模糊处理。隐私优先，在设备上运行，无需账号。"
+  },
+  "labelTopic": {
+    "message": "主题无关 — 点击查看"
+  },
+  "labelMedia": {
+    "message": "无文字可判断 — 点击查看"
+  },
+  "labelLanguage": {
+    "message": "其他语言 — 点击查看"
+  },
+  "labelPeek": {
+    "message": "… — 点击查看"
+  },
+  "labelPending": {
+    "message": "正在分类…"
+  },
+  "spokenTopic": {
+    "message": "FeedLens 已模糊此帖子：主题无关。按 Enter 键查看。"
+  },
+  "spokenMedia": {
+    "message": "FeedLens 已模糊此帖子：无文字可判断。按 Enter 键查看。"
+  },
+  "spokenLanguage": {
+    "message": "FeedLens 已模糊此帖子：其他语言。按 Enter 键查看。"
+  },
+  "spokenPeek": {
+    "message": "FeedLens 已模糊此帖子：判断不确定。按 Enter 键查看。"
+  },
+  "nudgeTitle": {
+    "message": "FeedLens 还没有主题"
+  },
+  "nudgeBody": {
+    "message": "FeedLens 已开启，但不知道你想看什么，所以没有模糊任何内容。请点击浏览器工具栏中上方的图标，添加一两个主题。"
+  },
+  "nudgeDismiss": {
+    "message": "隐藏，直到下次加载页面"
+  },
+  "badgeOpen": {
+    "message": "打开 FeedLens"
+  },
+  "badgeCount": {
+    "message": "已模糊的帖子：$COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      }
+    }
+  },
+  "thumbUp": {
+    "message": "符合主题"
+  },
+  "thumbDown": {
+    "message": "偏离主题"
+  },
+  "thumbBusy": {
+    "message": "正在检查帖子，请稍候"
+  },
+  "chipInitial": {
+    "message": "空闲"
+  },
+  "chipNone": {
+    "message": "此处无信息流"
+  },
+  "chipIdle": {
+    "message": "未启动"
+  },
+  "chipDownloading": {
+    "message": "正在下载"
+  },
+  "chipDownloadingPercent": {
+    "message": "正在下载 $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "chipStarting": {
+    "message": "正在启动"
+  },
+  "chipReady": {
+    "message": "就绪"
+  },
+  "chipFailed": {
+    "message": "失败"
+  },
+  "engineInitial": {
+    "message": "正在检查引擎…"
+  },
+  "engineNone": {
+    "message": "此标签页没有引擎 — 请打开 X、LinkedIn 或 Reddit"
+  },
+  "engineIdle": {
+    "message": "此标签页中的引擎尚未启动"
+  },
+  "engineDownloading": {
+    "message": "正在下载模型 — 仅此一次，之后会缓存"
+  },
+  "engineDownloadingPercent": {
+    "message": "正在下载模型 — $PERCENT$%，仅此一次",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "engineWarming": {
+    "message": "正在启动模型 — 已下载完成"
+  },
+  "engineReady": {
+    "message": "模型已就绪"
+  },
+  "engineFailed": {
+    "message": "模型加载失败"
+  },
+  "engineFailedWhy": {
+    "message": "模型加载失败 — $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "out of memory"
+      }
+    }
+  },
+  "statusInitial": {
+    "message": "正在检查设置…"
+  },
+  "switchOn": {
+    "message": "开"
+  },
+  "switchOff": {
+    "message": "关"
+  },
+  "statusNoTopics": {
+    "message": "请在上方添加主题以开始"
+  },
+  "statusTopicsOne": {
+    "message": "正在按 1 个主题过滤"
+  },
+  "statusTopicsMany": {
+    "message": "正在按 $COUNT$ 个主题过滤",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "topicsLabel": {
+    "message": "我想看的主题"
+  },
+  "topicsPlaceholder": {
+    "message": "软件工程, 编程\n机器学习研究\n电子游戏, 游戏设计"
+  },
+  "topicsHint": {
+    "message": "每行一个主题，几个词即可。其他内容的帖子会被模糊处理。你随时可以点击被模糊的帖子来查看。"
+  },
+  "tipsSummary": {
+    "message": "如何写好一个主题"
+  },
+  "tipWordsTitle": {
+    "message": "两到五个词。"
+  },
+  "tipWordsBody": {
+    "message": "只写一个词太笼统；超过五个词，每个词的作用就会变小。"
+  },
+  "tipKeywordsTitle": {
+    "message": "写关键词，不要写句子。"
+  },
+  "tipKeywordsBody": {
+    "message": "每个词都会起作用，所以“和”或“关于……的帖子”这类小词只会把你想看的内容也模糊掉。"
+  },
+  "tipCommasTitle": {
+    "message": "逗号无所谓。"
+  },
+  "tipCommasBody": {
+    "message": "“软件, 编程”和“软件 编程”效果相同，用你喜欢的即可。"
+  },
+  "tipLinesTitle": {
+    "message": "每行一个话题。"
+  },
+  "tipLinesBody": {
+    "message": "把不同的话题各写一行。只要帖子匹配其中任意一行，就会保持可见。"
+  },
+  "tipVocabTitle": {
+    "message": "使用帖子里常用的词。"
+  },
+  "tipVocabBody": {
+    "message": "“软件”比“科技”更有效，因为人们写的是具体的事物，而不是类别。"
+  },
+  "tipQualityTitle": {
+    "message": "它匹配的是话题，而不是质量。"
+  },
+  "tipQualityBody": {
+    "message": "同一话题下，好帖和差帖都会保留。FeedLens 无法区分它们。"
+  },
+  "saveTopics": {
+    "message": "保存主题"
+  },
+  "saved": {
+    "message": "已保存"
+  },
+  "strictnessLabel": {
+    "message": "严格程度"
+  },
+  "strictnessOff": {
+    "message": "不模糊任何内容 — 所有帖子都保持可见。"
+  },
+  "strictnessTradeoff": {
+    "message": "越严格，隐藏得越多，其中包括一些你想看的帖子。被模糊的帖子仍然只需点击一下即可查看。"
+  },
+  "modelLabel": {
+    "message": "模型"
+  },
+  "modelOptionEnglish": {
+    "message": "🇬🇧 英语 · 快速 — 33 MB"
+  },
+  "modelOptionMultilingual": {
+    "message": "🌍 多语言 · 精准 — 197 MB"
+  },
+  "modelHintEnglish": {
+    "message": "仅支持英语。体积小，处理每条帖子都很快。"
+  },
+  "modelHintMultilingual": {
+    "message": "支持所有语言，分类更精准，即使是英语也是如此。处理每条帖子更慢；只需下载一次。"
+  },
+  "details": {
+    "message": "详情"
+  },
+  "modelDetailsEnglishTitle": {
+    "message": "英语 · 快速。"
+  },
+  "modelDetailsEnglishBody": {
+    "message": "体积小，处理每条帖子都很快，但只能读英语。它对主题的措辞也更挑剔，所以主题请只写几个关键词。"
+  },
+  "modelDetailsMultilingualTitle": {
+    "message": "多语言 · 精准。"
+  },
+  "modelDetailsMultilingualBody": {
+    "message": "支持所有语言，对信息流的分类更精准，即使是英语也是如此。它对主题措辞更宽容。代价是需要一次性下载 197 MB，并且处理每条帖子的计算量更大。"
+  },
+  "modelDetailsKept": {
+    "message": "切换时，你的主题、严格程度和点赞点踩评分都会保留。评分按模型分别存储，每个模型保留各自的评分，切换回来时会恢复。"
+  },
+  "blurMediaLabel": {
+    "message": "模糊没有文字的图片和视频"
+  },
+  "blurMediaDetails": {
+    "message": "FeedLens 读取的是文字，而不是图片。当照片或视频只配有一两个词时，就没有可与你的主题比较的内容。开启后，这类帖子会被模糊，而不是直接放行。"
+  },
+  "blurLanguageLabel": {
+    "message": "模糊非英语的帖子"
+  },
+  "blurLanguageDetails": {
+    "message": "FeedLens 只懂英语。它无法判断其他语言的帖子是否与你的主题相关，所以会随机放行一些、模糊另一些。开启后会全部模糊 — 包括与主题相关的帖子。"
+  },
+  "blurLanguageRefresh": {
+    "message": "已在屏幕上的帖子保持原样。继续滚动或重新加载页面即可看到变化。"
+  },
+  "blurLanguageOff": {
+    "message": "已关闭，因为多语言模型可以读取所有语言 — 没有什么需要模糊的了。你的设置会保留，切换回来后继续生效。"
+  },
+  "collapseLabel": {
+    "message": "将被模糊的帖子折叠为细条"
+  },
+  "collapseDetails": {
+    "message": "不再让被模糊的帖子保持完整高度，而是缩成一条细行，滚动经过时几乎不占空间。标签仍然显示，点击后与其他被模糊的帖子一样可以查看。"
+  },
+  "scoresLabel": {
+    "message": "显示每条帖子的分数"
+  },
+  "scoresDetails": {
+    "message": "在每条帖子上添加一个小标签，显示它获得的分数、保持可见所需的分数以及帖子长度。可用于弄清某条内容为什么被模糊。标签始终为英文。"
+  },
+  "thumbsLabel": {
+    "message": "从我的点赞点踩中学习"
+  },
+  "thumbsIntro": {
+    "message": "将鼠标悬停在帖子上，即可点赞或点踩。"
+  },
+  "thumbsUpMeans": {
+    "message": "👍 表示这条内容属于该主题。"
+  },
+  "thumbsDownMeans": {
+    "message": "👎 表示这条内容不属于该主题。"
+  },
+  "thumbsCorrect": {
+    "message": "判断正确 — 无论是被模糊还是被显示 — 都不需要纠正。"
+  },
+  "thumbsScope": {
+    "message": "点赞或点踩只会影响与你评分的帖子几乎相同的帖子，例如转发或引用。其他内容仍按你的主题判断，所以一次评分不会意外隐藏好帖子。"
+  },
+  "thumbsPrivacy": {
+    "message": "你的评分只保存在这台设备上。有一点需要注意：它只比较帖子中的文字。如果真正的内容在图片或视频里，而文字没什么特点，请跳过。保持关闭时，按钮不会显示。"
+  },
+  "statKept": {
+    "message": "👍 保留"
+  },
+  "statBlurred": {
+    "message": "👎 已模糊"
+  },
+  "statRated": {
+    "message": "已评分"
+  },
+  "tuningNone": {
+    "message": "你还没有给任何帖子评分。"
+  },
+  "clearTuning": {
+    "message": "清除学习记录"
+  },
+  "backupTitle": {
+    "message": "备份"
+  },
+  "backupExport": {
+    "message": "导出"
+  },
+  "backupImport": {
+    "message": "导入"
+  },
+  "backupHint": {
+    "message": "将你的设置和点赞点踩评分保存到文件。导入会替换当前的内容。"
+  },
+  "exportFailed": {
+    "message": "导出失败"
+  },
+  "exportFailedTail": {
+    "message": "未写入任何内容"
+  },
+  "importPrompt": {
+    "message": "导入"
+  },
+  "importPromptTail": {
+    "message": "— 请选择你的备份文件"
+  },
+  "importNotBackup": {
+    "message": "— 不是 FeedLens 备份"
+  },
+  "importNewer": {
+    "message": "— 由更新的版本创建"
+  },
+  "importOtherModel": {
+    "message": "— 由其他模型创建"
+  },
+  "importSaveFailed": {
+    "message": "— 无法保存"
+  },
+  "importDone": {
+    "message": "✓ 主题：$TOPICS$ · 评分：$RATINGS$",
+    "placeholders": {
+      "topics": {
+        "content": "$1",
+        "example": "3"
+      },
+      "ratings": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
+  },
+  "resetTitle": {
+    "message": "重新开始"
+  },
+  "resetButton": {
+    "message": "重置"
+  },
+  "resetHint": {
+    "message": "恢复默认设置，并删除你的点赞点踩评分。你的主题和语言会保留。"
+  },
+  "reportIssue": {
+    "message": "📥 报告问题或分享想法"
+  },
+  "githubLabel": {
+    "message": "GitHub 上的 FeedLens"
+  },
+  "languageLabel": {
+    "message": "语言"
+  }
+}

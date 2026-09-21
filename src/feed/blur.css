@@ -43,7 +43,7 @@
 }
 
 .lx-blur::after {
-  content: 'Out of topic — click to read';
+  content: attr(data-lx-label);
   position: absolute;
   top: 8px;
   right: 8px;
@@ -70,12 +70,10 @@
 }
 
 .lx-blur[data-lx-reason='media']::after {
-  content: 'No text to check — click to view';
   background: color-mix(in srgb, #57534e 78%, transparent);
 }
 
 .lx-blur[data-lx-reason='language']::after {
-  content: 'Another language — click to read';
   background: color-mix(in srgb, #4338ca 78%, transparent);
   color: #f2f2ff;
 }
@@ -84,7 +82,7 @@
    destroying the blur. Shares ::after with the label so ::before stays free for
    the score badge — otherwise the badge would vanish on exactly these posts. */
 .lx-blur[data-lx-reason='peek']::after {
-  content: attr(data-lx-peek) '… — click to read';
+  content: attr(data-lx-peek) attr(data-lx-label);
   left: 8px;
   right: 8px;
   max-width: none;

@@ -1,3 +1,4 @@
+import { isLanguageCode, type LanguageSetting } from './languages';
 import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './models';
 import { clampStrictness } from './scoring';
 
@@ -17,6 +18,8 @@ export interface Settings {
   blurOtherLanguages: boolean;
   /** Shrink a blurred post to a thin row instead of leaving it full height. */
   collapseBlurred: boolean;
+  /** The language of the popup and the feed. `auto` follows the browser. */
+  language: LanguageSetting;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -29,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   tuneFromFeedback: false,
   blurOtherLanguages: true,
   collapseBlurred: true,
+  language: 'auto',
 };
 
 /**
@@ -51,6 +55,8 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
   // A model this build does not have is not a model: a stale or hand-edited key
   // would otherwise reach modelFor() and silently score with the wrong scale.
   if (!isModelKey(merged.model)) merged.model = DEFAULT_MODEL;
+  if (merged.language !== 'auto' && !isLanguageCode(merged.language))
+    merged.language = 'auto';
   return merged;
 }
 
@@ -66,6 +72,22 @@ const sameType = (value: unknown, fallback: unknown): boolean =>
  */
 export function needsTopics(settings: Settings): boolean {
   return settings.enabled && settings.topics.length === 0;
+}
+
+/**
+ * A language pick rewrites text, not decisions: when it is all that changed, a feed
+ * tab has nothing to reconnect or re-score.
+ */
+export function onlyLanguageChanged(before: Settings, after: Settings): boolean {
+  if (before.language === after.language) return false;
+  const rest = (Object.keys(after) as (keyof Settings)[]).filter(
+    (key) => key !== 'language',
+  );
+  return rest.every((key) =>
+    key === 'topics'
+      ? topicsEqual(before.topics, after.topics)
+      : before[key] === after[key],
+  );
 }
 
 export function isActive(settings: Settings): boolean {

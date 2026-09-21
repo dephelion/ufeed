@@ -8,7 +8,7 @@ asks for. Kept in the repo so the listing and the code change together.
 | Field          | Value                                                                     |
 | :------------- | :------------------------------------------------------------------------ |
 | Name           | FeedLens: Feed Cleaner for Social Networks                                |
-| Version        | 0.8.3 — pre-1.0 while it is finding its first users                       |
+| Version        | 0.9.0 — pre-1.0 while it is finding its first users                       |
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
@@ -22,50 +22,30 @@ before anything can be published.
 
 ## Short description (132 char max)
 
-Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.
+Name the topics you want; FeedLens blurs the rest on X, LinkedIn and Reddit. Private, on-device, open source, no account.
 
 ## Detailed description
 
-Most feed filters ask what you want to block. FeedLens asks what you want to see.
+Social networks are deciding what you see. FeedLens lets you decide instead.
 
-📝 Write the topics you care about, one per line. FeedLens reads each post as you
-scroll and blurs the ones that are not about them. Nothing is deleted: a blurred
-post is always one click away, so a wrong call costs you a click, not a missed
-post.
+🔒 Private and fast. Everything runs on your device. No account, no cloud, no analytics. Your feed is safe.
 
-🧹 Works on X, LinkedIn and Reddit.
+📖 Open source. Read the code, build it, fork it:
+https://github.com/dephelion/feedlens
 
-🔒 Private by design. A small AI model (about 33 MB) is downloaded once, then
-everything happens inside your browser. (An optional multilingual model, about
-197 MB, is downloaded only if you choose it.) No account, no server, no cloud AI, no
-analytics. The text of your feed is never uploaded, never stored, and never
-logged — we could not see it if we wanted to. The code is open source, so you can
-check.
+📝 Write your topics, one per line. Posts that don't match get blurred and collapsed, never
+deleted. One click shows them.
 
-🎚️ You can see why, and steer it. A 0–10 strictness slider, where every step is a
-measured threshold rather than a guess. Turn on scores to see what each post got
-and what it needed. Stricter hides more, including some posts you'd want, so pick
-what suits your feed. It is not going to be perfect and it does not pretend to be.
+🌍 Reads English by default. For any other language, switch to the optional
+multilingual model (197 MB) in the popup.
 
-🌍 English by default, every language if you ask. The default model is small and
-fast and reads English. If your feed is in another language, or mixed, switch to the
-multilingual model in the popup: it reads every language and sorts more accurately,
-for a one-time 197 MB download and more work on every post. Your topics, strictness
-and thumb ratings carry over, and each model keeps its own ratings.
+👍 Optional thumbs let you correct it. Off by default, kept only on your device.
 
-👍 It takes corrections, if you ask it to. Turn on thumbs and mark a post on or off
-topic; the next time a near-copy of it shows up, such as a repost or a quote, it
-follows your call. Your topics never change. Ratings stay on your device, and this
-is off by default.
+💾 Backup and import your settings anywhere.
 
-What it cannot do. It reads words, not pictures, so a photo with no caption cannot
-be judged on content. The default model understands English only; the optional
-multilingual model reads every language. It matches subjects, not quality: a
-great post and a poor one about the same thing both stay. And because it compares
-meaning rather than reasoning about a post, it can miss sarcasm or "this topic,
-but not the hype".
+It reads words, not images, and matches subject, not quality. It can miss sarcasm, and it won't be perfect.
 
-❓Bugs, ideas, or a feed it does not work on: contact us with the email below.
+❓Bugs or ideas: https://github.com/dephelion/feedlens/issues or the email below.
 
 ## Single purpose
 

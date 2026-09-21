@@ -1,0 +1,384 @@
+{
+  "extDescription": {
+    "message": "Escolha seus tópicos. O FeedLens desfoca o resto do seu feed no X, LinkedIn e Reddit. Privado, no dispositivo, sem conta."
+  },
+  "labelTopic": {
+    "message": "Fora do tema — clique para ler"
+  },
+  "labelMedia": {
+    "message": "Sem texto para analisar — clique para ver"
+  },
+  "labelLanguage": {
+    "message": "Outro idioma — clique para ler"
+  },
+  "labelPeek": {
+    "message": "… — clique para ler"
+  },
+  "labelPending": {
+    "message": "Classificando…"
+  },
+  "spokenTopic": {
+    "message": "Publicação desfocada pelo FeedLens: fora do tema. Pressione Enter para lê-la."
+  },
+  "spokenMedia": {
+    "message": "Publicação desfocada pelo FeedLens: sem texto para analisar. Pressione Enter para vê-la."
+  },
+  "spokenLanguage": {
+    "message": "Publicação desfocada pelo FeedLens: outro idioma. Pressione Enter para lê-la."
+  },
+  "spokenPeek": {
+    "message": "Publicação desfocada pelo FeedLens: caso duvidoso. Pressione Enter para lê-la."
+  },
+  "nudgeTitle": {
+    "message": "O FeedLens ainda não tem tópicos"
+  },
+  "nudgeBody": {
+    "message": "Ele está ativado, mas não sabe o que você quer ver, então nada está sendo desfocado. Abra o ícone acima, na barra de ferramentas do navegador, e adicione um ou dois tópicos."
+  },
+  "nudgeDismiss": {
+    "message": "Ocultar até o próximo carregamento da página"
+  },
+  "badgeOpen": {
+    "message": "Abrir o FeedLens"
+  },
+  "badgeCount": {
+    "message": "Publicações desfocadas: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      }
+    }
+  },
+  "thumbUp": {
+    "message": "Dentro do tema"
+  },
+  "thumbDown": {
+    "message": "Fora do tema"
+  },
+  "thumbBusy": {
+    "message": "Verificando publicações, um momento"
+  },
+  "chipInitial": {
+    "message": "Inativo"
+  },
+  "chipNone": {
+    "message": "Sem feed aqui"
+  },
+  "chipIdle": {
+    "message": "Não iniciado"
+  },
+  "chipDownloading": {
+    "message": "Baixando"
+  },
+  "chipDownloadingPercent": {
+    "message": "Baixando $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "chipStarting": {
+    "message": "Iniciando"
+  },
+  "chipReady": {
+    "message": "Pronto"
+  },
+  "chipFailed": {
+    "message": "Falhou"
+  },
+  "engineInitial": {
+    "message": "Verificando o motor…"
+  },
+  "engineNone": {
+    "message": "Nenhum motor nesta aba — abra o X, o LinkedIn ou o Reddit"
+  },
+  "engineIdle": {
+    "message": "O motor ainda não iniciou nesta aba"
+  },
+  "engineDownloading": {
+    "message": "Baixando o modelo — uma única vez, depois fica em cache"
+  },
+  "engineDownloadingPercent": {
+    "message": "Baixando o modelo — $PERCENT$%, só uma vez",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "engineWarming": {
+    "message": "Iniciando o modelo — já baixado"
+  },
+  "engineReady": {
+    "message": "Modelo pronto"
+  },
+  "engineFailed": {
+    "message": "Não foi possível carregar o modelo"
+  },
+  "engineFailedWhy": {
+    "message": "Não foi possível carregar o modelo — $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "out of memory"
+      }
+    }
+  },
+  "statusInitial": {
+    "message": "Verificando as configurações…"
+  },
+  "switchOn": {
+    "message": "Ativado"
+  },
+  "switchOff": {
+    "message": "Desativado"
+  },
+  "statusNoTopics": {
+    "message": "Adicione um tópico acima para começar"
+  },
+  "statusTopicsOne": {
+    "message": "Filtrando com 1 tópico"
+  },
+  "statusTopicsMany": {
+    "message": "Filtrando com $COUNT$ tópicos",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "topicsLabel": {
+    "message": "Tópicos que quero ver"
+  },
+  "topicsPlaceholder": {
+    "message": "engenharia de software, programação\npesquisa em aprendizado de máquina\nvideogames, design de jogos"
+  },
+  "topicsHint": {
+    "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
+  },
+  "tipsSummary": {
+    "message": "Como escrever um bom tópico"
+  },
+  "tipWordsTitle": {
+    "message": "De duas a cinco palavras."
+  },
+  "tipWordsBody": {
+    "message": "Uma palavra só é vaga demais. Com mais de cinco, cada uma pesa menos."
+  },
+  "tipKeywordsTitle": {
+    "message": "Palavras-chave, não frases."
+  },
+  "tipKeywordsBody": {
+    "message": "Cada palavra conta, então palavras pequenas como “e” ou “publicações sobre” só desfocam o que você está pedindo."
+  },
+  "tipCommasTitle": {
+    "message": "As vírgulas não importam."
+  },
+  "tipCommasBody": {
+    "message": "“software, programação” e “software programação” funcionam igual. Use a que preferir."
+  },
+  "tipLinesTitle": {
+    "message": "Um assunto por linha."
+  },
+  "tipLinesBody": {
+    "message": "Coloque cada assunto na própria linha. Uma publicação que corresponda a qualquer linha continua visível."
+  },
+  "tipVocabTitle": {
+    "message": "Use as palavras que as publicações usam."
+  },
+  "tipVocabBody": {
+    "message": "“software” funciona melhor que “tecnologia”, porque as pessoas escrevem sobre a coisa, não sobre a categoria."
+  },
+  "tipQualityTitle": {
+    "message": "Ele reconhece assuntos, não qualidade."
+  },
+  "tipQualityBody": {
+    "message": "Uma publicação ótima e uma ruim sobre a mesma coisa ficam as duas. O FeedLens não consegue distingui-las."
+  },
+  "saveTopics": {
+    "message": "Salvar tópicos"
+  },
+  "saved": {
+    "message": "Salvo"
+  },
+  "strictnessLabel": {
+    "message": "Rigor"
+  },
+  "strictnessOff": {
+    "message": "Não desfoca nada — todas as publicações continuam visíveis."
+  },
+  "strictnessTradeoff": {
+    "message": "Mais rigor oculta mais, inclusive algumas publicações que você gostaria de ver. As desfocadas ficam a um clique de distância."
+  },
+  "modelLabel": {
+    "message": "Modelo"
+  },
+  "modelOptionEnglish": {
+    "message": "🇬🇧 Inglês · Rápido — 33 MB"
+  },
+  "modelOptionMultilingual": {
+    "message": "🌍 Multilíngue · Preciso — 197 MB"
+  },
+  "modelHintEnglish": {
+    "message": "Lê apenas inglês. Pequeno e rápido em cada publicação."
+  },
+  "modelHintMultilingual": {
+    "message": "Lê todos os idiomas e classifica com mais precisão, até em inglês. Mais lento em cada publicação; baixa uma única vez."
+  },
+  "details": {
+    "message": "Detalhes"
+  },
+  "modelDetailsEnglishTitle": {
+    "message": "Inglês · Rápido."
+  },
+  "modelDetailsEnglishBody": {
+    "message": "Pequeno e rápido em cada publicação, e só lê inglês. Também é mais exigente quanto à forma de escrever um tópico, então mantenha os tópicos em poucas palavras-chave."
+  },
+  "modelDetailsMultilingualTitle": {
+    "message": "Multilíngue · Preciso."
+  },
+  "modelDetailsMultilingualBody": {
+    "message": "Lê todos os idiomas e classifica seu feed com mais precisão, até em inglês. É mais tolerante quanto à forma de escrever um tópico. O custo é um download único de 197 MB e mais trabalho em cada publicação."
+  },
+  "modelDetailsKept": {
+    "message": "Seus tópicos, o rigor e suas avaliações com polegares são mantidos quando você troca. As avaliações são guardadas por modelo, então cada modelo mantém as suas e, ao voltar, elas são restauradas."
+  },
+  "blurMediaLabel": {
+    "message": "Desfocar imagens e vídeos sem texto"
+  },
+  "blurMediaDetails": {
+    "message": "O FeedLens lê palavras, não imagens. Quando uma foto ou um vídeo vem com apenas uma ou duas palavras, não há nada para comparar com seus tópicos. Ative para desfocar essas publicações em vez de deixá-las passar."
+  },
+  "blurLanguageLabel": {
+    "message": "Desfocar publicações que não estão em inglês"
+  },
+  "blurLanguageDetails": {
+    "message": "O FeedLens só entende inglês. Ele não sabe dizer se uma publicação em outro idioma trata dos seus tópicos ou não, então deixa algumas passarem e desfoca outras ao acaso. Ative para desfocar todas — inclusive as que são do tema."
+  },
+  "blurLanguageRefresh": {
+    "message": "As publicações que já estão na tela ficam como estão. Continue rolando ou recarregue a página para ver a mudança."
+  },
+  "blurLanguageOff": {
+    "message": "Desativado porque o modelo multilíngue lê todos os idiomas — não sobra nada para desfocar. Sua configuração é mantida para quando você voltar."
+  },
+  "collapseLabel": {
+    "message": "Recolher publicações desfocadas em uma linha fina"
+  },
+  "collapseDetails": {
+    "message": "Em vez de deixar uma publicação desfocada em altura total, ela é reduzida a uma linha fina que quase não ocupa espaço enquanto você rola. O rótulo continua aparecendo, e um clique a revela como qualquer outra publicação desfocada."
+  },
+  "scoresLabel": {
+    "message": "Mostrar a pontuação de cada publicação"
+  },
+  "scoresDetails": {
+    "message": "Adiciona um pequeno rótulo a cada publicação com a pontuação obtida, a pontuação necessária para continuar visível e o tamanho dela. Útil para entender por que algo foi desfocado. O rótulo é sempre exibido em inglês."
+  },
+  "thumbsLabel": {
+    "message": "Aprender com meus polegares"
+  },
+  "thumbsIntro": {
+    "message": "Passe o mouse sobre uma publicação para dar um polegar para cima ou para baixo."
+  },
+  "thumbsUpMeans": {
+    "message": "👍 significa que este conteúdo pertence ao tópico."
+  },
+  "thumbsDownMeans": {
+    "message": "👎 significa que este conteúdo não pertence ao tópico."
+  },
+  "thumbsCorrect": {
+    "message": "Uma decisão correta — desfocada ou exibida — não precisa de correção."
+  },
+  "thumbsScope": {
+    "message": "Um polegar só altera publicações quase idênticas à que você avaliou, como um repost ou uma citação. Todo o resto é julgado pelos seus tópicos como sempre, então um polegar nunca oculta uma boa publicação por acidente."
+  },
+  "thumbsPrivacy": {
+    "message": "Suas avaliações ficam neste dispositivo. Uma ressalva: ele só compara as palavras de uma publicação. Se o conteúdo real está na imagem ou no vídeo e as palavras são irrelevantes, pule. Deixe isto desativado e os botões ficam ocultos."
+  },
+  "statKept": {
+    "message": "👍 Mantidas"
+  },
+  "statBlurred": {
+    "message": "👎 Desfocadas"
+  },
+  "statRated": {
+    "message": "Avaliadas"
+  },
+  "tuningNone": {
+    "message": "Você ainda não avaliou nenhuma publicação."
+  },
+  "clearTuning": {
+    "message": "Limpar aprendizado"
+  },
+  "backupTitle": {
+    "message": "Backup"
+  },
+  "backupExport": {
+    "message": "Exportar"
+  },
+  "backupImport": {
+    "message": "Importar"
+  },
+  "backupHint": {
+    "message": "Salva suas configurações e avaliações com polegares em um arquivo. Importar substitui o que há aqui agora."
+  },
+  "exportFailed": {
+    "message": "Falha ao exportar"
+  },
+  "exportFailedTail": {
+    "message": "nada foi gravado"
+  },
+  "importPrompt": {
+    "message": "Importar"
+  },
+  "importPromptTail": {
+    "message": "— escolha seu arquivo de backup"
+  },
+  "importNotBackup": {
+    "message": "— não é um backup do FeedLens"
+  },
+  "importNewer": {
+    "message": "— criado por uma versão mais recente"
+  },
+  "importOtherModel": {
+    "message": "— criado com outro modelo"
+  },
+  "importSaveFailed": {
+    "message": "— não pôde ser salvo"
+  },
+  "importDone": {
+    "message": "✓ Tópicos: $TOPICS$ · Avaliações: $RATINGS$",
+    "placeholders": {
+      "topics": {
+        "content": "$1",
+        "example": "3"
+      },
+      "ratings": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
+  },
+  "resetTitle": {
+    "message": "Começar do zero"
+  },
+  "resetButton": {
+    "message": "Redefinir"
+  },
+  "resetHint": {
+    "message": "Restaura os padrões e apaga suas avaliações com polegares. Seus tópicos e o idioma são mantidos."
+  },
+  "reportIssue": {
+    "message": "📥 Relatar um problema ou compartilhar uma ideia"
+  },
+  "githubLabel": {
+    "message": "FeedLens no GitHub"
+  },
+  "languageLabel": {
+    "message": "Idioma"
+  }
+}

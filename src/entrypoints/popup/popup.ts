@@ -9,13 +9,20 @@ import {
   type Settings,
 } from '../../core/settings';
 import { EMPTY_FEEDBACK, counts } from '../../core/feedback';
-import { exportConfig, importConfig } from '../../core/config-transfer';
+import {
+  exportConfig,
+  importConfig,
+  type ImportRefusal,
+} from '../../core/config-transfer';
 import {
   describeEngine,
   summarizeEngine,
   type EngineStatus,
 } from '../../core/engine-status';
+import { LANGUAGES, isLanguageCode, resolveLanguage } from '../../core/languages';
 import { logger } from '../../core/log';
+import type { MessageKey } from '../../core/messages';
+import { loadTranslator } from '../../platform/i18n';
 import { askEngineStatus, onEngineStatus } from '../../platform/status-channel';
 import {
   clearFeedback,
@@ -24,8 +31,15 @@ import {
   saveFeedback,
   saveSettings,
 } from '../../platform/storage';
+import { localizePage } from './localize';
 
 const log = logger('popup');
+
+const REFUSALS: Record<ImportRefusal, MessageKey> = {
+  'not-a-backup': 'importNotBackup',
+  newer: 'importNewer',
+  'other-model': 'importOtherModel',
+};
 
 const el = <T extends HTMLElement>(id: string): T => {
   const node = document.getElementById(id);
@@ -68,14 +82,28 @@ const engineDot = el<HTMLSpanElement>('engine-dot');
 const engineLine = el<HTMLParagraphElement>('engine-line');
 const chipText = el<HTMLSpanElement>('engine-chip-text');
 const chipDot = el<HTMLSpanElement>('engine-chip-dot');
+const languagePicker = el<HTMLSelectElement>('language');
+const languageFlag = el<HTMLSpanElement>('language-flag');
 
 let saved: Settings = await loadSettings();
 
+const browserLanguage = browser.i18n.getUILanguage();
+const language = resolveLanguage(saved.language, browserLanguage);
+const t = await loadTranslator(language);
+document.documentElement.lang = language.replace('_', '-');
+localizePage(document, t);
+
+for (const { code, flag, name } of LANGUAGES) {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = `${flag} ${name}`;
+  languagePicker.append(option);
+}
+
 /** States the trade-off, never a measured share: one feed's numbers are not the reader's. */
 function describeStrictness(step: number, key: ModelKey): string {
-  if (feedShownAt(step, modelFor(key)) >= 1)
-    return 'Blurs nothing — every post stays visible.';
-  return "Stricter hides more, including some posts you'd want. Blurred posts stay one click away.";
+  if (feedShownAt(step, modelFor(key)) >= 1) return t('strictnessOff');
+  return t('strictnessTradeoff');
 }
 
 /**
@@ -87,9 +115,7 @@ function renderModel(key: ModelKey, blurOther: boolean): void {
   const spec = modelFor(key);
   model.value = key;
   const monolingual = spec.language !== undefined;
-  modelHint.textContent = monolingual
-    ? 'Reads English only. Small, and quick on every post.'
-    : 'Reads every language and sorts more accurately, even in English. Slower on every post; downloads once.';
+  modelHint.textContent = t(monolingual ? 'modelHintEnglish' : 'modelHintMultilingual');
   blurOtherLanguages.checked = monolingual && blurOther;
   blurOtherLanguages.disabled = !monolingual;
   blurOtherLanguages.parentElement?.classList.toggle('disabled', !monolingual);
@@ -100,7 +126,7 @@ function renderModel(key: ModelKey, blurOther: boolean): void {
 
 function renderEnabled(on: boolean): void {
   enabled.checked = on;
-  enabledLabel.textContent = on ? 'On' : 'Off';
+  enabledLabel.textContent = t(on ? 'switchOn' : 'switchOff');
 }
 
 function render(settings: Settings): void {
@@ -114,6 +140,9 @@ function render(settings: Settings): void {
   blurThinMedia.checked = settings.blurThinMedia;
   collapseBlurred.checked = settings.collapseBlurred;
   tuneFeedback.checked = settings.tuneFromFeedback;
+  const shown = resolveLanguage(settings.language, browserLanguage);
+  languagePicker.value = shown;
+  languageFlag.textContent = LANGUAGES.find((item) => item.code === shown)?.flag ?? '';
   refreshApply();
 }
 
@@ -126,18 +155,18 @@ function refreshApply(): void {
 function describeStatus(settings: Settings): void {
   if (!settings.enabled) {
     dot.dataset.state = 'idle';
-    statusText.textContent = 'Off';
+    statusText.textContent = t('switchOff');
     return;
   }
   if (settings.topics.length === 0) {
     dot.dataset.state = 'idle';
-    statusText.textContent = 'Add a topic above to start';
+    statusText.textContent = t('statusNoTopics');
     return;
   }
   dot.dataset.state = 'ready';
+  const count = settings.topics.length;
   statusText.textContent =
-    `Filtering with ${settings.topics.length} topic` +
-    (settings.topics.length === 1 ? '' : 's');
+    count === 1 ? t('statusTopicsOne') : t('statusTopicsMany', String(count));
 }
 
 /**
@@ -148,11 +177,11 @@ function describeStatus(settings: Settings): void {
  * the chip alone says everything left to say.
  */
 function describeEngineStatus(status: EngineStatus | undefined): void {
-  const short = summarizeEngine(status);
+  const short = summarizeEngine(status, t);
   chipDot.dataset.state = short.tone;
   chipText.textContent = short.text;
 
-  const full = describeEngine(status);
+  const full = describeEngine(status, t);
   engineDot.dataset.state = full.tone;
   engineText.textContent = full.text;
   engineLine.hidden = full.tone === 'ready';
@@ -171,6 +200,9 @@ async function update(patch: Partial<Settings>): Promise<boolean> {
   }
   describeStatus(saved);
   refreshApply();
+  // Reloaded, not re-rendered: the text is set from many places, and a reload
+  // cannot leave any of it in the old language.
+  if (resolveLanguage(saved.language, browserLanguage) !== language) location.reload();
   return true;
 }
 
@@ -182,6 +214,11 @@ describeStatus(saved);
 void askEngineStatus().then(({ tabId, status }) => {
   describeEngineStatus(status);
   onEngineStatus(tabId, describeEngineStatus);
+});
+
+languagePicker.addEventListener('change', () => {
+  const next = languagePicker.value;
+  if (isLanguageCode(next)) void update({ language: next });
 });
 
 enabled.addEventListener('change', () => {
@@ -225,7 +262,7 @@ async function renderTuning(): Promise<void> {
   statUp.textContent = String(up);
   statDown.textContent = String(down);
   statTotal.textContent = String(total);
-  tuningNote.textContent = total === 0 ? 'You have not rated any posts yet.' : '';
+  tuningNote.textContent = total === 0 ? t('tuningNone') : '';
   clearTuning.disabled = total === 0;
   exportButton.disabled = total === 0 && saved.topics.length === 0;
 }
@@ -303,7 +340,7 @@ exportButton.addEventListener('click', () => {
       log.warn('export failed', {
         reason: error instanceof Error ? error.message : String(error),
       });
-      say('Export failed', 'nothing was written', 'bad');
+      say(t('exportFailed'), t('exportFailedTail'), 'bad');
     }
   })();
 });
@@ -312,7 +349,7 @@ exportButton.addEventListener('click', () => {
 const IN_TAB = new URLSearchParams(location.search).has('tab');
 if (IN_TAB) {
   document.documentElement.dataset['tab'] = '';
-  say('Import', '— choose your backup file', 'ok');
+  say(t('importPrompt'), t('importPromptTail'), 'ok');
   importButton.focus();
 }
 
@@ -333,32 +370,27 @@ importFile.addEventListener('change', () => {
   void (async () => {
     const result = importConfig(await file.text().catch(() => ''));
     if (!result.ok) {
-      say(file.name, `— ${result.reason}`, 'bad');
+      say(file.name, t(REFUSALS[result.reason]), 'bad');
       return;
     }
     // Corrections first: the settings write is what makes a feed tab requery,
     // and it must not find the old vectors still in place.
     await saveFeedback(modelFor(result.settings.model), result.feedback);
     if (!(await update(result.settings))) {
-      say(file.name, '— could not be saved', 'bad');
+      say(file.name, t('importSaveFailed'), 'bad');
       return;
     }
     render(saved);
     applied.hidden = true;
     await renderTuning();
     const { total } = counts(result.feedback);
-    const topics = saved.topics.length;
-    say(
-      file.name,
-      `\u2713 ${topics} topic${topics === 1 ? '' : 's'}, ${total} rating${total === 1 ? '' : 's'}`,
-      'ok',
-    );
+    say(file.name, t('importDone', String(saved.topics.length), String(total)), 'ok');
   })();
 });
 
 reset.addEventListener('click', () => {
   void Promise.all([
-    update({ ...DEFAULT_SETTINGS, topics: saved.topics }),
+    update({ ...DEFAULT_SETTINGS, topics: saved.topics, language: saved.language }),
     clearFeedback().catch(() => undefined),
   ]).then(() => {
     render(saved);

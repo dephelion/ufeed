@@ -35,7 +35,7 @@ not synced to other devices, and is never transmitted.
 
 | What          | Details                                                                                        |
 | :------------ | :--------------------------------------------------------------------------------------------- |
-| Your settings | Topics, strictness, which model you chose, and the on/off toggles in the popup.                |
+| Your settings | Topics, strictness, which model you chose, your language, and the on/off toggles in the popup. |
 | Thumb ratings | Only if you turn on "Learn from my thumbs", which is **off** unless you turn it on. See below. |
 
 **About thumb ratings.** When that option is on and you rate a post, FeedLens

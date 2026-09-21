@@ -1,9 +1,15 @@
 import { ScoreCache, hashText } from '../core/cache';
 import { logger } from '../core/log';
+import type { Translate } from '../core/messages';
 import { gatesLanguage } from '../core/language';
 import { modelFor } from '../core/models';
 import type { EngineState } from '../core/protocol';
-import { isActive, topicsEqual, type Settings } from '../core/settings';
+import {
+  isActive,
+  onlyLanguageChanged,
+  topicsEqual,
+  type Settings,
+} from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
 import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
@@ -31,6 +37,7 @@ export interface FeedFilterOptions {
   tuner: Tuning;
   settings: Settings;
   detectLanguage: DetectLanguage;
+  t: Translate;
   /** Told whenever the number of posts being hidden changes. */
   onHiddenChange?: (count: number) => void;
 }
@@ -54,6 +61,7 @@ export class FeedFilter {
   /** Content hashes of the posts being hidden: a virtualized feed remounts one post as a new node. */
   readonly #hidden = new Set<string>();
   readonly #onHiddenChange: (count: number) => void;
+  readonly #t: Translate;
 
   constructor({
     adapter,
@@ -61,9 +69,11 @@ export class FeedFilter {
     tuner,
     settings,
     detectLanguage,
+    t,
     onHiddenChange = () => {},
   }: FeedFilterOptions) {
     this.#onHiddenChange = onHiddenChange;
+    this.#t = t;
     this.#adapter = adapter;
     this.#engine = engine;
     this.#tuner = tuner;
@@ -119,6 +129,10 @@ export class FeedFilter {
   }
 
   applySettings(next: Settings): void {
+    if (onlyLanguageChanged(this.#settings, next)) {
+      this.#settings = next;
+      return;
+    }
     const topicsChanged = !topicsEqual(next.topics, this.#settings.topics);
     const tuningChanged = next.tuneFromFeedback !== this.#settings.tuneFromFeedback;
     const modelChanged = next.model !== this.#settings.model;
@@ -260,8 +274,8 @@ export class FeedFilter {
     this.#track(post.text, action !== 'reveal');
     const collapse = this.#settings.collapseBlurred;
     if (action === 'reveal') reveal(post.container);
-    else if (action === 'peek') peek(post.container, post.text, collapse);
-    else blur(post.container, REASONS[action], collapse);
+    else if (action === 'peek') peek(post.container, this.#t, post.text, collapse);
+    else blur(post.container, this.#t, REASONS[action], collapse);
     this.#settle(post.container, action === 'reveal');
     return action;
   }
@@ -336,7 +350,7 @@ export class FeedFilter {
     const { state } = this.#engine.status;
     if (state === 'downloading' || state === 'error') return;
     if (isBlurred(post.container) || isRevealed(post.container)) return;
-    showSkeleton(post.container);
+    showSkeleton(post.container, this.#t);
   }
 
   /**

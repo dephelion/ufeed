@@ -1,3 +1,5 @@
+import type { Translate } from '../core/messages';
+
 const SKELETON_CLASS = 'lx-pending';
 
 /**
@@ -32,8 +34,9 @@ const SKELETON_MS = 10_000;
 const holding = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
 
 /** Caller's job to know whether the post is blurred or revealed; this only holds. */
-export function showSkeleton(element: HTMLElement): void {
+export function showSkeleton(element: HTMLElement, t: Translate): void {
   element.classList.add(SKELETON_CLASS);
+  element.dataset.lxPending = t('labelPending');
   clearTimeout(holding.get(element));
   holding.set(
     element,
@@ -45,6 +48,7 @@ export function hideSkeleton(element: HTMLElement): void {
   clearTimeout(holding.get(element));
   holding.delete(element);
   element.classList.remove(SKELETON_CLASS);
+  delete element.dataset.lxPending;
 }
 
 export function isSkeleton(element: HTMLElement): boolean {

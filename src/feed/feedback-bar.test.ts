@@ -1,5 +1,12 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 import { mountFeedbackBar } from './feedback-bar';
+import { createTranslator } from '../core/messages';
+import { translate as t } from '../platform/i18n';
+
+const spanish = createTranslator(
+  JSON.parse(readFileSync('public/_locales/es/messages.json', 'utf8')),
+);
 
 const post = () => {
   const container = document.createElement('article');
@@ -14,6 +21,7 @@ describe('the thumbs bar', () => {
     const container = post();
     const onFeedback = vi.fn();
     const bar = mountFeedbackBar({
+      t,
       postAt: () => ({ container, text: 'a post about rust' }),
       onFeedback,
     });
@@ -30,6 +38,26 @@ describe('the thumbs bar', () => {
       expect.objectContaining({ container }),
       false,
     );
+
+    bar.unmount();
+  });
+
+  it('writes its titles again when the language changes, busy or not', () => {
+    let current = t;
+    const bar = mountFeedbackBar({
+      t: (key, ...substitutions) => current(key, ...substitutions),
+      postAt: () => undefined,
+      onFeedback: vi.fn(),
+    });
+    const up = document.querySelector<HTMLButtonElement>('.lx-fb-up')!;
+
+    bar.setBusy(true);
+    current = spanish;
+    bar.relabel();
+    expect(up.title).toBe('Comprobando publicaciones, un momento');
+
+    bar.setBusy(false);
+    expect(up.title).toBe('Dentro del tema');
 
     bar.unmount();
   });

@@ -1,4 +1,5 @@
 import { logger } from '../core/log';
+import type { Translate } from '../core/messages';
 
 const log = logger('feedback');
 
@@ -10,6 +11,7 @@ export interface PostRef {
 }
 
 export interface FeedbackBarOptions {
+  t: Translate;
   /** Resolves the post under the pointer, or undefined if it is not a post. */
   postAt(target: Element): PostRef | undefined;
   onFeedback(post: PostRef, liked: boolean): void;
@@ -18,10 +20,10 @@ export interface FeedbackBarOptions {
 export interface FeedbackBar {
   /** While the engine is busy a thumb would queue behind scoring and could time out. */
   setBusy(busy: boolean): void;
+  /** Writes the text again, for a `t` that now answers in another language. */
+  relabel(): void;
   unmount(): void;
 }
-
-const BUSY_TITLE = 'Checking posts, one moment';
 
 /**
  * One floating element over the hovered post, never a child of it: injecting a
@@ -32,8 +34,8 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
   bar.className = 'lx-fb';
   bar.setAttribute('aria-hidden', 'true');
   bar.innerHTML =
-    '<button type="button" class="lx-fb-up" title="On topic">&#128077;</button>' +
-    '<button type="button" class="lx-fb-down" title="Off topic">&#128078;</button>';
+    '<button type="button" class="lx-fb-up">&#128077;</button>' +
+    '<button type="button" class="lx-fb-down">&#128078;</button>';
 
   let current: PostRef | undefined;
   let busy = false;
@@ -45,6 +47,11 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
 
   const up = bar.querySelector<HTMLButtonElement>('.lx-fb-up')!;
   const down = bar.querySelector<HTMLButtonElement>('.lx-fb-down')!;
+  const relabel = () => {
+    up.title = options.t(busy ? 'thumbBusy' : 'thumbUp');
+    down.title = options.t(busy ? 'thumbBusy' : 'thumbDown');
+  };
+  relabel();
 
   const show = (post: PostRef) => {
     const box = post.container.getBoundingClientRect();
@@ -99,9 +106,9 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
       bar.classList.toggle('lx-fb-busy', busy);
       up.disabled = busy;
       down.disabled = busy;
-      up.title = busy ? BUSY_TITLE : 'On topic';
-      down.title = busy ? BUSY_TITLE : 'Off topic';
+      relabel();
     },
+    relabel,
     unmount() {
       document.removeEventListener('mouseover', onOver, true);
       window.removeEventListener('scroll', hide);

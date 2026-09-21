@@ -1,11 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { LANGUAGES } from '../../core/languages';
+import { DEFAULT_SETTINGS, type Settings } from '../../core/settings';
 
 const store: Record<string, unknown> = {};
 const listeners: unknown[] = [];
-vi.mock('webextension-polyfill', () => ({
+vi.mock('webextension-polyfill', async () => ({
   default: {
+    // The English catalog from vitest.setup.ts.
+    i18n: (await import('wxt/testing/fake-browser')).fakeBrowser.i18n,
     runtime: {
+      getURL: (path: string) => path,
       getManifest: () => ({ version: '9.9.9' }),
       sendMessage: async () => undefined,
       onMessage: { addListener: () => {}, removeListener: () => {} },
@@ -23,6 +28,11 @@ vi.mock('webextension-polyfill', () => ({
       },
     },
   },
+}));
+
+// The popup reads its language's catalog from the extension package; here, from disk.
+vi.stubGlobal('fetch', async (url: string) => ({
+  json: async () => JSON.parse(readFileSync(`public${url}`, 'utf8')),
 }));
 
 const html = readFileSync('src/entrypoints/popup/index.html', 'utf8');
@@ -69,6 +79,7 @@ describe('the backup row in a rendered popup', () => {
     const file = JSON.parse(downloaded!.text);
     expect(file.app).toBe('9.9.9');
     expect(file.settings.topics).toEqual(['software engineering']);
+    expect(file.settings.language).toBe('auto');
     expect(Object.keys(file.feedback['software engineering'])).toHaveLength(1);
     // An anchor download reports nothing back, so the popup claims nothing:
     // the save dialog may still be open, and may be cancelled.
@@ -142,5 +153,59 @@ describe('the language checkbox in a rendered popup', () => {
     await pick('e5-small');
     expect(box().disabled).toBe(false);
     expect(box().checked).toBe(true);
+  });
+});
+
+describe('the language menu in a rendered popup', () => {
+  const picker = () => el('language') as HTMLSelectElement;
+  const reload = vi.spyOn(window.location, 'reload').mockImplementation(() => {});
+  const choose = async (code: string) => {
+    picker().value = code;
+    picker().dispatchEvent(new Event('change'));
+    await tick();
+  };
+
+  it('offers every language with its flag first', () => {
+    const labels = [...picker().options].map((option) => option.textContent ?? '');
+    expect(labels).toHaveLength(LANGUAGES.length);
+    for (const label of labels) expect(label).toMatch(/^\p{Regional_Indicator}{2} \S/u);
+    expect(labels[0]).toBe('🇬🇧 English');
+  });
+
+  it('shows the flag of the language in use', () => {
+    expect(el('language-flag').textContent).toBe('🇬🇧');
+  });
+
+  it('saves the choice with the settings, changes nothing else, and reopens in it', async () => {
+    const before = { ...(store['settings'] as Settings) };
+    await choose('es');
+    expect(store['settings']).toEqual({ ...before, language: 'es' });
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('survives a reset of everything else', async () => {
+    (el('reset') as HTMLButtonElement).click();
+    await tick();
+    const stored = store['settings'] as Settings;
+    expect(stored.language).toBe('es');
+    expect(stored.strictness).toBe(DEFAULT_SETTINGS.strictness);
+  });
+
+  it('comes back from an imported backup, and reopens in it', async () => {
+    reload.mockClear();
+    const file = JSON.parse(downloaded!.text);
+    file.settings.language = 'ja';
+    const input = el('import-file') as HTMLInputElement;
+    Object.defineProperty(input, 'files', {
+      value: [
+        { name: 'backup.json', text: async () => JSON.stringify(file) },
+      ] as unknown as FileList,
+      configurable: true,
+    });
+    input.dispatchEvent(new Event('change'));
+    await tick();
+
+    expect((store['settings'] as Settings).language).toBe('ja');
+    expect(reload).toHaveBeenCalled();
   });
 });

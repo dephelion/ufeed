@@ -11,7 +11,7 @@
 /* No colour of our own: it inherits the host's text colour, which contrasts with the
    host's background, so it is white on a dark feed and black on a light one. */
 .lx-pending::after {
-  content: 'Classifying…';
+  content: attr(data-lx-pending);
   position: absolute;
   top: 50%;
   left: 50%;
