@@ -1,6 +1,6 @@
-# Chrome Web Store listing
+# Store listing
 
-Copy to paste into the developer dashboard, plus the answers the review form
+Copy to paste into the Chrome Web Store and Firefox Add-ons dashboards, plus the answers the review form
 asks for. Kept in the repo so the listing and the code change together.
 
 ## Identity
@@ -95,6 +95,40 @@ _collected_ — it is never stored and never transmitted — so the answer is no
 If a reviewer queries it, the explanation is that scoring happens entirely in
 the content script and a Web Worker, and the result is a number applied to the
 page.
+
+## Firefox Add-ons: notes to reviewer
+
+Paste into the "Notes to Reviewer" field. Upload `ufeed-<version>-sources.zip`
+when AMO asks for source code.
+
+```text
+uFeed blurs posts on X, LinkedIn and Reddit that do not match topics the user writes. It scores posts with a small embedding model that runs entirely on the device. Open source (GPL-3.0): https://github.com/dephelion/ufeed
+
+BUILD FROM THE ATTACHED SOURCES ZIP
+- Node 22.12 or later (tested with Node 24.19.0 and npm 11.17.0 on macOS).
+- npm ci
+- npm run build:firefox
+- Output: .output/firefox-mv3/, identical file for file to the uploaded package.
+The production build is minified by Vite (WXT). The source under src/ is unminified TypeScript.
+
+THIRD-PARTY BINARIES
+public/ort/ort-wasm-simd-threaded.jsep.wasm and .mjs are the unmodified ONNX Runtime Web files from the onnxruntime-web package pinned in package-lock.json (1.22.0-dev.20250409-89f8206ba4). scripts/sync-ort.mjs copies them from node_modules/onnxruntime-web/dist/ on npm install, so they can be compared byte for byte. They are bundled and loaded from the extension; nothing is fetched from a CDN.
+
+CONTENT SECURITY POLICY
+'wasm-unsafe-eval' on extension pages is needed only to compile that bundled ONNX Runtime WebAssembly. No remote code is executed and nothing uses eval.
+
+NETWORK
+The only request is a one-time download of model weights (data files, not code) from huggingface.co, which redirects to its hf.co CDN. The browser then caches them. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics, no accounts, no data collected (data_collection_permissions: none).
+
+WHY THE HIDDEN IFRAME
+The content script injects engine.html (a web_accessible_resource) as a hidden iframe. An MV3 background cannot start a Worker and a content script cannot start one on the extension origin, so the iframe exists only to run the model in a Worker. It receives post text over a MessageChannel and returns scores. It never reads the host page.
+
+HOW TO TEST
+1. Install, then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.
+2. Click the toolbar icon, type a topic such as "cooking, recipes, food", and click Save topics.
+3. The first run downloads the model; the popup shows progress, then Ready.
+4. Posts that are not about the topic blur. Click one to reveal it.
+```
 
 ## Assets still needed
 
