@@ -370,12 +370,15 @@
     "message": "Zurücksetzen"
   },
   "resetHint": {
-    "message": "Stellt die Standardwerte wieder her und löscht deine Daumen-Bewertungen. Deine Themen bleiben erhalten."
+    "message": "Stellt die Standardwerte wieder her und löscht deine Daumen-Bewertungen. Deine Themen und die Sprache bleiben erhalten."
   },
   "reportIssue": {
     "message": "📥 Problem melden oder Idee teilen"
   },
   "githubLabel": {
     "message": "FeedLens auf GitHub"
+  },
+  "languageLabel": {
+    "message": "Sprache"
   }
 }

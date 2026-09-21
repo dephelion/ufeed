@@ -370,12 +370,15 @@
     "message": "重置"
   },
   "resetHint": {
-    "message": "恢复默认设置，并删除你的点赞点踩评分。你的主题会保留。"
+    "message": "恢复默认设置，并删除你的点赞点踩评分。你的主题和语言会保留。"
   },
   "reportIssue": {
     "message": "📥 报告问题或分享想法"
   },
   "githubLabel": {
     "message": "GitHub 上的 FeedLens"
+  },
+  "languageLabel": {
+    "message": "语言"
   }
 }

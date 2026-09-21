@@ -192,6 +192,18 @@ describe('FeedFilter', () => {
     expect(engine.score).toHaveBeenCalledTimes(1);
   });
 
+  it('does nothing when only the popup language changes', async () => {
+    const { engine, filter } = await run(SETTINGS, ['a chocolate cake recipe']);
+    const connects = engine.connect.mock.calls.length;
+
+    filter.applySettings({ ...SETTINGS, language: 'es' });
+
+    expect(engine.connect).toHaveBeenCalledTimes(connects);
+    expect(engine.restart).not.toHaveBeenCalled();
+    expect(engine.score).toHaveBeenCalledTimes(1);
+    expect(isBlurred(post('cake'))).toBe(true);
+  });
+
   it('discards scores measured against topics that have since changed', async () => {
     let answerOld: (matches: RatedMatch[]) => void = () => {};
     const calls: Promise<RatedMatch[]>[] = [

@@ -422,7 +422,7 @@
     "message": "Reset"
   },
   "resetHint": {
-    "message": "Restores the defaults and deletes your thumb ratings. Your topics are kept."
+    "message": "Restores the defaults and deletes your thumb ratings. Your topics and language are kept."
   },
   "reportIssue": {
     "message": "📥 Report an issue or share an idea"
@@ -430,5 +430,9 @@
   "githubLabel": {
     "message": "FeedLens on GitHub",
     "description": "Tooltip and accessible name of the GitHub icon link."
+  },
+  "languageLabel": {
+    "message": "Language",
+    "description": "Tooltip and accessible name of the flag menu that changes the popup language."
   }
 }

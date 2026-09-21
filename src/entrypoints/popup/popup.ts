@@ -19,9 +19,10 @@ import {
   summarizeEngine,
   type EngineStatus,
 } from '../../core/engine-status';
+import { LANGUAGES, isLanguageCode, resolveLanguage } from '../../core/languages';
 import { logger } from '../../core/log';
 import type { MessageKey } from '../../core/messages';
-import { translate as t } from '../../platform/i18n';
+import { loadTranslator } from '../../platform/i18n';
 import { askEngineStatus, onEngineStatus } from '../../platform/status-channel';
 import {
   clearFeedback,
@@ -81,12 +82,23 @@ const engineDot = el<HTMLSpanElement>('engine-dot');
 const engineLine = el<HTMLParagraphElement>('engine-line');
 const chipText = el<HTMLSpanElement>('engine-chip-text');
 const chipDot = el<HTMLSpanElement>('engine-chip-dot');
-
-// Before the settings load, so the popup never opens empty.
-document.documentElement.lang = browser.i18n.getUILanguage();
-localizePage(document, t);
+const languagePicker = el<HTMLSelectElement>('language');
+const languageFlag = el<HTMLSpanElement>('language-flag');
 
 let saved: Settings = await loadSettings();
+
+const browserLanguage = browser.i18n.getUILanguage();
+const language = resolveLanguage(saved.language, browserLanguage);
+const t = await loadTranslator(language);
+document.documentElement.lang = language.replace('_', '-');
+localizePage(document, t);
+
+for (const { code, flag, name } of LANGUAGES) {
+  const option = document.createElement('option');
+  option.value = code;
+  option.textContent = `${flag} ${name}`;
+  languagePicker.append(option);
+}
 
 /** States the trade-off, never a measured share: one feed's numbers are not the reader's. */
 function describeStrictness(step: number, key: ModelKey): string {
@@ -128,6 +140,9 @@ function render(settings: Settings): void {
   blurThinMedia.checked = settings.blurThinMedia;
   collapseBlurred.checked = settings.collapseBlurred;
   tuneFeedback.checked = settings.tuneFromFeedback;
+  const shown = resolveLanguage(settings.language, browserLanguage);
+  languagePicker.value = shown;
+  languageFlag.textContent = LANGUAGES.find((item) => item.code === shown)?.flag ?? '';
   refreshApply();
 }
 
@@ -185,6 +200,9 @@ async function update(patch: Partial<Settings>): Promise<boolean> {
   }
   describeStatus(saved);
   refreshApply();
+  // Reloaded, not re-rendered: the text is set from many places, and a reload
+  // cannot leave any of it in the old language.
+  if (resolveLanguage(saved.language, browserLanguage) !== language) location.reload();
   return true;
 }
 
@@ -196,6 +214,11 @@ describeStatus(saved);
 void askEngineStatus().then(({ tabId, status }) => {
   describeEngineStatus(status);
   onEngineStatus(tabId, describeEngineStatus);
+});
+
+languagePicker.addEventListener('change', () => {
+  const next = languagePicker.value;
+  if (isLanguageCode(next)) void update({ language: next });
 });
 
 enabled.addEventListener('change', () => {
@@ -367,7 +390,7 @@ importFile.addEventListener('change', () => {
 
 reset.addEventListener('click', () => {
   void Promise.all([
-    update({ ...DEFAULT_SETTINGS, topics: saved.topics }),
+    update({ ...DEFAULT_SETTINGS, topics: saved.topics, language: saved.language }),
     clearFeedback().catch(() => undefined),
   ]).then(() => {
     render(saved);

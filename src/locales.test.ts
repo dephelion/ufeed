@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { LANGUAGES } from './core/languages';
 
 /** A missing key renders as an empty string in both browsers, so nothing else would notice. wiki-llm/i18n.md. */
 const ROOT = 'public/_locales';
@@ -65,6 +66,11 @@ describe('the locales', () => {
         expect(text.length, key).toBeLessThanOrEqual(CHIP_LIMIT);
       }
     });
+  });
+
+  it('are all offered in the popup, and only those', () => {
+    const offered = LANGUAGES.map((language) => language.code).sort();
+    expect(offered).toEqual([...locales].sort());
   });
 
   it('cover every key the popup page names', () => {

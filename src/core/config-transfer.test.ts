@@ -133,3 +133,27 @@ describe('a file that is trusted but wrong in places', () => {
     expect(result.settings.blurOtherLanguages).toBe(true);
   });
 });
+
+describe('the popup language in a backup', () => {
+  it('is carried like any other setting', () => {
+    const result = roundTrip({ ...settings, language: 'ja' });
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings.language).toBe('ja');
+  });
+
+  it('falls back to the browser when the file names a language this build lacks', () => {
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
+    file.settings.language = 'klingon';
+    const result = importConfig(JSON.stringify(file));
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings.language).toBe('auto');
+  });
+
+  it('reads a backup written before the language existed as following the browser', () => {
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
+    delete file.settings.language;
+    const result = importConfig(JSON.stringify(file));
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings.language).toBe('auto');
+  });
+});

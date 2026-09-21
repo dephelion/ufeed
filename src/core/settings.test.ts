@@ -3,9 +3,11 @@ import {
   DEFAULT_SETTINGS,
   isActive,
   needsTopics,
+  onlyLanguageChanged,
   parseTopics,
   topicsEqual,
   withDefaults,
+  type Settings,
 } from './settings';
 
 const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
@@ -118,5 +120,36 @@ describe('a settings value of the wrong type', () => {
     const read = withDefaults({ topics: ['rust'], showScores: true });
     expect(read.topics).toEqual(['rust']);
     expect(read.showScores).toBe(true);
+  });
+});
+
+describe('language', () => {
+  it('follows the browser until the reader picks one', () => {
+    expect(DEFAULT_SETTINGS.language).toBe('auto');
+  });
+
+  it('keeps a language this build ships', () => {
+    expect(withDefaults({ language: 'de' }).language).toBe('de');
+  });
+
+  it('falls back to the browser for one it does not, as a hand-edited backup may hold', () => {
+    const unknown = 'klingon' as Settings['language'];
+    expect(withDefaults({ language: unknown }).language).toBe('auto');
+  });
+});
+
+describe('onlyLanguageChanged', () => {
+  it('is true when the language is all that differs', () => {
+    expect(onlyLanguageChanged(withTopics, { ...withTopics, language: 'ja' })).toBe(true);
+  });
+
+  it('is false when anything else changed with it', () => {
+    const after = { ...withTopics, language: 'ja' as const };
+    expect(onlyLanguageChanged(withTopics, { ...after, strictness: 2 })).toBe(false);
+    expect(onlyLanguageChanged(withTopics, { ...after, topics: ['baking'] })).toBe(false);
+  });
+
+  it('is false when the language did not change at all', () => {
+    expect(onlyLanguageChanged(withTopics, { ...withTopics })).toBe(false);
   });
 });

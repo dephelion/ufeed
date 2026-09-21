@@ -4,7 +4,12 @@ import type { Translate } from '../core/messages';
 import { gatesLanguage } from '../core/language';
 import { modelFor } from '../core/models';
 import type { EngineState } from '../core/protocol';
-import { isActive, topicsEqual, type Settings } from '../core/settings';
+import {
+  isActive,
+  onlyLanguageChanged,
+  topicsEqual,
+  type Settings,
+} from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
 import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
@@ -124,6 +129,10 @@ export class FeedFilter {
   }
 
   applySettings(next: Settings): void {
+    if (onlyLanguageChanged(this.#settings, next)) {
+      this.#settings = next;
+      return;
+    }
     const topicsChanged = !topicsEqual(next.topics, this.#settings.topics);
     const tuningChanged = next.tuneFromFeedback !== this.#settings.tuneFromFeedback;
     const modelChanged = next.model !== this.#settings.model;

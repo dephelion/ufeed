@@ -8,7 +8,17 @@
   </head>
   <body>
     <header>
-      <h1>FeedLens</h1>
+      <div class="title">
+        <h1>FeedLens</h1>
+        <label class="language">
+          <span id="language-flag" aria-hidden="true"></span>
+          <select
+            id="language"
+            data-i18n-aria-label="languageLabel"
+            data-i18n-title="languageLabel"
+          ></select>
+        </label>
+      </div>
       <span class="chip" id="engine-chip">
         <span class="dot" id="engine-chip-dot"></span>
         <span id="engine-chip-text" data-i18n="chipInitial"></span>

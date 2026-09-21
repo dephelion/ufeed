@@ -370,12 +370,15 @@
     "message": "Redefinir"
   },
   "resetHint": {
-    "message": "Restaura os padrões e apaga suas avaliações com polegares. Seus tópicos são mantidos."
+    "message": "Restaura os padrões e apaga suas avaliações com polegares. Seus tópicos e o idioma são mantidos."
   },
   "reportIssue": {
     "message": "📥 Relatar um problema ou compartilhar uma ideia"
   },
   "githubLabel": {
     "message": "FeedLens no GitHub"
+  },
+  "languageLabel": {
+    "message": "Idioma"
   }
 }

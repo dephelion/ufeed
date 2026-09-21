@@ -370,12 +370,15 @@
     "message": "Réinitialiser"
   },
   "resetHint": {
-    "message": "Rétablit les valeurs par défaut et supprime vos évaluations par pouces. Vos sujets sont conservés."
+    "message": "Rétablit les valeurs par défaut et supprime vos évaluations par pouces. Vos sujets et la langue sont conservés."
   },
   "reportIssue": {
     "message": "📥 Signaler un problème ou partager une idée"
   },
   "githubLabel": {
     "message": "FeedLens sur GitHub"
+  },
+  "languageLabel": {
+    "message": "Langue"
   }
 }

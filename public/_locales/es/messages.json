@@ -370,12 +370,15 @@
     "message": "Restablecer"
   },
   "resetHint": {
-    "message": "Restaura los valores por defecto y borra tus valoraciones con pulgares. Tus temas se conservan."
+    "message": "Restaura los valores por defecto y borra tus valoraciones con pulgares. Tus temas y el idioma se conservan."
   },
   "reportIssue": {
     "message": "📥 Informar de un problema o compartir una idea"
   },
   "githubLabel": {
     "message": "FeedLens en GitHub"
+  },
+  "languageLabel": {
+    "message": "Idioma"
   }
 }

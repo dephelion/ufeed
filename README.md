@@ -37,9 +37,10 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
   sorts more accurately, for a one-time 197 MB download and more work on every
   post. Your topics and settings carry over, and each model keeps its own thumb
   ratings.
-- **In your language.** The popup and the labels follow your browser's language:
-  English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese
-  (Simplified and Traditional).
+- **In your language.** The popup and the labels follow your browser's language,
+  and the flag next to the title switches the popup to another: English, Spanish,
+  German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and
+  Traditional).
 - **You can see why, and steer it.** A 0–10 strictness slider, an option to show
   every post's score, a peek strip that keeps close calls readable, and thumbs
   that correct near-copies of posts you rated.

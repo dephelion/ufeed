@@ -370,12 +370,15 @@
     "message": "リセット"
   },
   "resetHint": {
-    "message": "設定を初期値に戻し、👍/👎 の評価を削除します。トピックは保持されます。"
+    "message": "設定を初期値に戻し、👍/👎 の評価を削除します。トピックと言語は保持されます。"
   },
   "reportIssue": {
     "message": "📥 問題を報告、またはアイデアを共有"
   },
   "githubLabel": {
     "message": "GitHub の FeedLens"
+  },
+  "languageLabel": {
+    "message": "言語"
   }
 }

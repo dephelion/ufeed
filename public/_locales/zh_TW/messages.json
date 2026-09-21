@@ -370,12 +370,15 @@
     "message": "重設"
   },
   "resetHint": {
-    "message": "還原預設值，並刪除你的讚／倒讚評分。你的主題會保留。"
+    "message": "還原預設值，並刪除你的讚／倒讚評分。你的主題和語言會保留。"
   },
   "reportIssue": {
     "message": "📥 回報問題或分享想法"
   },
   "githubLabel": {
     "message": "GitHub 上的 FeedLens"
+  },
+  "languageLabel": {
+    "message": "語言"
   }
 }
