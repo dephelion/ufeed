@@ -10,7 +10,8 @@ leaves your browser.
 
 ## The idea
 
-<img width="1280" height="800" alt="image" src="https://github.com/user-attachments/assets/2cc961b3-b58e-469a-98f2-be0ba2222fa5" />
+<img width="3900" height="840" alt="feed-showcase-side-by-side-black" src="https://github.com/user-attachments/assets/9352db65-f6f0-47d1-8445-1aa01a643578" />
+
 
 
 Most feed filters ask what you want to get rid of. That list never ends: there is
