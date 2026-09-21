@@ -8,6 +8,7 @@ import { isBlurred } from './blur';
 import { FeedFilter } from './filter';
 import type { Engine, FeedbackStore } from './ports';
 import { Tuning } from './tuning';
+import { translate as t } from '../platform/i18n';
 
 /** happy-dom never intersects; this one reports every observed node as in view. */
 class InView {
@@ -82,6 +83,7 @@ async function run(
     tuner,
     settings,
     detectLanguage: async () => ({ isReliable: false, languages: [] }),
+    t,
     onHiddenChange,
   });
   filter.start();

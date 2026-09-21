@@ -9,6 +9,7 @@ import {
   revealAll,
   revealPermanently,
 } from './blur';
+import { translate as t } from '../platform/i18n';
 
 const post = () => {
   document.body.innerHTML = '<div id="p"><span>text</span></div>';
@@ -22,14 +23,24 @@ describe('blur', () => {
 
   it('hides the post from assistive tech as well as sight', () => {
     const el = post();
-    blur(el);
+    blur(el, t);
     expect(el.classList.contains('lx-blur')).toBe(true);
     expect(el.getAttribute('aria-hidden')).toBe('true');
   });
 
+  it('writes the label the stylesheet draws, and takes it away on reveal', () => {
+    const el = post();
+    blur(el, t, 'media');
+    expect(el.dataset.lxLabel).toBe(t('labelMedia'));
+    peek(el, t, 'opening words');
+    expect(el.dataset.lxLabel).toBe(t('labelPeek'));
+    reveal(el);
+    expect(el.dataset.lxLabel).toBeUndefined();
+  });
+
   it('reveal clears both', () => {
     const el = post();
-    blur(el);
+    blur(el, t);
     reveal(el);
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(el.hasAttribute('aria-hidden')).toBe(false);
@@ -38,40 +49,40 @@ describe('blur', () => {
   it('refuses to re-blur a post the user revealed', () => {
     const el = post();
     revealPermanently(el);
-    blur(el);
+    blur(el, t);
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(isRevealed(el)).toBe(true);
   });
 
   it('leaves a post uncollapsed by default', () => {
     const el = post();
-    blur(el);
+    blur(el, t);
     expect(el.classList.contains('lx-collapse')).toBe(false);
   });
 
   it('collapses a post on request', () => {
     const el = post();
-    blur(el, 'topic', true);
+    blur(el, t, 'topic', true);
     expect(el.classList.contains('lx-blur')).toBe(true);
     expect(el.classList.contains('lx-collapse')).toBe(true);
   });
 
   it('drops the collapse class when re-blurred without it', () => {
     const el = post();
-    blur(el, 'topic', true);
-    blur(el, 'topic', false);
+    blur(el, t, 'topic', true);
+    blur(el, t, 'topic', false);
     expect(el.classList.contains('lx-collapse')).toBe(false);
   });
 
   it('collapses a peek on request', () => {
     const el = post();
-    peek(el, 'opening words', true);
+    peek(el, t, 'opening words', true);
     expect(el.classList.contains('lx-collapse')).toBe(true);
   });
 
   it('reveal clears the collapse class too', () => {
     const el = post();
-    blur(el, 'topic', true);
+    blur(el, t, 'topic', true);
     reveal(el);
     expect(el.classList.contains('lx-collapse')).toBe(false);
   });
@@ -88,13 +99,13 @@ describe('isBlurred', () => {
 
   it('is true whether or not the blur is collapsed', () => {
     const el = post();
-    blur(el, 'topic', true);
+    blur(el, t, 'topic', true);
     expect(isBlurred(el)).toBe(true);
   });
 
   it('is false again once revealed', () => {
     const el = post();
-    blur(el);
+    blur(el, t);
     reveal(el);
     expect(isBlurred(el)).toBe(false);
   });
@@ -107,8 +118,8 @@ describe('listenForReveal', () => {
 
   it('reveals on click and stops the click reaching the post', () => {
     const el = post();
-    blur(el);
-    const stop = listenForReveal(document);
+    blur(el, t);
+    const stop = listenForReveal(t, document);
     let reachedPost = false;
     el.addEventListener('click', () => {
       reachedPost = true;
@@ -123,8 +134,8 @@ describe('listenForReveal', () => {
 
   it('lets a second click through once revealed', () => {
     const el = post();
-    blur(el);
-    const stop = listenForReveal(document);
+    blur(el, t);
+    const stop = listenForReveal(t, document);
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
     let reachedPost = false;
@@ -139,7 +150,7 @@ describe('listenForReveal', () => {
 
   it('ignores clicks on posts that were never blurred', () => {
     const el = post();
-    const stop = listenForReveal(document);
+    const stop = listenForReveal(t, document);
     let reachedPost = false;
     el.addEventListener('click', () => {
       reachedPost = true;
@@ -165,8 +176,8 @@ describe('keyboard and screen-reader reveal', () => {
   it('reveals on Enter from anything focused inside, without opening the post', () => {
     const link = linkInside();
     const el = link.parentElement!;
-    blur(el);
-    const stop = listenForReveal(document);
+    blur(el, t);
+    const stop = listenForReveal(t, document);
     const key = enter();
 
     link.dispatchEvent(key);
@@ -178,7 +189,7 @@ describe('keyboard and screen-reader reveal', () => {
 
   it('leaves Enter alone on a post that is not blurred', () => {
     const link = linkInside();
-    const stop = listenForReveal(document);
+    const stop = listenForReveal(t, document);
     const key = enter();
 
     link.dispatchEvent(key);
@@ -190,8 +201,8 @@ describe('keyboard and screen-reader reveal', () => {
   it('tells a screen reader why the focused post is hidden and how to read it', () => {
     vi.useFakeTimers();
     const link = linkInside();
-    blur(link.parentElement!, 'language');
-    const stop = listenForReveal(document);
+    blur(link.parentElement!, t, 'language');
+    const stop = listenForReveal(t, document);
 
     link.dispatchEvent(new FocusEvent('focusin', { bubbles: true }));
     vi.advanceTimersByTime(100);
@@ -221,7 +232,7 @@ describe('peek', () => {
     const el = post();
     const text =
       'Los circuitos de test son artificiales, creados por la mano del hombre.';
-    peek(el, text);
+    peek(el, t, text);
     expect(el.classList.contains('lx-blur')).toBe(true);
     expect(el.dataset.lxReason).toBe('peek');
     expect(text.startsWith(el.dataset.lxPeek!)).toBe(true);
@@ -230,20 +241,20 @@ describe('peek', () => {
 
   it('passes a short post through whole rather than truncating nothing', () => {
     const el = post();
-    peek(el, 'short one');
+    peek(el, t, 'short one');
     expect(el.dataset.lxPeek).toBe('short one');
   });
 
   it('never touches the host DOM, only attributes', () => {
     const el = post();
     const before = el.innerHTML;
-    peek(el, 'some borderline post text that is long enough to be cut');
+    peek(el, t, 'some borderline post text that is long enough to be cut');
     expect(el.innerHTML).toBe(before);
   });
 
   it('clears the peek on reveal, so a recycled node never shows stale words', () => {
     const el = post();
-    peek(el, 'borderline text');
+    peek(el, t, 'borderline text');
     reveal(el);
     expect(el.dataset.lxPeek).toBeUndefined();
     expect(el.dataset.lxReason).toBeUndefined();
@@ -252,7 +263,7 @@ describe('peek', () => {
   it('leaves a permanently revealed post alone', () => {
     const el = post();
     revealPermanently(el);
-    peek(el, 'borderline text');
+    peek(el, t, 'borderline text');
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(el.dataset.lxPeek).toBeUndefined();
   });

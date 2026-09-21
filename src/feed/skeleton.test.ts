@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { hideAllSkeletons, hideSkeleton, isSkeleton, showSkeleton } from './skeleton';
+import { translate as t } from '../platform/i18n';
 
 const post = () => {
   document.body.innerHTML = '<div id="p"><span>text</span></div>';
@@ -13,7 +14,7 @@ describe('the skeleton', () => {
 
   it('holds a post while it is being judged, without claiming a verdict', () => {
     const el = post();
-    showSkeleton(el);
+    showSkeleton(el, t);
     expect(isSkeleton(el)).toBe(true);
     // A verdict is a blur: a label, a reason, and hidden from a screen reader.
     expect(el.hasAttribute('aria-hidden')).toBe(false);
@@ -21,9 +22,17 @@ describe('the skeleton', () => {
     expect(el.classList.contains('lx-blur')).toBe(false);
   });
 
+  it('carries the text the stylesheet draws, only while held', () => {
+    const el = post();
+    showSkeleton(el, t);
+    expect(el.dataset.lxPending).toBe(t('labelPending'));
+    hideSkeleton(el);
+    expect(el.dataset.lxPending).toBeUndefined();
+  });
+
   it('lifts again on demand', () => {
     const el = post();
-    showSkeleton(el);
+    showSkeleton(el, t);
     hideSkeleton(el);
     expect(isSkeleton(el)).toBe(false);
   });
@@ -37,8 +46,8 @@ describe('the skeleton', () => {
     document.body.innerHTML = '<div id="a"></div><div id="b"></div>';
     const a = document.getElementById('a') as HTMLElement;
     const b = document.getElementById('b') as HTMLElement;
-    showSkeleton(a);
-    showSkeleton(b);
+    showSkeleton(a, t);
+    showSkeleton(b, t);
 
     hideAllSkeletons(document);
 
@@ -55,18 +64,18 @@ describe('the failsafe timer', () => {
 
   it('lifts a post nothing ever answered for', () => {
     const el = post();
-    showSkeleton(el);
+    showSkeleton(el, t);
     vi.advanceTimersByTime(10_000);
     expect(isSkeleton(el)).toBe(false);
   });
 
   it('extends rather than stacking, so re-holding cannot be cut short', () => {
     const el = post();
-    showSkeleton(el);
+    showSkeleton(el, t);
     vi.advanceTimersByTime(9_000);
 
     // Re-held while the queue is still draining: the first timer must not fire.
-    showSkeleton(el);
+    showSkeleton(el, t);
     vi.advanceTimersByTime(2_000);
     expect(isSkeleton(el)).toBe(true);
 
@@ -76,9 +85,9 @@ describe('the failsafe timer', () => {
 
   it('stops counting once the post is lifted', () => {
     const el = post();
-    showSkeleton(el);
+    showSkeleton(el, t);
     hideSkeleton(el);
-    showSkeleton(el);
+    showSkeleton(el, t);
     vi.advanceTimersByTime(9_000);
     // The lifted timer would have fired by now had it survived.
     expect(isSkeleton(el)).toBe(true);

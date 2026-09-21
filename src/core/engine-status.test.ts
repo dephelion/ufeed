@@ -6,6 +6,7 @@ import {
   worthReporting,
   type EngineStatus,
 } from './engine-status';
+import { translate as t } from '../platform/i18n';
 
 const status = (over: Partial<EngineStatus> = {}): EngineStatus => ({
   state: 'ready',
@@ -78,26 +79,29 @@ describe('worthReporting', () => {
 
 describe('describeEngine', () => {
   it("says there is no engine here rather than borrowing another tab's state", () => {
-    const { tone, text } = describeEngine(undefined);
+    const { tone, text } = describeEngine(undefined, t);
     expect(tone).toBe('idle');
     expect(text).toMatch(/no engine on this tab/i);
   });
 
   it('names the download as one-time, because the wait needs explaining', () => {
-    const { tone, text } = describeEngine(status({ state: 'downloading', progress: 37 }));
+    const { tone, text } = describeEngine(
+      status({ state: 'downloading', progress: 37 }),
+      t,
+    );
     expect(tone).toBe('busy');
     expect(text).toContain('37%');
     expect(text).toMatch(/one time/i);
   });
 
   it('survives a download with no percentage yet', () => {
-    const { text } = describeEngine(status({ state: 'downloading' }));
+    const { text } = describeEngine(status({ state: 'downloading' }), t);
     expect(text).not.toContain('undefined');
     expect(text).not.toContain('NaN');
   });
 
   it('reports ready without printing undefined', () => {
-    const { tone, text } = describeEngine(status({ state: 'ready' }));
+    const { tone, text } = describeEngine(status({ state: 'ready' }), t);
     expect(tone).toBe('ready');
     expect(text).not.toContain('undefined');
   });
@@ -105,6 +109,7 @@ describe('describeEngine', () => {
   it('surfaces the failure reason, since that is what a bug report needs', () => {
     const { tone, text } = describeEngine(
       status({ state: 'error', message: 'model returns wrong vectors' }),
+      t,
     );
     expect(tone).toBe('error');
     expect(text).toContain('model returns wrong vectors');
@@ -125,26 +130,26 @@ describe('summarizeEngine', () => {
       status({ state: 'error', message: 'a'.repeat(200) }),
     ];
     for (const s of states) {
-      expect(summarizeEngine(s).text.length).toBeLessThanOrEqual(LIMIT);
+      expect(summarizeEngine(s, t).text.length).toBeLessThanOrEqual(LIMIT);
     }
-    expect(summarizeEngine(undefined).text.length).toBeLessThanOrEqual(LIMIT);
+    expect(summarizeEngine(undefined, t).text.length).toBeLessThanOrEqual(LIMIT);
   });
 
   it('keeps the percentage, which is the only part that moves', () => {
-    expect(summarizeEngine(status({ state: 'downloading', progress: 7 })).text).toBe(
+    expect(summarizeEngine(status({ state: 'downloading', progress: 7 }), t).text).toBe(
       'Downloading 7%',
     );
   });
 
   it('drops the failure reason, which the footer line keeps', () => {
     const failed = status({ state: 'error', message: 'model returns wrong vectors' });
-    expect(summarizeEngine(failed).text).toBe('Failed');
-    expect(describeEngine(failed).text).toContain('model returns wrong vectors');
+    expect(summarizeEngine(failed, t).text).toBe('Failed');
+    expect(describeEngine(failed, t).text).toContain('model returns wrong vectors');
   });
 
   it('distinguishes a tab with no engine from one that has not started', () => {
-    expect(summarizeEngine(undefined).text).toBe('No feed here');
-    expect(summarizeEngine(status({ state: 'idle' })).text).toBe('Not started');
+    expect(summarizeEngine(undefined, t).text).toBe('No feed here');
+    expect(summarizeEngine(status({ state: 'idle' }), t).text).toBe('Not started');
   });
 
   it('agrees with the long form on tone, so the two lights never disagree', () => {
@@ -156,8 +161,8 @@ describe('summarizeEngine', () => {
       status({ state: 'error' }),
     ];
     for (const s of states) {
-      expect(summarizeEngine(s).tone).toBe(describeEngine(s).tone);
+      expect(summarizeEngine(s, t).tone).toBe(describeEngine(s, t).tone);
     }
-    expect(summarizeEngine(undefined).tone).toBe(describeEngine(undefined).tone);
+    expect(summarizeEngine(undefined, t).tone).toBe(describeEngine(undefined, t).tone);
   });
 });

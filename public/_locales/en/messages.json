@@ -1,0 +1,434 @@
+{
+  "extDescription": {
+    "message": "Name the topics you want. FeedLens blurs the rest of your X, LinkedIn and Reddit feed. Private, on-device, no account.",
+    "description": "Store and toolbar description. 132 characters at most."
+  },
+  "labelTopic": {
+    "message": "Out of topic — click to read",
+    "description": "Pill over a blurred post whose subject is not one of the reader’s topics."
+  },
+  "labelMedia": {
+    "message": "No text to check — click to view",
+    "description": "Pill over a blurred image or video post with too little text to judge."
+  },
+  "labelLanguage": {
+    "message": "Another language — click to read",
+    "description": "Pill over a blurred post written in a language the model does not read."
+  },
+  "labelPeek": {
+    "message": "… — click to read",
+    "description": "Follows the first words of a borderline post, which are shown in the clear before this text."
+  },
+  "labelPending": {
+    "message": "Classifying…",
+    "description": "Centred over a post while FeedLens decides whether to blur it."
+  },
+  "spokenTopic": {
+    "message": "Blurred by FeedLens: out of topic. Press Enter to read it.",
+    "description": "Screen-reader announcement."
+  },
+  "spokenMedia": {
+    "message": "Blurred by FeedLens: no text to check. Press Enter to read it.",
+    "description": "Screen-reader announcement."
+  },
+  "spokenLanguage": {
+    "message": "Blurred by FeedLens: another language. Press Enter to read it.",
+    "description": "Screen-reader announcement."
+  },
+  "spokenPeek": {
+    "message": "Blurred by FeedLens: borderline. Press Enter to read it.",
+    "description": "Screen-reader announcement. Borderline means the score was close to the cut."
+  },
+  "nudgeTitle": {
+    "message": "FeedLens has no topics yet"
+  },
+  "nudgeBody": {
+    "message": "It is on, but it does not know what you want to see, so nothing is being blurred. Open the icon above in your browser toolbar and add a topic or two."
+  },
+  "nudgeDismiss": {
+    "message": "Hide until the next page load",
+    "description": "Accessible name of the card’s close button."
+  },
+  "badgeOpen": {
+    "message": "Open FeedLens"
+  },
+  "badgeCount": {
+    "message": "Posts hidden: $COUNT$",
+    "description": "Corner counter.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      }
+    }
+  },
+  "thumbUp": {
+    "message": "On topic",
+    "description": "Tooltip of the thumbs-up button."
+  },
+  "thumbDown": {
+    "message": "Off topic",
+    "description": "Tooltip of the thumbs-down button."
+  },
+  "thumbBusy": {
+    "message": "Checking posts, one moment",
+    "description": "Tooltip of both thumbs while the engine is busy."
+  },
+  "chipInitial": {
+    "message": "Idle",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "chipNone": {
+    "message": "No feed here",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "chipIdle": {
+    "message": "Not started",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "chipDownloading": {
+    "message": "Downloading",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "chipDownloadingPercent": {
+    "message": "Downloading $PERCENT$%",
+    "description": "Header chip. Keep it under 18 characters.",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "chipStarting": {
+    "message": "Starting up",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "chipReady": {
+    "message": "Ready",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "chipFailed": {
+    "message": "Failed",
+    "description": "Header chip. Keep it under 18 characters."
+  },
+  "engineInitial": {
+    "message": "Checking engine…"
+  },
+  "engineNone": {
+    "message": "No engine on this tab — open x, LinkedIn or Reddit"
+  },
+  "engineIdle": {
+    "message": "Engine has not started on this tab yet"
+  },
+  "engineDownloading": {
+    "message": "Downloading the model — one time, then it is cached"
+  },
+  "engineDownloadingPercent": {
+    "message": "Downloading the model — $PERCENT$%, one time only",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "engineWarming": {
+    "message": "Starting the model up — already downloaded"
+  },
+  "engineReady": {
+    "message": "Model ready"
+  },
+  "engineFailed": {
+    "message": "Model failed to load"
+  },
+  "engineFailedWhy": {
+    "message": "Model failed to load — $REASON$",
+    "description": "The reason is the engine’s own error text and is not translated.",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "out of memory"
+      }
+    }
+  },
+  "statusInitial": {
+    "message": "Checking settings…"
+  },
+  "switchOn": {
+    "message": "On",
+    "description": "Label of the on/off switch."
+  },
+  "switchOff": {
+    "message": "Off",
+    "description": "Label of the on/off switch, and the status line when it is off."
+  },
+  "statusNoTopics": {
+    "message": "Add a topic above to start"
+  },
+  "statusTopicsOne": {
+    "message": "Filtering with 1 topic"
+  },
+  "statusTopicsMany": {
+    "message": "Filtering with $COUNT$ topics",
+    "description": "Plural form; the singular is statusTopicsOne.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "topicsLabel": {
+    "message": "Topics I want to see"
+  },
+  "topicsPlaceholder": {
+    "message": "software engineering, programming\nmachine learning research\nvideo games, game design",
+    "description": "Three example topics, one per line."
+  },
+  "topicsHint": {
+    "message": "One topic per line, a few words each. Posts about anything else get blurred out. You can always click a blurred post to read it."
+  },
+  "tipsSummary": {
+    "message": "How to write a good topic"
+  },
+  "tipWordsTitle": {
+    "message": "Two to five words.",
+    "description": "Bold lead-in; tipWordsBody follows it."
+  },
+  "tipWordsBody": {
+    "message": "One word is too vague. More than five and each one counts for less."
+  },
+  "tipKeywordsTitle": {
+    "message": "Keywords, not sentences.",
+    "description": "Bold lead-in; tipKeywordsBody follows it."
+  },
+  "tipKeywordsBody": {
+    "message": "Every word counts, so small words like “and” or “posts about” only blur what you're asking for."
+  },
+  "tipCommasTitle": {
+    "message": "Commas don't matter.",
+    "description": "Bold lead-in; tipCommasBody follows it."
+  },
+  "tipCommasBody": {
+    "message": "“software, programming” and “software programming” work the same. Use whichever you prefer."
+  },
+  "tipLinesTitle": {
+    "message": "One subject per line.",
+    "description": "Bold lead-in; tipLinesBody follows it."
+  },
+  "tipLinesBody": {
+    "message": "Put a separate subject on its own line. A post that matches any line stays visible."
+  },
+  "tipVocabTitle": {
+    "message": "Use the words posts use.",
+    "description": "Bold lead-in; tipVocabBody follows it."
+  },
+  "tipVocabBody": {
+    "message": "“software” works better than “tech”, because people write about the thing, not the category."
+  },
+  "tipQualityTitle": {
+    "message": "It matches subjects, not quality.",
+    "description": "Bold lead-in; tipQualityBody follows it."
+  },
+  "tipQualityBody": {
+    "message": "A great post and a poor one about the same thing both stay. FeedLens can't tell them apart."
+  },
+  "saveTopics": {
+    "message": "Save topics"
+  },
+  "saved": {
+    "message": "Saved"
+  },
+  "strictnessLabel": {
+    "message": "Strictness"
+  },
+  "strictnessOff": {
+    "message": "Blurs nothing — every post stays visible."
+  },
+  "strictnessTradeoff": {
+    "message": "Stricter hides more, including some posts you'd want. Blurred posts stay one click away."
+  },
+  "modelLabel": {
+    "message": "Model"
+  },
+  "modelOptionEnglish": {
+    "message": "🇬🇧 English · Fast — 33 MB",
+    "description": "Dropdown option. The download size is part of the choice."
+  },
+  "modelOptionMultilingual": {
+    "message": "🌍 Multilingual · Accurate — 197 MB",
+    "description": "Dropdown option. The download size is part of the choice."
+  },
+  "modelHintEnglish": {
+    "message": "Reads English only. Small, and quick on every post."
+  },
+  "modelHintMultilingual": {
+    "message": "Reads every language and sorts more accurately, even in English. Slower on every post; downloads once."
+  },
+  "details": {
+    "message": "Details",
+    "description": "Label of every collapsible help section in the popup."
+  },
+  "modelDetailsEnglishTitle": {
+    "message": "English · Fast.",
+    "description": "Bold lead-in; modelDetailsEnglishBody follows it."
+  },
+  "modelDetailsEnglishBody": {
+    "message": "Small and quick on every post, and it only reads English. It is also more particular about how a topic is worded, so keep topics to a few keywords."
+  },
+  "modelDetailsMultilingualTitle": {
+    "message": "Multilingual · Accurate.",
+    "description": "Bold lead-in; modelDetailsMultilingualBody follows it."
+  },
+  "modelDetailsMultilingualBody": {
+    "message": "Reads every language and sorts your feed more accurately, even in English. It is more forgiving of how a topic is worded. The cost is a 197 MB one-time download and more work on every post."
+  },
+  "modelDetailsKept": {
+    "message": "Your topics, strictness and thumb ratings are all kept when you switch. Ratings are stored per model, so each model keeps its own and switching back restores them."
+  },
+  "blurMediaLabel": {
+    "message": "Blur images and videos with no text"
+  },
+  "blurMediaDetails": {
+    "message": "FeedLens reads words, not pictures. When a photo or video has only a word or two with it, there is nothing to compare against your topics. Turn this on to blur those posts instead of letting them through."
+  },
+  "blurLanguageLabel": {
+    "message": "Blur posts that aren't in English",
+    "description": "Names the language the default model reads. Only shown with that model."
+  },
+  "blurLanguageDetails": {
+    "message": "FeedLens only understands English. It can't tell whether a post in another language is about your topics or not, so it lets some through and blurs others at random. Turn this on to blur them all — including ones that are on topic."
+  },
+  "blurLanguageRefresh": {
+    "message": "Posts already on screen stay as they are. Scroll on, or reload the page, to see the change."
+  },
+  "blurLanguageOff": {
+    "message": "Switched off because the multilingual model reads every language — there is nothing left for it to blur. Your setting is kept for when you switch back."
+  },
+  "collapseLabel": {
+    "message": "Collapse blurred posts into a thin row"
+  },
+  "collapseDetails": {
+    "message": "Instead of leaving a blurred post at full height, shrink it down to a thin row so it takes up almost no space while you scroll past. The label still shows, and a click reveals it like any other blurred post."
+  },
+  "scoresLabel": {
+    "message": "Show each post's score"
+  },
+  "scoresDetails": {
+    "message": "Adds a small label to every post showing the score it got, the score it needed to stay visible, and how long it is. Useful for working out why something was blurred.",
+    "description": "The label itself is a diagnostic and stays in English in every locale."
+  },
+  "thumbsLabel": {
+    "message": "Learn from my thumbs"
+  },
+  "thumbsIntro": {
+    "message": "Hover over a post to give it a thumb up or down."
+  },
+  "thumbsUpMeans": {
+    "message": "👍 means this content belongs in the topic."
+  },
+  "thumbsDownMeans": {
+    "message": "👎 means this content does not belong in the topic."
+  },
+  "thumbsCorrect": {
+    "message": "A correct call — blurred or shown — needs no correction."
+  },
+  "thumbsScope": {
+    "message": "A thumb only changes posts that are almost the same as the one you rated, such as a repost or a quote. Everything else is judged by your topics as usual, so a thumb never hides a good post by accident."
+  },
+  "thumbsPrivacy": {
+    "message": "Your ratings stay on this device. One catch: it only compares the words in a post. If the real content is in the image or video and the words are forgettable, skip it. Leave this off and the buttons stay hidden."
+  },
+  "statKept": {
+    "message": "👍 Kept",
+    "description": "Count of posts rated thumbs-up."
+  },
+  "statBlurred": {
+    "message": "👎 Blurred",
+    "description": "Count of posts rated thumbs-down."
+  },
+  "statRated": {
+    "message": "Rated",
+    "description": "Count of all rated posts."
+  },
+  "tuningNone": {
+    "message": "You have not rated any posts yet."
+  },
+  "clearTuning": {
+    "message": "Clear tuning",
+    "description": "Deletes every thumb rating."
+  },
+  "backupTitle": {
+    "message": "Backup"
+  },
+  "backupExport": {
+    "message": "Export"
+  },
+  "backupImport": {
+    "message": "Import"
+  },
+  "backupHint": {
+    "message": "Saves your settings and thumb ratings to a file. Importing replaces what is here now."
+  },
+  "exportFailed": {
+    "message": "Export failed",
+    "description": "Followed on the same line by exportFailedTail."
+  },
+  "exportFailedTail": {
+    "message": "nothing was written"
+  },
+  "importPrompt": {
+    "message": "Import",
+    "description": "Followed on the same line by importPromptTail."
+  },
+  "importPromptTail": {
+    "message": "— choose your backup file"
+  },
+  "importNotBackup": {
+    "message": "— not a FeedLens backup",
+    "description": "Follows the name of the file that was refused."
+  },
+  "importNewer": {
+    "message": "— made by a newer version",
+    "description": "Follows the name of the file that was refused."
+  },
+  "importOtherModel": {
+    "message": "— made with a different model",
+    "description": "Follows the name of the file that was refused."
+  },
+  "importSaveFailed": {
+    "message": "— could not be saved",
+    "description": "Follows the name of the file that was refused."
+  },
+  "importDone": {
+    "message": "✓ Topics: $TOPICS$ · Ratings: $RATINGS$",
+    "description": "Follows the name of the imported file.",
+    "placeholders": {
+      "topics": {
+        "content": "$1",
+        "example": "3"
+      },
+      "ratings": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
+  },
+  "resetTitle": {
+    "message": "Start over"
+  },
+  "resetButton": {
+    "message": "Reset"
+  },
+  "resetHint": {
+    "message": "Restores the defaults and deletes your thumb ratings. Your topics are kept."
+  },
+  "reportIssue": {
+    "message": "📥 Report an issue or share an idea"
+  },
+  "githubLabel": {
+    "message": "FeedLens on GitHub",
+    "description": "Tooltip and accessible name of the GitHub icon link."
+  }
+}

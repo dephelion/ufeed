@@ -1,3 +1,5 @@
+import type { Translate } from '../core/messages';
+
 /**
  * The card shown when FeedLens is on and has no topics. That state is invisible
  * otherwise — the feed looks untouched, which reads as a broken install rather
@@ -29,25 +31,36 @@ function whenBody(attach: (body: HTMLElement) => void): () => void {
 }
 
 /** `iconUrl` is the gray toolbar icon, resolved by the caller: this ring has no extension API. */
-export function mountNudge(iconUrl: string): Nudge {
+export function mountNudge(iconUrl: string, t: Translate): Nudge {
   const card = document.createElement('div');
   card.className = 'lx-nudge';
   card.setAttribute('role', 'status');
   card.hidden = true;
 
-  card.innerHTML =
-    '<img class="lx-nudge-icon" alt="" width="28" height="28">' +
-    '<div class="lx-nudge-body">' +
-    '<b>FeedLens has no topics yet</b>' +
-    '<p>It is on, but it does not know what you want to see, so nothing is ' +
-    'being blurred. Open the icon above in your browser toolbar and add a ' +
-    'topic or two.</p>' +
-    '</div>' +
-    '<button type="button" class="lx-nudge-x" aria-label="Hide until the next ' +
-    'page load">&times;</button>';
   // Gray, not the branded color icon: this card only shows while the tab has
   // no topics, which is exactly the state that leaves the toolbar icon gray.
-  card.querySelector('img')!.src = iconUrl;
+  const icon = document.createElement('img');
+  icon.className = 'lx-nudge-icon';
+  icon.alt = '';
+  icon.width = 28;
+  icon.height = 28;
+  icon.src = iconUrl;
+
+  const title = document.createElement('b');
+  title.textContent = t('nudgeTitle');
+  const text = document.createElement('p');
+  text.textContent = t('nudgeBody');
+  const body = document.createElement('div');
+  body.className = 'lx-nudge-body';
+  body.append(title, text);
+
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'lx-nudge-x';
+  close.setAttribute('aria-label', t('nudgeDismiss'));
+  close.textContent = '\u00d7';
+
+  card.append(icon, body, close);
 
   // Dismissal lives for this page load only. Persisting it would leave the
   // reader with a silent extension and no way back to the explanation.
@@ -58,7 +71,7 @@ export function mountNudge(iconUrl: string): Nudge {
     card.hidden = !(wanted && !dismissed);
   };
 
-  card.querySelector('.lx-nudge-x')!.addEventListener('click', () => {
+  close.addEventListener('click', () => {
     dismissed = true;
     paint();
   });

@@ -5,12 +5,12 @@
 
 ## Tiers
 
-| Tier      | Command              | Runtime | Covers                                                         |
-| :-------- | :------------------- | :------ | :------------------------------------------------------------- |
-| Unit      | `npm test`           | <1s     | Pure logic, protocol guards, cache, settings, blur DOM.        |
-| Adapter   | `npm test`           | <1s     | Selectors against captured fixture HTML, happy-dom.            |
-| Model     | `npm run test:model` | ~6s     | Both real models on real feed text. Separate config, node env. |
-| Typecheck | `npm run compile`    | ~2s     | `tsc --noEmit`.                                                |
+| Tier      | Command              | Runtime | Covers                                                                   |
+| :-------- | :------------------- | :------ | :----------------------------------------------------------------------- |
+| Unit      | `npm test`           | <1s     | Pure logic, protocol guards, cache, settings, blur DOM, locale catalogs. |
+| Adapter   | `npm test`           | <1s     | Selectors against captured fixture HTML, happy-dom.                      |
+| Model     | `npm run test:model` | ~6s     | Both real models on real feed text. Separate config, node env.           |
+| Typecheck | `npm run compile`    | ~2s     | `tsc --noEmit`.                                                          |
 
 `npm test` excludes `*.model.test.ts` — it loads weights. Both suites are offline once the models are cached.
 
@@ -31,6 +31,8 @@ Adapters test against **captured fixture HTML, never a live fetch**. A vendor DO
 Model tests assert **gaps and orderings, never absolute scores** — absolutes are model-specific, and two assertions had to be rewritten when the model changed for exactly that reason.
 
 ## What no test covers
+
+How a translation fits. Every locale is checked for keys, placeholders and length, never for wrapping or width; open the popup and a feed in each new language ([i18n.md](i18n.md)).
 
 Model loading and real scoring in a browser. Those need a build loaded in Chrome or Firefox and the popup status watched. A green suite is not a working extension.
 

@@ -7,13 +7,13 @@
 
 `.lx-blur`, applied to the post container. `src/feed/blur.css`, shipped via `content_scripts[].css` so it applies before first paint.
 
-| Target    | Treatment                                                   |
-| :-------- | :---------------------------------------------------------- |
-| Container | `opacity: .55`, `position: relative`                        |
-| Text      | `color: transparent` + `text-shadow: 0 0 10px currentColor` |
-| Image     | `filter: blur(64px) saturate(.25)`, `opacity: .45`          |
-| Video     | `filter: blur(40px) saturate(.25)`, `opacity: .45`          |
-| Label     | `::after` — "Out of topic — click to read"                  |
+| Target    | Treatment                                                              |
+| :-------- | :--------------------------------------------------------------------- |
+| Container | `opacity: .55`, `position: relative`                                   |
+| Text      | `color: transparent` + `text-shadow: 0 0 10px currentColor`            |
+| Image     | `filter: blur(64px) saturate(.25)`, `opacity: .45`                     |
+| Video     | `filter: blur(40px) saturate(.25)`, `opacity: .45`                     |
+| Label     | `::after` — "Out of topic — click to read", drawn from `data-lx-label` |
 
 **Media is blurred far harder than text.** At `blur(18px)` a bright, high-contrast photo kept its shapes and its watermark readable, while a dim one looked fully hidden — same rule, different source material. That asymmetry reads as a bug and is not one.
 
@@ -41,7 +41,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 ## Why a post is blurred
 
-`data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`.
+`data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`. `blur()` also writes the label's text to `data-lx-label` in the reader's language; the English shown in this page is `en`, see [i18n.md](i18n.md).
 
 | Reason     | Label                              | Set when                                                                                 |
 | :--------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
@@ -87,6 +87,8 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 **Everything queued is held, not just the batch at the engine.** A post waiting its turn is no more judged than the one being scored, so it looks the same. `ScoreQueue` names the batch going out _and_ everything still behind it on each flush, and `FeedFilter` holds them all. Re-announcing on every flush also keeps the failsafe timer refreshed while the queue drains, so a post that started deep in a backlog never lifts and re-holds on its way to the front.
 
 **A settings change leaves held posts alone.** `rescore()` re-applies verdicts, and a held post has none: its missing score reads as unscored, which fails open and reveals it. Unchecking _Show each post's score_ did exactly that to every post waiting on the engine, which then showed in full until the next flush held it again. The verdict lands under whatever the settings are by then.
+
+**The skeleton's text follows the same rule**: `showSkeleton()` writes `data-lx-pending`, `hideSkeleton()` clears it, and the stylesheet draws it.
 
 **The skeleton is the blur pushed further, in its own file.** Same targets as `.lx-blur`, which holds up on X, LinkedIn and Reddit, only heavier. It carries a centred "Classifying…". No verdict colour, and **clicks still reach the post**. Radius does the hiding; opacity stays at the blur's values, because lower opacity multiplies down and the feed goes black (§The blur).
 
@@ -157,6 +159,8 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics.                                                                       |
 | Engine chip                       | Header, beside the title. Two or three words plus a light.                                                                                                       |
 | Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, GitHub mark linking to the repo (same row, no added height). |
+
+**The popup follows the browser's language.** A control's text is a key filled at load ([i18n.md](i18n.md)); it never changes what a control does. Hints keep the rules below in every language.
 
 **Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 
@@ -233,5 +237,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 
 **Bottom-right corner.** Top-left sat under the thumbs bar, which is centred on the post's top edge, and pushed the peek text down. Bottom-right meets nothing on a full-height post. A collapsed row grows to 46px with its label at the top, so the badge fits underneath.
+
+**Stays English in every language**: a diagnostic readout, and its screenshots reach bug reports ([i18n.md](i18n.md)). The popup hint for it says so.
 
 **Gated solely on `settings.showScores`** (default off) — identical in a dev and a release build, so what is debugged is what ships. Turning it off, or going inactive, strips the attributes; a stale badge must never outlive the setting.

@@ -1,0 +1,381 @@
+{
+  "extDescription": {
+    "message": "Indiquez vos sujets. FeedLens floute le reste de votre fil sur X, LinkedIn et Reddit. Privé, sur l'appareil, sans compte."
+  },
+  "labelTopic": {
+    "message": "Hors sujet — cliquez pour lire"
+  },
+  "labelMedia": {
+    "message": "Pas de texte à analyser — cliquez pour voir"
+  },
+  "labelLanguage": {
+    "message": "Autre langue — cliquez pour lire"
+  },
+  "labelPeek": {
+    "message": "… — cliquez pour lire"
+  },
+  "labelPending": {
+    "message": "Classification…"
+  },
+  "spokenTopic": {
+    "message": "Publication floutée par FeedLens : hors sujet. Appuyez sur Entrée pour la lire."
+  },
+  "spokenMedia": {
+    "message": "Publication floutée par FeedLens : pas de texte à analyser. Appuyez sur Entrée pour la voir."
+  },
+  "spokenLanguage": {
+    "message": "Publication floutée par FeedLens : autre langue. Appuyez sur Entrée pour la lire."
+  },
+  "spokenPeek": {
+    "message": "Publication floutée par FeedLens : cas limite. Appuyez sur Entrée pour la lire."
+  },
+  "nudgeTitle": {
+    "message": "FeedLens n'a pas encore de sujets"
+  },
+  "nudgeBody": {
+    "message": "FeedLens est activé, mais il ne sait pas ce que vous voulez voir, donc rien n'est flouté. Ouvrez l'icône ci-dessus dans la barre d'outils de votre navigateur et ajoutez un ou deux sujets."
+  },
+  "nudgeDismiss": {
+    "message": "Masquer jusqu'au prochain chargement de la page"
+  },
+  "badgeOpen": {
+    "message": "Ouvrir FeedLens"
+  },
+  "badgeCount": {
+    "message": "Publications floutées : $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      }
+    }
+  },
+  "thumbUp": {
+    "message": "Dans le sujet"
+  },
+  "thumbDown": {
+    "message": "Hors sujet"
+  },
+  "thumbBusy": {
+    "message": "Vérification des publications, un instant"
+  },
+  "chipInitial": {
+    "message": "Inactif"
+  },
+  "chipNone": {
+    "message": "Aucun fil ici"
+  },
+  "chipIdle": {
+    "message": "Non démarré"
+  },
+  "chipDownloading": {
+    "message": "Téléchargement"
+  },
+  "chipDownloadingPercent": {
+    "message": "Téléch. $PERCENT$ %",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "chipStarting": {
+    "message": "Démarrage"
+  },
+  "chipReady": {
+    "message": "Prêt"
+  },
+  "chipFailed": {
+    "message": "Échec"
+  },
+  "engineInitial": {
+    "message": "Vérification du moteur…"
+  },
+  "engineNone": {
+    "message": "Aucun moteur dans cet onglet — ouvrez X, LinkedIn ou Reddit"
+  },
+  "engineIdle": {
+    "message": "Le moteur n'a pas encore démarré dans cet onglet"
+  },
+  "engineDownloading": {
+    "message": "Téléchargement du modèle — une seule fois, puis mis en cache"
+  },
+  "engineDownloadingPercent": {
+    "message": "Téléchargement du modèle — $PERCENT$ %, une seule fois",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "engineWarming": {
+    "message": "Démarrage du modèle — déjà téléchargé"
+  },
+  "engineReady": {
+    "message": "Modèle prêt"
+  },
+  "engineFailed": {
+    "message": "Le modèle n'a pas pu se charger"
+  },
+  "engineFailedWhy": {
+    "message": "Le modèle n'a pas pu se charger — $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "out of memory"
+      }
+    }
+  },
+  "statusInitial": {
+    "message": "Vérification des réglages…"
+  },
+  "switchOn": {
+    "message": "Activé"
+  },
+  "switchOff": {
+    "message": "Désactivé"
+  },
+  "statusNoTopics": {
+    "message": "Ajoutez un sujet ci-dessus pour commencer"
+  },
+  "statusTopicsOne": {
+    "message": "Filtrage avec 1 sujet"
+  },
+  "statusTopicsMany": {
+    "message": "Filtrage avec $COUNT$ sujets",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "topicsLabel": {
+    "message": "Sujets que je veux voir"
+  },
+  "topicsPlaceholder": {
+    "message": "génie logiciel, programmation\nrecherche en apprentissage automatique\njeux vidéo, conception de jeux"
+  },
+  "topicsHint": {
+    "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
+  },
+  "tipsSummary": {
+    "message": "Comment rédiger un bon sujet"
+  },
+  "tipWordsTitle": {
+    "message": "De deux à cinq mots."
+  },
+  "tipWordsBody": {
+    "message": "Un seul mot est trop vague. Au-delà de cinq, chacun compte pour moins."
+  },
+  "tipKeywordsTitle": {
+    "message": "Des mots-clés, pas des phrases."
+  },
+  "tipKeywordsBody": {
+    "message": "Chaque mot compte, donc les petits mots comme « et » ou « publications sur » ne font que flouter ce que vous cherchez."
+  },
+  "tipCommasTitle": {
+    "message": "Les virgules n'ont pas d'importance."
+  },
+  "tipCommasBody": {
+    "message": "« logiciel, programmation » et « logiciel programmation » fonctionnent pareil. Utilisez celle que vous préférez."
+  },
+  "tipLinesTitle": {
+    "message": "Un sujet par ligne."
+  },
+  "tipLinesBody": {
+    "message": "Mettez chaque sujet sur sa propre ligne. Une publication qui correspond à n'importe quelle ligne reste visible."
+  },
+  "tipVocabTitle": {
+    "message": "Utilisez les mots des publications."
+  },
+  "tipVocabBody": {
+    "message": "« logiciel » fonctionne mieux que « tech », car les gens écrivent sur la chose, pas sur la catégorie."
+  },
+  "tipQualityTitle": {
+    "message": "Il repère les sujets, pas la qualité."
+  },
+  "tipQualityBody": {
+    "message": "Une excellente publication et une mauvaise sur le même sujet restent toutes les deux. FeedLens ne sait pas les distinguer."
+  },
+  "saveTopics": {
+    "message": "Enregistrer les sujets"
+  },
+  "saved": {
+    "message": "Enregistré"
+  },
+  "strictnessLabel": {
+    "message": "Sévérité"
+  },
+  "strictnessOff": {
+    "message": "Ne floute rien — chaque publication reste visible."
+  },
+  "strictnessTradeoff": {
+    "message": "Plus de sévérité floute davantage, y compris certaines publications que vous voudriez voir. Les publications floutées restent à un clic."
+  },
+  "modelLabel": {
+    "message": "Modèle"
+  },
+  "modelOptionEnglish": {
+    "message": "🇬🇧 Anglais · Rapide — 33 Mo"
+  },
+  "modelOptionMultilingual": {
+    "message": "🌍 Multilingue · Précis — 197 Mo"
+  },
+  "modelHintEnglish": {
+    "message": "Ne lit que l'anglais. Petit, et rapide sur chaque publication."
+  },
+  "modelHintMultilingual": {
+    "message": "Lit toutes les langues et trie plus précisément, même en anglais. Plus lent sur chaque publication ; se télécharge une seule fois."
+  },
+  "details": {
+    "message": "Détails"
+  },
+  "modelDetailsEnglishTitle": {
+    "message": "Anglais · Rapide."
+  },
+  "modelDetailsEnglishBody": {
+    "message": "Petit et rapide sur chaque publication, mais il ne lit que l'anglais. Il est aussi plus pointilleux sur la formulation d'un sujet : limitez-vous à quelques mots-clés."
+  },
+  "modelDetailsMultilingualTitle": {
+    "message": "Multilingue · Précis."
+  },
+  "modelDetailsMultilingualBody": {
+    "message": "Lit toutes les langues et trie votre fil plus précisément, même en anglais. Il est plus tolérant sur la formulation d'un sujet. En contrepartie : un téléchargement unique de 197 Mo et plus de calcul sur chaque publication."
+  },
+  "modelDetailsKept": {
+    "message": "Vos sujets, votre sévérité et vos évaluations par pouces sont conservés quand vous changez. Les évaluations sont stockées par modèle : chacun garde les siennes, et revenir en arrière les restaure."
+  },
+  "blurMediaLabel": {
+    "message": "Flouter les images et vidéos sans texte"
+  },
+  "blurMediaDetails": {
+    "message": "FeedLens lit les mots, pas les images. Quand une photo ou une vidéo n'est accompagnée que d'un mot ou deux, il n'y a rien à comparer avec vos sujets. Activez cette option pour flouter ces publications au lieu de les laisser passer."
+  },
+  "blurLanguageLabel": {
+    "message": "Flouter les publications qui ne sont pas en anglais"
+  },
+  "blurLanguageDetails": {
+    "message": "FeedLens ne comprend que l'anglais. Il ne peut pas savoir si une publication dans une autre langue parle de vos sujets ou non : il en laisse passer certaines et en floute d'autres au hasard. Activez cette option pour toutes les flouter — y compris celles qui sont dans le sujet."
+  },
+  "blurLanguageRefresh": {
+    "message": "Les publications déjà à l'écran restent telles quelles. Faites défiler ou rechargez la page pour voir le changement."
+  },
+  "blurLanguageOff": {
+    "message": "Désactivé, car le modèle multilingue lit toutes les langues — il ne reste rien à flouter. Votre réglage est conservé pour quand vous reviendrez en arrière."
+  },
+  "collapseLabel": {
+    "message": "Réduire les publications floutées en une ligne fine"
+  },
+  "collapseDetails": {
+    "message": "Au lieu de laisser une publication floutée à pleine hauteur, elle est réduite à une ligne fine qui ne prend presque aucune place pendant que vous faites défiler. L'étiquette reste visible, et un clic la révèle comme n'importe quelle autre publication floutée."
+  },
+  "scoresLabel": {
+    "message": "Afficher le score de chaque publication"
+  },
+  "scoresDetails": {
+    "message": "Ajoute une petite étiquette à chaque publication avec le score obtenu, le score nécessaire pour rester visible et sa longueur. Utile pour comprendre pourquoi quelque chose a été flouté. L'étiquette est toujours en anglais."
+  },
+  "thumbsLabel": {
+    "message": "Apprendre de mes pouces"
+  },
+  "thumbsIntro": {
+    "message": "Survolez une publication pour lui donner un pouce levé ou baissé."
+  },
+  "thumbsUpMeans": {
+    "message": "👍 signifie que ce contenu appartient au sujet."
+  },
+  "thumbsDownMeans": {
+    "message": "👎 signifie que ce contenu n'appartient pas au sujet."
+  },
+  "thumbsCorrect": {
+    "message": "Une bonne décision — floutée ou affichée — n'a pas besoin de correction."
+  },
+  "thumbsScope": {
+    "message": "Un pouce ne modifie que les publications presque identiques à celle que vous avez évaluée, comme un repost ou une citation. Tout le reste est jugé par vos sujets comme d'habitude : un pouce ne cache donc jamais une bonne publication par accident."
+  },
+  "thumbsPrivacy": {
+    "message": "Vos évaluations restent sur cet appareil. Un bémol : seuls les mots d'une publication sont comparés. Si le vrai contenu est dans l'image ou la vidéo et que les mots sont anodins, passez votre tour. Laissez cette option désactivée et les boutons restent masqués."
+  },
+  "statKept": {
+    "message": "👍 Gardées"
+  },
+  "statBlurred": {
+    "message": "👎 Floutées"
+  },
+  "statRated": {
+    "message": "Évaluées"
+  },
+  "tuningNone": {
+    "message": "Vous n'avez encore évalué aucune publication."
+  },
+  "clearTuning": {
+    "message": "Effacer l'apprentissage"
+  },
+  "backupTitle": {
+    "message": "Sauvegarde"
+  },
+  "backupExport": {
+    "message": "Exporter"
+  },
+  "backupImport": {
+    "message": "Importer"
+  },
+  "backupHint": {
+    "message": "Enregistre vos réglages et vos évaluations par pouces dans un fichier. L'import remplace ce qui se trouve ici actuellement."
+  },
+  "exportFailed": {
+    "message": "Échec de l'export"
+  },
+  "exportFailedTail": {
+    "message": "rien n'a été écrit"
+  },
+  "importPrompt": {
+    "message": "Importer"
+  },
+  "importPromptTail": {
+    "message": "— choisissez votre fichier de sauvegarde"
+  },
+  "importNotBackup": {
+    "message": "— pas une sauvegarde FeedLens"
+  },
+  "importNewer": {
+    "message": "— créée par une version plus récente"
+  },
+  "importOtherModel": {
+    "message": "— créée avec un autre modèle"
+  },
+  "importSaveFailed": {
+    "message": "— n'a pas pu être enregistré"
+  },
+  "importDone": {
+    "message": "✓ Sujets : $TOPICS$ · Évaluations : $RATINGS$",
+    "placeholders": {
+      "topics": {
+        "content": "$1",
+        "example": "3"
+      },
+      "ratings": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
+  },
+  "resetTitle": {
+    "message": "Repartir de zéro"
+  },
+  "resetButton": {
+    "message": "Réinitialiser"
+  },
+  "resetHint": {
+    "message": "Rétablit les valeurs par défaut et supprime vos évaluations par pouces. Vos sujets sont conservés."
+  },
+  "reportIssue": {
+    "message": "📥 Signaler un problème ou partager une idée"
+  },
+  "githubLabel": {
+    "message": "FeedLens sur GitHub"
+  }
+}

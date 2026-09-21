@@ -3,8 +3,10 @@ import { readFileSync } from 'node:fs';
 
 const store: Record<string, unknown> = {};
 const listeners: unknown[] = [];
-vi.mock('webextension-polyfill', () => ({
+vi.mock('webextension-polyfill', async () => ({
   default: {
+    // The English catalog from vitest.setup.ts.
+    i18n: (await import('wxt/testing/fake-browser')).fakeBrowser.i18n,
     runtime: {
       getManifest: () => ({ version: '9.9.9' }),
       sendMessage: async () => undefined,

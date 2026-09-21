@@ -68,30 +68,28 @@ describe('a file that cannot be trusted', () => {
   };
 
   it('refuses junk', () => {
-    expect(refused('not json at all')).toBe('not a FeedLens backup');
-    expect(refused('{}')).toBe('not a FeedLens backup');
-    expect(refused('[]')).toBe('not a FeedLens backup');
+    expect(refused('not json at all')).toBe('not-a-backup');
+    expect(refused('{}')).toBe('not-a-backup');
+    expect(refused('[]')).toBe('not-a-backup');
   });
 
   it('refuses a truncated file', () => {
     const whole = exportConfig(settings, feedback, APP);
-    expect(refused(whole.slice(0, whole.length / 2))).toBe('not a FeedLens backup');
+    expect(refused(whole.slice(0, whole.length / 2))).toBe('not-a-backup');
   });
 
   it('refuses a schema it does not know', () => {
     const file = JSON.parse(exportConfig(settings, feedback, APP));
-    expect(refused(JSON.stringify({ ...file, schema: SCHEMA + 1 }))).toBe(
-      'made by a newer version',
-    );
+    expect(refused(JSON.stringify({ ...file, schema: SCHEMA + 1 }))).toBe('newer');
   });
 
   it('refuses another model whole, settings included', () => {
     const file = JSON.parse(exportConfig(settings, feedback, APP));
     expect(refused(JSON.stringify({ ...file, model: { id: 'other', dim: 384 } }))).toBe(
-      'made with a different model',
+      'other-model',
     );
     expect(refused(JSON.stringify({ ...file, model: { id: MODEL.id, dim: 768 } }))).toBe(
-      'made with a different model',
+      'other-model',
     );
   });
 });

@@ -103,6 +103,26 @@ What no test covers: model loading and real scoring in a browser.
 A green suite is not a working extension — load a build and watch the popup
 status. See [`wiki-llm/testing.md`](../wiki-llm/testing.md).
 
+## Add a language
+
+Every word the extension shows lives in `public/_locales/<code>/messages.json`,
+one folder per language. The browser picks the folder from its own language and
+falls back to English, so nothing else needs wiring.
+
+1. Copy `public/_locales/en` to `public/_locales/<code>`. Use the browser's folder
+   name: `de`, `fr`, `pt_BR`, `zh_TW`.
+2. Translate each `message`. Keep every `$NAME$` exactly as written, keep
+   `extDescription` within 132 characters, and keep the `chip*` messages within 18.
+   The `description` fields explain where each line appears.
+3. Run `npm test`. It fails on a missing key, a lost placeholder or a string that
+   is too long.
+4. Set the browser to that language (Chrome: Settings, Languages, or the system
+   language on macOS; Firefox: Settings, Language), restart it, then open the
+   popup and a feed. Tests cannot see wrapping.
+
+The score badge, log output and the engine's own error text stay English on
+purpose. The reasons are in [`wiki-llm/i18n.md`](../wiki-llm/i18n.md).
+
 ## Release
 
 1. On the branch, bump the version: `npm version minor --no-git-tag-version`.

@@ -1,0 +1,381 @@
+{
+  "extDescription": {
+    "message": "Indica tus temas. FeedLens difumina el resto de tu feed de X, LinkedIn y Reddit. Privado, en tu dispositivo, sin cuenta."
+  },
+  "labelTopic": {
+    "message": "Fuera de tema — clic para leer"
+  },
+  "labelMedia": {
+    "message": "Sin texto que analizar — clic para ver"
+  },
+  "labelLanguage": {
+    "message": "Otro idioma — clic para leer"
+  },
+  "labelPeek": {
+    "message": "… — clic para leer"
+  },
+  "labelPending": {
+    "message": "Clasificando…"
+  },
+  "spokenTopic": {
+    "message": "Publicación difuminada por FeedLens: fuera de tema. Pulsa Intro para leerla."
+  },
+  "spokenMedia": {
+    "message": "Publicación difuminada por FeedLens: sin texto que analizar. Pulsa Intro para verla."
+  },
+  "spokenLanguage": {
+    "message": "Publicación difuminada por FeedLens: otro idioma. Pulsa Intro para leerla."
+  },
+  "spokenPeek": {
+    "message": "Publicación difuminada por FeedLens: dudosa. Pulsa Intro para leerla."
+  },
+  "nudgeTitle": {
+    "message": "FeedLens aún no tiene temas"
+  },
+  "nudgeBody": {
+    "message": "Está activado, pero no sabe qué quieres ver, así que no se difumina nada. Abre el icono de arriba, en la barra de herramientas del navegador, y añade uno o dos temas."
+  },
+  "nudgeDismiss": {
+    "message": "Ocultar hasta la próxima carga de página"
+  },
+  "badgeOpen": {
+    "message": "Abrir FeedLens"
+  },
+  "badgeCount": {
+    "message": "Publicaciones ocultas: $COUNT$",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "12"
+      }
+    }
+  },
+  "thumbUp": {
+    "message": "Dentro del tema"
+  },
+  "thumbDown": {
+    "message": "Fuera de tema"
+  },
+  "thumbBusy": {
+    "message": "Comprobando publicaciones, un momento"
+  },
+  "chipInitial": {
+    "message": "Inactivo"
+  },
+  "chipNone": {
+    "message": "Sin feed aquí"
+  },
+  "chipIdle": {
+    "message": "Sin iniciar"
+  },
+  "chipDownloading": {
+    "message": "Descargando"
+  },
+  "chipDownloadingPercent": {
+    "message": "Descargando $PERCENT$%",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "chipStarting": {
+    "message": "Iniciando"
+  },
+  "chipReady": {
+    "message": "Listo"
+  },
+  "chipFailed": {
+    "message": "Falló"
+  },
+  "engineInitial": {
+    "message": "Comprobando el motor…"
+  },
+  "engineNone": {
+    "message": "No hay motor en esta pestaña — abre X, LinkedIn o Reddit"
+  },
+  "engineIdle": {
+    "message": "El motor aún no ha arrancado en esta pestaña"
+  },
+  "engineDownloading": {
+    "message": "Descargando el modelo — una sola vez, luego queda en caché"
+  },
+  "engineDownloadingPercent": {
+    "message": "Descargando el modelo — $PERCENT$%, solo una vez",
+    "placeholders": {
+      "percent": {
+        "content": "$1",
+        "example": "45"
+      }
+    }
+  },
+  "engineWarming": {
+    "message": "Iniciando el modelo — ya descargado"
+  },
+  "engineReady": {
+    "message": "Modelo listo"
+  },
+  "engineFailed": {
+    "message": "No se pudo cargar el modelo"
+  },
+  "engineFailedWhy": {
+    "message": "No se pudo cargar el modelo — $REASON$",
+    "placeholders": {
+      "reason": {
+        "content": "$1",
+        "example": "out of memory"
+      }
+    }
+  },
+  "statusInitial": {
+    "message": "Comprobando ajustes…"
+  },
+  "switchOn": {
+    "message": "Activado"
+  },
+  "switchOff": {
+    "message": "Desactivado"
+  },
+  "statusNoTopics": {
+    "message": "Añade un tema arriba para empezar"
+  },
+  "statusTopicsOne": {
+    "message": "Filtrando con 1 tema"
+  },
+  "statusTopicsMany": {
+    "message": "Filtrando con $COUNT$ temas",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "topicsLabel": {
+    "message": "Temas que quiero ver"
+  },
+  "topicsPlaceholder": {
+    "message": "ingeniería de software, programación\ninvestigación en aprendizaje automático\nvideojuegos, diseño de juegos"
+  },
+  "topicsHint": {
+    "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
+  },
+  "tipsSummary": {
+    "message": "Cómo escribir un buen tema"
+  },
+  "tipWordsTitle": {
+    "message": "De dos a cinco palabras."
+  },
+  "tipWordsBody": {
+    "message": "Una sola palabra es demasiado vaga. Con más de cinco, cada una pesa menos."
+  },
+  "tipKeywordsTitle": {
+    "message": "Palabras clave, no frases."
+  },
+  "tipKeywordsBody": {
+    "message": "Cada palabra cuenta, así que palabras pequeñas como “y” o “publicaciones sobre” solo difuminan lo que pides."
+  },
+  "tipCommasTitle": {
+    "message": "Las comas no importan."
+  },
+  "tipCommasBody": {
+    "message": "“software, programación” y “software programación” funcionan igual. Usa la que prefieras."
+  },
+  "tipLinesTitle": {
+    "message": "Un tema por línea."
+  },
+  "tipLinesBody": {
+    "message": "Pon cada tema en su propia línea. Una publicación que coincida con cualquier línea sigue visible."
+  },
+  "tipVocabTitle": {
+    "message": "Usa las palabras que usan las publicaciones."
+  },
+  "tipVocabBody": {
+    "message": "“software” funciona mejor que “tecnología”, porque la gente escribe sobre la cosa, no sobre la categoría."
+  },
+  "tipQualityTitle": {
+    "message": "Coincide con temas, no con calidad."
+  },
+  "tipQualityBody": {
+    "message": "Una publicación excelente y una mala sobre lo mismo se quedan las dos. FeedLens no puede distinguirlas."
+  },
+  "saveTopics": {
+    "message": "Guardar temas"
+  },
+  "saved": {
+    "message": "Guardado"
+  },
+  "strictnessLabel": {
+    "message": "Exigencia"
+  },
+  "strictnessOff": {
+    "message": "No difumina nada — todas las publicaciones siguen visibles."
+  },
+  "strictnessTradeoff": {
+    "message": "Más exigencia oculta más, incluidas algunas publicaciones que querrías ver. Las difuminadas siguen a un clic de distancia."
+  },
+  "modelLabel": {
+    "message": "Modelo"
+  },
+  "modelOptionEnglish": {
+    "message": "🇬🇧 Inglés · Rápido — 33 MB"
+  },
+  "modelOptionMultilingual": {
+    "message": "🌍 Multilingüe · Preciso — 197 MB"
+  },
+  "modelHintEnglish": {
+    "message": "Solo lee inglés. Pequeño y rápido con cada publicación."
+  },
+  "modelHintMultilingual": {
+    "message": "Lee todos los idiomas y clasifica con más precisión, incluso en inglés. Más lento con cada publicación; se descarga una vez."
+  },
+  "details": {
+    "message": "Detalles"
+  },
+  "modelDetailsEnglishTitle": {
+    "message": "Inglés · Rápido."
+  },
+  "modelDetailsEnglishBody": {
+    "message": "Pequeño y rápido con cada publicación, y solo lee inglés. También es más exigente con cómo se redacta un tema, así que usa unas pocas palabras clave."
+  },
+  "modelDetailsMultilingualTitle": {
+    "message": "Multilingüe · Preciso."
+  },
+  "modelDetailsMultilingualBody": {
+    "message": "Lee todos los idiomas y clasifica tu feed con más precisión, incluso en inglés. Es más tolerante con cómo se redacta un tema. El coste es una descarga única de 197 MB y más trabajo con cada publicación."
+  },
+  "modelDetailsKept": {
+    "message": "Tus temas, la exigencia y tus valoraciones con pulgares se conservan al cambiar. Las valoraciones se guardan por modelo, así que cada modelo conserva las suyas y al volver se restauran."
+  },
+  "blurMediaLabel": {
+    "message": "Difuminar imágenes y vídeos sin texto"
+  },
+  "blurMediaDetails": {
+    "message": "FeedLens lee palabras, no imágenes. Cuando una foto o un vídeo lleva solo una palabra o dos, no hay nada que comparar con tus temas. Actívalo para difuminar esas publicaciones en lugar de dejarlas pasar."
+  },
+  "blurLanguageLabel": {
+    "message": "Difuminar publicaciones que no estén en inglés"
+  },
+  "blurLanguageDetails": {
+    "message": "FeedLens solo entiende inglés. No puede saber si una publicación en otro idioma trata de tus temas o no, así que deja pasar algunas y difumina otras al azar. Actívalo para difuminarlas todas, incluso las que sí son de tu interés."
+  },
+  "blurLanguageRefresh": {
+    "message": "Las publicaciones que ya están en pantalla se quedan como están. Sigue desplazándote o recarga la página para ver el cambio."
+  },
+  "blurLanguageOff": {
+    "message": "Desactivado porque el modelo multilingüe lee todos los idiomas: ya no queda nada que difuminar. Tu ajuste se conserva para cuando vuelvas al otro modelo."
+  },
+  "collapseLabel": {
+    "message": "Contraer las publicaciones difuminadas en una fila fina"
+  },
+  "collapseDetails": {
+    "message": "En lugar de dejar una publicación difuminada a toda su altura, se reduce a una fila fina para que casi no ocupe espacio al desplazarte. La etiqueta sigue visible y un clic la revela como cualquier otra publicación difuminada."
+  },
+  "scoresLabel": {
+    "message": "Mostrar la puntuación de cada publicación"
+  },
+  "scoresDetails": {
+    "message": "Añade una pequeña etiqueta a cada publicación con la puntuación obtenida, la que necesitaba para seguir visible y su longitud. Útil para entender por qué algo se difuminó. La etiqueta se muestra siempre en inglés."
+  },
+  "thumbsLabel": {
+    "message": "Aprender de mis pulgares"
+  },
+  "thumbsIntro": {
+    "message": "Pasa el cursor sobre una publicación para darle un pulgar arriba o abajo."
+  },
+  "thumbsUpMeans": {
+    "message": "👍 significa que este contenido pertenece al tema."
+  },
+  "thumbsDownMeans": {
+    "message": "👎 significa que este contenido no pertenece al tema."
+  },
+  "thumbsCorrect": {
+    "message": "Un acierto — difuminada o visible — no necesita corrección."
+  },
+  "thumbsScope": {
+    "message": "Un pulgar solo cambia las publicaciones casi idénticas a la que valoraste, como un repost o una cita. Todo lo demás se juzga por tus temas como siempre, así que un pulgar nunca oculta una buena publicación por accidente."
+  },
+  "thumbsPrivacy": {
+    "message": "Tus valoraciones se quedan en este dispositivo. Un inconveniente: solo compara las palabras de una publicación. Si el contenido real está en la imagen o el vídeo y las palabras son irrelevantes, sáltatela. Si lo dejas desactivado, los botones permanecen ocultos."
+  },
+  "statKept": {
+    "message": "👍 Conservadas"
+  },
+  "statBlurred": {
+    "message": "👎 Difuminadas"
+  },
+  "statRated": {
+    "message": "Valoradas"
+  },
+  "tuningNone": {
+    "message": "Aún no has valorado ninguna publicación."
+  },
+  "clearTuning": {
+    "message": "Borrar aprendizaje"
+  },
+  "backupTitle": {
+    "message": "Copia de seguridad"
+  },
+  "backupExport": {
+    "message": "Exportar"
+  },
+  "backupImport": {
+    "message": "Importar"
+  },
+  "backupHint": {
+    "message": "Guarda tus ajustes y valoraciones en un archivo. Al importar se reemplaza lo que hay ahora."
+  },
+  "exportFailed": {
+    "message": "Error al exportar"
+  },
+  "exportFailedTail": {
+    "message": "no se escribió nada"
+  },
+  "importPrompt": {
+    "message": "Importar"
+  },
+  "importPromptTail": {
+    "message": "— elige tu archivo de copia"
+  },
+  "importNotBackup": {
+    "message": "— no es una copia de FeedLens"
+  },
+  "importNewer": {
+    "message": "— creada con una versión más reciente"
+  },
+  "importOtherModel": {
+    "message": "— creada con otro modelo"
+  },
+  "importSaveFailed": {
+    "message": "— no se pudo guardar"
+  },
+  "importDone": {
+    "message": "✓ Temas: $TOPICS$ · Valoraciones: $RATINGS$",
+    "placeholders": {
+      "topics": {
+        "content": "$1",
+        "example": "3"
+      },
+      "ratings": {
+        "content": "$2",
+        "example": "12"
+      }
+    }
+  },
+  "resetTitle": {
+    "message": "Empezar de nuevo"
+  },
+  "resetButton": {
+    "message": "Restablecer"
+  },
+  "resetHint": {
+    "message": "Restaura los valores por defecto y borra tus valoraciones con pulgares. Tus temas se conservan."
+  },
+  "reportIssue": {
+    "message": "📥 Informar de un problema o compartir una idea"
+  },
+  "githubLabel": {
+    "message": "FeedLens en GitHub"
+  }
+}

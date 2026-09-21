@@ -5,6 +5,7 @@
  *
  * Never carries post text. State, a percentage and a failure reason.
  */
+import type { Translate } from './messages';
 import type { EngineState, StatusEvent } from './protocol';
 
 export interface EngineStatus {
@@ -50,28 +51,31 @@ export function worthReporting(
  * scrolling, and it has to share a 380px row with the title and the switch.
  * Hence two or three words, and the sentence left to `describeEngine`.
  */
-export function summarizeEngine(status: EngineStatus | undefined): {
+export function summarizeEngine(
+  status: EngineStatus | undefined,
+  t: Translate,
+): {
   tone: StatusTone;
   text: string;
 } {
-  if (!status) return { tone: 'idle', text: 'No feed here' };
+  if (!status) return { tone: 'idle', text: t('chipNone') };
   switch (status.state) {
     case 'idle':
-      return { tone: 'idle', text: 'Not started' };
+      return { tone: 'idle', text: t('chipIdle') };
     case 'downloading':
       return {
         tone: 'busy',
         text:
           status.progress === undefined
-            ? 'Downloading'
-            : `Downloading ${status.progress}%`,
+            ? t('chipDownloading')
+            : t('chipDownloadingPercent', String(status.progress)),
       };
     case 'warming':
-      return { tone: 'busy', text: 'Starting up' };
+      return { tone: 'busy', text: t('chipStarting') };
     case 'ready':
-      return { tone: 'ready', text: 'Ready' };
+      return { tone: 'ready', text: t('chipReady') };
     case 'error':
-      return { tone: 'error', text: 'Failed' };
+      return { tone: 'error', text: t('chipFailed') };
   }
 }
 
@@ -79,39 +83,35 @@ export function summarizeEngine(status: EngineStatus | undefined): {
  * Plain language, and honest about the one slow step: the model is a real
  * download and a reader who is not told that reads the silence as a bug.
  */
-export function describeEngine(status: EngineStatus | undefined): {
+export function describeEngine(
+  status: EngineStatus | undefined,
+  t: Translate,
+): {
   tone: StatusTone;
   text: string;
 } {
-  if (!status) {
-    return {
-      tone: 'idle',
-      text: 'No engine on this tab — open x, LinkedIn or Reddit',
-    };
-  }
+  if (!status) return { tone: 'idle', text: t('engineNone') };
   switch (status.state) {
     case 'idle':
-      return { tone: 'idle', text: 'Engine has not started on this tab yet' };
+      return { tone: 'idle', text: t('engineIdle') };
     case 'downloading':
       return {
         tone: 'busy',
         text:
           status.progress === undefined
-            ? 'Downloading the model — one time, then it is cached'
-            : `Downloading the model — ${status.progress}%, one time only`,
+            ? t('engineDownloading')
+            : t('engineDownloadingPercent', String(status.progress)),
       };
     case 'warming':
       // Also the whole of a cached load: reading ~200MB off disk and starting a
       // session is not instant, and it is emphatically not a second download.
-      return { tone: 'busy', text: 'Starting the model up — already downloaded' };
+      return { tone: 'busy', text: t('engineWarming') };
     case 'ready':
-      return { tone: 'ready', text: 'Model ready' };
+      return { tone: 'ready', text: t('engineReady') };
     case 'error':
       return {
         tone: 'error',
-        text: status.message
-          ? `Model failed to load — ${status.message}`
-          : 'Model failed to load',
+        text: status.message ? t('engineFailedWhy', status.message) : t('engineFailed'),
       };
   }
 }

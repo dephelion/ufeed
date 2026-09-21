@@ -1,3 +1,5 @@
+import type { MessageKey, Translate } from '../core/messages';
+
 const BLUR_CLASS = 'lx-blur';
 const COLLAPSE_CLASS = 'lx-collapse';
 
@@ -9,6 +11,17 @@ const revealed = new WeakSet<HTMLElement>();
 
 /** Drives the label: only 'topic' means the model actually judged the post. */
 export type BlurReason = 'topic' | 'media' | 'language' | 'peek';
+
+/**
+ * The text rides on `data-lx-label` and is drawn by `attr()`: a stylesheet has one
+ * language, and a `<style>` we inject may be refused by the host's CSP.
+ */
+const LABELS: Record<BlurReason, MessageKey> = {
+  topic: 'labelTopic',
+  media: 'labelMedia',
+  language: 'labelLanguage',
+  peek: 'labelPeek',
+};
 
 /** Enough to judge the subject, short enough not to become the distraction. */
 const PEEK_CHARS = 50;
@@ -22,6 +35,7 @@ const PEEK_CHARS = 50;
  */
 export function blur(
   element: HTMLElement,
+  t: Translate,
   reason: BlurReason = 'topic',
   collapse = false,
 ): void {
@@ -29,6 +43,7 @@ export function blur(
   element.classList.add(BLUR_CLASS);
   element.classList.toggle(COLLAPSE_CLASS, collapse);
   element.dataset.lxReason = reason;
+  element.dataset.lxLabel = t(LABELS[reason]);
   element.setAttribute('aria-hidden', 'true');
 }
 
@@ -37,15 +52,21 @@ export function blur(
  * the host's text node to un-blur them in place would mutate the feed's DOM and
  * die on the next re-render.
  */
-export function peek(element: HTMLElement, text: string, collapse = false): void {
+export function peek(
+  element: HTMLElement,
+  t: Translate,
+  text: string,
+  collapse = false,
+): void {
   if (revealed.has(element)) return;
-  blur(element, 'peek', collapse);
+  blur(element, t, 'peek', collapse);
   element.dataset.lxPeek = text.slice(0, PEEK_CHARS).trim();
 }
 
 export function reveal(element: HTMLElement): void {
   element.classList.remove(BLUR_CLASS, COLLAPSE_CLASS);
   delete element.dataset.lxReason;
+  delete element.dataset.lxLabel;
   delete element.dataset.lxPeek;
   element.removeAttribute('aria-hidden');
 }
@@ -65,11 +86,11 @@ export function isBlurred(element: HTMLElement): boolean {
 }
 
 /** What a screen reader hears when focus enters a blurred post, per `BlurReason`. */
-const SPOKEN: Record<BlurReason, string> = {
-  topic: 'out of topic',
-  media: 'no text to check',
-  language: 'another language',
-  peek: 'borderline',
+const SPOKEN: Record<BlurReason, MessageKey> = {
+  topic: 'spokenTopic',
+  media: 'spokenMedia',
+  language: 'spokenLanguage',
+  peek: 'spokenPeek',
 };
 
 /**
@@ -104,6 +125,7 @@ function mountAnnouncer(root: Document): { say(text: string): void; remove(): vo
  * crossed while scrolling.
  */
 export function listenForReveal(
+  t: Translate,
   root: Document = document,
   onReveal: (element: HTMLElement) => void = () => {},
 ): () => void {
@@ -128,8 +150,8 @@ export function listenForReveal(
     const element = blurredAt(event.target);
     if (!element || element === announced) return;
     announced = element;
-    const reason = SPOKEN[element.dataset.lxReason as BlurReason] ?? SPOKEN.topic;
-    announcer.say(`Blurred by FeedLens: ${reason}. Press Enter to read it.`);
+    const spoken = SPOKEN[element.dataset.lxReason as BlurReason] ?? SPOKEN.topic;
+    announcer.say(t(spoken));
   };
 
   root.addEventListener('click', take, true);

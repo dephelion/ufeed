@@ -11,51 +11,36 @@
       <h1>FeedLens</h1>
       <span class="chip" id="engine-chip">
         <span class="dot" id="engine-chip-dot"></span>
-        <span id="engine-chip-text">Idle</span>
+        <span id="engine-chip-text" data-i18n="chipInitial"></span>
       </span>
       <label class="switch">
         <input type="checkbox" id="enabled" />
-        <span id="enabled-label">On</span>
+        <span id="enabled-label"></span>
       </label>
     </header>
 
-    <label class="field" for="topics">Topics I want to see</label>
+    <label class="field" for="topics" data-i18n="topicsLabel"></label>
     <textarea
       id="topics"
       rows="3"
       spellcheck="false"
-      placeholder="software engineering, programming&#10;machine learning research&#10;video games, game design"
+      data-i18n-placeholder="topicsPlaceholder"
     ></textarea>
-    <p class="hint" id="topics-hint">
-      One topic per line, a few words each. Posts about anything else get blurred out. You
-      can always click a blurred post to read it.
-    </p>
+    <p class="hint" id="topics-hint" data-i18n="topicsHint"></p>
     <details>
-      <summary>How to write a good topic</summary>
+      <summary data-i18n="tipsSummary"></summary>
       <ul class="hint">
+        <li><b data-i18n="tipWordsTitle"></b> <span data-i18n="tipWordsBody"></span></li>
         <li>
-          <b>Two to five words.</b> One word is too vague. More than five and each one
-          counts for less.
+          <b data-i18n="tipKeywordsTitle"></b> <span data-i18n="tipKeywordsBody"></span>
         </li>
         <li>
-          <b>Keywords, not sentences.</b> Every word counts, so small words like
-          <em>and</em> or <em>posts about</em> only blur what you're asking for.
+          <b data-i18n="tipCommasTitle"></b> <span data-i18n="tipCommasBody"></span>
         </li>
+        <li><b data-i18n="tipLinesTitle"></b> <span data-i18n="tipLinesBody"></span></li>
+        <li><b data-i18n="tipVocabTitle"></b> <span data-i18n="tipVocabBody"></span></li>
         <li>
-          <b>Commas don't matter.</b> <em>software, programming</em> and
-          <em>software programming</em> work the same. Use whichever you prefer.
-        </li>
-        <li>
-          <b>One subject per line.</b> Put a separate subject on its own line. A post that
-          matches any line stays visible.
-        </li>
-        <li>
-          <b>Use the words posts use.</b> <em>software</em> works better than
-          <em>tech</em>, because people write about the thing, not the category.
-        </li>
-        <li>
-          <b>It matches subjects, not quality.</b> A great post and a poor one about the
-          same thing both stay. FeedLens can't tell them apart.
+          <b data-i18n="tipQualityTitle"></b> <span data-i18n="tipQualityBody"></span>
         </li>
       </ul>
     </details>
@@ -63,153 +48,125 @@
     <div class="actions">
       <button id="apply" type="button" disabled>
         <img src="/icon/32.png" alt="" class="btn-icon" />
-        Save topics
+        <span data-i18n="saveTopics"></span>
       </button>
-      <span class="applied" id="applied" hidden>Saved</span>
+      <span class="applied" id="applied" data-i18n="saved" hidden></span>
     </div>
 
     <label class="field" for="strictness">
-      Strictness <output id="strictness-value"></output>
+      <span data-i18n="strictnessLabel"></span> <output id="strictness-value"></output>
     </label>
     <input type="range" id="strictness" min="0" max="10" step="1" />
     <p class="hint" id="strictness-hint"></p>
 
-    <label class="field" for="model">Model</label>
+    <label class="field" for="model" data-i18n="modelLabel"></label>
     <select id="model">
-      <option value="e5-small">🇬🇧 English · Fast — 33 MB</option>
-      <option value="gemma">🌍 Multilingual · Accurate — 197 MB</option>
+      <option value="e5-small" data-i18n="modelOptionEnglish"></option>
+      <option value="gemma" data-i18n="modelOptionMultilingual"></option>
     </select>
     <p class="hint" id="model-hint"></p>
     <details class="hint-details">
-      <summary>Details</summary>
+      <summary data-i18n="details"></summary>
       <p class="hint">
-        <b>English · Fast.</b> Small and quick on every post, and it only reads English.
-        It is also more particular about how a topic is worded, so keep topics to a few
-        keywords.
+        <b data-i18n="modelDetailsEnglishTitle"></b>
+        <span data-i18n="modelDetailsEnglishBody"></span>
         <br />
-        <b>Multilingual · Accurate.</b> Reads every language and sorts your feed more
-        accurately, even in English. It is more forgiving of how a topic is worded. The
-        cost is a 197 MB one-time download and more work on every post.
+        <b data-i18n="modelDetailsMultilingualTitle"></b>
+        <span data-i18n="modelDetailsMultilingualBody"></span>
         <br />
-        Your topics, strictness and thumb ratings are all kept when you switch. Ratings
-        are stored per model, so each model keeps its own and switching back restores
-        them.
+        <span data-i18n="modelDetailsKept"></span>
       </p>
     </details>
 
     <label class="check" for="blur-thin-media">
       <input type="checkbox" id="blur-thin-media" />
-      Blur images and videos with no text
+      <span data-i18n="blurMediaLabel"></span>
     </label>
     <details class="hint-details">
-      <summary>Details</summary>
-      <p class="hint">
-        FeedLens reads words, not pictures. When a photo or video has only a word or two
-        with it, there is nothing to compare against your topics. Turn this on to blur
-        those posts instead of letting them through.
-      </p>
+      <summary data-i18n="details"></summary>
+      <p class="hint" data-i18n="blurMediaDetails"></p>
     </details>
 
     <label class="check" for="blur-other-languages">
       <input type="checkbox" id="blur-other-languages" />
-      Blur posts that aren't in English
+      <span data-i18n="blurLanguageLabel"></span>
     </label>
     <details class="hint-details">
-      <summary>Details</summary>
+      <summary data-i18n="details"></summary>
       <p class="hint" id="language-hint">
-        FeedLens only understands English. It can't tell whether a post in another
-        language is about your topics or not, so it lets some through and blurs others at
-        random. Turn this on to blur them all — including ones that are on topic.
+        <span data-i18n="blurLanguageDetails"></span>
         <br />
-        Posts already on screen stay as they are. Scroll on, or reload the page, to see
-        the change.
+        <span data-i18n="blurLanguageRefresh"></span>
       </p>
-      <p class="hint" id="language-off" hidden>
-        Switched off because the multilingual model reads every language — there is
-        nothing left for it to blur. Your setting is kept for when you switch back.
-      </p>
+      <p class="hint" id="language-off" data-i18n="blurLanguageOff" hidden></p>
     </details>
 
     <label class="check" for="collapse-blurred">
       <input type="checkbox" id="collapse-blurred" />
-      Collapse blurred posts into a thin row
+      <span data-i18n="collapseLabel"></span>
     </label>
     <details class="hint-details">
-      <summary>Details</summary>
-      <p class="hint">
-        Instead of leaving a blurred post at full height, shrink it down to a thin row so
-        it takes up almost no space while you scroll past. The label still shows, and a
-        click reveals it like any other blurred post.
-      </p>
+      <summary data-i18n="details"></summary>
+      <p class="hint" data-i18n="collapseDetails"></p>
     </details>
 
     <label class="check" for="show-scores">
       <input type="checkbox" id="show-scores" />
-      Show each post's score
+      <span data-i18n="scoresLabel"></span>
     </label>
     <details class="hint-details">
-      <summary>Details</summary>
-      <p class="hint">
-        Adds a small label to every post showing the score it got, the score it needed to
-        stay visible, and how long it is. Useful for working out why something was
-        blurred.
-      </p>
+      <summary data-i18n="details"></summary>
+      <p class="hint" data-i18n="scoresDetails"></p>
     </details>
 
     <section class="block">
       <label class="check block-head" for="tune-feedback">
         <input type="checkbox" id="tune-feedback" />
-        Learn from my thumbs
+        <span data-i18n="thumbsLabel"></span>
       </label>
       <details class="hint-details">
-        <summary>Details</summary>
-        <p class="hint block-hint">Hover over a post to give it a thumb up or down.</p>
+        <summary data-i18n="details"></summary>
+        <p class="hint block-hint" data-i18n="thumbsIntro"></p>
         <ul class="hint block-hint">
-          <li>&#128077; means this content belongs in the topic.</li>
-          <li>&#128078; means this content does not belong in the topic.</li>
-          <li>A correct call — blurred or shown — needs no correction.</li>
+          <li data-i18n="thumbsUpMeans"></li>
+          <li data-i18n="thumbsDownMeans"></li>
+          <li data-i18n="thumbsCorrect"></li>
         </ul>
-        <p class="hint block-hint">
-          A thumb only changes posts that are almost the same as the one you rated, such
-          as a repost or a quote. Everything else is judged by your topics as usual, so a
-          thumb never hides a good post by accident.
-        </p>
-        <p class="hint block-hint">
-          Your ratings stay on this device. One catch: it only compares the words in a
-          post. If the real content is in the image or video and the words are
-          forgettable, skip it. Leave this off and the buttons stay hidden.
-        </p>
+        <p class="hint block-hint" data-i18n="thumbsScope"></p>
+        <p class="hint block-hint" data-i18n="thumbsPrivacy"></p>
       </details>
       <dl class="stats">
         <div>
-          <dt>&#128077; Kept</dt>
+          <dt data-i18n="statKept"></dt>
           <dd id="stat-up">0</dd>
         </div>
         <div>
-          <dt>&#128078; Blurred</dt>
+          <dt data-i18n="statBlurred"></dt>
           <dd id="stat-down">0</dd>
         </div>
         <div>
-          <dt>Rated</dt>
+          <dt data-i18n="statRated"></dt>
           <dd id="stat-total">0</dd>
         </div>
       </dl>
       <div class="row block-foot">
         <span class="hint block-note" id="tuning-note"></span>
-        <button id="clear-tuning" class="ghost" type="button">Clear tuning</button>
+        <button
+          id="clear-tuning"
+          class="ghost"
+          type="button"
+          data-i18n="clearTuning"
+        ></button>
       </div>
     </section>
 
     <section class="block">
       <div class="row block-head">
-        <span>Backup</span>
-        <button id="export" class="ghost" type="button">Export</button>
-        <button id="import" class="ghost" type="button">Import</button>
+        <span data-i18n="backupTitle"></span>
+        <button id="export" class="ghost" type="button" data-i18n="backupExport"></button>
+        <button id="import" class="ghost" type="button" data-i18n="backupImport"></button>
       </div>
-      <p class="hint block-hint">
-        Saves your settings and thumb ratings to a file. Importing replaces what is here
-        now.
-      </p>
+      <p class="hint block-hint" data-i18n="backupHint"></p>
       <p class="transfer" id="transfer" hidden>
         <span class="transfer-name" id="transfer-name"></span>
         <span class="transfer-tail" id="transfer-tail"></span>
@@ -225,22 +182,20 @@
 
     <section class="block">
       <div class="row block-head">
-        <span>Start over</span>
-        <button id="reset" class="ghost" type="button">Reset</button>
+        <span data-i18n="resetTitle"></span>
+        <button id="reset" class="ghost" type="button" data-i18n="resetButton"></button>
       </div>
-      <p class="hint block-hint">
-        Restores the defaults and deletes your thumb ratings. Your topics are kept.
-      </p>
+      <p class="hint block-hint" data-i18n="resetHint"></p>
     </section>
 
     <footer>
       <p class="status-line">
         <span class="dot" id="dot"></span>
-        <span id="status">Checking settings…</span>
+        <span id="status" data-i18n="statusInitial"></span>
       </p>
       <p class="status-line" id="engine-line">
         <span class="dot" id="engine-dot"></span>
-        <span id="engine-status">Checking engine…</span>
+        <span id="engine-status" data-i18n="engineInitial"></span>
       </p>
       <div class="contact">
         <p>
@@ -248,16 +203,16 @@
             href="https://github.com/dephelion/feedlens/issues/new/choose"
             target="_blank"
             rel="noopener noreferrer"
-            >📥 Report an issue or share an idea</a
-          >
+            data-i18n="reportIssue"
+          ></a>
         </p>
         <a
           class="github"
           href="https://github.com/dephelion/feedlens"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="FeedLens on GitHub"
-          title="FeedLens on GitHub"
+          data-i18n-aria-label="githubLabel"
+          data-i18n-title="githubLabel"
         >
           <svg
             viewBox="0 0 16 16"

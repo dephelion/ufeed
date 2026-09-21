@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { mountFeedbackBar } from './feedback-bar';
+import { translate as t } from '../platform/i18n';
 
 const post = () => {
   const container = document.createElement('article');
@@ -14,6 +15,7 @@ describe('the thumbs bar', () => {
     const container = post();
     const onFeedback = vi.fn();
     const bar = mountFeedbackBar({
+      t,
       postAt: () => ({ container, text: 'a post about rust' }),
       onFeedback,
     });

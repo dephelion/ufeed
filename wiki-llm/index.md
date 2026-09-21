@@ -14,6 +14,7 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 | [model.md](model.md)               | Which model, why that one, what do the scores mean, how is the threshold set, why does a backend get rejected?               |
 | [adapters.md](adapters.md)         | How is a post found in a vendor DOM? X selectors, virtualized recycling, what breaks when the vendor ships a change.         |
 | [ui.md](ui.md)                     | What the blur looks like, how a post is revealed, what the popup controls, what debug mode adds.                             |
+| [i18n.md](i18n.md)                 | Where UI text lives, which language a reader gets, how text reaches each surface, what stays English, how to add a language. |
 | [manifest.md](manifest.md)         | Permissions, CSP, per-browser manifest differences, what must never be dropped.                                              |
 | [privacy.md](privacy.md)           | What FeedLens reads, what it stores, what leaves the device, store policy, legal posture.                                    |
 | [product.md](product.md)           | What is FeedLens for, what will it never do, which words may user-facing copy claim.                                         |
@@ -28,6 +29,8 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model, so WASM is the only backend.
 
 Two models, picked in the popup: `e5-small-v2` (33MB, English only, default) and EmbeddingGemma-300m (197MB, every language). The multilingual one is opt-in until its cost is measured in a browser rather than in node, and its strictness scale is provisional.
+
+The UI speaks English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and Traditional); the browser's language picks one, see [i18n.md](i18n.md).
 
 Not built: Chrome offscreen singleton, worker pool, mobile.
 

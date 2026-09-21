@@ -25,13 +25,13 @@ Clean Architecture's Dependency Rule ([Uncle Bob](https://blog.cleancoder.com/un
 
 ## Rings
 
-| Ring | Folder         | Holds                                                                                                                                                                                        | May import                   | May touch             |
-| :--- | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- | :-------------------- |
-| 1    | `core/`        | FeedLens's rules: model constants, scoring, the blur policy, settings and ratings shapes, language and media rules, the engine message contract, status text, backup format, caches, logging | `core/`                      | Plain JavaScript only |
-| 2    | `feed/`        | The host page: `FeedFilter`, scanner, queue, conversations, tuning, blur, score badge, thumbs bar, no-topics card, and `ports.ts`                                                            | `core/`, `feed/`             | The DOM               |
-| 3    | `adapters/`    | One site's DOM knowledge each; implements `SiteAdapter`                                                                                                                                      | `core/`, `feed/`, own folder | The DOM               |
-| 3    | `platform/`    | Extension APIs and libraries: storage, runtime messaging, the engine client (iframe + port), the embedder (transformers.js)                                                                  | `core/`, `feed/`, own folder | Anything              |
-| 4    | `entrypoints/` | WXT entry files. Build the concrete pieces and plug them into ports. Nothing imports them.                                                                                                   | Anything                     | Anything              |
+| Ring | Folder         | Holds                                                                                                                                                                                                                               | May import                   | May touch             |
+| :--- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------- | :-------------------- |
+| 1    | `core/`        | FeedLens's rules: model constants, scoring, the blur policy, settings and ratings shapes, language and media rules, the engine message contract, status text, message keys and the `Translate` type, backup format, caches, logging | `core/`                      | Plain JavaScript only |
+| 2    | `feed/`        | The host page: `FeedFilter`, scanner, queue, conversations, tuning, blur, score badge, thumbs bar, no-topics card, and `ports.ts`                                                                                                   | `core/`, `feed/`             | The DOM               |
+| 3    | `adapters/`    | One site's DOM knowledge each; implements `SiteAdapter`                                                                                                                                                                             | `core/`, `feed/`, own folder | The DOM               |
+| 3    | `platform/`    | Extension APIs and libraries: storage, runtime messaging, the engine client (iframe + port), the embedder (transformers.js)                                                                                                         | `core/`, `feed/`, own folder | Anything              |
+| 4    | `entrypoints/` | WXT entry files. Build the concrete pieces and plug them into ports. Nothing imports them.                                                                                                                                          | Anything                     | Anything              |
 
 - **Same ring, different folder: never.** `adapters/` and `platform/` do not import each other.
 - **Packages** (`webextension-polyfill`, `@huggingface/transformers`, `wxt`) enter at ring 3 or 4 only.
@@ -41,14 +41,17 @@ Clean Architecture's Dependency Rule ([Uncle Bob](https://blog.cleancoder.com/un
 
 `src/feed/ports.ts` — everything the feed needs from outside its ring, and nothing else. Outer rings implement; entrypoints wire.
 
-| Port                  | Implemented by                                | Wired in                        |
-| :-------------------- | :-------------------------------------------- | :------------------------------ |
-| `SiteAdapter`, `Post` | `adapters/x.ts` · `linkedin.ts` · `reddit.ts` | `content.ts` via `adapterFor()` |
-| `Engine`              | `platform/engine-client.ts`                   | `content.ts`                    |
-| `FeedbackStore`       | `platform/storage.ts` (`feedbackStore`)       | `content.ts` → `Tuning.load()`  |
-| `DetectLanguage`      | `browser.i18n.detectLanguage`                 | `content.ts` → `FeedFilter`     |
+| Port                  | Implemented by                                 | Wired in                        |
+| :-------------------- | :--------------------------------------------- | :------------------------------ |
+| `SiteAdapter`, `Post` | `adapters/x.ts` · `linkedin.ts` · `reddit.ts`  | `content.ts` via `adapterFor()` |
+| `Engine`              | `platform/engine-client.ts`                    | `content.ts`                    |
+| `FeedbackStore`       | `platform/storage.ts` (`feedbackStore`)        | `content.ts` → `Tuning.load()`  |
+| `DetectLanguage`      | `browser.i18n.detectLanguage`                  | `content.ts` → `FeedFilter`     |
+| `Translate`           | `platform/i18n.ts` (`browser.i18n.getMessage`) | `content.ts`, `popup.ts`        |
 
 The no-topics card takes its icon URL as a plain argument; no port needed for one string.
+
+**`Translate` is defined in `core/`, not `ports.ts`**: `core/engine-status.ts` needs it too, and `core/` may not import `feed/`. Feed modules take it as an argument. `core/` never returns UI prose except through it; `importConfig` returns a refusal code and the popup words it ([i18n.md](i18n.md)).
 
 **A new port is a decision, not a convenience.** Add one only when an inner ring needs something only an outer ring can do. A port with one method and one caller can be a function type (`DetectLanguage`).
 

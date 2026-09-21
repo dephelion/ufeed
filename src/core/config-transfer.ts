@@ -23,8 +23,12 @@ export interface Backup {
   feedback: Record<string, { key: string; liked: boolean; vector: string }[]>;
 }
 
+/** Why a file was refused. The popup words it, so the reason never has to be English. */
+export type ImportRefusal = 'not-a-backup' | 'newer' | 'other-model';
+
 export type ImportResult =
-  { ok: true; settings: Settings; feedback: Feedback } | { ok: false; reason: string };
+  | { ok: true; settings: Settings; feedback: Feedback }
+  | { ok: false; reason: ImportRefusal };
 
 /** The backup carries the model the ratings were made with, so a reader's file
  *  is refused rather than silently misread when it meets another model. */
@@ -59,22 +63,22 @@ export function importConfig(text: string): ImportResult {
   try {
     parsed = JSON.parse(text);
   } catch {
-    return { ok: false, reason: 'not a FeedLens backup' };
+    return { ok: false, reason: 'not-a-backup' };
   }
   if (!isRecord(parsed) || !isRecord(parsed['settings'])) {
-    return { ok: false, reason: 'not a FeedLens backup' };
+    return { ok: false, reason: 'not-a-backup' };
   }
   const schema = parsed['schema'];
   if (typeof schema !== 'number' || !Number.isInteger(schema) || schema < 1) {
-    return { ok: false, reason: 'not a FeedLens backup' };
+    return { ok: false, reason: 'not-a-backup' };
   }
-  if (schema > SCHEMA) return { ok: false, reason: 'made by a newer version' };
+  if (schema > SCHEMA) return { ok: false, reason: 'newer' };
 
   const model = parsed['model'];
   const stamp = isRecord(model) ? model['id'] : undefined;
   const spec = modelById(stamp);
   if (!spec || (isRecord(model) ? model['dim'] : undefined) !== spec.dim) {
-    return { ok: false, reason: 'made with a different model' };
+    return { ok: false, reason: 'other-model' };
   }
 
   // The stamp, not the settings, decides which model these vectors belong to:

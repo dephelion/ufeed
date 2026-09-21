@@ -13,6 +13,7 @@ import { mountHiddenBadge } from '../feed/hidden-badge';
 import { mountNudge } from '../feed/nudge';
 import { Tuning } from '../feed/tuning';
 import { EngineClient } from '../platform/engine-client';
+import { translate } from '../platform/i18n';
 import { requestPopup } from '../platform/open-popup';
 import {
   publishEngineStatus,
@@ -58,6 +59,7 @@ async function start(): Promise<void> {
   const engine = new EngineClient();
   const badge = mountHiddenBadge({
     iconUrl: browser.runtime.getURL('icon/32.png'),
+    t: translate,
     onClick: requestPopup,
   });
   const filter = new FeedFilter({
@@ -66,6 +68,7 @@ async function start(): Promise<void> {
     tuner,
     settings,
     detectLanguage: (text) => browser.i18n.detectLanguage(text),
+    t: translate,
     onHiddenChange: (count) => badge.setCount(count),
   });
 
@@ -80,7 +83,7 @@ async function start(): Promise<void> {
     filter.engineChanged(next.state);
   });
 
-  const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'));
+  const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'), translate);
   nudge.setVisible(needsTopics(settings));
   onSettingsChanged((next) => {
     const modelChanged = next.model !== settings.model;
@@ -95,11 +98,12 @@ async function start(): Promise<void> {
   tuner.onChange(() => filter.tuningChanged());
 
   const feedbackBar = mountFeedbackBar({
+    t: translate,
     postAt: (target) => filter.ratable(target),
     onFeedback: (post, liked) => filter.feedback(post, liked),
   });
   engine.onBusyChange((busy) => feedbackBar.setBusy(busy));
-  listenForReveal(document, (element) => filter.revealed(element));
+  listenForReveal(translate, document, (element) => filter.revealed(element));
 
   filter.start();
   badge.setVisible(filter.active);
