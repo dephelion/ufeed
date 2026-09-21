@@ -18,7 +18,7 @@ export interface Settings {
   blurOtherLanguages: boolean;
   /** Shrink a blurred post to a thin row instead of leaving it full height. */
   collapseBlurred: boolean;
-  /** The popup's language. Feed tabs never read it. `auto` follows the browser. */
+  /** The language of the popup and the feed. `auto` follows the browser. */
   language: LanguageSetting;
 }
 
@@ -75,8 +75,8 @@ export function needsTopics(settings: Settings): boolean {
 }
 
 /**
- * The language belongs to the popup, but it is stored with the rest, so every feed
- * tab hears about a change. When it is all that changed there is nothing to redo.
+ * A language pick rewrites text, not decisions: when it is all that changed, a feed
+ * tab has nothing to reconnect or re-score.
  */
 export function onlyLanguageChanged(before: Settings, after: Settings): boolean {
   if (before.language === after.language) return false;

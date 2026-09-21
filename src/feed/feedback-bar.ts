@@ -20,6 +20,8 @@ export interface FeedbackBarOptions {
 export interface FeedbackBar {
   /** While the engine is busy a thumb would queue behind scoring and could time out. */
   setBusy(busy: boolean): void;
+  /** Writes the text again, for a `t` that now answers in another language. */
+  relabel(): void;
   unmount(): void;
 }
 
@@ -45,8 +47,11 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
 
   const up = bar.querySelector<HTMLButtonElement>('.lx-fb-up')!;
   const down = bar.querySelector<HTMLButtonElement>('.lx-fb-down')!;
-  up.title = options.t('thumbUp');
-  down.title = options.t('thumbDown');
+  const relabel = () => {
+    up.title = options.t(busy ? 'thumbBusy' : 'thumbUp');
+    down.title = options.t(busy ? 'thumbBusy' : 'thumbDown');
+  };
+  relabel();
 
   const show = (post: PostRef) => {
     const box = post.container.getBoundingClientRect();
@@ -101,9 +106,9 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
       bar.classList.toggle('lx-fb-busy', busy);
       up.disabled = busy;
       down.disabled = busy;
-      up.title = options.t(busy ? 'thumbBusy' : 'thumbUp');
-      down.title = options.t(busy ? 'thumbBusy' : 'thumbDown');
+      relabel();
     },
+    relabel,
     unmount() {
       document.removeEventListener('mouseover', onOver, true);
       window.removeEventListener('scroll', hide);

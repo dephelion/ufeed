@@ -38,7 +38,7 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
   post. Your topics and settings carry over, and each model keeps its own thumb
   ratings.
 - **In your language.** The popup and the labels follow your browser's language,
-  and the flag next to the title switches the popup to another: English, Spanish,
+  and the flag next to the title switches both to another: English, Spanish,
   German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and
   Traditional).
 - **You can see why, and steer it.** A 0–10 strictness slider, an option to show

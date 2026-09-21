@@ -30,7 +30,7 @@ Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and 
 
 Two models, picked in the popup: `e5-small-v2` (33MB, English only, default) and EmbeddingGemma-300m (197MB, every language). The multilingual one is opt-in until its cost is measured in a browser rather than in node, and its strictness scale is provisional.
 
-The UI speaks English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and Traditional); the browser's language picks one, see [i18n.md](i18n.md).
+The UI speaks English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and Traditional); the browser's language picks one until the reader picks another in the popup, see [i18n.md](i18n.md).
 
 Not built: Chrome offscreen singleton, worker pool, mobile.
 

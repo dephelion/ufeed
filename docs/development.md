@@ -118,10 +118,8 @@ falls back to English, so nothing else needs wiring.
    own name for itself. This is what puts it in the popup's flag menu.
 4. Run `npm test`. It fails on a missing key, a lost placeholder, a string that is
    too long, or a language missing from that list.
-5. Pick it from the flag next to the title in the popup. The labels on posts follow
-   the browser's language instead, so to check those set the browser to it (Chrome:
-   Settings, Languages, or the system language on macOS; Firefox: Settings,
-   Language) and restart. Tests cannot see wrapping.
+5. Pick it from the flag next to the title in the popup, then check the labels on
+   a feed tab. Tests cannot see wrapping.
 
 The score badge, log output and the engine's own error text stay English on
 purpose. The reasons are in [`wiki-llm/i18n.md`](../wiki-llm/i18n.md).

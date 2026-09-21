@@ -8,6 +8,8 @@ import type { Translate } from '../core/messages';
 export interface HiddenBadge {
   setCount(count: number): void;
   setVisible(visible: boolean): void;
+  /** Writes the text again, for a `t` that now answers in another language. */
+  relabel(): void;
   destroy(): void;
 }
 
@@ -26,7 +28,6 @@ export function mountHiddenBadge({
   const badge = document.createElement('button');
   badge.type = 'button';
   badge.className = 'lx-count';
-  badge.title = t('badgeOpen');
   badge.hidden = true;
 
   const icon = document.createElement('img');
@@ -38,17 +39,23 @@ export function mountHiddenBadge({
   badge.append(icon, label);
   badge.addEventListener('click', () => onClick());
 
-  const setCount = (count: number): void => {
+  let count = 0;
+  const relabel = (): void => {
+    badge.title = t('badgeOpen');
     label.textContent = t('badgeCount', String(count));
   };
-  setCount(0);
+  relabel();
 
   // Firefox keeps a dead content script's badge on reload (see ui.md §No-topics card).
   for (const stale of document.querySelectorAll('.lx-count')) stale.remove();
   document.documentElement.appendChild(badge);
 
   return {
-    setCount,
+    setCount(next: number): void {
+      count = next;
+      relabel();
+    },
+    relabel,
     setVisible(visible: boolean): void {
       badge.hidden = !visible;
     },

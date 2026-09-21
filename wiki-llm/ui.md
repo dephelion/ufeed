@@ -157,11 +157,11 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                     |
 | Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm.                                      |
 | Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics and language.                                                          |
-| Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Changes the popup only, never a feed ([i18n.md](i18n.md)).            |
+| Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Sets the language of the popup and the feed ([i18n.md](i18n.md)).     |
 | Engine chip                       | Header, centred between the title and the switch. Two or three words plus a light.                                                                               |
 | Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, GitHub mark linking to the repo (same row, no added height). |
 
-**The popup follows the browser's language.** A control's text is a key filled at load ([i18n.md](i18n.md)); it never changes what a control does. Hints keep the rules below in every language.
+**The popup follows the reader's language, the browser's until one is picked.** A control's text is a key filled at load ([i18n.md](i18n.md)); it never changes what a control does. Hints keep the rules below in every language.
 
 **Hints speak in outcomes, not cosines, and not in the vocabulary of the thing that makes them.** _"Stricter hides more, including some posts you'd want. Blurred posts stay one click away."_ No model, no score, no embedding: a reader who has never met either must be able to predict what a control does. **No cosine reaches the hint at all**, not even behind `showScores`: the cut score is on the badge, over the post it judged, where it means something. In the popup it is a leaked implementation detail.
 

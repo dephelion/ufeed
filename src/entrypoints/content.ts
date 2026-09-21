@@ -5,15 +5,16 @@ import '../feed/skeleton.css';
 import { adapterFor } from '../adapters';
 import { toStatus, worthReporting, type EngineStatus } from '../core/engine-status';
 import { logger } from '../core/log';
+import type { Translate } from '../core/messages';
 import { needsTopics } from '../core/settings';
-import { listenForReveal } from '../feed/blur';
+import { listenForReveal, relabelBlurred } from '../feed/blur';
 import { mountFeedbackBar } from '../feed/feedback-bar';
 import { FeedFilter } from '../feed/filter';
 import { mountHiddenBadge } from '../feed/hidden-badge';
 import { mountNudge } from '../feed/nudge';
 import { Tuning } from '../feed/tuning';
 import { EngineClient } from '../platform/engine-client';
-import { translate } from '../platform/i18n';
+import { translatorFor } from '../platform/i18n';
 import { requestPopup } from '../platform/open-popup';
 import {
   publishEngineStatus,
@@ -56,10 +57,13 @@ async function start(): Promise<void> {
   // has to see the switch at the same moment the filter does.
   let settings = await loadSettings();
   const tuner = await Tuning.load(feedbackStoreFor(() => settings.model));
+  // Looked up on every call, so each module holding `t` follows a later pick.
+  let translator = await translatorFor(settings.language);
+  const t: Translate = (key, ...substitutions) => translator(key, ...substitutions);
   const engine = new EngineClient();
   const badge = mountHiddenBadge({
     iconUrl: browser.runtime.getURL('icon/32.png'),
-    t: translate,
+    t,
     onClick: requestPopup,
   });
   const filter = new FeedFilter({
@@ -68,7 +72,7 @@ async function start(): Promise<void> {
     tuner,
     settings,
     detectLanguage: (text) => browser.i18n.detectLanguage(text),
-    t: translate,
+    t,
     onHiddenChange: (count) => badge.setCount(count),
   });
 
@@ -83,7 +87,7 @@ async function start(): Promise<void> {
     filter.engineChanged(next.state);
   });
 
-  const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'), translate);
+  const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'), t);
   nudge.setVisible(needsTopics(settings));
   onSettingsChanged((next) => {
     const modelChanged = next.model !== settings.model;
@@ -98,12 +102,26 @@ async function start(): Promise<void> {
   tuner.onChange(() => filter.tuningChanged());
 
   const feedbackBar = mountFeedbackBar({
-    t: translate,
+    t,
     postAt: (target) => filter.ratable(target),
     onFeedback: (post, liked) => filter.feedback(post, liked),
   });
   engine.onBusyChange((busy) => feedbackBar.setBusy(busy));
-  listenForReveal(translate, document, (element) => filter.revealed(element));
+  listenForReveal(t, document, (element) => filter.revealed(element));
+
+  // A pick in the popup reaches a tab that is already open (i18n.md).
+  let language = settings.language;
+  onSettingsChanged((next) => {
+    if (next.language === language) return;
+    language = next.language;
+    void translatorFor(language).then((picked) => {
+      translator = picked;
+      badge.relabel();
+      nudge.relabel();
+      feedbackBar.relabel();
+      relabelBlurred(t);
+    });
+  });
 
   filter.start();
   badge.setVisible(filter.active);

@@ -8,7 +8,7 @@ vi.mock('webextension-polyfill', () => ({
   },
 }));
 
-const { loadTranslator } = await import('./i18n');
+const { loadTranslator, translatorFor } = await import('./i18n');
 
 const spanish = JSON.parse(readFileSync('public/_locales/es/messages.json', 'utf8'));
 
@@ -51,5 +51,30 @@ describe('loadTranslator', () => {
     const t = await loadTranslator('de');
 
     expect(t('badgeOpen')).toBe('browser:badgeOpen');
+  });
+});
+
+describe('translatorFor', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('leaves the browser to answer when the reader never picked', async () => {
+    const fetched = vi.fn();
+    vi.stubGlobal('fetch', fetched);
+
+    const t = await translatorFor('auto');
+
+    expect(t('badgeOpen')).toBe('browser:badgeOpen');
+    expect(fetched).not.toHaveBeenCalled();
+  });
+
+  it('reads the catalog of a picked language', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ json: async () => spanish })),
+    );
+
+    const t = await translatorFor('es');
+
+    expect(t('badgeCount', '3')).toBe('Publicaciones ocultas: 3');
   });
 });

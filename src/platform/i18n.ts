@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import { logger } from '../core/log';
-import type { LanguageCode } from '../core/languages';
+import type { LanguageCode, LanguageSetting } from '../core/languages';
 import { createTranslator, type Translate } from '../core/messages';
 
 const log = logger('i18n');
@@ -26,4 +26,9 @@ export async function loadTranslator(language: LanguageCode): Promise<Translate>
     });
     return translate;
   }
+}
+
+/** `auto` is the browser's own answer and needs no fetch; only a pick reads a catalog. */
+export async function translatorFor(setting: LanguageSetting): Promise<Translate> {
+  return setting === 'auto' ? translate : loadTranslator(setting);
 }

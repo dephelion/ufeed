@@ -14,8 +14,8 @@ interface Entry {
 export type Catalog = Record<string, Entry>;
 
 /**
- * What a browser does with a catalog, for the one reader that cannot ask it: the
- * popup, when the reader picked a language other than the browser's. Each `$NAME$`
+ * What a browser does with a catalog, for a reader who picked a language other
+ * than the browser's, which `getMessage` cannot serve. Each `$NAME$`
  * takes the substitution its placeholder points at (`$1` is the first).
  */
 export function createTranslator(catalog: Catalog): Translate {

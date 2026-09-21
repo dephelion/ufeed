@@ -11,6 +11,8 @@ import type { Translate } from '../core/messages';
  */
 export interface Nudge {
   setVisible(visible: boolean): void;
+  /** Writes the text again, for a `t` that now answers in another language. */
+  relabel(): void;
   destroy(): void;
 }
 
@@ -47,9 +49,7 @@ export function mountNudge(iconUrl: string, t: Translate): Nudge {
   icon.src = iconUrl;
 
   const title = document.createElement('b');
-  title.textContent = t('nudgeTitle');
   const text = document.createElement('p');
-  text.textContent = t('nudgeBody');
   const body = document.createElement('div');
   body.className = 'lx-nudge-body';
   body.append(title, text);
@@ -57,8 +57,14 @@ export function mountNudge(iconUrl: string, t: Translate): Nudge {
   const close = document.createElement('button');
   close.type = 'button';
   close.className = 'lx-nudge-x';
-  close.setAttribute('aria-label', t('nudgeDismiss'));
   close.textContent = '\u00d7';
+
+  const relabel = (): void => {
+    title.textContent = t('nudgeTitle');
+    text.textContent = t('nudgeBody');
+    close.setAttribute('aria-label', t('nudgeDismiss'));
+  };
+  relabel();
 
   card.append(icon, body, close);
 
@@ -83,6 +89,7 @@ export function mountNudge(iconUrl: string, t: Translate): Nudge {
   });
 
   return {
+    relabel,
     setVisible(visible: boolean): void {
       // Re-entering the state is a fresh reason to speak, so the × resets.
       if (visible && !wanted) dismissed = false;

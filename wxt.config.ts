@@ -50,8 +50,14 @@ export default defineConfig({
       // button to look for. An <img> in the page cannot load an extension file
       // that is not listed here.
       // icon/32.png is the posts-hidden badge's icon, for the same reason.
+      // The catalogs let a feed tab read the language the reader picked in the popup.
       {
-        resources: ['engine.html', 'icon-gray/48.png', 'icon/32.png'],
+        resources: [
+          'engine.html',
+          'icon-gray/48.png',
+          'icon/32.png',
+          '_locales/*/messages.json',
+        ],
         matches: FEED_HOSTS,
       },
     ],

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   blur,
@@ -5,11 +6,17 @@ import {
   isBlurred,
   isRevealed,
   listenForReveal,
+  relabelBlurred,
   reveal,
   revealAll,
   revealPermanently,
 } from './blur';
+import { createTranslator } from '../core/messages';
 import { translate as t } from '../platform/i18n';
+
+const spanish = createTranslator(
+  JSON.parse(readFileSync('public/_locales/es/messages.json', 'utf8')),
+);
 
 const post = () => {
   document.body.innerHTML = '<div id="p"><span>text</span></div>';
@@ -85,6 +92,28 @@ describe('blur', () => {
     blur(el, t, 'topic', true);
     reveal(el);
     expect(el.classList.contains('lx-collapse')).toBe(false);
+  });
+});
+
+describe('relabelBlurred', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('writes the label of every blurred post again, peek words untouched', () => {
+    const make = () => document.body.appendChild(document.createElement('div'));
+    const blurred = make();
+    const peeked = make();
+    const plain = make();
+    blur(blurred, t);
+    peek(peeked, t, 'opening words');
+
+    relabelBlurred(spanish);
+
+    expect(blurred.dataset.lxLabel).toBe('Fuera de tema — clic para leer');
+    expect(peeked.dataset.lxLabel).toBe(spanish('labelPeek'));
+    expect(peeked.dataset.lxPeek).toBe('opening words');
+    expect(plain.dataset.lxLabel).toBeUndefined();
   });
 });
 

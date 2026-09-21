@@ -1,5 +1,5 @@
 /**
- * The languages the popup speaks, one per folder of public/_locales. A name is
+ * The languages FeedLens speaks, one per folder of public/_locales. A name is
  * written in its own language and never translated, so a reader who cannot read
  * the current one can still find theirs.
  */

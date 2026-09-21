@@ -63,6 +63,17 @@ export function peek(
   element.dataset.lxPeek = text.slice(0, PEEK_CHARS).trim();
 }
 
+/** Each label is text written once, so a `t` in another language means writing it again. */
+export function relabelBlurred(t: Translate, root: ParentNode = document): void {
+  for (const [reason, key] of Object.entries(LABELS)) {
+    for (const element of root.querySelectorAll<HTMLElement>(
+      `[data-lx-reason="${reason}"]`,
+    )) {
+      element.dataset.lxLabel = t(key);
+    }
+  }
+}
+
 export function reveal(element: HTMLElement): void {
   element.classList.remove(BLUR_CLASS, COLLAPSE_CLASS);
   delete element.dataset.lxReason;
