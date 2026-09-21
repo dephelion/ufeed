@@ -1,10 +1,10 @@
-# AGENTS.md — FeedLens
+# AGENTS.md — uFeed
 
 > **Operational Core:** Rules for all repository agents (Claude, GPT, & Grok native). Overridden only by explicit user command.
 > **Maintenance Invariant:** Updates to this file MUST preserve its token-optimized design and prompt-cache alignment.
 > Use strict imperative syntax. Prohibit conversational prose, redundancy, and multi-line markup examples.
 
-FeedLens is a Chrome and Firefox extension that blurs off-topic posts on X, LinkedIn and Reddit with an on-device embedding model.
+uFeed is a Chrome and Firefox extension that blurs off-topic posts on X, LinkedIn and Reddit with an on-device embedding model.
 
 **`wiki-llm/` is the source of truth.** Start every code, architecture, model, selector, UI, permission or testing task at [`wiki-llm/index.md`](wiki-llm/index.md) and open only the page it names.
 

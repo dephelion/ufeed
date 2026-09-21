@@ -24,7 +24,7 @@ export default defineConfig({
   // The AMO sources zip is for rebuilding the extension; design docs are not.
   zip: { excludeSources: ['wiki-llm/**', 'docs/**', 'AGENTS.md'] },
   manifest: ({ browser }) => ({
-    name: 'FeedLens: Feed Cleaner for Social Networks',
+    name: 'uFeed: Feed Cleaner for Social Networks',
     // Text lives in public/_locales; the browser picks the locale (wiki-llm/i18n.md).
     default_locale: 'en',
     description: '__MSG_extDescription__',
@@ -36,7 +36,7 @@ export default defineConfig({
      * to start idle-looking rather than assume a feed is running.
      */
     action: {
-      default_title: 'FeedLens',
+      default_title: 'uFeed',
       default_icon: {
         16: 'icon-gray/16.png',
         32: 'icon-gray/32.png',
@@ -78,7 +78,7 @@ export default defineConfig({
       ? {
           browser_specific_settings: {
             gecko: {
-              id: 'feedlens@dephelion.com',
+              id: 'ufeed@dephelion.com',
               strict_min_version: '115.0',
               data_collection_permissions: { required: ['none'] },
             },

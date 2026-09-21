@@ -1,6 +1,6 @@
-# Contributing to FeedLens
+# Contributing to uFeed
 
-Thanks for looking. FeedLens is small on purpose, and a good bug report is often
+Thanks for looking. uFeed is small on purpose, and a good bug report is often
 worth more than a patch: the bug template asks for the few things that make one
 reproducible.
 
@@ -8,7 +8,7 @@ reproducible.
 
 - **Open an issue first** for anything bigger than a bug fix. The scope is narrow
   by design: no cloud or LLM inference, no accounts, and no new sites without a
-  decision. [`wiki-llm/product.md`](wiki-llm/product.md) lists what FeedLens will
+  decision. [`wiki-llm/product.md`](wiki-llm/product.md) lists what uFeed will
   not do.
 - **Read [`wiki-llm/architecture.md`](wiki-llm/architecture.md).** It is the
   design doc: the three execution contexts (content script, engine iframe,

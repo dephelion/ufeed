@@ -85,19 +85,19 @@ engine  → content  { type: 'STATUS', state, progress?, message? }
 
 **Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
 
-**The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and FeedLens fails open.
+**The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and uFeed fails open.
 
 ## Status channel
 
 A second, separate contract: content script <-> popup, over `browser.runtime` messaging. `src/platform/status-channel.ts`.
 
 ```
-popup   → content  { type: 'feedlens:status?' }            to the ACTIVE tab only
+popup   → content  { type: 'ufeed:status?' }            to the ACTIVE tab only
 content → popup    EngineStatus (the reply)
-content → popup    { type: 'feedlens:status', status }     pushed on change
+content → popup    { type: 'ufeed:status', status }     pushed on change
 ```
 
-**The posts-hidden badge asks the background to open the popup** — `content → background { type: 'feedlens:open-popup' }`, `src/platform/open-popup.ts` — because `action.openPopup` is unreachable from a content script. The background honours it only from a tab (`sender.tab`).
+**The posts-hidden badge asks the background to open the popup** — `content → background { type: 'ufeed:open-popup' }`, `src/platform/open-popup.ts` — because `action.openPopup` is unreachable from a content script. The background honours it only from a tab (`sender.tab`).
 
 **Asked per tab, never stored.** Each feed tab runs its own engine. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.
 

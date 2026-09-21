@@ -5,7 +5,7 @@
  */
 import browser from 'webextension-polyfill';
 
-const OPEN = 'feedlens:open-popup';
+const OPEN = 'ufeed:open-popup';
 
 interface Open {
   type: typeof OPEN;

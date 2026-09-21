@@ -1,5 +1,5 @@
 name: Feature request
-description: An idea for FeedLens.
+description: An idea for uFeed.
 labels: [enhancement]
 body:
   - type: textarea
@@ -11,6 +11,6 @@ body:
   - type: textarea
     id: idea
     attributes:
-      label: What would you like FeedLens to do?
+      label: What would you like uFeed to do?
     validations:
       required: true

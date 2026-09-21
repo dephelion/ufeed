@@ -7,13 +7,13 @@ asks for. Kept in the repo so the listing and the code change together.
 
 | Field          | Value                                                                     |
 | :------------- | :------------------------------------------------------------------------ |
-| Name           | FeedLens: Feed Cleaner for Social Networks                                |
-| Version        | 0.9.0 — pre-1.0 while it is finding its first users                       |
+| Name           | uFeed: Feed Cleaner for Social Networks                                   |
+| Version        | 0.9.1 — pre-1.0 while it is finding its first users                       |
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
-| Support URL    | https://dephelion.com/feedlens-browser-extension/contact/                 |
-| Privacy policy | https://dephelion.com/feedlens-browser-extension/privacy/                 |
+| Support URL    | https://dephelion.com/ufeed-browser-extension/contact/                    |
+| Privacy policy | https://dephelion.com/ufeed-browser-extension/privacy/                    |
 | Visibility     | Public — listed in search and category browsing                           |
 | Store URL      | https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
@@ -22,16 +22,16 @@ before anything can be published.
 
 ## Short description (132 char max)
 
-Name the topics you want; FeedLens blurs the rest on X, LinkedIn and Reddit. Private, on-device, open source, no account.
+Name the topics you want; uFeed blurs the rest on X, LinkedIn and Reddit. Private, on-device, open source, no account.
 
 ## Detailed description
 
-Social networks are deciding what you see. FeedLens lets you decide instead.
+Social networks are deciding what you see. uFeed lets you decide instead.
 
 🔒 Private and fast. Everything runs on your device. No account, no cloud, no analytics. Your feed is safe.
 
 📖 Open source. Read the code, build it, fork it:
-https://github.com/dephelion/feedlens
+https://github.com/dephelion/ufeed
 
 📝 Write your topics, one per line. Posts that don't match get blurred and collapsed, never
 deleted. One click shows them.
@@ -45,11 +45,11 @@ multilingual model (197 MB) in the popup.
 
 It reads words, not images, and matches subject, not quality. It can miss sarcasm, and it won't be perfect.
 
-❓Bugs or ideas: https://github.com/dephelion/feedlens/issues or the email below.
+❓Bugs or ideas: https://github.com/dephelion/ufeed/issues or the email below.
 
 ## Single purpose
 
-FeedLens has one purpose: to blur posts in a user's social feed that do not
+uFeed has one purpose: to blur posts in a user's social feed that do not
 match topics the user has chosen. Every permission and every code path serves
 that. It does nothing else.
 
@@ -57,7 +57,7 @@ that. It does nothing else.
 
 **Host access to x.com, twitter.com, linkedin.com, reddit.com**
 
-FeedLens must read the text of posts in the page to compare them against the
+uFeed must read the text of posts in the page to compare them against the
 user's topics, and must modify the page to apply the blur. Both require
 running a content script on those sites. These four are the only sites it
 supports, and the only ones requested; it requests no wildcard host access.
@@ -69,7 +69,7 @@ in local extension storage. Nothing is synced or transmitted.
 
 **Remote code — none**
 
-FeedLens executes no remote code. The ONNX Runtime WebAssembly binary is
+uFeed executes no remote code. The ONNX Runtime WebAssembly binary is
 bundled in the package and loaded from an extension-relative path. The only
 network request is a one-time download of the model **weights** (a data file,
 not code) from Hugging Face (`huggingface.co`, redirecting to its `hf.co`
@@ -90,7 +90,7 @@ location, web history, user activity, and website content are all **not
 collected**: post text is read in memory and discarded, and nothing is
 transmitted anywhere.
 
-Note on "website content": FeedLens reads post text in the page. It is not
+Note on "website content": uFeed reads post text in the page. It is not
 _collected_ — it is never stored and never transmitted — so the answer is no.
 If a reviewer queries it, the explanation is that scoring happens entirely in
 the content script and a Web Worker, and the result is a number applied to the
@@ -103,7 +103,7 @@ page.
       revealed by clicking, the strictness slider with its hint, the model picker,
       the no-topics card.
 - [ ] Small promo tile, 440×280. Optional, but listings without one look unfinished.
-- [ ] Privacy policy live at https://dephelion.com/feedlens-browser-extension/privacy/ (ship the dephelion.com PR first).
+- [ ] Privacy policy live at https://dephelion.com/ufeed-browser-extension/privacy/ (ship the dephelion.com PR first).
 
 ## Before each submission
 

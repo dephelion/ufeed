@@ -17,9 +17,9 @@
 import browser from 'webextension-polyfill';
 import type { EngineStatus } from '../core/engine-status';
 
-const ASK = 'feedlens:status?';
-const TELL = 'feedlens:status';
-const FEED = 'feedlens:feed';
+const ASK = 'ufeed:status?';
+const TELL = 'ufeed:status';
+const FEED = 'ufeed:feed';
 
 interface Ask {
   type: typeof ASK;
@@ -103,7 +103,7 @@ export function onEngineStatus(
 /**
  * Content side: once, the moment an adapter matches — before settings, the
  * engine, or anything that can fail. The toolbar icon reads this as "this tab
- * is FeedLens's business", full stop; whether filtering ever actually starts
+ * is uFeed's business", full stop; whether filtering ever actually starts
  * is a separate question the icon does not need to answer.
  */
 export function publishFeedDetected(): void {

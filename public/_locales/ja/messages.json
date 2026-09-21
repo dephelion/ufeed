@@ -1,6 +1,6 @@
 {
   "extDescription": {
-    "message": "見たいトピックを指定するだけ。FeedLens は X・LinkedIn・Reddit のフィードの残りをぼかします。プライバシー重視、端末内で動作、アカウント不要。"
+    "message": "見たいトピックを指定するだけ。uFeed は X・LinkedIn・Reddit のフィードの残りをぼかします。プライバシー重視、端末内で動作、アカウント不要。"
   },
   "labelTopic": {
     "message": "トピック外 — クリックで表示"
@@ -18,28 +18,28 @@
     "message": "分類中…"
   },
   "spokenTopic": {
-    "message": "FeedLens がぼかした投稿: トピック外。Enter キーで表示します。"
+    "message": "uFeed がぼかした投稿: トピック外。Enter キーで表示します。"
   },
   "spokenMedia": {
-    "message": "FeedLens がぼかした投稿: 判定できる文章なし。Enter キーで表示します。"
+    "message": "uFeed がぼかした投稿: 判定できる文章なし。Enter キーで表示します。"
   },
   "spokenLanguage": {
-    "message": "FeedLens がぼかした投稿: 別の言語。Enter キーで表示します。"
+    "message": "uFeed がぼかした投稿: 別の言語。Enter キーで表示します。"
   },
   "spokenPeek": {
-    "message": "FeedLens がぼかした投稿: 判定が微妙。Enter キーで表示します。"
+    "message": "uFeed がぼかした投稿: 判定が微妙。Enter キーで表示します。"
   },
   "nudgeTitle": {
-    "message": "FeedLens にはまだトピックがありません"
+    "message": "uFeed にはまだトピックがありません"
   },
   "nudgeBody": {
-    "message": "FeedLens は有効ですが、何を見たいのかわからないため、何もぼかしていません。ブラウザーのツールバーにある上のアイコンを開き、トピックをひとつかふたつ追加してください。"
+    "message": "uFeed は有効ですが、何を見たいのかわからないため、何もぼかしていません。ブラウザーのツールバーにある上のアイコンを開き、トピックをひとつかふたつ追加してください。"
   },
   "nudgeDismiss": {
     "message": "次にページを読み込むまで非表示"
   },
   "badgeOpen": {
-    "message": "FeedLens を開く"
+    "message": "uFeed を開く"
   },
   "badgeCount": {
     "message": "ぼかした投稿: $COUNT$",
@@ -198,7 +198,7 @@
     "message": "一致するのは話題で、質ではありません。"
   },
   "tipQualityBody": {
-    "message": "同じ話題なら、優れた投稿も質の低い投稿も表示されたままです。FeedLens には区別できません。"
+    "message": "同じ話題なら、優れた投稿も質の低い投稿も表示されたままです。uFeed には区別できません。"
   },
   "saveTopics": {
     "message": "トピックを保存"
@@ -252,13 +252,13 @@
     "message": "文章のない画像や動画をぼかす"
   },
   "blurMediaDetails": {
-    "message": "FeedLens が読むのは文章で、画像は読みません。写真や動画に 1〜2 語しか付いていない場合、トピックと比べる材料がありません。オンにすると、そうした投稿をそのまま通さずにぼかします。"
+    "message": "uFeed が読むのは文章で、画像は読みません。写真や動画に 1〜2 語しか付いていない場合、トピックと比べる材料がありません。オンにすると、そうした投稿をそのまま通さずにぼかします。"
   },
   "blurLanguageLabel": {
     "message": "英語以外の投稿をぼかす"
   },
   "blurLanguageDetails": {
-    "message": "FeedLens が理解できるのは英語だけです。他の言語の投稿がトピックに合うかどうか判断できないため、通すものとぼかすものがランダムに分かれます。オンにすると、トピックに合うものも含め、すべてぼかします。"
+    "message": "uFeed が理解できるのは英語だけです。他の言語の投稿がトピックに合うかどうか判断できないため、通すものとぼかすものがランダムに分かれます。オンにすると、トピックに合うものも含め、すべてぼかします。"
   },
   "blurLanguageRefresh": {
     "message": "すでに画面にある投稿はそのままです。スクロールするか、ページを再読み込みすると変更が反映されます。"
@@ -339,7 +339,7 @@
     "message": "— バックアップファイルを選んでください"
   },
   "importNotBackup": {
-    "message": "— FeedLens のバックアップではありません"
+    "message": "— uFeed のバックアップではありません"
   },
   "importNewer": {
     "message": "— 新しいバージョンで作成されています"
@@ -376,7 +376,7 @@
     "message": "📥 問題を報告、またはアイデアを共有"
   },
   "githubLabel": {
-    "message": "GitHub の FeedLens"
+    "message": "GitHub の uFeed"
   },
   "languageLabel": {
     "message": "言語"

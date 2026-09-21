@@ -1,6 +1,6 @@
 # How it works
 
-FeedLens compares each post in your feed with the topics you wrote, and blurs the
+uFeed compares each post in your feed with the topics you wrote, and blurs the
 ones that do not match. This page explains how, and why it is built the way it is.
 
 ## Why it is built this way
@@ -12,7 +12,7 @@ Four choices shape everything else. Each one gives something up.
   none of your topics is blurred, even if it is harmless.
 - **Blur, never delete.** Every blurred post is one click (or Enter, from the
   keyboard) from readable, so a wrong call costs a click, not a missed post.
-- **An embedding model, not a chat model.** FeedLens turns text into numbers and
+- **An embedding model, not a chat model.** uFeed turns text into numbers and
   compares them. It does not reason about a post. That is what keeps the model
   small (33 MB by default), lets it run in your browser, and makes it give the same
   answer every time for the same post. The cost: it cannot weigh sarcasm or "this
@@ -59,7 +59,7 @@ about X.
 
 ## What the model does
 
-FeedLens does not train a classifier on your topics. It uses a text _embedding_
+uFeed does not train a classifier on your topics. It uses a text _embedding_
 model, and you pick which one under _Model_ in the popup:
 
 | Model                         | Reads          | Download | Work per post         |
@@ -96,7 +96,7 @@ EmbeddingGemma is a retrieval model too, so the same argument holds for it.
 `passage:` tell it which side of the pair a text is on, because a three-word
 topic and a paragraph of post are different kinds of text. The model was trained
 with these tags, and its scores get worse without them. Each model has its own
-tags, and FeedLens uses the right ones for the model you picked.
+tags, and uFeed uses the right ones for the model you picked.
 
 **Why scores sit in a narrow band.** Cosine can run from −1 to 1, but that is not
 how e5 uses the range. During training, every similarity was divided by a
@@ -112,7 +112,7 @@ own scale.
 
 - **Read other languages, on the default model.** e5 was trained and evaluated on
   English. Text in another language still gets a score, but that score is noise.
-  FeedLens checks a post's language before trusting its score. EmbeddingGemma reads
+  uFeed checks a post's language before trusting its score. EmbeddingGemma reads
   every language, so it has no such check and the popup's language option switches
   itself off.
 - **Match exact strings reliably.** The paper notes that embedding models still
@@ -157,7 +157,7 @@ a word. transformers.js averages those vectors into one vector for the whole
 text; this is the **mean pool**. E5 was trained with that averaging, so a
 different pooling method would produce vectors the model never learned.
 EmbeddingGemma is the exception: its graph pools inside itself and returns one
-vector already, so FeedLens reads that output rather than averaging. Either way
+vector already, so uFeed reads that output rather than averaging. Either way
 the result is then scaled to length 1, which makes the cosine a plain dot product.
 
 **ONNX** is the model's file format — graph plus weights, framework-independent.
@@ -257,7 +257,7 @@ nothing, and switching back restores them. If a model is ever replaced, the
 ratings made with it are dropped, because the post text is already gone and
 nothing can be embedded again.
 
-A small green badge in the bottom-left corner counts the posts FeedLens is hiding
+A small green badge in the bottom-left corner counts the posts uFeed is hiding
 on the page, and clicking it opens the popup.
 
 To see all of this at work, turn on _Show each post's score_ in the popup. Each

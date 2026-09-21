@@ -8,7 +8,7 @@ describe('requestPopup', () => {
   it('sends the open message', () => {
     const send = vi.spyOn(browser.runtime, 'sendMessage').mockResolvedValue(undefined);
     requestPopup();
-    expect(send).toHaveBeenCalledWith({ type: 'feedlens:open-popup' });
+    expect(send).toHaveBeenCalledWith({ type: 'ufeed:open-popup' });
   });
 
   it('drops a rejection', async () => {

@@ -38,7 +38,7 @@
 Listing copy, permission justifications and the data-disclosure answers live in [`docs/store-listing.md`](../docs/store-listing.md); the policy itself in [`docs/privacy-policy.md`](../docs/privacy-policy.md).
 
 - [ ] `npm run build` — debug logs and score badges compiled out.
-- [ ] Privacy policy live at https://dephelion.com/feedlens-browser-extension/privacy/ and pasted into the dashboard.
+- [ ] Privacy policy live at https://dephelion.com/ufeed-browser-extension/privacy/ and pasted into the dashboard.
 - [ ] Screenshots (1280x800 or 640x400), at least one.
 - [ ] Load `.output/chrome-mv3` unpacked in a cold profile and walk install -> topic -> first score. No suite covers it.
 - [ ] Network tab clean on that run: `GET` model files from `huggingface.co` and its storage CDN (`*.hf.co`, reached by redirect) only. A `cdn.jsdelivr.net` WASM fetch is remote code execution and a rejection.

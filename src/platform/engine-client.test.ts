@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-const EXTENSION = 'chrome-extension://feedlens/';
+const EXTENSION = 'chrome-extension://ufeed/';
 
 vi.mock('webextension-polyfill', () => ({
   default: {
