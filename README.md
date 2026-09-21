@@ -12,8 +12,6 @@ leaves your browser.
 
 <img width="3900" height="840" alt="feed-showcase-side-by-side-black" src="https://github.com/user-attachments/assets/9352db65-f6f0-47d1-8445-1aa01a643578" />
 
-
-
 Most feed filters ask what you want to get rid of. That list never ends: there is
 always one more thing to block.
 
