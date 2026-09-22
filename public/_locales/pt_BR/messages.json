@@ -24,7 +24,13 @@
     "message": "Fora do tema"
   },
   "openedBlacklist": {
-    "message": "Palavra bloqueada"
+    "message": "Palavra bloqueada ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
   },
   "openedMedia": {
     "message": "Sem texto para analisar"

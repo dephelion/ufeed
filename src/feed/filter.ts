@@ -1,4 +1,4 @@
-import { blursAsBlacklisted } from '../core/blacklist';
+import { blockedKeyword, blursAsBlacklisted } from '../core/blacklist';
 import { ScoreCache, hashText } from '../core/cache';
 import { logger } from '../core/log';
 import type { Translate } from '../core/messages';
@@ -310,6 +310,10 @@ export class FeedFilter {
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, this.#t, post.text, collapse);
     else blur(post.container, this.#t, REASONS[action], collapse);
+    const keyword =
+      action === 'blur-blacklist' ? blockedKeyword(this.#settings, post.text) : undefined;
+    if (keyword === undefined) delete post.container.dataset.lxKeyword;
+    else post.container.dataset.lxKeyword = keyword;
     this.#settle(post.container, action === 'reveal');
     return action;
   }

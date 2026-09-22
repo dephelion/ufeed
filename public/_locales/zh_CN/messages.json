@@ -24,7 +24,13 @@
     "message": "主题无关"
   },
   "openedBlacklist": {
-    "message": "屏蔽的关键词"
+    "message": "屏蔽的关键词（$KEYWORD$）",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
   },
   "openedMedia": {
     "message": "无文字可判断"

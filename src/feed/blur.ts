@@ -82,12 +82,8 @@ export function relabelBlurred(t: Translate, root: ParentNode = document): void 
       element.dataset.lxLabel = t(key);
     }
   }
-  for (const [reason, key] of Object.entries(OPENED)) {
-    for (const element of root.querySelectorAll<HTMLElement>(
-      `[data-lx-opened="${reason}"]`,
-    )) {
-      element.dataset.lxLabel = t(key);
-    }
+  for (const element of root.querySelectorAll<HTMLElement>('[data-lx-opened]')) {
+    element.dataset.lxLabel = openedLabel(element, t);
   }
 }
 
@@ -97,17 +93,26 @@ export function reveal(element: HTMLElement): void {
   delete element.dataset.lxLabel;
   delete element.dataset.lxPeek;
   delete element.dataset.lxOpened;
+  delete element.dataset.lxKeyword;
   element.removeAttribute('aria-hidden');
 }
 
 /** Opened by the reader: the post shows, and a tag keeps saying why it had been hidden. */
 export function revealPermanently(element: HTMLElement, t: Translate): void {
   const reason = element.dataset.lxReason as BlurReason | undefined;
+  const keyword = element.dataset.lxKeyword;
   revealed.add(element);
   reveal(element);
   if (reason === undefined || !(reason in OPENED)) return;
   element.dataset.lxOpened = reason;
-  element.dataset.lxLabel = t(OPENED[reason]);
+  if (keyword !== undefined) element.dataset.lxKeyword = keyword;
+  element.dataset.lxLabel = openedLabel(element, t);
+}
+
+/** The blacklist tag names the keyword that blocked the post. */
+function openedLabel(element: HTMLElement, t: Translate): string {
+  const reason = element.dataset.lxOpened as BlurReason;
+  return t(OPENED[reason], element.dataset.lxKeyword ?? '');
 }
 
 export function isRevealed(element: HTMLElement): boolean {

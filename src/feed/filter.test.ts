@@ -213,6 +213,7 @@ describe('FeedFilter', () => {
       'rust ships a new borrow checker',
     ]);
     expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(post('rust').dataset.lxKeyword).toBe('borrow checker');
     expect(engine.score).not.toHaveBeenCalled();
   });
 

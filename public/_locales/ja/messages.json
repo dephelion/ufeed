@@ -24,7 +24,13 @@
     "message": "トピック外"
   },
   "openedBlacklist": {
-    "message": "ブロックしたキーワード"
+    "message": "ブロックしたキーワード（$KEYWORD$）",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
   },
   "openedMedia": {
     "message": "判定できる文章なし"

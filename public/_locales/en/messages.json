@@ -32,8 +32,14 @@
     "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
   },
   "openedBlacklist": {
-    "message": "Blocked keyword",
-    "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
+    "message": "Blocked keyword ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    },
+    "description": "Tag kept on an opened post that a blacklist keyword had blurred; names the keyword."
   },
   "openedMedia": {
     "message": "No text to check",

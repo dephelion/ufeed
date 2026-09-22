@@ -24,7 +24,13 @@
     "message": "Hors sujet"
   },
   "openedBlacklist": {
-    "message": "Mot-clé bloqué"
+    "message": "Mot-clé bloqué ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
   },
   "openedMedia": {
     "message": "Pas de texte à analyser"

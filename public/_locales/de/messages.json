@@ -24,7 +24,13 @@
     "message": "Themenfremd"
   },
   "openedBlacklist": {
-    "message": "Gesperrtes Stichwort"
+    "message": "Gesperrtes Stichwort ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
   },
   "openedMedia": {
     "message": "Kein Text zum Prüfen"

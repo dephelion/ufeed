@@ -24,7 +24,13 @@
     "message": "主題無關"
   },
   "openedBlacklist": {
-    "message": "封鎖的關鍵字"
+    "message": "封鎖的關鍵字（$KEYWORD$）",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
   },
   "openedMedia": {
     "message": "無文字可判斷"

@@ -163,12 +163,12 @@ describe('listenForReveal', () => {
 
   it('keeps a tag saying why the opened post had been hidden', () => {
     const el = post();
-    blur(el, t, 'blacklist');
+    blur(el, t, 'language');
     const stop = listenForReveal(t, document);
     el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
-    expect(el.dataset.lxOpened).toBe('blacklist');
-    expect(el.dataset.lxLabel).toBe('Blocked keyword');
+    expect(el.dataset.lxOpened).toBe('language');
+    expect(el.dataset.lxLabel).toBe('Another language');
     expect(el.getAttribute('aria-hidden')).toBeNull();
     stop();
   });
@@ -270,6 +270,28 @@ describe('revealAll', () => {
     revealAll(document);
     expect(el.dataset.lxOpened).toBeUndefined();
     expect(el.dataset.lxLabel).toBeUndefined();
+  });
+});
+
+describe('the blacklist tag', () => {
+  it('names the keyword that blocked the post, in any language', () => {
+    const el = post();
+    blur(el, t, 'blacklist');
+    el.dataset.lxKeyword = 'crypto';
+    revealPermanently(el, t);
+    expect(el.dataset.lxLabel).toBe('Blocked keyword (crypto)');
+
+    relabelBlurred(spanish);
+    expect(el.dataset.lxLabel).toBe('Palabra bloqueada (crypto)');
+  });
+
+  it('forgets the keyword once the post is the host page again', () => {
+    const el = post();
+    blur(el, t, 'blacklist');
+    el.dataset.lxKeyword = 'crypto';
+    revealPermanently(el, t);
+    revealAll(document);
+    expect(el.dataset.lxKeyword).toBeUndefined();
   });
 });
 
