@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Hors sujet — cliquez pour lire"
   },
+  "labelBlacklist": {
+    "message": "Sujet bloqué — cliquez pour lire"
+  },
   "labelMedia": {
     "message": "Pas de texte à analyser — cliquez pour voir"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Publication floutée par uFeed : hors sujet. Appuyez sur Entrée pour la lire."
+  },
+  "spokenBlacklist": {
+    "message": "Publication floutée par uFeed : sujet bloqué. Appuyez sur Entrée pour la lire."
   },
   "spokenMedia": {
     "message": "Publication floutée par uFeed : pas de texte à analyser. Appuyez sur Entrée pour la voir."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Sujets que je veux voir"
+    "message": "Sujets que je veux voir (liste blanche)"
   },
   "topicsPlaceholder": {
     "message": "génie logiciel, programmation\nrecherche en apprentissage automatique\njeux vidéo, conception de jeux"
   },
   "topicsHint": {
     "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
+  },
+  "blacklistLabel": {
+    "message": "Sujets que je ne veux pas voir (liste noire)"
+  },
+  "blacklistPlaceholder": {
+    "message": "annonces de lancements de produits\nconcours crypto"
+  },
+  "blacklistHint": {
+    "message": "Un sujet par ligne. Une publication plus proche de l’un d’eux que de tout sujet ci-dessus est floutée, même si elle est dans le sujet. Les pouces ne modifient jamais cette liste."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"

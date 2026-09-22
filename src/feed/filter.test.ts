@@ -34,6 +34,7 @@ const match = (score: number): RatedMatch => ({
   topic: 0,
   lines: [score],
   rating: undefined,
+  block: -1,
 });
 const scored = (texts: string[]) =>
   texts.map((text) => {
@@ -204,6 +205,18 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(true);
   });
 
+  it('blurs an on-topic post closer to a blacklist line, and re-asks when the blacklist changes', async () => {
+    const { engine, filter } = await run(
+      SETTINGS,
+      ['rust ships a new borrow checker'],
+      async (t) => scored(t).map((m) => ({ ...m, block: 0.95 })),
+    );
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['launches'] });
+    expect(engine.setTopics).toHaveBeenLastCalledWith(SETTINGS.topics, [], ['launches']);
+  });
+
   it('discards scores measured against topics that have since changed', async () => {
     let answerOld: (matches: RatedMatch[]) => void = () => {};
     const calls: Promise<RatedMatch[]>[] = [
@@ -221,7 +234,7 @@ describe('FeedFilter', () => {
     answerOld([match(0.1)]);
     await vi.advanceTimersByTimeAsync(0);
 
-    expect(engine.setTopics).toHaveBeenLastCalledWith(['baking'], []);
+    expect(engine.setTopics).toHaveBeenLastCalledWith(['baking'], [], []);
     expect(isBlurred(post('cake'))).toBe(false);
   });
 

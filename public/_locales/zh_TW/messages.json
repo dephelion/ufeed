@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "主題無關 — 點擊查看"
   },
+  "labelBlacklist": {
+    "message": "黑名單主題 — 點擊查看"
+  },
   "labelMedia": {
     "message": "無文字可判斷 — 點擊查看"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "uFeed 已模糊此貼文：主題無關。按 Enter 鍵查看。"
+  },
+  "spokenBlacklist": {
+    "message": "uFeed 已模糊此貼文：黑名單主題。按 Enter 鍵查看。"
   },
   "spokenMedia": {
     "message": "uFeed 已模糊此貼文：無文字可判斷。按 Enter 鍵查看。"
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "我想看的主題"
+    "message": "我想看的主題（白名單）"
   },
   "topicsPlaceholder": {
     "message": "軟體工程, 程式設計\n機器學習研究\n電玩遊戲, 遊戲設計"
   },
   "topicsHint": {
     "message": "每行一個主題，幾個詞即可。其他內容的貼文會被模糊處理。你隨時可以點擊被模糊的貼文來查看。"
+  },
+  "blacklistLabel": {
+    "message": "我不想看的主題（黑名單）"
+  },
+  "blacklistPlaceholder": {
+    "message": "產品發表公告\n加密貨幣抽獎"
+  },
+  "blacklistHint": {
+    "message": "每行一個主題。與這些主題比與上方任何主題更接近的貼文會被模糊處理，即使它屬於你的主題。按讚和倒讚不會改變這個清單。"
   },
   "tipsSummary": {
     "message": "如何寫好一個主題"

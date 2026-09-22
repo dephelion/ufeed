@@ -20,6 +20,8 @@ export interface Match {
 /** A match, plus the rating that overrides it when a rated post is near-identical. */
 export interface RatedMatch extends Match {
   rating: boolean | undefined;
+  /** Highest similarity to any blacklist line; -1 when there are none. */
+  block: number;
 }
 
 /** Highest similarity to any topic, and the line that gave it. */

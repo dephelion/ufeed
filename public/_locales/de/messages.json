@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Themenfremd — zum Lesen klicken"
   },
+  "labelBlacklist": {
+    "message": "Gesperrtes Thema — zum Lesen klicken"
+  },
   "labelMedia": {
     "message": "Kein Text zum Prüfen — zum Ansehen klicken"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Von uFeed verwischt: themenfremd. Zum Lesen die Eingabetaste drücken."
+  },
+  "spokenBlacklist": {
+    "message": "Von uFeed verwischt: gesperrtes Thema. Zum Lesen die Eingabetaste drücken."
   },
   "spokenMedia": {
     "message": "Von uFeed verwischt: kein Text zum Prüfen. Zum Ansehen die Eingabetaste drücken."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Themen, die ich sehen möchte"
+    "message": "Themen, die ich sehen möchte (Whitelist)"
   },
   "topicsPlaceholder": {
     "message": "Softwareentwicklung, Programmierung\nForschung zu maschinellem Lernen\nVideospiele, Spieldesign"
   },
   "topicsHint": {
     "message": "Ein Thema pro Zeile, wenige Wörter. Beiträge zu allem anderen werden verwischt. Du kannst einen verwischten Beitrag jederzeit anklicken, um ihn zu lesen."
+  },
+  "blacklistLabel": {
+    "message": "Themen, die ich nicht sehen möchte (Blacklist)"
+  },
+  "blacklistPlaceholder": {
+    "message": "Ankündigungen von Produktstarts\nKrypto-Gewinnspiele"
+  },
+  "blacklistHint": {
+    "message": "Ein Thema pro Zeile. Ein Beitrag, der einem dieser Themen näher ist als jedem Thema oben, wird verwischt, auch wenn er zum Thema passt. Daumen ändern diese Liste nie."
   },
   "tipsSummary": {
     "message": "So schreibst du ein gutes Thema"

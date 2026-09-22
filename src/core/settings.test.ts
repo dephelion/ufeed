@@ -153,6 +153,9 @@ describe('onlyLanguageChanged', () => {
     const after = { ...withTopics, language: 'ja' as const };
     expect(onlyLanguageChanged(withTopics, { ...after, strictness: 2 })).toBe(false);
     expect(onlyLanguageChanged(withTopics, { ...after, topics: ['baking'] })).toBe(false);
+    expect(onlyLanguageChanged(withTopics, { ...after, blacklist: ['crypto'] })).toBe(
+      false,
+    );
   });
 
   it('is false when the language did not change at all', () => {

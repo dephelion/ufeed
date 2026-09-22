@@ -7,6 +7,10 @@
     "message": "Out of topic — click to read",
     "description": "Pill over a blurred post whose subject is not one of the reader’s topics."
   },
+  "labelBlacklist": {
+    "message": "Blacklisted topic — click to read",
+    "description": "Pill over a blurred post closer to a blacklisted topic than to any wanted topic."
+  },
   "labelMedia": {
     "message": "No text to check — click to view",
     "description": "Pill over a blurred image or video post with too little text to judge."
@@ -25,6 +29,10 @@
   },
   "spokenTopic": {
     "message": "Blurred by uFeed: out of topic. Press Enter to read it.",
+    "description": "Screen-reader announcement."
+  },
+  "spokenBlacklist": {
+    "message": "Blurred by uFeed: blacklisted topic. Press Enter to read it.",
     "description": "Screen-reader announcement."
   },
   "spokenMedia": {
@@ -180,7 +188,7 @@
     }
   },
   "topicsLabel": {
-    "message": "Topics I want to see"
+    "message": "Topics I want to see (whitelist)"
   },
   "topicsPlaceholder": {
     "message": "software engineering, programming\nmachine learning research\nvideo games, game design",
@@ -188,6 +196,16 @@
   },
   "topicsHint": {
     "message": "One topic per line, a few words each. Posts about anything else get blurred out. You can always click a blurred post to read it."
+  },
+  "blacklistLabel": {
+    "message": "Topics I don't want to see (blacklist)"
+  },
+  "blacklistPlaceholder": {
+    "message": "product launch announcements\ncrypto giveaways",
+    "description": "Two example topics to block, one per line."
+  },
+  "blacklistHint": {
+    "message": "One topic per line. A post closer to one of these than to any topic above is blurred, even when it is on topic. Thumbs never change this list."
   },
   "tipsSummary": {
     "message": "How to write a good topic"

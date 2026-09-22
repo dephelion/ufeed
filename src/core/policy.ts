@@ -5,7 +5,8 @@ import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
 
 /** What to do with a post. No DOM: applying it is the caller's job. */
-export type Action = 'reveal' | 'blur' | 'blur-media' | 'blur-language' | 'peek';
+export type Action =
+  'reveal' | 'blur' | 'blur-media' | 'blur-language' | 'blur-blacklist' | 'peek';
 
 /** Everything the tiers that need no score can read. */
 export interface Grounds {
@@ -22,6 +23,13 @@ export interface Judgement extends Grounds {
   threshold: number;
   /** A near-identical rated post: true liked, false disliked. Overrides the score. */
   rating?: boolean | undefined;
+  /** Highest similarity to a blacklist line; -1 or undefined when there is none. */
+  block?: number | undefined;
+}
+
+/** Closer to a blacklist line than to any topic. Overrides the score and any rating. */
+export function isBlacklisted({ score, block }: Judgement): boolean {
+  return score !== undefined && block !== undefined && block > score;
 }
 
 /**
@@ -45,6 +53,7 @@ export function decide(judgement: Judgement): Action {
   const settled = decideWithoutScore(judgement);
   if (settled !== undefined) return settled;
   const { score, threshold, rating } = judgement;
+  if (isBlacklisted(judgement)) return 'blur-blacklist';
   if (rating !== undefined) return rating ? 'reveal' : 'blur';
   if (score === undefined) return 'reveal';
   const verdict = verdictAt(score, threshold, modelFor(judgement.settings.model));

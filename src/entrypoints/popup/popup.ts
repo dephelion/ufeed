@@ -51,6 +51,8 @@ const el = <T extends HTMLElement>(id: string): T => {
 const enabled = el<HTMLInputElement>('enabled');
 const enabledLabel = el<HTMLSpanElement>('enabled-label');
 const topics = el<HTMLTextAreaElement>('topics');
+const blacklist = el<HTMLTextAreaElement>('blacklist');
+const blacklistDetails = el<HTMLDetailsElement>('blacklist-details');
 const apply = el<HTMLButtonElement>('apply');
 const applied = el<HTMLSpanElement>('applied');
 const strictness = el<HTMLInputElement>('strictness');
@@ -137,6 +139,8 @@ function renderEnabled(on: boolean | undefined): void {
 
 function render(settings: Settings): void {
   topics.value = topicsToText(settings.topics);
+  blacklist.value = topicsToText(settings.blacklist);
+  if (settings.blacklist.length > 0) blacklistDetails.open = true;
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
   strictnessHint.textContent = describeStrictness(settings.strictness, settings.model);
@@ -153,7 +157,9 @@ function render(settings: Settings): void {
 
 /** Topics only take effect on Apply, so an unfinished edit never filters the feed. */
 function refreshApply(): void {
-  apply.disabled = topicsEqual(parseTopics(topics.value), saved.topics);
+  apply.disabled =
+    topicsEqual(parseTopics(topics.value), saved.topics) &&
+    topicsEqual(parseTopics(blacklist.value), saved.blacklist);
   if (!apply.disabled) applied.hidden = true;
 }
 
@@ -243,11 +249,17 @@ enabled.addEventListener('change', () => {
 });
 
 topics.addEventListener('input', refreshApply);
+blacklist.addEventListener('input', refreshApply);
 
 apply.addEventListener('click', () => {
-  void update({ topics: parseTopics(topics.value) }).then((ok) => {
+  const patch = {
+    topics: parseTopics(topics.value),
+    blacklist: parseTopics(blacklist.value),
+  };
+  void update(patch).then((ok) => {
     if (!ok) return;
     topics.value = topicsToText(saved.topics);
+    blacklist.value = topicsToText(saved.blacklist);
     applied.hidden = false;
     refreshApply();
   });
@@ -406,7 +418,12 @@ importFile.addEventListener('change', () => {
 
 reset.addEventListener('click', () => {
   void Promise.all([
-    update({ ...DEFAULT_SETTINGS, topics: saved.topics, language: saved.language }),
+    update({
+      ...DEFAULT_SETTINGS,
+      topics: saved.topics,
+      blacklist: saved.blacklist,
+      language: saved.language,
+    }),
     clearFeedback().catch(() => undefined),
   ]).then(() => {
     render(saved);

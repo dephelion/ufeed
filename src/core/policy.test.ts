@@ -32,6 +32,26 @@ describe('decide', () => {
   });
 });
 
+describe('blacklist', () => {
+  it('blurs an on-topic post that is closer to a blacklist line', () => {
+    expect(decide(base({ score: 0.9, block: 0.91 }))).toBe('blur-blacklist');
+  });
+
+  it('leaves a post closer to its topic than to the blacklist', () => {
+    expect(decide(base({ score: 0.9, block: 0.89 }))).toBe('reveal');
+  });
+
+  it('overrides a liked near-identical post', () => {
+    expect(decide(base({ score: 0.9, block: 0.95, rating: true }))).toBe(
+      'blur-blacklist',
+    );
+  });
+
+  it('fails open when the post was never scored', () => {
+    expect(decide(base({ score: undefined, block: 0.95 }))).toBe('reveal');
+  });
+});
+
 describe('fail-open', () => {
   it('reveals an unscored post rather than holding a blur', () => {
     expect(decide(base({ score: undefined }))).toBe('reveal');

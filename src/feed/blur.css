@@ -78,6 +78,10 @@
   color: #f2f2ff;
 }
 
+.lx-blur[data-lx-reason='blacklist']::after {
+  background: color-mix(in srgb, #1c1917 82%, transparent);
+}
+
 /* Borderline: the opening words stay legible so the call can be judged without
    destroying the blur. Shares ::after with the label so ::before stays free for
    the score badge — otherwise the badge would vanish on exactly these posts. */
@@ -187,6 +191,18 @@
   content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
     attr(data-lx-chars) ' chars · ' attr(data-lx-lines) ' · marked ' attr(data-lx-rated)
     ' topic';
+}
+
+[data-lx-score][data-lx-lines][data-lx-block]::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars · ' attr(data-lx-lines) ' · blacklist '
+    attr(data-lx-block);
+}
+
+[data-lx-score][data-lx-lines][data-lx-block][data-lx-rated]::before {
+  content: 'score ' attr(data-lx-score) ' / needs ' attr(data-lx-needs) ' · '
+    attr(data-lx-chars) ' chars · ' attr(data-lx-lines) ' · blacklist '
+    attr(data-lx-block) ' · marked ' attr(data-lx-rated) ' topic';
 }
 
 /* No score at all: the engine timed out, errored, or never answered, and the post

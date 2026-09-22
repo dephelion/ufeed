@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Fuera de tema — clic para leer"
   },
+  "labelBlacklist": {
+    "message": "Tema bloqueado — clic para leer"
+  },
   "labelMedia": {
     "message": "Sin texto que analizar — clic para ver"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Publicación difuminada por uFeed: fuera de tema. Pulsa Intro para leerla."
+  },
+  "spokenBlacklist": {
+    "message": "Publicación difuminada por uFeed: tema bloqueado. Pulsa Intro para leerla."
   },
   "spokenMedia": {
     "message": "Publicación difuminada por uFeed: sin texto que analizar. Pulsa Intro para verla."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Temas que quiero ver"
+    "message": "Temas que quiero ver (lista blanca)"
   },
   "topicsPlaceholder": {
     "message": "ingeniería de software, programación\ninvestigación en aprendizaje automático\nvideojuegos, diseño de juegos"
   },
   "topicsHint": {
     "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
+  },
+  "blacklistLabel": {
+    "message": "Temas que no quiero ver (lista negra)"
+  },
+  "blacklistPlaceholder": {
+    "message": "anuncios de lanzamientos de productos\nsorteos de criptomonedas"
+  },
+  "blacklistHint": {
+    "message": "Un tema por línea. Una publicación más cercana a uno de estos que a cualquier tema de arriba se difumina, aunque sea del tema. Los pulgares nunca cambian esta lista."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"

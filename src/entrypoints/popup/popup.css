@@ -176,7 +176,8 @@ input[type='range'] {
 
 /* One band per line, because a line is a topic. No wrapping: a wrapped topic
    would span two bands and read as two topics. */
-#topics {
+#topics,
+#blacklist {
   --row: 26px;
   padding: 4px 10px;
   font: inherit;

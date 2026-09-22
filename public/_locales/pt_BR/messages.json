@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Fora do tema — clique para ler"
   },
+  "labelBlacklist": {
+    "message": "Tópico bloqueado — clique para ler"
+  },
   "labelMedia": {
     "message": "Sem texto para analisar — clique para ver"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Publicação desfocada pelo uFeed: fora do tema. Pressione Enter para lê-la."
+  },
+  "spokenBlacklist": {
+    "message": "Publicação desfocada pelo uFeed: tópico bloqueado. Pressione Enter para lê-la."
   },
   "spokenMedia": {
     "message": "Publicação desfocada pelo uFeed: sem texto para analisar. Pressione Enter para vê-la."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Tópicos que quero ver"
+    "message": "Tópicos que quero ver (lista branca)"
   },
   "topicsPlaceholder": {
     "message": "engenharia de software, programação\npesquisa em aprendizado de máquina\nvideogames, design de jogos"
   },
   "topicsHint": {
     "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
+  },
+  "blacklistLabel": {
+    "message": "Tópicos que não quero ver (lista negra)"
+  },
+  "blacklistPlaceholder": {
+    "message": "anúncios de lançamento de produtos\nsorteios de criptomoedas"
+  },
+  "blacklistHint": {
+    "message": "Um tópico por linha. Uma publicação mais próxima de um destes do que de qualquer tópico acima fica desfocada, mesmo quando é do tema. Os polegares nunca mudam esta lista."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"

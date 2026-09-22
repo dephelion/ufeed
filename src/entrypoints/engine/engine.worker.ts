@@ -6,6 +6,7 @@ import {
   type SetTopicsRequest,
 } from '../../core/protocol';
 import { captureConsole, logger } from '../../core/log';
+import { topicsEqual } from '../../core/settings';
 import { Embedder } from '../../platform/embedder';
 import {
   DEFAULT_MODEL,
@@ -38,8 +39,13 @@ interface Topics {
   request: SetTopicsRequest;
   /** Every line's ratings together; see `pooled`. */
   rated: Rated;
-  vectors?: Promise<Vector[]>;
-  embedded?: Vector[];
+  vectors?: Promise<Embedded>;
+  embedded?: Embedded;
+}
+
+interface Embedded {
+  topics: Vector[];
+  blacklist: Vector[];
 }
 
 /** Kept past a failed load, so the next load still has the query to embed. */
@@ -74,8 +80,8 @@ function ensureLoaded(): Promise<void> {
   return loading;
 }
 
-function topicVectors(current: Topics | undefined): Promise<Vector[]> {
-  if (!current) return Promise.resolve([]);
+function topicVectors(current: Topics | undefined): Promise<Embedded> {
+  if (!current) return Promise.resolve({ topics: [], blacklist: [] });
   if (current.embedded) return Promise.resolve(current.embedded);
   current.vectors ??= embedTopics(current.request).then(
     (vectors) => (current.embedded = vectors),
@@ -87,26 +93,30 @@ function topicVectors(current: Topics | undefined): Promise<Vector[]> {
   return current.vectors;
 }
 
-async function embedTopics(request: SetTopicsRequest): Promise<Vector[]> {
-  const vectors = await embedder.embed(request.topics.map((t) => formatTopic(t, spec)));
+async function embedTopics(request: SetTopicsRequest): Promise<Embedded> {
+  const blacklist = request.blacklist ?? [];
+  const lines = [...request.topics, ...blacklist];
+  const vectors = await embedder.embed(lines.map((t) => formatTopic(t, spec)));
   log.info('topics embedded', {
     model: spec.label,
     count: vectors.length,
     topics: JSON.stringify(request.topics),
+    blacklist: JSON.stringify(blacklist),
     rated: (request.corrections ?? []).reduce(
       (n, c) => n + c.liked.length + c.disliked.length,
       0,
     ),
   });
-  return vectors;
+  const split = request.topics.length;
+  return { topics: vectors.slice(0, split), blacklist: vectors.slice(split) };
 }
 
 /** A change of ratings alone keeps the embedded topics: thumbs never move them. */
 function next(request: SetTopicsRequest): Topics {
   const same =
     topics !== undefined &&
-    topics.request.topics.length === request.topics.length &&
-    topics.request.topics.every((t, i) => t === request.topics[i]);
+    topicsEqual(topics.request.topics, request.topics) &&
+    topicsEqual(topics.request.blacklist ?? [], request.blacklist ?? []);
   return {
     request,
     rated: ratedOf(request),
@@ -144,7 +154,7 @@ async function handle(request: EngineRequest): Promise<void> {
   }
   try {
     const current = topics;
-    const vectors = await topicVectors(current);
+    const { topics: vectors, blacklist } = await topicVectors(current);
     if (request.type === 'SET_TOPICS') {
       post({ id: request.id, type: 'ACK' });
       return;
@@ -165,6 +175,7 @@ async function handle(request: EngineRequest): Promise<void> {
       (v) => ratingNear(v, rated.liked, rated.disliked, spec.ratingNear) ?? null,
     );
     const scores = matches.map((m) => m.score);
+    const blocks = embedded.map((v) => bestMatch(v, blacklist).score);
     const elapsed = Date.now() - started;
     log.info('scored', {
       posts: scores.length,
@@ -172,6 +183,7 @@ async function handle(request: EngineRequest): Promise<void> {
       device: embedder.device,
       max: scores.length ? Math.max(...scores).toFixed(3) : undefined,
       rated: ratings.filter((r) => r !== null).length,
+      blocked: blocks.filter((b, i) => b > scores[i]!).length,
     });
     post({
       id: request.id,
@@ -180,6 +192,7 @@ async function handle(request: EngineRequest): Promise<void> {
       topics: matches.map((m) => m.topic),
       lines: matches.map((m) => m.lines),
       ratings,
+      blocks,
     });
   } catch (error: unknown) {
     log.error('request failed', { type: request.type, reason: describe(error) });

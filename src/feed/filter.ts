@@ -10,7 +10,12 @@ import {
   topicsEqual,
   type Settings,
 } from '../core/settings';
-import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
+import {
+  decide as decideAction,
+  decideWithoutScore,
+  isBlacklisted,
+  type Action,
+} from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
 import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
 import { hideAllSkeletons, hideSkeleton, isSkeleton, showSkeleton } from './skeleton';
@@ -28,6 +33,7 @@ const log = logger('filter');
 const REASONS = {
   'blur-media': 'media',
   'blur-language': 'language',
+  'blur-blacklist': 'blacklist',
   blur: 'topic',
 } as const;
 
@@ -135,7 +141,9 @@ export class FeedFilter {
       this.#settings = next;
       return;
     }
-    const topicsChanged = !topicsEqual(next.topics, this.#settings.topics);
+    const topicsChanged =
+      !topicsEqual(next.topics, this.#settings.topics) ||
+      !topicsEqual(next.blacklist, this.#settings.blacklist);
     const tuningChanged = next.tuneFromFeedback !== this.#settings.tuneFromFeedback;
     const modelChanged = next.model !== this.#settings.model;
     const wasActive = this.active;
@@ -263,17 +271,22 @@ export class FeedFilter {
     const cut = this.#threshold();
     const revealed = isRevealed(post.container);
     const followsKept = !revealed && this.#conversation?.route(post) === 'keep';
-    const judged = { ...this.#grounds(post), score, threshold: cut, rating };
+    const block = match?.block;
+    const judged = { ...this.#grounds(post), score, threshold: cut, rating, block };
     // A revealed post stays shown whatever the rating, so the badge is the thumb's only confirmation.
     const ratingShown =
       rating !== undefined &&
-      (revealed || (!followsKept && decideWithoutScore(judged) === undefined));
+      (revealed ||
+        (!followsKept &&
+          decideWithoutScore(judged) === undefined &&
+          !isBlacklisted(judged)));
     if (this.#settings.showScores)
       stampScore(post.container, {
         score,
         needs: cut,
         chars: post.text.length,
         lines: match?.lines,
+        block,
         rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);
@@ -389,13 +402,14 @@ export class FeedFilter {
     }
   }
 
-  /** Topics and corrections both change the query, so both force a re-embed. */
+  /** Topics, blacklist and corrections all change the query, so both force a re-embed. */
   #requery(): void {
-    const { topics, tuneFromFeedback } = this.#settings;
+    const { topics, blacklist, tuneFromFeedback } = this.#settings;
     this.#sentRatings = tuneFromFeedback ? this.#tuner.signature(topics) : '';
     this.#engine.setTopics(
       topics,
       tuneFromFeedback ? this.#tuner.corrections(topics) : [],
+      blacklist,
     );
     this.#queue.invalidate();
     this.#cache.clear();

@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { ScoreCache, hashText } from './cache';
 
-const m = (score: number) => ({ score, topic: 0, lines: [score], rating: undefined });
+const m = (score: number) => ({
+  score,
+  topic: 0,
+  lines: [score],
+  rating: undefined,
+  block: -1,
+});
 
 describe('hashText', () => {
   it('ignores whitespace and case, so a re-rendered post is the same post', () => {

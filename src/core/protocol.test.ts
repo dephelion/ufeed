@@ -35,6 +35,7 @@ describe('isEngineReply', () => {
     topics: [0],
     lines: [[0.1]],
     ratings: [null],
+    blocks: [-1],
     ...extra,
   });
 
@@ -51,6 +52,7 @@ describe('isEngineReply', () => {
     expect(isEngineReply(scores({ topics: [0, 1] }))).toBe(false);
     expect(isEngineReply(scores({ ratings: [] }))).toBe(false);
     expect(isEngineReply(scores({ lines: [] }))).toBe(false);
+    expect(isEngineReply(scores({ blocks: [] }))).toBe(false);
     expect(isEngineReply(scores({ lines: [['0.1']] }))).toBe(false);
   });
 
@@ -104,6 +106,12 @@ describe('feedback messages', () => {
     expect(isEngineRequest({ id: 'r1', type: 'SET_TOPICS', topics: ['software'] })).toBe(
       true,
     );
+  });
+
+  it('accepts a blacklist and rejects one that is not strings', () => {
+    const request = { id: 'r1', type: 'SET_TOPICS', topics: ['ai'] };
+    expect(isEngineRequest({ ...request, blacklist: ['crypto'] })).toBe(true);
+    expect(isEngineRequest({ ...request, blacklist: [1] })).toBe(false);
   });
 
   it('rejects corrections that are not vectors', () => {

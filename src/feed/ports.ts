@@ -41,7 +41,11 @@ export interface Engine {
   connect(model: ModelKey): void;
   /** Tears the engine down and brings it back on another model. */
   restart(model: ModelKey): void;
-  setTopics(topics: string[], corrections?: TopicCorrections[]): void;
+  setTopics(
+    topics: string[],
+    corrections?: TopicCorrections[],
+    blacklist?: string[],
+  ): void;
   /** Resolves empty on timeout or error, so callers fail open. */
   score(texts: string[]): Promise<RatedMatch[]>;
   /** Resolves empty when the engine cannot answer, so feedback is dropped, never guessed. */

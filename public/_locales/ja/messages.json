@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "トピック外 — クリックで表示"
   },
+  "labelBlacklist": {
+    "message": "ブロックしたトピック — クリックで表示"
+  },
   "labelMedia": {
     "message": "判定できる文章なし — クリックで表示"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "uFeed がぼかした投稿: トピック外。Enter キーで表示します。"
+  },
+  "spokenBlacklist": {
+    "message": "uFeed がぼかした投稿: ブロックしたトピック。Enter キーで表示します。"
   },
   "spokenMedia": {
     "message": "uFeed がぼかした投稿: 判定できる文章なし。Enter キーで表示します。"
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "見たいトピック"
+    "message": "見たいトピック（ホワイトリスト）"
   },
   "topicsPlaceholder": {
     "message": "ソフトウェア開発, プログラミング\n機械学習の研究\nビデオゲーム, ゲームデザイン"
   },
   "topicsHint": {
     "message": "1 行に 1 トピック、数語で書きます。それ以外の投稿はぼかされます。ぼかされた投稿は、いつでもクリックして読めます。"
+  },
+  "blacklistLabel": {
+    "message": "見たくないトピック（ブラックリスト）"
+  },
+  "blacklistPlaceholder": {
+    "message": "新製品の発表\n暗号資産のプレゼント企画"
+  },
+  "blacklistHint": {
+    "message": "1 行に 1 トピック。上のどのトピックよりもこれらに近い投稿は、トピック内でもぼかされます。👍👎 でこのリストが変わることはありません。"
   },
   "tipsSummary": {
     "message": "よいトピックの書き方"

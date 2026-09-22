@@ -9,8 +9,8 @@ const COLLAPSE_CLASS = 'lx-collapse';
  */
 const revealed = new WeakSet<HTMLElement>();
 
-/** Drives the label: only 'topic' means the model actually judged the post. */
-export type BlurReason = 'topic' | 'media' | 'language' | 'peek';
+/** Drives the label: only 'topic' and 'blacklist' mean the model actually judged the post. */
+export type BlurReason = 'topic' | 'blacklist' | 'media' | 'language' | 'peek';
 
 /**
  * The text rides on `data-lx-label` and is drawn by `attr()`: a stylesheet has one
@@ -18,6 +18,7 @@ export type BlurReason = 'topic' | 'media' | 'language' | 'peek';
  */
 const LABELS: Record<BlurReason, MessageKey> = {
   topic: 'labelTopic',
+  blacklist: 'labelBlacklist',
   media: 'labelMedia',
   language: 'labelLanguage',
   peek: 'labelPeek',
@@ -99,6 +100,7 @@ export function isBlurred(element: HTMLElement): boolean {
 /** What a screen reader hears when focus enters a blurred post, per `BlurReason`. */
 const SPOKEN: Record<BlurReason, MessageKey> = {
   topic: 'spokenTopic',
+  blacklist: 'spokenBlacklist',
   media: 'spokenMedia',
   language: 'spokenLanguage',
   peek: 'spokenPeek',

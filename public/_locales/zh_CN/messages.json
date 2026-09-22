@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "主题无关 — 点击查看"
   },
+  "labelBlacklist": {
+    "message": "黑名单主题 — 点击查看"
+  },
   "labelMedia": {
     "message": "无文字可判断 — 点击查看"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "uFeed 已模糊此帖子：主题无关。按 Enter 键查看。"
+  },
+  "spokenBlacklist": {
+    "message": "uFeed 已模糊此帖子：黑名单主题。按 Enter 键查看。"
   },
   "spokenMedia": {
     "message": "uFeed 已模糊此帖子：无文字可判断。按 Enter 键查看。"
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "我想看的主题"
+    "message": "我想看的主题（白名单）"
   },
   "topicsPlaceholder": {
     "message": "软件工程, 编程\n机器学习研究\n电子游戏, 游戏设计"
   },
   "topicsHint": {
     "message": "每行一个主题，几个词即可。其他内容的帖子会被模糊处理。你随时可以点击被模糊的帖子来查看。"
+  },
+  "blacklistLabel": {
+    "message": "我不想看的主题（黑名单）"
+  },
+  "blacklistPlaceholder": {
+    "message": "产品发布公告\n加密货币抽奖"
+  },
+  "blacklistHint": {
+    "message": "每行一个主题。与这些主题比与上方任何主题更接近的帖子会被模糊处理，即使它属于你的主题。点赞和点踩不会改变这个列表。"
   },
   "tipsSummary": {
     "message": "如何写好一个主题"

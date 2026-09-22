@@ -43,18 +43,19 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 `data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`. `blur()` also writes the label's text to `data-lx-label` in the reader's language; the English shown in this page is `en`, see [i18n.md](i18n.md).
 
-| Reason     | Label                              | Set when                                                                                 |
-| :--------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
-| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or a near-copy of a thumbed-down post.               |
-| `media`    | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
-| `language` | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
-| `peek`     | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
+| Reason      | Label                               | Set when                                                                                    |
+| :---------- | :---------------------------------- | :------------------------------------------------------------------------------------------ |
+| `topic`     | "Out of topic — click to read"      | The score fell below the threshold, or a near-copy of a thumbed-down post.                  |
+| `media`     | "No text to check — click to view"  | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place.    |
+| `language`  | "Another language — click to read"  | `blurOtherLanguages` and CLD placed the post outside the model's language.                  |
+| `blacklist` | "Blacklisted topic — click to read" | The post is closer to a blacklist line than to any topic ([model.md](model.md) §Blacklist). |
+| `peek`      | `data-lx-peek` + "— click to read"  | The score landed in the uncertain strip.                                                    |
 
 **The peek never touches host DOM.** The opening words ride on `data-lx-peek` and render in our own overlay. Un-blurring them in place means splitting the host's text node — Invariant 3, and dead on the next vendor re-render. `reveal()` clears the attribute, so a recycled node never shows another post's words.
 
 **Dim the children, never the container.** `opacity` on `.lx-blur` makes a group, and a group's own `::after` cannot exceed it — the label faded to 55% along with the post it labels. The dim lives on `.lx-blur > *`, which also carries `pointer-events: none`.
 
-**Labels are translucent over a dark fill, never a light tint.** The first pass tinted 22% of the reason's colour and coloured the text to match — picked against X's dark feed, invisible on LinkedIn's white one. A **78%** fill of the deep shade with near-white text reads on either background and still lets the feed through, which is what keeps the label part of the page rather than pasted onto it. Each reason keeps its own colour: red for topic, indigo for language, stone for media, amber for the peek.
+**Labels are translucent over a dark fill, never a light tint.** The first pass tinted 22% of the reason's colour and coloured the text to match — picked against X's dark feed, invisible on LinkedIn's white one. A **78%** fill of the deep shade with near-white text reads on either background and still lets the feed through, which is what keeps the label part of the page rather than pasted onto it. Each reason keeps its own colour: red for topic, indigo for language, stone for media, near-black for the blacklist, amber for the peek.
 
 **Solid was tried and rejected.** It is the most legible and the most foreign — the pill stops belonging to the feed. Legibility here comes from the fill being dark and the text near-white, not from removing the transparency.
 
@@ -147,6 +148,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | :-------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                       |
 | Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                 |
+| Blacklist                         | Collapsed disclosure under the topics, open once it holds a line. Same textarea format; saved by the same Apply.                                                 |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                 |
 | Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                             |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                           |
@@ -156,7 +158,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                         |
 | Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                     |
 | Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm.                                      |
-| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics and language.                                                          |
+| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics, blacklist and language.                                               |
 | Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Sets the language of the popup and the feed ([i18n.md](i18n.md)).     |
 | Engine chip                       | Header, centred between the title and the switch. Two or three words plus a light.                                                                               |
 | Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, GitHub mark linking to the repo (same row, no added height). |
@@ -169,7 +171,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
-Apply is disabled until the textarea differs from what is saved.
+Apply is disabled until either textarea differs from what is saved.
 
 **Engine state is shown twice, on purpose.** The popup runs past Chrome's 600px cap, so the footer opens below the fold — the header chip is the only engine state most readers ever see (`Downloading 45%`, `Ready · wasm`, `Failed`, `No feed here`). The footer line carries what will not fit in a 380px header row: that the download happens once, and the failure reason a bug report needs. It hides itself once ready, when the chip says everything left to say. Both lights read from one tone, so they can never disagree.
 
@@ -229,7 +231,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars · #1 0.793 · #2 0.791 · #3 0.760 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). Every line's score is always shown, by 1-based position; the score is the highest of them. The lines are absent when the post has none (unscored). A hover swap that hid them behind `ℹ️ 3 topics` was removed in 0.7.0: the scores are the point of the badge. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
+`score 0.793 / needs 0.795 · 105 chars · #1 0.793 · #2 0.791 · #3 0.760 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). Every line's score is always shown, by 1-based position; the score is the highest of them. The lines are absent when the post has none (unscored). A hover swap that hid them behind `ℹ️ 3 topics` was removed in 0.7.0: the scores are the point of the badge. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post. `· blacklist 0.812` follows the lines when a blacklist exists: the best blacklist cosine; the badge goes red whenever it beats the score.
 
 **"Downloading" must mean bandwidth, and only transformers.js knows — so ask the cache instead.** A cache hit is streamed through the same `progress` events as a real fetch (Chrome; Firefox fires a single 100%), and the callback never says which it was, so **every page refresh claimed to be downloading the model again**. `Embedder` now checks `caches.open('transformers-cache')` for a key carrying the model id before loading, and reports `warming` rather than `downloading` when the weights are already there. A cached load is not instant — a few hundred MB off disk plus session startup — so the reader is still told the engine is working: "Starting the model up — already downloaded". An unreadable cache reads as "not cached", which is the old behaviour and never blocks a load.
 

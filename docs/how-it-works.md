@@ -9,7 +9,9 @@ Four choices shape everything else. Each one gives something up.
 
 - **You name what you want, not what you hate.** A list of topics to keep is short
   and finite. A list of topics to avoid never is. The cost: a post that is about
-  none of your topics is blurred, even if it is harmless.
+  none of your topics is blurred, even if it is harmless. An optional blacklist
+  trims inside your topics: a post closer to a blacklisted topic than to any of
+  yours is blurred too. It never works alone.
 - **Blur, never delete.** Every blurred post is one click (or Enter, from the
   keyboard) from readable, so a wrong call costs a click, not a missed post.
 - **An embedding model, not a chat model.** uFeed turns text into numbers and
