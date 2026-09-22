@@ -13,7 +13,16 @@ import {
 } from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
-import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
+import {
+  blur,
+  isBlurred,
+  isRevealed,
+  peek,
+  retag,
+  reveal,
+  revealAll,
+  type BlurReason,
+} from './blur';
 import { hideAllSkeletons, hideSkeleton, isSkeleton, showSkeleton } from './skeleton';
 import { Conversation } from './conversation';
 import type { PostRef } from './feedback-bar';
@@ -32,6 +41,9 @@ const REASONS = {
   'blur-blacklist': 'blacklist',
   blur: 'topic',
 } as const;
+
+const reasonOf = (action: Action): BlurReason | undefined =>
+  action === 'reveal' ? undefined : action === 'peek' ? 'peek' : REASONS[action];
 
 export interface FeedFilterOptions {
   adapter: SiteAdapter;
@@ -286,11 +298,13 @@ export class FeedFilter {
         rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);
+    const action = followsKept ? 'reveal' : decideAction(judged);
     if (revealed) {
+      retag(post.container, this.#t, reasonOf(action), this.#keywordFor(post, action));
       this.#settle(post.container, true);
       return undefined;
     }
-    return this.#apply(post, followsKept ? 'reveal' : decideAction(judged));
+    return this.#apply(post, action);
   }
 
   #grounds(post: Post) {
@@ -310,12 +324,17 @@ export class FeedFilter {
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, this.#t, post.text, collapse);
     else blur(post.container, this.#t, REASONS[action], collapse);
-    const keyword =
-      action === 'blur-blacklist' ? blockedKeyword(this.#settings, post.text) : undefined;
+    const keyword = this.#keywordFor(post, action);
     if (keyword === undefined) delete post.container.dataset.lxKeyword;
     else post.container.dataset.lxKeyword = keyword;
     this.#settle(post.container, action === 'reveal');
     return action;
+  }
+
+  #keywordFor(post: Post, action: Action): string | undefined {
+    return action === 'blur-blacklist'
+      ? blockedKeyword(this.#settings, post.text)
+      : undefined;
   }
 
   #track(text: string, hidden: boolean): void {

@@ -103,9 +103,29 @@ export function revealPermanently(element: HTMLElement, t: Translate): void {
   const keyword = element.dataset.lxKeyword;
   revealed.add(element);
   reveal(element);
-  if (reason === undefined || !(reason in OPENED)) return;
+  retag(element, t, reason, keyword);
+}
+
+/**
+ * An opened post's tag follows the current verdict, not the one it was opened
+ * under: removing the keyword that blocked it drops the tag or names the new reason.
+ */
+export function retag(
+  element: HTMLElement,
+  t: Translate,
+  reason: BlurReason | undefined,
+  keyword?: string,
+): void {
+  if (!revealed.has(element)) return;
+  if (reason === undefined || !(reason in OPENED)) {
+    delete element.dataset.lxOpened;
+    delete element.dataset.lxKeyword;
+    delete element.dataset.lxLabel;
+    return;
+  }
   element.dataset.lxOpened = reason;
-  if (keyword !== undefined) element.dataset.lxKeyword = keyword;
+  if (keyword === undefined) delete element.dataset.lxKeyword;
+  else element.dataset.lxKeyword = keyword;
   element.dataset.lxLabel = openedLabel(element, t);
 }
 

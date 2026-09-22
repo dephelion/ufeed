@@ -273,6 +273,28 @@ describe('FeedFilter', () => {
     expect(counts.at(-1)).toBe(3);
   });
 
+  it('updates the tag on an opened post when the keyword that blocked it is removed', async () => {
+    const { filter } = await run({ ...SETTINGS, blacklist: ['rust', 'cake'] }, [
+      'rust ships a new borrow checker',
+      'a chocolate cake recipe',
+    ]);
+    for (const word of ['rust', 'cake']) {
+      revealPermanently(post(word), t);
+      filter.revealed(post(word));
+    }
+    expect(post('rust').dataset.lxLabel).toBe('Blocked keyword (rust)');
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+
+    expect(post('rust').dataset.lxOpened).toBeUndefined();
+    expect(post('rust').dataset.lxLabel).toBeUndefined();
+    expect(post('rust').dataset.lxKeyword).toBeUndefined();
+    expect(post('cake').dataset.lxOpened).toBe('topic');
+    expect(post('cake').dataset.lxLabel).toBe('Out of topic');
+    expect(isBlurred(post('cake'))).toBe(false);
+  });
+
   it('offers no thumbs on a blacklisted post, even once opened', async () => {
     const { filter } = await run(
       { ...SETTINGS, tuneFromFeedback: true, blacklist: ['rust'] },
