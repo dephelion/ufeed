@@ -171,10 +171,10 @@
     "message": "Mots-clés que je ne veux pas voir (liste noire)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing\nconcours\nsponsorisé"
+    "message": "introducing, concours, sponsorisé"
   },
   "blacklistHint": {
-    "message": "Un mot ou une expression par ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
+    "message": "Séparez les mots-clés par des virgules. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"

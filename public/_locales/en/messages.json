@@ -201,11 +201,11 @@
     "message": "Keywords I don't want to see (blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing\ngiveaway\nsponsored",
-    "description": "Three example keywords to block, one per line."
+    "message": "introducing, giveaway, sponsored",
+    "description": "Three example keywords to block, comma-separated."
   },
   "blacklistHint": {
-    "message": "One word or phrase per line. Any post that contains one is blurred, even when it is on topic. Case and accents don't matter, and a singular also blocks its plural."
+    "message": "Separate keywords with commas. Any post that contains one is blurred, even when it is on topic. Case and accents don't matter, and a singular also blocks its plural."
   },
   "tipsSummary": {
     "message": "How to write a good topic"

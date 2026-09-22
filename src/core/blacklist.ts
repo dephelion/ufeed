@@ -3,6 +3,9 @@ import type { Settings } from './settings';
 /** Scripts written without spaces between words: a keyword there is matched anywhere. */
 const UNSPACED = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
 
+/** Latin, fullwidth and ideographic commas, and the Japanese list mark; line breaks too. */
+const SEPARATORS = /[,，、،\n]/;
+
 const compiled = new WeakMap<readonly string[], RegExp | null>();
 
 /**
@@ -18,6 +21,20 @@ export function blursAsBlacklisted(settings: Settings, text: string): boolean {
     compiled.set(blacklist, pattern);
   }
   return pattern?.test(fold(text)) ?? false;
+}
+
+/** Keywords as the reader types them, comma-separated; blanks and duplicates dropped. */
+export function parseKeywords(raw: string): string[] {
+  const seen = new Set<string>();
+  for (const part of raw.split(SEPARATORS)) {
+    const keyword = part.trim().replace(/\s+/g, ' ');
+    if (keyword !== '') seen.add(keyword);
+  }
+  return [...seen];
+}
+
+export function keywordsToText(keywords: readonly string[]): string {
+  return keywords.join(', ');
 }
 
 function compile(keywords: readonly string[]): RegExp | null {

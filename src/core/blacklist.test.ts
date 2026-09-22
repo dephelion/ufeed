@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { blursAsBlacklisted } from './blacklist';
+import { blursAsBlacklisted, keywordsToText, parseKeywords } from './blacklist';
 import { DEFAULT_SETTINGS } from './settings';
 
 const blocks = (blacklist: string[], text: string) =>
@@ -38,5 +38,26 @@ describe('blursAsBlacklisted', () => {
 
   it('matches anywhere in scripts written without spaces', () => {
     expect(blocks(['暗号資産'], '今日の暗号資産ニュース')).toBe(true);
+  });
+});
+
+describe('parseKeywords', () => {
+  it('splits on the comma of every language, and on line breaks', () => {
+    expect(parseKeywords('crypto, giveaway ,,  nft')).toEqual([
+      'crypto',
+      'giveaway',
+      'nft',
+    ]);
+    expect(parseKeywords('抽奖，广告、广告\nintroducing,')).toEqual([
+      '抽奖',
+      '广告',
+      'introducing',
+    ]);
+  });
+
+  it('keeps a phrase whole and reads back what it wrote', () => {
+    const keywords = parseKeywords('product   launch, crypto');
+    expect(keywords).toEqual(['product launch', 'crypto']);
+    expect(parseKeywords(keywordsToText(keywords))).toEqual(keywords);
   });
 });

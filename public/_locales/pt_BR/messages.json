@@ -171,10 +171,10 @@
     "message": "Palavras-chave que não quero ver (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing\nsorteio\npatrocinado"
+    "message": "introducing, sorteio, patrocinado"
   },
   "blacklistHint": {
-    "message": "Uma palavra ou frase por linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
+    "message": "Separe as palavras-chave com vírgulas. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"

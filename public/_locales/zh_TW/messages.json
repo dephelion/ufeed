@@ -171,10 +171,10 @@
     "message": "我不想看的關鍵字（黑名單）"
   },
   "blacklistPlaceholder": {
-    "message": "抽獎\n廣告\nintroducing"
+    "message": "抽獎，廣告，introducing"
   },
   "blacklistHint": {
-    "message": "每行一個詞或片語。包含其中任何一個的貼文都會被模糊處理，即使它屬於你的主題。不區分大小寫和重音符號，英文單數也會比對複數。"
+    "message": "用逗號分隔關鍵字。包含其中任何一個的貼文都會被模糊處理，即使它屬於你的主題。不區分大小寫和重音符號，英文單數也會比對複數。"
   },
   "tipsSummary": {
     "message": "如何寫好一個主題"

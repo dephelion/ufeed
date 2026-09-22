@@ -8,6 +8,7 @@ import {
   topicsToText,
   type Settings,
 } from '../../core/settings';
+import { keywordsToText, parseKeywords } from '../../core/blacklist';
 import { EMPTY_FEEDBACK, counts } from '../../core/feedback';
 import {
   exportConfig,
@@ -139,7 +140,7 @@ function renderEnabled(on: boolean | undefined): void {
 
 function render(settings: Settings): void {
   topics.value = topicsToText(settings.topics);
-  blacklist.value = topicsToText(settings.blacklist);
+  blacklist.value = keywordsToText(settings.blacklist);
   if (settings.blacklist.length > 0) blacklistDetails.open = true;
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
@@ -159,7 +160,7 @@ function render(settings: Settings): void {
 function refreshApply(): void {
   apply.disabled =
     topicsEqual(parseTopics(topics.value), saved.topics) &&
-    topicsEqual(parseTopics(blacklist.value), saved.blacklist);
+    topicsEqual(parseKeywords(blacklist.value), saved.blacklist);
   if (!apply.disabled) applied.hidden = true;
 }
 
@@ -254,12 +255,12 @@ blacklist.addEventListener('input', refreshApply);
 apply.addEventListener('click', () => {
   const patch = {
     topics: parseTopics(topics.value),
-    blacklist: parseTopics(blacklist.value),
+    blacklist: parseKeywords(blacklist.value),
   };
   void update(patch).then((ok) => {
     if (!ok) return;
     topics.value = topicsToText(saved.topics);
-    blacklist.value = topicsToText(saved.blacklist);
+    blacklist.value = keywordsToText(saved.blacklist);
     applied.hidden = false;
     refreshApply();
   });

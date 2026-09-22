@@ -171,10 +171,10 @@
     "message": "Stichwörter, die ich nicht sehen möchte (Blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing\ngewinnspiel\nanzeige"
+    "message": "introducing, Gewinnspiel, Anzeige"
   },
   "blacklistHint": {
-    "message": "Ein Wort oder eine Wortgruppe pro Zeile. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
+    "message": "Stichwörter durch Kommas trennen. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
   },
   "tipsSummary": {
     "message": "So schreibst du ein gutes Thema"
