@@ -105,6 +105,11 @@ export class FeedScanner {
     if (post && changed(before, this.#shape(post))) this.#offer(post);
   }
 
+  /** Whether this post has entered view and been handed over for judging. */
+  offered(container: HTMLElement): boolean {
+    return this.#offered.has(container);
+  }
+
   /** Whether this post has been picked up at all, for UI that attaches to one. */
   knows(container: HTMLElement): boolean {
     return this.#seen.has(container);

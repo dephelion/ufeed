@@ -402,12 +402,14 @@ export class FeedFilter {
   }
 
   /**
-   * Scores stay valid: only the keyword tier moved. A post it blurred was never
-   * scored, so the whole feed is offered again rather than re-applied from cache.
+   * Scores stay valid: only the keyword tier moved, so every judged post is decided
+   * again on the spot. One the tier had blurred was never scored; it goes to the engine.
    */
   #rescan(): void {
-    this.#conversation?.reset();
-    this.#scanner.reset();
+    for (const post of this.#adapter.findPosts(document)) {
+      if (!this.#scanner.offered(post.container) || isSkeleton(post.container)) continue;
+      this.#enqueue(post);
+    }
   }
 
   /** Topics and corrections both change the query, so both force a re-embed. */

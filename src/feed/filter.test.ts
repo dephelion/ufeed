@@ -12,8 +12,11 @@ import { translate as t } from '../platform/i18n';
 
 /** happy-dom never intersects; this one reports every observed node as in view. */
 class InView {
+  /** Set to stand in for a browser that has not delivered a notification yet. */
+  static quiet = false;
   constructor(private readonly callback: IntersectionObserverCallback) {}
   observe(target: Element): void {
+    if (InView.quiet) return;
     const entry = { target, isIntersecting: true } as IntersectionObserverEntry;
     this.callback([entry], this as unknown as IntersectionObserver);
   }
@@ -98,6 +101,7 @@ describe('FeedFilter', () => {
   });
 
   afterEach(() => {
+    InView.quiet = false;
     filter?.stop();
     vi.useRealTimers();
     vi.unstubAllGlobals();
@@ -229,6 +233,24 @@ describe('FeedFilter', () => {
     await vi.advanceTimersByTimeAsync(200);
     expect(isBlurred(post('rust'))).toBe(false);
     expect(counts.at(-1)).toBe(0);
+  });
+
+  it('blurs an on-screen post as soon as a keyword is added, without waiting on the viewport', async () => {
+    const { engine, filter } = await run(SETTINGS, [
+      'rust ships a new borrow checker',
+      'a chocolate cake recipe',
+    ]);
+    InView.quiet = true;
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust'] });
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(post('cake').dataset.lxReason).toBe('topic');
+    expect(post('rust').classList.contains('lx-pending')).toBe(false);
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(engine.score).toHaveBeenCalledTimes(1);
   });
 
   it('re-judges the feed from cache when the blacklist changes', async () => {
