@@ -267,6 +267,17 @@ describe('FeedFilter', () => {
     expect(post('cake').dataset.lxScore).toBeUndefined();
   });
 
+  it('stops offering a post to the thumbs bar once the tab is turned off', async () => {
+    const { filter } = await run({ ...SETTINGS, tuneFromFeedback: true }, [
+      'rust ships a new borrow checker',
+    ]);
+    expect(filter.ratable(post('rust'))).toBeDefined();
+
+    filter.setOn(false);
+
+    expect(filter.ratable(post('rust'))).toBeUndefined();
+  });
+
   it('asks the engine again when the tab is turned back on', async () => {
     const { filter, engine } = await run(SETTINGS, ['a chocolate cake recipe']);
     const sent = engine.setTopics.mock.calls.length;

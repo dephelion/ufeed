@@ -193,7 +193,7 @@ export class FeedFilter {
 
   /** The post under the pointer, when it is one a thumb can rate. */
   ratable(target: Element): PostRef | undefined {
-    if (!this.#settings.tuneFromFeedback) return undefined;
+    if (!this.active || !this.#settings.tuneFromFeedback) return undefined;
     const container = target.closest<HTMLElement>(this.#adapter.containerSelector);
     const found = container ? this.#adapter.findPosts(container)[0] : undefined;
     if (!found || !this.#scanner.knows(found.container)) return undefined;
