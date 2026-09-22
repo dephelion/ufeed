@@ -22,9 +22,12 @@ interface Shape {
   media: boolean;
 }
 
-/** X can mount a cell before its photo or text; a post that filled in is judged again. */
-function filledIn(before: Shape, after: Shape): boolean {
-  return (!before.media && after.media) || (before.text === '' && after.text !== '');
+/**
+ * X can mount a cell before its photo or text, and LinkedIn can swap a card's
+ * body after first paint: a post whose text or photo changed is judged again.
+ */
+function changed(before: Shape, after: Shape): boolean {
+  return (!before.media && after.media) || before.text !== after.text;
 }
 
 /**
@@ -99,7 +102,7 @@ export class FeedScanner {
     const before = this.#offered.get(container);
     if (!before || !this.options.isActive()) return;
     const post = this.options.adapter.findPosts(container)[0];
-    if (post && filledIn(before, this.#shape(post))) this.#offer(post);
+    if (post && changed(before, this.#shape(post))) this.#offer(post);
   }
 
   /** Whether this post has been picked up at all, for UI that attaches to one. */

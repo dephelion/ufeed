@@ -343,7 +343,7 @@ export class FeedFilter {
       this.#decide(post, cached);
       return;
     }
-    if (blursAsBlacklisted(this.#settings, post.text)) {
+    if (!isRevealed(post.container) && blursAsBlacklisted(this.#settings, post.text)) {
       clearScore(post.container);
       this.#apply(post, 'blur-blacklist');
       return;

@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS, type Settings } from '../core/settings';
 import { EMPTY_FEEDBACK } from '../core/feedback';
 import type { EngineState } from '../core/protocol';
 import type { RatedMatch } from '../core/scoring';
-import { isBlurred } from './blur';
+import { isBlurred, revealPermanently } from './blur';
 import { FeedFilter } from './filter';
 import type { Engine, FeedbackStore } from './ports';
 import { Tuning } from './tuning';
@@ -210,6 +210,25 @@ describe('FeedFilter', () => {
     ]);
     expect(post('rust').dataset.lxReason).toBe('blacklist');
     expect(engine.score).not.toHaveBeenCalled();
+  });
+
+  it('never counts a revealed blacklisted post as hidden when it is offered again', async () => {
+    const counts: number[] = [];
+    const { filter } = await run(
+      { ...SETTINGS, blacklist: ['rust'] },
+      ['rust ships a new borrow checker'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    revealPermanently(post('rust'));
+    filter.revealed(post('rust'));
+    expect(counts.at(-1)).toBe(0);
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust', 'crypto'] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(counts.at(-1)).toBe(0);
   });
 
   it('re-judges the feed from cache when the blacklist changes', async () => {
