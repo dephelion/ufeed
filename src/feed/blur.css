@@ -78,6 +78,50 @@
   color: #f2f2ff;
 }
 
+.lx-blur[data-lx-reason='blacklist']::after {
+  background: color-mix(in srgb, #1c1917 82%, transparent);
+}
+
+/* An opened post keeps a small tag saying why it had been hidden. Bottom-left and
+   click-through: top-right sits on the host's own menu buttons once the post shows. */
+[data-lx-opened] {
+  position: relative;
+}
+
+[data-lx-opened]::after {
+  content: attr(data-lx-label);
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  z-index: 2;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #b91c1c 60%, transparent);
+  color: #fff5f5;
+  font:
+    600 10px/1.4 'JetBrainsMono Nerd Font',
+    'JetBrains Mono',
+    ui-monospace,
+    monospace;
+  pointer-events: none;
+}
+
+[data-lx-opened='media']::after {
+  background: color-mix(in srgb, #57534e 60%, transparent);
+}
+
+[data-lx-opened='language']::after {
+  background: color-mix(in srgb, #4338ca 60%, transparent);
+}
+
+[data-lx-opened='blacklist']::after {
+  background: color-mix(in srgb, #1c1917 70%, transparent);
+}
+
+[data-lx-opened='peek']::after {
+  background: color-mix(in srgb, #b45309 60%, transparent);
+}
+
 /* Borderline: the opening words stay legible so the call can be judged without
    destroying the blur. Shares ::after with the label so ::before stays free for
    the score badge — otherwise the badge would vanish on exactly these posts. */

@@ -225,7 +225,7 @@ describe('FeedFilter', () => {
       'ready',
       (n) => counts.push(n),
     );
-    revealPermanently(post('rust'));
+    revealPermanently(post('rust'), t);
     filter.revealed(post('rust'));
     expect(counts.at(-1)).toBe(0);
 

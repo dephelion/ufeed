@@ -126,6 +126,7 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 - Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by uFeed: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
+- An opened post keeps a small tag with the reason, minus "click to read" (`data-lx-opened` + `data-lx-label`, `opened*` keys). Bottom-left and click-through: top-right sits on the host's menu buttons once the post shows. `revealAll()` removes it with the blurs.
 - Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
 
 **Node-level is sufficient.** A reveal lost to virtualized recycling is an accepted tradeoff, not a bug. Do not add a persistence layer for it.

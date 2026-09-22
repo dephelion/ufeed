@@ -27,6 +27,26 @@
     "message": "Classifying…",
     "description": "Centred over a post while uFeed decides whether to blur it."
   },
+  "openedTopic": {
+    "message": "Out of topic",
+    "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
+  },
+  "openedBlacklist": {
+    "message": "Blocked keyword",
+    "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
+  },
+  "openedMedia": {
+    "message": "No text to check",
+    "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
+  },
+  "openedLanguage": {
+    "message": "Another language",
+    "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
+  },
+  "openedPeek": {
+    "message": "Borderline",
+    "description": "Small tag kept on a post the reader opened, saying why it had been blurred."
+  },
   "spokenTopic": {
     "message": "Blurred by uFeed: out of topic. Press Enter to read it.",
     "description": "Screen-reader announcement."
