@@ -198,7 +198,7 @@
     "message": "One topic per line, a few words each. Posts about anything else get blurred out. You can always click a blurred post to read it."
   },
   "blacklistLabel": {
-    "message": "Keywords I don't want to see (blacklist)"
+    "message": "Hide posts containing these keywords (blacklist)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, giveaway, sponsored",

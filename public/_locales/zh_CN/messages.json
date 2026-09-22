@@ -168,7 +168,7 @@
     "message": "每行一个主题，几个词即可。其他内容的帖子会被模糊处理。你随时可以点击被模糊的帖子来查看。"
   },
   "blacklistLabel": {
-    "message": "我不想看的关键词（黑名单）"
+    "message": "隐藏包含这些关键词的帖子（黑名单）"
   },
   "blacklistPlaceholder": {
     "message": "抽奖，广告，introducing"

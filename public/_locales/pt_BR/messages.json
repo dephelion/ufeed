@@ -168,7 +168,7 @@
     "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
   },
   "blacklistLabel": {
-    "message": "Palavras-chave que não quero ver (lista negra)"
+    "message": "Ocultar publicações com estas palavras-chave (lista negra)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, sorteio, patrocinado"

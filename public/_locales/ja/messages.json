@@ -168,7 +168,7 @@
     "message": "1 行に 1 トピック、数語で書きます。それ以外の投稿はぼかされます。ぼかされた投稿は、いつでもクリックして読めます。"
   },
   "blacklistLabel": {
-    "message": "見たくないキーワード（ブラックリスト）"
+    "message": "これらのキーワードを含む投稿を隠す（ブラックリスト）"
   },
   "blacklistPlaceholder": {
     "message": "プレゼント企画、広告、introducing"

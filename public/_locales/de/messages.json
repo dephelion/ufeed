@@ -168,7 +168,7 @@
     "message": "Ein Thema pro Zeile, wenige Wörter. Beiträge zu allem anderen werden verwischt. Du kannst einen verwischten Beitrag jederzeit anklicken, um ihn zu lesen."
   },
   "blacklistLabel": {
-    "message": "Stichwörter, die ich nicht sehen möchte (Blacklist)"
+    "message": "Beiträge mit diesen Stichwörtern ausblenden (Blacklist)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, Gewinnspiel, Anzeige"

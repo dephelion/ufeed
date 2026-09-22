@@ -168,7 +168,7 @@
     "message": "每行一個主題，幾個詞即可。其他內容的貼文會被模糊處理。你隨時可以點擊被模糊的貼文來查看。"
   },
   "blacklistLabel": {
-    "message": "我不想看的關鍵字（黑名單）"
+    "message": "隱藏包含這些關鍵字的貼文（黑名單）"
   },
   "blacklistPlaceholder": {
     "message": "抽獎，廣告，introducing"

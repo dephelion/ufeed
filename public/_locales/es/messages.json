@@ -168,7 +168,7 @@
     "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
   },
   "blacklistLabel": {
-    "message": "Palabras clave que no quiero ver (lista negra)"
+    "message": "Ocultar publicaciones con estas palabras clave (lista negra)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, sorteo, patrocinado"

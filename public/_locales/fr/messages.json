@@ -168,7 +168,7 @@
     "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
   },
   "blacklistLabel": {
-    "message": "Mots-clés que je ne veux pas voir (liste noire)"
+    "message": "Masquer les publications contenant ces mots-clés (liste noire)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, concours, sponsorisé"
