@@ -204,6 +204,29 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(true);
   });
 
+  it('blurs a post with a blocked keyword without asking the engine', async () => {
+    const { engine } = await run({ ...SETTINGS, blacklist: ['borrow checker'] }, [
+      'rust ships a new borrow checker',
+    ]);
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(engine.score).not.toHaveBeenCalled();
+  });
+
+  it('re-judges the feed from cache when the blacklist changes', async () => {
+    const { engine, filter } = await run(SETTINGS, ['rust ships a new borrow checker']);
+    expect(isBlurred(post('rust'))).toBe(false);
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust'] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(engine.score).toHaveBeenCalledTimes(1);
+    expect(engine.setTopics).toHaveBeenCalledTimes(1);
+  });
+
   it('discards scores measured against topics that have since changed', async () => {
     let answerOld: (matches: RatedMatch[]) => void = () => {};
     const calls: Promise<RatedMatch[]>[] = [

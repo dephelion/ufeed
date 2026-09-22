@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Fora do tema — clique para ler"
   },
+  "labelBlacklist": {
+    "message": "Palavra bloqueada — clique para ler"
+  },
   "labelMedia": {
     "message": "Sem texto para analisar — clique para ver"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Publicação desfocada pelo uFeed: fora do tema. Pressione Enter para lê-la."
+  },
+  "spokenBlacklist": {
+    "message": "Publicação desfocada pelo uFeed: palavra bloqueada. Pressione Enter para lê-la."
   },
   "spokenMedia": {
     "message": "Publicação desfocada pelo uFeed: sem texto para analisar. Pressione Enter para vê-la."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Tópicos que quero ver"
+    "message": "Tópicos que quero ver (lista branca)"
   },
   "topicsPlaceholder": {
     "message": "engenharia de software, programação\npesquisa em aprendizado de máquina\nvideogames, design de jogos"
   },
   "topicsHint": {
     "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
+  },
+  "blacklistLabel": {
+    "message": "Ocultar se mencionar (lista negra)"
+  },
+  "blacklistPlaceholder": {
+    "message": "cripto, IA, patrocinado"
+  },
+  "blacklistHint": {
+    "message": "Separe as palavras-chave com vírgulas ou quebras de linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"
@@ -200,8 +215,8 @@
   "tipQualityBody": {
     "message": "Uma publicação ótima e uma ruim sobre a mesma coisa ficam as duas. O uFeed não consegue distingui-las."
   },
-  "saveTopics": {
-    "message": "Salvar tópicos"
+  "saveLists": {
+    "message": "Salvar listas"
   },
   "saved": {
     "message": "Salvo"

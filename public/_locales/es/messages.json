@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Fuera de tema — clic para leer"
   },
+  "labelBlacklist": {
+    "message": "Palabra bloqueada — clic para leer"
+  },
   "labelMedia": {
     "message": "Sin texto que analizar — clic para ver"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Publicación difuminada por uFeed: fuera de tema. Pulsa Intro para leerla."
+  },
+  "spokenBlacklist": {
+    "message": "Publicación difuminada por uFeed: palabra bloqueada. Pulsa Intro para leerla."
   },
   "spokenMedia": {
     "message": "Publicación difuminada por uFeed: sin texto que analizar. Pulsa Intro para verla."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Temas que quiero ver"
+    "message": "Temas que quiero ver (lista blanca)"
   },
   "topicsPlaceholder": {
     "message": "ingeniería de software, programación\ninvestigación en aprendizaje automático\nvideojuegos, diseño de juegos"
   },
   "topicsHint": {
     "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
+  },
+  "blacklistLabel": {
+    "message": "Ocultar si mencionan (lista negra)"
+  },
+  "blacklistPlaceholder": {
+    "message": "cripto, IA, patrocinado"
+  },
+  "blacklistHint": {
+    "message": "Separa las palabras clave con comas o saltos de línea. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"
@@ -200,8 +215,8 @@
   "tipQualityBody": {
     "message": "Una publicación excelente y una mala sobre lo mismo se quedan las dos. uFeed no puede distinguirlas."
   },
-  "saveTopics": {
-    "message": "Guardar temas"
+  "saveLists": {
+    "message": "Guardar listas"
   },
   "saved": {
     "message": "Guardado"

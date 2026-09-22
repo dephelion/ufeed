@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "Hors sujet — cliquez pour lire"
   },
+  "labelBlacklist": {
+    "message": "Mot-clé bloqué — cliquez pour lire"
+  },
   "labelMedia": {
     "message": "Pas de texte à analyser — cliquez pour voir"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "Publication floutée par uFeed : hors sujet. Appuyez sur Entrée pour la lire."
+  },
+  "spokenBlacklist": {
+    "message": "Publication floutée par uFeed : mot-clé bloqué. Appuyez sur Entrée pour la lire."
   },
   "spokenMedia": {
     "message": "Publication floutée par uFeed : pas de texte à analyser. Appuyez sur Entrée pour la voir."
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "Sujets que je veux voir"
+    "message": "Sujets que je veux voir (liste blanche)"
   },
   "topicsPlaceholder": {
     "message": "génie logiciel, programmation\nrecherche en apprentissage automatique\njeux vidéo, conception de jeux"
   },
   "topicsHint": {
     "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
+  },
+  "blacklistLabel": {
+    "message": "Masquer si ça mentionne (liste noire)"
+  },
+  "blacklistPlaceholder": {
+    "message": "crypto, IA, sponsorisé"
+  },
+  "blacklistHint": {
+    "message": "Séparez les mots-clés par des virgules ou des retours à la ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"
@@ -200,8 +215,8 @@
   "tipQualityBody": {
     "message": "Une excellente publication et une mauvaise sur le même sujet restent toutes les deux. uFeed ne sait pas les distinguer."
   },
-  "saveTopics": {
-    "message": "Enregistrer les sujets"
+  "saveLists": {
+    "message": "Enregistrer les listes"
   },
   "saved": {
     "message": "Enregistré"

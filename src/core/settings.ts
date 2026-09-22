@@ -1,9 +1,13 @@
+import { parseKeywords } from './blacklist';
 import { isLanguageCode, type LanguageSetting } from './languages';
 import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './models';
 import { clampStrictness } from './scoring';
 
 export interface Settings {
+  /** The whitelist: posts must be about one of these to show. */
   topics: string[];
+  /** The blacklist: a post closer to one of these than to any topic is blurred. */
+  blacklist: string[];
   /** Which model scores the feed. Changing it restarts the engine. */
   model: ModelKey;
   /** Step 0..10, not a score: scores differ per model. */
@@ -23,6 +27,7 @@ export interface Settings {
 
 export const DEFAULT_SETTINGS: Settings = {
   topics: [],
+  blacklist: [],
   model: DEFAULT_MODEL,
   strictness: DEFAULT_STRICTNESS,
   showScores: false,
@@ -55,6 +60,7 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
   if (!isModelKey(merged.model)) merged.model = DEFAULT_MODEL;
   if (merged.language !== 'auto' && !isLanguageCode(merged.language))
     merged.language = 'auto';
+  merged.blacklist = parseKeywords(merged.blacklist.join('\n'));
   return merged;
 }
 
@@ -81,11 +87,10 @@ export function onlyLanguageChanged(before: Settings, after: Settings): boolean 
   const rest = (Object.keys(after) as (keyof Settings)[]).filter(
     (key) => key !== 'language',
   );
-  return rest.every((key) =>
-    key === 'topics'
-      ? topicsEqual(before.topics, after.topics)
-      : before[key] === after[key],
-  );
+  return rest.every((key) => {
+    const [a, b] = [before[key], after[key]];
+    return Array.isArray(a) && Array.isArray(b) ? topicsEqual(a, b) : a === b;
+  });
 }
 
 /** `on` is the tab's own switch, never stored: turning one tab off leaves the others. */

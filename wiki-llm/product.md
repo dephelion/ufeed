@@ -5,7 +5,7 @@
 
 ## Position
 
-- Allowlist filter. User names topics to keep; everything else blurs. Never a blocklist mode.
+- Allowlist filter. User names topics to keep; everything else blurs. An optional keyword blacklist only narrows what the topics let through; never a blocklist-only mode.
 - Private by construction. Inference on-device only. No account, no server, no analytics.
 - Predictable over clever. Embedding model: same post, same score. Every control is inspectable (strictness, scores, peek strip, thumbs).
 - Blur, never delete. One click reveals.

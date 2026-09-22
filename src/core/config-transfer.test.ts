@@ -20,6 +20,7 @@ const rating = (n: number, liked = true): Rating => ({
 const settings: Settings = {
   ...DEFAULT_SETTINGS,
   topics: ['software engineering', 'climbing'],
+  blacklist: ['introducing', 'giveaway'],
   strictness: 4,
   tuneFromFeedback: true,
 };
@@ -155,5 +156,29 @@ describe('the popup language in a backup', () => {
     const result = importConfig(JSON.stringify(file));
     if (!result.ok) throw new Error(result.reason);
     expect(result.settings.language).toBe('auto');
+  });
+});
+
+describe('the blacklist in a backup', () => {
+  it('is carried like any other setting', () => {
+    const result = roundTrip();
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings.blacklist).toEqual(['introducing', 'giveaway']);
+  });
+
+  it('reads a backup written before the blacklist existed as empty', () => {
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
+    delete file.settings.blacklist;
+    const result = importConfig(JSON.stringify(file));
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings.blacklist).toEqual([]);
+  });
+
+  it('cleans a hand-edited list the way the popup would', () => {
+    const file = JSON.parse(exportConfig(settings, feedback, APP));
+    file.settings.blacklist = ['Jev', 'jev', '  ', 'crypto, NFT'];
+    const result = importConfig(JSON.stringify(file));
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings.blacklist).toEqual(['jev', 'crypto', 'nft']);
   });
 });

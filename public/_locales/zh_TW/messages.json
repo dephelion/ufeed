@@ -5,6 +5,9 @@
   "labelTopic": {
     "message": "主題無關 — 點擊查看"
   },
+  "labelBlacklist": {
+    "message": "封鎖的關鍵字 — 點擊查看"
+  },
   "labelMedia": {
     "message": "無文字可判斷 — 點擊查看"
   },
@@ -19,6 +22,9 @@
   },
   "spokenTopic": {
     "message": "uFeed 已模糊此貼文：主題無關。按 Enter 鍵查看。"
+  },
+  "spokenBlacklist": {
+    "message": "uFeed 已模糊此貼文：封鎖的關鍵字。按 Enter 鍵查看。"
   },
   "spokenMedia": {
     "message": "uFeed 已模糊此貼文：無文字可判斷。按 Enter 鍵查看。"
@@ -153,13 +159,22 @@
     }
   },
   "topicsLabel": {
-    "message": "我想看的主題"
+    "message": "我想看的主題（白名單）"
   },
   "topicsPlaceholder": {
     "message": "軟體工程, 程式設計\n機器學習研究\n電玩遊戲, 遊戲設計"
   },
   "topicsHint": {
     "message": "每行一個主題，幾個詞即可。其他內容的貼文會被模糊處理。你隨時可以點擊被模糊的貼文來查看。"
+  },
+  "blacklistLabel": {
+    "message": "隱藏提及以下詞的貼文（黑名單）"
+  },
+  "blacklistPlaceholder": {
+    "message": "加密貨幣，AI，廣告"
+  },
+  "blacklistHint": {
+    "message": "用逗號或換行分隔關鍵字。包含其中任何一個的貼文都會被模糊處理，即使它屬於你的主題。不區分大小寫和重音符號，英文單數也會比對複數。"
   },
   "tipsSummary": {
     "message": "如何寫好一個主題"
@@ -200,8 +215,8 @@
   "tipQualityBody": {
     "message": "同一話題下，好貼文和差貼文都會保留。uFeed 無法區分它們。"
   },
-  "saveTopics": {
-    "message": "儲存主題"
+  "saveLists": {
+    "message": "儲存清單"
   },
   "saved": {
     "message": "已儲存"

@@ -43,18 +43,19 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 `data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`. `blur()` also writes the label's text to `data-lx-label` in the reader's language; the English shown in this page is `en`, see [i18n.md](i18n.md).
 
-| Reason     | Label                              | Set when                                                                                 |
-| :--------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
-| `topic`    | "Out of topic — click to read"     | The score fell below the threshold, or a near-copy of a thumbed-down post.               |
-| `media`    | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
-| `language` | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
-| `peek`     | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
+| Reason      | Label                              | Set when                                                                                 |
+| :---------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
+| `topic`     | "Out of topic — click to read"     | The score fell below the threshold, or a near-copy of a thumbed-down post.               |
+| `media`     | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
+| `language`  | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
+| `blacklist` | "Blocked keyword — click to read"  | The post contains a blacklist keyword (§Blacklist). Checked first, before any score.     |
+| `peek`      | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
 
 **The peek never touches host DOM.** The opening words ride on `data-lx-peek` and render in our own overlay. Un-blurring them in place means splitting the host's text node — Invariant 3, and dead on the next vendor re-render. `reveal()` clears the attribute, so a recycled node never shows another post's words.
 
 **Dim the children, never the container.** `opacity` on `.lx-blur` makes a group, and a group's own `::after` cannot exceed it — the label faded to 55% along with the post it labels. The dim lives on `.lx-blur > *`, which also carries `pointer-events: none`.
 
-**Labels are translucent over a dark fill, never a light tint.** The first pass tinted 22% of the reason's colour and coloured the text to match — picked against X's dark feed, invisible on LinkedIn's white one. A **78%** fill of the deep shade with near-white text reads on either background and still lets the feed through, which is what keeps the label part of the page rather than pasted onto it. Each reason keeps its own colour: red for topic, indigo for language, stone for media, amber for the peek.
+**Labels are translucent over a dark fill, never a light tint.** The first pass tinted 22% of the reason's colour and coloured the text to match — picked against X's dark feed, invisible on LinkedIn's white one. A **78%** fill of the deep shade with near-white text reads on either background and still lets the feed through, which is what keeps the label part of the page rather than pasted onto it. Each reason keeps its own colour: red for topic, indigo for language, stone for media, near-black for the blacklist, amber for the peek.
 
 **Solid was tried and rejected.** It is the most legible and the most foreign — the pill stops belonging to the feed. Legibility here comes from the fill being dark and the text near-white, not from removing the transparency.
 
@@ -64,7 +65,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
 
-**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They are user policy, not a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them, asked before an inference is spent: a post they claim never reaches the engine.
+**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They are user policy, not a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` holds them and the keyword blacklist, asked before an inference is spent: a post they claim never reaches the engine.
 
 **The language label carries its own colour**, indigo against the topic label's red. It is not a verdict about the subject and must not read as one — [model.md](model.md) has why the score behind it would have been noise.
 
@@ -75,6 +76,16 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 **An unplaceable post is labelled `media`, not `language`.** CLD returning unreliable says the text is too thin to read, not that it is foreign. That is the same claim `MIN_BACKING_CHARS` makes by counting characters, so it lands in the same rule and the same label, and like that rule it needs media present and `blurThinMedia` on.
 
 `position: relative` on the container is the one accepted layout side effect — it anchors the label. Verified on X without shifting.
+
+### Blacklist
+
+Keywords, never the model: an embedding blacklist blurred unrelated posts and read as a broken feed. `core/blacklist.ts`.
+
+- **First tier, before scoring.** A match blurs at once and costs no inference; it beats the score, a rating and a kept conversation.
+- **Literal match.** Case and Latin accents (U+0300–036F) folded, then recomposed: stripping every mark turned が into か. Whole words, lookarounds on `\p{L}\p{N}`; a phrase matches across any whitespace.
+- **Singular matches plural**: `-s`, `-es`, `y` → `-ys`/`-ies`. Never plural to singular: `news` would match `new`.
+- **Han, Kana, Hangul, Thai, Lao, Khmer, Myanmar match as a substring**: no spaces to bound a word, or particles glued on (`코인은`).
+- **Thumbs never touch it.** An edit re-offers the feed from the score cache; only posts it had blurred reach the engine.
 
 ## While a post is being judged
 
@@ -143,23 +154,24 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 ## Popup
 
-| Control                           | Effect                                                                                                                                                           |
-| :-------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                       |
-| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                 |
-| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                 |
-| Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                             |
-| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                           |
-| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection. **Disabled** while a multilingual model runs.                                         |
-| Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                     |
-| Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                                                     |
-| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                         |
-| Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                     |
-| Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm.                                      |
-| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics and language.                                                          |
-| Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Sets the language of the popup and the feed ([i18n.md](i18n.md)).     |
-| Engine chip                       | Header, centred between the title and the switch. Two or three words plus a light.                                                                               |
-| Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, GitHub mark linking to the repo (same row, no added height). |
+| Control                           | Effect                                                                                                                                                                                                 |
+| :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                                                             |
+| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                                                       |
+| Blacklist                         | Collapsed disclosure under the topics, open once it holds a line. Keywords or phrases split on commas (`，` and `、` too) or new lines, stored lowercased, wrapped, no bands; saved by the same Apply. |
+| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                                                       |
+| Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                                                                   |
+| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                                                                 |
+| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection. **Disabled** while a multilingual model runs.                                                                               |
+| Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                                                           |
+| Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                                                                                           |
+| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                                                               |
+| Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                                                           |
+| Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm.                                                                            |
+| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics, blacklist and language.                                                                                     |
+| Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Sets the language of the popup and the feed ([i18n.md](i18n.md)).                                           |
+| Engine chip                       | Header, centred between the title and the switch. Two or three words plus a light.                                                                                                                     |
+| Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, GitHub mark linking to the repo (same row, no added height).                                       |
 
 **The popup follows the reader's language, the browser's until one is picked.** A control's text is a key filled at load ([i18n.md](i18n.md)); it never changes what a control does. Hints keep the rules below in every language.
 
@@ -169,7 +181,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 Topic guidance lives behind a disclosure; the measured rules are in [model.md](model.md).
 
-Apply is disabled until the textarea differs from what is saved.
+Apply is disabled until either textarea differs from what is saved.
 
 **Engine state is shown twice, on purpose.** The popup runs past Chrome's 600px cap, so the footer opens below the fold — the header chip is the only engine state most readers ever see (`Downloading 45%`, `Ready · wasm`, `Failed`, `No feed here`). The footer line carries what will not fit in a 380px header row: that the download happens once, and the failure reason a bug report needs. It hides itself once ready, when the chip says everything left to say. Both lights read from one tone, so they can never disagree.
 

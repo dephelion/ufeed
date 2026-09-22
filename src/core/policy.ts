@@ -3,9 +3,11 @@ import { modelFor } from './models';
 import { verdictAt } from './scoring';
 import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
+import { blursAsBlacklisted } from './blacklist';
 
 /** What to do with a post. No DOM: applying it is the caller's job. */
-export type Action = 'reveal' | 'blur' | 'blur-media' | 'blur-language' | 'peek';
+export type Action =
+  'reveal' | 'blur' | 'blur-media' | 'blur-language' | 'blur-blacklist' | 'peek';
 
 /** Everything the tiers that need no score can read. */
 export interface Grounds {
@@ -31,6 +33,7 @@ export interface Judgement extends Grounds {
  */
 export function decideWithoutScore(grounds: Grounds): Action | undefined {
   const { settings, text, hasMedia, language } = grounds;
+  if (blursAsBlacklisted(settings, text)) return 'blur-blacklist';
   if (blursAsThinMedia(settings, text, hasMedia, language)) return 'blur-media';
   if (blursAsOtherLanguage(settings, language)) return 'blur-language';
   return undefined;

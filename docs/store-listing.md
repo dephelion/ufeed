@@ -64,7 +64,7 @@ supports, and the only ones requested; it requests no wildcard host access.
 
 **`storage`**
 
-Stores the user's topics, strictness and toggles, plus optional thumb ratings,
+Stores the user's topics, blocked keywords, strictness and toggles, plus optional thumb ratings,
 in local extension storage. Nothing is synced or transmitted.
 
 **Remote code — none**
@@ -125,7 +125,7 @@ The content script injects engine.html (a web_accessible_resource) as a hidden i
 
 HOW TO TEST
 1. Install, then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.
-2. Click the toolbar icon, type a topic such as "cooking, recipes, food", and click Save topics.
+2. Click the toolbar icon, type a topic such as "cooking, recipes, food", and click Save lists.
 3. The first run downloads the model; the popup shows progress, then Ready.
 4. Posts that are not about the topic blur. Click one to reveal it.
 ```

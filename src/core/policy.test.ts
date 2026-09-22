@@ -32,6 +32,23 @@ describe('decide', () => {
   });
 });
 
+describe('blacklist', () => {
+  it('blurs an on-topic post that contains a blocked keyword', () => {
+    const judged = withSettings({ blacklist: ['distributed'] }, { score: 0.99 });
+    expect(decide(judged)).toBe('blur-blacklist');
+  });
+
+  it('beats a liked near-identical post', () => {
+    const judged = withSettings({ blacklist: ['systems'] }, { rating: true });
+    expect(decide(judged)).toBe('blur-blacklist');
+  });
+
+  it('settles the post before any score exists', () => {
+    const grounds = withSettings({ blacklist: ['systems'] }, { score: undefined });
+    expect(decideWithoutScore(grounds)).toBe('blur-blacklist');
+  });
+});
+
 describe('fail-open', () => {
   it('reveals an unscored post rather than holding a blur', () => {
     expect(decide(base({ score: undefined }))).toBe('reveal');

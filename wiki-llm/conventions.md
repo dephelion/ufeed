@@ -32,7 +32,7 @@
 
 **`entrypoints/content.ts` wires, it does not decide.** Every piece of feed state has an owner: `filter` the decisions and what the engine last received, `scanner` what it has seen, `queue` what is in flight, `tuning` the ratings. Logic that grows in `content.ts` belongs in `feed/`.
 
-**The blur decision is pure.** `core/policy.ts` answers reveal / peek / blur / blur-media / blur-language from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
+**The blur decision is pure.** `core/policy.ts` answers reveal / peek / blur / blur-media / blur-language / blur-blacklist from settings, text, score, threshold, a detected language and a near-identical rating — no DOM, no element. The caller applies the answer. Fail-open and the tier boundaries are decided there, so they test in milliseconds instead of through happy-dom.
 
 **Nothing the worker imports touches the polyfill.** The polyfill throws outside an extension page, and the worker is not one; `architecture.test.ts` walks the worker's imports to prove it. `platform/` tests fake the browser through `vitest.setup.ts` (WXT's `fakeBrowser`); a test file's own `vi.mock` still wins.
 
