@@ -13,6 +13,8 @@ describe('blursAsBlacklisted', () => {
   it('ignores case and accents', () => {
     expect(blocks(['introducing'], 'INTRODUCING: Jev, our new agent')).toBe(true);
     expect(blocks(['cafe'], 'Best café in town')).toBe(true);
+    for (const text of ['Meet Jev', 'meet jev', 'MEET jeV'])
+      expect(blocks(['JeV'], text)).toBe(true);
   });
 
   it('matches whole words only', () => {
@@ -53,6 +55,10 @@ describe('parseKeywords', () => {
       '广告',
       'introducing',
     ]);
+  });
+
+  it('lowercases, so one word in any capitalisation is one keyword', () => {
+    expect(parseKeywords('Jev, jev, jeV')).toEqual(['jev']);
   });
 
   it('keeps a phrase whole and reads back what it wrote', () => {

@@ -23,11 +23,11 @@ export function blursAsBlacklisted(settings: Settings, text: string): boolean {
   return pattern?.test(fold(text)) ?? false;
 }
 
-/** Keywords as the reader types them, comma-separated; blanks and duplicates dropped. */
+/** Comma-separated and lowercased, so `Jev` and `jeV` are one keyword; blanks and duplicates dropped. */
 export function parseKeywords(raw: string): string[] {
   const seen = new Set<string>();
   for (const part of raw.split(SEPARATORS)) {
-    const keyword = part.trim().replace(/\s+/g, ' ');
+    const keyword = part.trim().replace(/\s+/g, ' ').toLowerCase();
     if (keyword !== '') seen.add(keyword);
   }
   return [...seen];
