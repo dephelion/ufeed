@@ -82,8 +82,8 @@
   background: color-mix(in srgb, #1c1917 82%, transparent);
 }
 
-/* An opened post keeps a small tag saying why it had been hidden. Top-left and
-   click-through: top-right sits on the host's own menu buttons once the post shows. */
+/* An opened post keeps a small tag saying why it had been hidden. Top-centre and
+   click-through: the corners hold the host's avatar and menu buttons once it shows. */
 [data-lx-opened] {
   position: relative;
 }
@@ -91,8 +91,10 @@
 [data-lx-opened]::after {
   content: attr(data-lx-label);
   position: absolute;
-  left: 2px;
+  left: 50%;
   top: 2px;
+  transform: translateX(-50%);
+  white-space: nowrap;
   z-index: 2;
   padding: 1px 6px;
   border-radius: 999px;
