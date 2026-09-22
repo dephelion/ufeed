@@ -253,6 +253,25 @@ describe('FeedFilter', () => {
     expect(engine.score).toHaveBeenCalledTimes(1);
   });
 
+  it('counts blacklisted posts as hidden, whenever the keyword arrives', async () => {
+    const counts: number[] = [];
+    const { filter } = await run(
+      { ...SETTINGS, blacklist: ['rust'] },
+      ['rust ships a new borrow checker', 'a chocolate cake recipe', 'more rust news'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    expect(counts.at(-1)).toBe(3);
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(counts.at(-1)).toBe(1);
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust'] });
+    expect(counts.at(-1)).toBe(3);
+  });
+
   it('offers no thumbs on a blacklisted post, even once opened', async () => {
     const { filter } = await run(
       { ...SETTINGS, tuneFromFeedback: true, blacklist: ['rust'] },
