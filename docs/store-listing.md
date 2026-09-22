@@ -64,7 +64,7 @@ supports, and the only ones requested; it requests no wildcard host access.
 
 **`storage`**
 
-Stores the user's topics, strictness and toggles, plus optional thumb ratings,
+Stores the user's topics, blocked keywords, strictness and toggles, plus optional thumb ratings,
 in local extension storage. Nothing is synced or transmitted.
 
 **Remote code — none**

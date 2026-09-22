@@ -33,10 +33,10 @@ uFeed does not read any other page. On every other website it does nothing.
 Stored in your browser's local extension storage. It stays on your device, is
 not synced to other devices, and is never transmitted.
 
-| What          | Details                                                                                        |
-| :------------ | :--------------------------------------------------------------------------------------------- |
-| Your settings | Topics, strictness, which model you chose, your language, and the on/off toggles in the popup. |
-| Thumb ratings | Only if you turn on "Learn from my thumbs", which is **off** unless you turn it on. See below. |
+| What          | Details                                                                                                          |
+| :------------ | :--------------------------------------------------------------------------------------------------------------- |
+| Your settings | Topics, blocked keywords, strictness, which model you chose, your language, and the on/off toggles in the popup. |
+| Thumb ratings | Only if you turn on "Learn from my thumbs", which is **off** unless you turn it on. See below.                   |
 
 **About thumb ratings.** When that option is on and you rate a post, uFeed
 stores a list of numbers describing that post's meaning (an "embedding"), a

@@ -40,6 +40,18 @@ describe('blursAsBlacklisted', () => {
 
   it('matches anywhere in scripts written without spaces', () => {
     expect(blocks(['暗号資産'], '今日の暗号資産ニュース')).toBe(true);
+    expect(blocks(['คริปโต'], 'ข่าวคริปโตวันนี้')).toBe(true);
+  });
+
+  it('matches a Korean word with its particle attached, but not inside another syllable', () => {
+    expect(blocks(['코인'], '코인은 위험하다')).toBe(true);
+    expect(blocks(['코'], '콘서트')).toBe(false);
+  });
+
+  it('folds Latin accents only, never the marks other scripts spell with', () => {
+    expect(blocks(['かき'], 'がき')).toBe(false);
+    expect(blocks(['हद'], 'हिंदी')).toBe(false);
+    expect(blocks(['हिंदी'], 'मैं हिंदी बोलता हूँ')).toBe(true);
   });
 });
 

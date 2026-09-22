@@ -1,7 +1,8 @@
 import type { Settings } from './settings';
 
-/** Scripts written without spaces between words: a keyword there is matched anywhere. */
-const UNSPACED = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u;
+/** No spaces between words, or particles glued onto them (Hangul): matched anywhere. */
+const UNSPACED =
+  /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
 
 /** Latin, fullwidth and ideographic commas, and the Japanese list mark; line breaks too. */
 const SEPARATORS = /[,，、،\n]/;
@@ -52,8 +53,13 @@ function keywordPattern(keyword: string): string {
   return `(?<![\\p{L}\\p{N}])${plural}(?![\\p{L}\\p{N}])`;
 }
 
+/** Latin-range accents only: stripping every mark turned が into か and emptied Devanagari vowels. */
 function fold(text: string): string {
-  return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFC')
+    .toLowerCase();
 }
 
 function escape(text: string): string {

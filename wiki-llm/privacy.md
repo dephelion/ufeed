@@ -5,13 +5,13 @@
 
 ## Data
 
-| Data          | Where it goes                                                                                                             |
-| :------------ | :------------------------------------------------------------------------------------------------------------------------ |
-| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                   |
-| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                      |
-| Settings      | `storage.local`. Topics, strictness step, the checkboxes, the language picked in the popup (a locale code).               |
-| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                     |
-| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way. |
+| Data          | Where it goes                                                                                                                   |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------ |
+| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                         |
+| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                            |
+| Settings      | `storage.local`. Topics, blacklist keywords, strictness step, the checkboxes, the language picked in the popup (a locale code). |
+| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                           |
+| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way.       |
 
 **Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs.
 
