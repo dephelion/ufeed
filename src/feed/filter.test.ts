@@ -253,6 +253,20 @@ describe('FeedFilter', () => {
     expect(engine.score).toHaveBeenCalledTimes(1);
   });
 
+  it('offers no thumbs on a blacklisted post, even once opened', async () => {
+    const { filter } = await run(
+      { ...SETTINGS, tuneFromFeedback: true, blacklist: ['rust'] },
+      ['rust ships a new borrow checker', 'a chocolate cake recipe'],
+    );
+    revealPermanently(post('rust'), t);
+    filter.revealed(post('rust'));
+    revealPermanently(post('cake'), t);
+    filter.revealed(post('cake'));
+
+    expect(filter.ratable(post('rust'))).toBeUndefined();
+    expect(filter.ratable(post('cake'))).toBeDefined();
+  });
+
   it('re-judges the feed from cache when the blacklist changes', async () => {
     const { engine, filter } = await run(SETTINGS, ['rust ships a new borrow checker']);
     expect(isBlurred(post('rust'))).toBe(false);

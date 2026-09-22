@@ -203,6 +203,8 @@ export class FeedFilter {
     if (!found || !this.#scanner.knows(found.container)) return undefined;
     if (isBlurred(found.container)) return undefined;
     if (this.#conversation?.keeps(found.container)) return undefined;
+    // A thumb cannot move a keyword verdict, so offering one would mislead.
+    if (blursAsBlacklisted(this.#settings, found.text)) return undefined;
     return { ...found, rating: this.#tuner.ratingOf(found.text)?.liked };
   }
 
