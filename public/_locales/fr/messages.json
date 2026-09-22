@@ -20,6 +20,27 @@
   "labelPending": {
     "message": "Classification…"
   },
+  "openedTopic": {
+    "message": "Hors sujet"
+  },
+  "openedBlacklist": {
+    "message": "Mot-clé bloqué ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
+  },
+  "openedMedia": {
+    "message": "Pas de texte à analyser"
+  },
+  "openedLanguage": {
+    "message": "Autre langue"
+  },
+  "openedPeek": {
+    "message": "Cas limite"
+  },
   "spokenTopic": {
     "message": "Publication floutée par uFeed : hors sujet. Appuyez sur Entrée pour la lire."
   },

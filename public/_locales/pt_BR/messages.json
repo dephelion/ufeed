@@ -20,6 +20,27 @@
   "labelPending": {
     "message": "Classificando…"
   },
+  "openedTopic": {
+    "message": "Fora do tema"
+  },
+  "openedBlacklist": {
+    "message": "Palavra bloqueada ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
+  },
+  "openedMedia": {
+    "message": "Sem texto para analisar"
+  },
+  "openedLanguage": {
+    "message": "Outro idioma"
+  },
+  "openedPeek": {
+    "message": "Caso duvidoso"
+  },
   "spokenTopic": {
     "message": "Publicação desfocada pelo uFeed: fora do tema. Pressione Enter para lê-la."
   },

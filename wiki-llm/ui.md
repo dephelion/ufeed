@@ -85,7 +85,7 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 - **Literal match.** Case and Latin accents (U+0300–036F) folded, then recomposed: stripping every mark turned が into か. Whole words, lookarounds on `\p{L}\p{N}`; a phrase matches across any whitespace.
 - **Singular matches plural**: `-s`, `-es`, `y` → `-ys`/`-ies`. Never plural to singular: `news` would match `new`.
 - **Han, Kana, Hangul, Thai, Lao, Khmer, Myanmar match as a substring**: no spaces to bound a word, or particles glued on (`코인은`).
-- **Thumbs never touch it.** An edit re-offers the feed from the score cache; only posts it had blurred reach the engine.
+- **Thumbs never touch it, and never show on a blacklisted post**, opened or not: a rating could not move the verdict. An edit re-decides every judged post on the spot from the score cache, never through the viewport observer: waiting on it left an on-screen post shown. Only posts the tier had blurred reach the engine.
 
 ## While a post is being judged
 
@@ -126,6 +126,7 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 - Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by uFeed: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
+- An opened post keeps a small tag with the reason, minus "click to read" (`data-lx-opened` + `data-lx-label`, `opened*` keys). The blacklist tag names the keyword that matched, "Blocked keyword (crypto)", from `data-lx-keyword` set when the post was blurred ([privacy.md](privacy.md)). Top-centre and click-through: the corners hold the host's avatar and menu buttons once the post shows. The thumbs bar covers it while hovered. `revealAll()` removes it with the blurs. It follows the current verdict (`retag()`), never the one the post was opened under: removing the keyword that blocked it drops the tag, or names the reason that still applies.
 - Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
 
 **Node-level is sufficient.** A reveal lost to virtualized recycling is an accepted tradeoff, not a bug. Do not add a persistence layer for it.

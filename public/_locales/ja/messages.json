@@ -20,6 +20,27 @@
   "labelPending": {
     "message": "分類中…"
   },
+  "openedTopic": {
+    "message": "トピック外"
+  },
+  "openedBlacklist": {
+    "message": "ブロックしたキーワード（$KEYWORD$）",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
+  },
+  "openedMedia": {
+    "message": "判定できる文章なし"
+  },
+  "openedLanguage": {
+    "message": "別の言語"
+  },
+  "openedPeek": {
+    "message": "判定が微妙"
+  },
   "spokenTopic": {
     "message": "uFeed がぼかした投稿: トピック外。Enter キーで表示します。"
   },

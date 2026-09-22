@@ -20,6 +20,27 @@
   "labelPending": {
     "message": "正在分类…"
   },
+  "openedTopic": {
+    "message": "主题无关"
+  },
+  "openedBlacklist": {
+    "message": "屏蔽的关键词（$KEYWORD$）",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
+  },
+  "openedMedia": {
+    "message": "无文字可判断"
+  },
+  "openedLanguage": {
+    "message": "其他语言"
+  },
+  "openedPeek": {
+    "message": "判断不确定"
+  },
   "spokenTopic": {
     "message": "uFeed 已模糊此帖子：主题无关。按 Enter 键查看。"
   },

@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { blursAsBlacklisted, keywordsToText, parseKeywords } from './blacklist';
+import {
+  blockedKeyword,
+  blursAsBlacklisted,
+  keywordsToText,
+  parseKeywords,
+} from './blacklist';
 import { DEFAULT_SETTINGS } from './settings';
 
 const blocks = (blacklist: string[], text: string) =>
@@ -85,5 +90,20 @@ describe('parseKeywords', () => {
     const keywords = parseKeywords('product   launch, crypto');
     expect(keywords).toEqual(['product launch', 'crypto']);
     expect(parseKeywords(keywordsToText(keywords))).toEqual(keywords);
+  });
+});
+
+describe('blockedKeyword', () => {
+  const blacklist = ['jev', 'café', 'crypto'];
+  const named = (text: string) =>
+    blockedKeyword({ ...DEFAULT_SETTINGS, blacklist }, text);
+
+  it('names the keyword that matched, as the reader wrote it', () => {
+    expect(named('Top 5 CRYPTO picks')).toBe('crypto');
+    expect(named('Best cafe in town')).toBe('café');
+  });
+
+  it('is undefined when nothing matches', () => {
+    expect(named('a chocolate cake recipe')).toBeUndefined();
   });
 });

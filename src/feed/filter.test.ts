@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS, type Settings } from '../core/settings';
 import { EMPTY_FEEDBACK } from '../core/feedback';
 import type { EngineState } from '../core/protocol';
 import type { RatedMatch } from '../core/scoring';
-import { isBlurred } from './blur';
+import { isBlurred, revealPermanently } from './blur';
 import { FeedFilter } from './filter';
 import type { Engine, FeedbackStore } from './ports';
 import { Tuning } from './tuning';
@@ -12,8 +12,11 @@ import { translate as t } from '../platform/i18n';
 
 /** happy-dom never intersects; this one reports every observed node as in view. */
 class InView {
+  /** Set to stand in for a browser that has not delivered a notification yet. */
+  static quiet = false;
   constructor(private readonly callback: IntersectionObserverCallback) {}
   observe(target: Element): void {
+    if (InView.quiet) return;
     const entry = { target, isIntersecting: true } as IntersectionObserverEntry;
     this.callback([entry], this as unknown as IntersectionObserver);
   }
@@ -98,6 +101,7 @@ describe('FeedFilter', () => {
   });
 
   afterEach(() => {
+    InView.quiet = false;
     filter?.stop();
     vi.useRealTimers();
     vi.unstubAllGlobals();
@@ -209,7 +213,100 @@ describe('FeedFilter', () => {
       'rust ships a new borrow checker',
     ]);
     expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(post('rust').dataset.lxKeyword).toBe('borrow checker');
     expect(engine.score).not.toHaveBeenCalled();
+  });
+
+  it('never counts a revealed blacklisted post as hidden when it is offered again', async () => {
+    const counts: number[] = [];
+    const { filter } = await run(
+      { ...SETTINGS, blacklist: ['rust'] },
+      ['rust ships a new borrow checker'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    revealPermanently(post('rust'), t);
+    filter.revealed(post('rust'));
+    expect(counts.at(-1)).toBe(0);
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust', 'crypto'] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(counts.at(-1)).toBe(0);
+  });
+
+  it('blurs an on-screen post as soon as a keyword is added, without waiting on the viewport', async () => {
+    const { engine, filter } = await run(SETTINGS, [
+      'rust ships a new borrow checker',
+      'a chocolate cake recipe',
+    ]);
+    InView.quiet = true;
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust'] });
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(post('cake').dataset.lxReason).toBe('topic');
+    expect(post('rust').classList.contains('lx-pending')).toBe(false);
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(engine.score).toHaveBeenCalledTimes(1);
+  });
+
+  it('counts blacklisted posts as hidden, whenever the keyword arrives', async () => {
+    const counts: number[] = [];
+    const { filter } = await run(
+      { ...SETTINGS, blacklist: ['rust'] },
+      ['rust ships a new borrow checker', 'a chocolate cake recipe', 'more rust news'],
+      undefined,
+      'ready',
+      (n) => counts.push(n),
+    );
+    expect(counts.at(-1)).toBe(3);
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(counts.at(-1)).toBe(1);
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust'] });
+    expect(counts.at(-1)).toBe(3);
+  });
+
+  it('updates the tag on an opened post when the keyword that blocked it is removed', async () => {
+    const { filter } = await run({ ...SETTINGS, blacklist: ['rust', 'cake'] }, [
+      'rust ships a new borrow checker',
+      'a chocolate cake recipe',
+    ]);
+    for (const word of ['rust', 'cake']) {
+      revealPermanently(post(word), t);
+      filter.revealed(post(word));
+    }
+    expect(post('rust').dataset.lxLabel).toBe('Blocked keyword (rust)');
+
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+
+    expect(post('rust').dataset.lxOpened).toBeUndefined();
+    expect(post('rust').dataset.lxLabel).toBeUndefined();
+    expect(post('rust').dataset.lxKeyword).toBeUndefined();
+    expect(post('cake').dataset.lxOpened).toBe('topic');
+    expect(post('cake').dataset.lxLabel).toBe('Out of topic');
+    expect(isBlurred(post('cake'))).toBe(false);
+  });
+
+  it('offers no thumbs on a blacklisted post, even once opened', async () => {
+    const { filter } = await run(
+      { ...SETTINGS, tuneFromFeedback: true, blacklist: ['rust'] },
+      ['rust ships a new borrow checker', 'a chocolate cake recipe'],
+    );
+    revealPermanently(post('rust'), t);
+    filter.revealed(post('rust'));
+    revealPermanently(post('cake'), t);
+    filter.revealed(post('cake'));
+
+    expect(filter.ratable(post('rust'))).toBeUndefined();
+    expect(filter.ratable(post('cake'))).toBeDefined();
   });
 
   it('re-judges the feed from cache when the blacklist changes', async () => {

@@ -13,6 +13,8 @@
 | Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                           |
 | Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way.       |
 
+**A blacklist keyword that blocked a post is written into the host DOM** (`data-lx-keyword`), where the page's own scripts can read it, so the opened tag can name it. Accepted by the owner: the site already sees `data-lx-reason="blacklist"` on a post whose text it served, so the exact word adds little. Only matched keywords, never the list; cleared by `reveal()`.
+
 **Corrections persist as vectors, and that is a real softening, not a technicality.** An embedding is a derivative of post content and is partially invertible, so storing one is not the same as storing nothing. Post text itself still never persists, transmits or logs.
 
 **Settled for the first public release: kept, on these terms.** Opt-in and off by default, so the untouched install stores nothing. Capped at `MAX_PER_CLASS = 50` each way per topic line, oldest off first. Local only, never synced, never transmitted; the reader can export them to a file themselves, see below. Cleared by "Clear tuning", by Reset, and by uninstalling. `docs/privacy-policy.md` states the partial invertibility plainly rather than calling an embedding anonymous — a policy that oversells is worse than the storage it describes.

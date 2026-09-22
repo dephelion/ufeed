@@ -24,6 +24,15 @@ const LABELS: Record<BlurReason, MessageKey> = {
   peek: 'labelPeek',
 };
 
+/** The same reasons once opened: a plain tag, nothing left to click. */
+const OPENED: Record<BlurReason, MessageKey> = {
+  topic: 'openedTopic',
+  blacklist: 'openedBlacklist',
+  media: 'openedMedia',
+  language: 'openedLanguage',
+  peek: 'openedPeek',
+};
+
 /** Enough to judge the subject, short enough not to become the distraction. */
 const PEEK_CHARS = 50;
 
@@ -73,6 +82,9 @@ export function relabelBlurred(t: Translate, root: ParentNode = document): void 
       element.dataset.lxLabel = t(key);
     }
   }
+  for (const element of root.querySelectorAll<HTMLElement>('[data-lx-opened]')) {
+    element.dataset.lxLabel = openedLabel(element, t);
+  }
 }
 
 export function reveal(element: HTMLElement): void {
@@ -80,12 +92,47 @@ export function reveal(element: HTMLElement): void {
   delete element.dataset.lxReason;
   delete element.dataset.lxLabel;
   delete element.dataset.lxPeek;
+  delete element.dataset.lxOpened;
+  delete element.dataset.lxKeyword;
   element.removeAttribute('aria-hidden');
 }
 
-export function revealPermanently(element: HTMLElement): void {
+/** Opened by the reader: the post shows, and a tag keeps saying why it had been hidden. */
+export function revealPermanently(element: HTMLElement, t: Translate): void {
+  const reason = element.dataset.lxReason as BlurReason | undefined;
+  const keyword = element.dataset.lxKeyword;
   revealed.add(element);
   reveal(element);
+  retag(element, t, reason, keyword);
+}
+
+/**
+ * An opened post's tag follows the current verdict, not the one it was opened
+ * under: removing the keyword that blocked it drops the tag or names the new reason.
+ */
+export function retag(
+  element: HTMLElement,
+  t: Translate,
+  reason: BlurReason | undefined,
+  keyword?: string,
+): void {
+  if (!revealed.has(element)) return;
+  if (reason === undefined || !(reason in OPENED)) {
+    delete element.dataset.lxOpened;
+    delete element.dataset.lxKeyword;
+    delete element.dataset.lxLabel;
+    return;
+  }
+  element.dataset.lxOpened = reason;
+  if (keyword === undefined) delete element.dataset.lxKeyword;
+  else element.dataset.lxKeyword = keyword;
+  element.dataset.lxLabel = openedLabel(element, t);
+}
+
+/** The blacklist tag names the keyword that blocked the post. */
+function openedLabel(element: HTMLElement, t: Translate): string {
+  const reason = element.dataset.lxOpened as BlurReason;
+  return t(OPENED[reason], element.dataset.lxKeyword ?? '');
 }
 
 export function isRevealed(element: HTMLElement): boolean {
@@ -150,7 +197,7 @@ export function listenForReveal(
     if (!element) return;
     event.preventDefault();
     event.stopPropagation();
-    revealPermanently(element);
+    revealPermanently(element, t);
     onReveal(element);
   };
   const onKey = (event: KeyboardEvent) => {
@@ -178,6 +225,8 @@ export function listenForReveal(
   };
 }
 
+/** Blurred posts and the tags on opened ones: turned off, the feed is the host's again. */
 export function revealAll(root: ParentNode = document): void {
-  for (const el of root.querySelectorAll<HTMLElement>(`.${BLUR_CLASS}`)) reveal(el);
+  for (const el of root.querySelectorAll<HTMLElement>(`.${BLUR_CLASS}, [data-lx-opened]`))
+    reveal(el);
 }

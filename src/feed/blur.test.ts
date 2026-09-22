@@ -55,7 +55,7 @@ describe('blur', () => {
 
   it('refuses to re-blur a post the user revealed', () => {
     const el = post();
-    revealPermanently(el);
+    revealPermanently(el, t);
     blur(el, t);
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(isRevealed(el)).toBe(true);
@@ -161,6 +161,18 @@ describe('listenForReveal', () => {
     stop();
   });
 
+  it('keeps a tag saying why the opened post had been hidden', () => {
+    const el = post();
+    blur(el, t, 'language');
+    const stop = listenForReveal(t, document);
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+    expect(el.dataset.lxOpened).toBe('language');
+    expect(el.dataset.lxLabel).toBe('Another language');
+    expect(el.getAttribute('aria-hidden')).toBeNull();
+    stop();
+  });
+
   it('lets a second click through once revealed', () => {
     const el = post();
     blur(el, t);
@@ -250,6 +262,47 @@ describe('revealAll', () => {
     revealAll(document);
     expect(document.querySelectorAll('.lx-blur')).toHaveLength(0);
   });
+
+  it('takes the tags off opened posts too, so a turned-off tab is the host page again', () => {
+    const el = post();
+    blur(el, t);
+    revealPermanently(el, t);
+    revealAll(document);
+    expect(el.dataset.lxOpened).toBeUndefined();
+    expect(el.dataset.lxLabel).toBeUndefined();
+  });
+});
+
+describe('the blacklist tag', () => {
+  it('names the keyword that blocked the post, in any language', () => {
+    const el = post();
+    blur(el, t, 'blacklist');
+    el.dataset.lxKeyword = 'crypto';
+    revealPermanently(el, t);
+    expect(el.dataset.lxLabel).toBe('Blocked keyword (crypto)');
+
+    relabelBlurred(spanish);
+    expect(el.dataset.lxLabel).toBe('Palabra bloqueada (crypto)');
+  });
+
+  it('forgets the keyword once the post is the host page again', () => {
+    const el = post();
+    blur(el, t, 'blacklist');
+    el.dataset.lxKeyword = 'crypto';
+    revealPermanently(el, t);
+    revealAll(document);
+    expect(el.dataset.lxKeyword).toBeUndefined();
+  });
+});
+
+describe('relabelBlurred on opened posts', () => {
+  it('rewrites the tag in the new language', () => {
+    const el = post();
+    blur(el, t, 'language');
+    revealPermanently(el, t);
+    relabelBlurred(spanish);
+    expect(el.dataset.lxLabel).toBe('Otro idioma');
+  });
 });
 
 describe('peek', () => {
@@ -291,7 +344,7 @@ describe('peek', () => {
 
   it('leaves a permanently revealed post alone', () => {
     const el = post();
-    revealPermanently(el);
+    revealPermanently(el, t);
     peek(el, t, 'borderline text');
     expect(el.classList.contains('lx-blur')).toBe(false);
     expect(el.dataset.lxPeek).toBeUndefined();

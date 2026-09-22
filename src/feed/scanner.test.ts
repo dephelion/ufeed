@@ -75,6 +75,20 @@ describe('FeedScanner', () => {
     expect(offered.map((p) => p.text)).toEqual(['', 'Late text']);
   });
 
+  it('offers a post again when the host swaps its text after it was judged', async () => {
+    document.body.innerHTML = cell(
+      '<div data-testid="tweetText"><span>First</span></div>',
+    );
+    await flush();
+    document
+      .querySelector('[data-testid="tweetText"] span')!
+      .replaceWith(
+        Object.assign(document.createElement('span'), { textContent: 'Swapped' }),
+      );
+    await flush();
+    expect(offered.map((p) => p.text)).toEqual(['First', 'Swapped']);
+  });
+
   it('leaves a finished post alone when the host re-renders inside it', async () => {
     document.body.innerHTML = cell('<div data-testid="tweetText">Some text</div>');
     await flush();

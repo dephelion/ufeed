@@ -7,21 +7,35 @@ const UNSPACED =
 /** Latin, fullwidth and ideographic commas, and the Japanese list mark; line breaks too. */
 const SEPARATORS = /[,，、،\n]/;
 
-const compiled = new WeakMap<readonly string[], RegExp | null>();
+/** One capture group per keyword, aligned with `keywords`, so a match names its keyword. */
+interface Matcher {
+  pattern: RegExp;
+  keywords: string[];
+}
+
+const compiled = new WeakMap<readonly string[], Matcher | null>();
 
 /**
  * Literal, never the model: a keyword blurs exactly the posts that contain it.
  * Case and accents are ignored, and a singular also matches its plural.
  */
 export function blursAsBlacklisted(settings: Settings, text: string): boolean {
+  return blockedKeyword(settings, text) !== undefined;
+}
+
+/** The keyword that blocks this post, as the reader wrote it; undefined when none does. */
+export function blockedKeyword(settings: Settings, text: string): string | undefined {
   const { blacklist } = settings;
-  if (blacklist.length === 0) return false;
-  let pattern = compiled.get(blacklist);
-  if (pattern === undefined) {
-    pattern = compile(blacklist);
-    compiled.set(blacklist, pattern);
+  if (blacklist.length === 0) return undefined;
+  let matcher = compiled.get(blacklist);
+  if (matcher === undefined) {
+    matcher = compile(blacklist);
+    compiled.set(blacklist, matcher);
   }
-  return pattern?.test(fold(text)) ?? false;
+  const match = matcher?.pattern.exec(fold(text));
+  if (!match) return undefined;
+  const group = match.findIndex((captured, i) => i > 0 && captured !== undefined);
+  return matcher?.keywords[group - 1];
 }
 
 /** Comma-separated and lowercased, so `Jev` and `jeV` are one keyword; blanks and duplicates dropped. */
@@ -38,10 +52,11 @@ export function keywordsToText(keywords: readonly string[]): string {
   return keywords.join(', ');
 }
 
-function compile(keywords: readonly string[]): RegExp | null {
-  const parts = keywords.map((k) => fold(k).trim()).filter((k) => k !== '');
-  if (parts.length === 0) return null;
-  return new RegExp(parts.map(keywordPattern).join('|'), 'u');
+function compile(blacklist: readonly string[]): Matcher | null {
+  const keywords = blacklist.filter((k) => fold(k).trim() !== '');
+  if (keywords.length === 0) return null;
+  const groups = keywords.map((k) => `(${keywordPattern(fold(k).trim())})`);
+  return { pattern: new RegExp(groups.join('|'), 'u'), keywords };
 }
 
 function keywordPattern(keyword: string): string {

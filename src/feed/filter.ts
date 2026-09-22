@@ -1,4 +1,4 @@
-import { blursAsBlacklisted } from '../core/blacklist';
+import { blockedKeyword, blursAsBlacklisted } from '../core/blacklist';
 import { ScoreCache, hashText } from '../core/cache';
 import { logger } from '../core/log';
 import type { Translate } from '../core/messages';
@@ -13,7 +13,16 @@ import {
 } from '../core/settings';
 import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
-import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
+import {
+  blur,
+  isBlurred,
+  isRevealed,
+  peek,
+  retag,
+  reveal,
+  revealAll,
+  type BlurReason,
+} from './blur';
 import { hideAllSkeletons, hideSkeleton, isSkeleton, showSkeleton } from './skeleton';
 import { Conversation } from './conversation';
 import type { PostRef } from './feedback-bar';
@@ -32,6 +41,9 @@ const REASONS = {
   'blur-blacklist': 'blacklist',
   blur: 'topic',
 } as const;
+
+const reasonOf = (action: Action): BlurReason | undefined =>
+  action === 'reveal' ? undefined : action === 'peek' ? 'peek' : REASONS[action];
 
 export interface FeedFilterOptions {
   adapter: SiteAdapter;
@@ -203,6 +215,8 @@ export class FeedFilter {
     if (!found || !this.#scanner.knows(found.container)) return undefined;
     if (isBlurred(found.container)) return undefined;
     if (this.#conversation?.keeps(found.container)) return undefined;
+    // A thumb cannot move a keyword verdict, so offering one would mislead.
+    if (blursAsBlacklisted(this.#settings, found.text)) return undefined;
     return { ...found, rating: this.#tuner.ratingOf(found.text)?.liked };
   }
 
@@ -284,11 +298,13 @@ export class FeedFilter {
         rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);
+    const action = followsKept ? 'reveal' : decideAction(judged);
     if (revealed) {
+      retag(post.container, this.#t, reasonOf(action), this.#keywordFor(post, action));
       this.#settle(post.container, true);
       return undefined;
     }
-    return this.#apply(post, followsKept ? 'reveal' : decideAction(judged));
+    return this.#apply(post, action);
   }
 
   #grounds(post: Post) {
@@ -308,8 +324,17 @@ export class FeedFilter {
     if (action === 'reveal') reveal(post.container);
     else if (action === 'peek') peek(post.container, this.#t, post.text, collapse);
     else blur(post.container, this.#t, REASONS[action], collapse);
+    const keyword = this.#keywordFor(post, action);
+    if (keyword === undefined) delete post.container.dataset.lxKeyword;
+    else post.container.dataset.lxKeyword = keyword;
     this.#settle(post.container, action === 'reveal');
     return action;
+  }
+
+  #keywordFor(post: Post, action: Action): string | undefined {
+    return action === 'blur-blacklist'
+      ? blockedKeyword(this.#settings, post.text)
+      : undefined;
   }
 
   #track(text: string, hidden: boolean): void {
@@ -343,7 +368,7 @@ export class FeedFilter {
       this.#decide(post, cached);
       return;
     }
-    if (blursAsBlacklisted(this.#settings, post.text)) {
+    if (!isRevealed(post.container) && blursAsBlacklisted(this.#settings, post.text)) {
       clearScore(post.container);
       this.#apply(post, 'blur-blacklist');
       return;
@@ -402,12 +427,14 @@ export class FeedFilter {
   }
 
   /**
-   * Scores stay valid: only the keyword tier moved. A post it blurred was never
-   * scored, so the whole feed is offered again rather than re-applied from cache.
+   * Scores stay valid: only the keyword tier moved, so every judged post is decided
+   * again on the spot. One the tier had blurred was never scored; it goes to the engine.
    */
   #rescan(): void {
-    this.#conversation?.reset();
-    this.#scanner.reset();
+    for (const post of this.#adapter.findPosts(document)) {
+      if (!this.#scanner.offered(post.container) || isSkeleton(post.container)) continue;
+      this.#enqueue(post);
+    }
   }
 
   /** Topics and corrections both change the query, so both force a re-embed. */

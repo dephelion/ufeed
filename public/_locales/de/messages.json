@@ -20,6 +20,27 @@
   "labelPending": {
     "message": "Wird klassifiziert…"
   },
+  "openedTopic": {
+    "message": "Themenfremd"
+  },
+  "openedBlacklist": {
+    "message": "Gesperrtes Stichwort ($KEYWORD$)",
+    "placeholders": {
+      "keyword": {
+        "content": "$1",
+        "example": "crypto"
+      }
+    }
+  },
+  "openedMedia": {
+    "message": "Kein Text zum Prüfen"
+  },
+  "openedLanguage": {
+    "message": "Andere Sprache"
+  },
+  "openedPeek": {
+    "message": "Grenzfall"
+  },
   "spokenTopic": {
     "message": "Von uFeed verwischt: themenfremd. Zum Lesen die Eingabetaste drücken."
   },
