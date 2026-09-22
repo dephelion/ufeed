@@ -82,7 +82,7 @@
   background: color-mix(in srgb, #1c1917 82%, transparent);
 }
 
-/* An opened post keeps a small tag saying why it had been hidden. Bottom-left and
+/* An opened post keeps a small tag saying why it had been hidden. Top-left and
    click-through: top-right sits on the host's own menu buttons once the post shows. */
 [data-lx-opened] {
   position: relative;
@@ -92,7 +92,7 @@
   content: attr(data-lx-label);
   position: absolute;
   left: 2px;
-  bottom: 2px;
+  top: 2px;
   z-index: 2;
   padding: 1px 6px;
   border-radius: 999px;
