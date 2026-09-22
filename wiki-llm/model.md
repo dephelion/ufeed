@@ -220,16 +220,6 @@ Rules that hold: two to five words beats one; sentences and `and` cost 0.05-0.07
 
 Concrete beats abstract: posts write about code, not about categories. `tech` scored 0.005 on a Linux/macOS post; `software` scored 0.097.
 
-## Blacklist
-
-**A post that would show, but is closer to a blacklist line than to its best topic line, blurs** (`isBlacklisted()` in `policy.ts`): `block > score`, both raw cosine in the same space, so no per-model constant.
-
-- **Only a shown post can be blacklisted**, a liked near-identical one included: the owner's rule, a blacklist beats the whitelist. A post under the threshold stays `topic` or `peek` — it is out of topic, not blacklisted.
-- **Needs a whitelist.** Filtering is off without topics; a blacklist alone does nothing.
-- **Ratings never touch it.** Thumbs are filed and matched against whitelist lines only.
-- **Fail-open holds.** No score, no blacklist verdict.
-- **Unmeasured.** Relative comparison assumes the two lists' cosines share a scale, true for one model and one query prefix; no harness has labelled blacklist posts yet.
-
 ## Relevance feedback
 
 **The topic score is the source of truth; a thumb never moves a topic vector.** A rating overrides the verdict only for a near-identical post: `ratingNear()` in `scoring.ts`, cosine against the rated post's vector `>= MODEL.ratingNear = 0.90`. Closest rating wins; liked shows, disliked blurs. Everything else is judged by the fixed strictness threshold alone, so "shown means above this score" holds with or without ratings.

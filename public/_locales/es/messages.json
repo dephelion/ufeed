@@ -6,7 +6,7 @@
     "message": "Fuera de tema — clic para leer"
   },
   "labelBlacklist": {
-    "message": "Tema bloqueado — clic para leer"
+    "message": "Palabra bloqueada — clic para leer"
   },
   "labelMedia": {
     "message": "Sin texto que analizar — clic para ver"
@@ -24,7 +24,7 @@
     "message": "Publicación difuminada por uFeed: fuera de tema. Pulsa Intro para leerla."
   },
   "spokenBlacklist": {
-    "message": "Publicación difuminada por uFeed: tema bloqueado. Pulsa Intro para leerla."
+    "message": "Publicación difuminada por uFeed: palabra bloqueada. Pulsa Intro para leerla."
   },
   "spokenMedia": {
     "message": "Publicación difuminada por uFeed: sin texto que analizar. Pulsa Intro para verla."
@@ -168,13 +168,13 @@
     "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
   },
   "blacklistLabel": {
-    "message": "Temas que no quiero ver (lista negra)"
+    "message": "Palabras clave que no quiero ver (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "anuncios de lanzamientos de productos\nsorteos de criptomonedas"
+    "message": "introducing\nsorteo\npatrocinado"
   },
   "blacklistHint": {
-    "message": "Un tema por línea. Una publicación más cercana a uno de estos que a cualquier tema de arriba se difumina, aunque sea del tema. Los pulgares nunca cambian esta lista."
+    "message": "Una palabra o frase por línea. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"

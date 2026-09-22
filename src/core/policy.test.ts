@@ -33,27 +33,19 @@ describe('decide', () => {
 });
 
 describe('blacklist', () => {
-  it('blurs an on-topic post that is closer to a blacklist line', () => {
-    expect(decide(base({ score: 0.9, block: 0.91 }))).toBe('blur-blacklist');
+  it('blurs an on-topic post that contains a blocked keyword', () => {
+    const judged = withSettings({ blacklist: ['distributed'] }, { score: 0.99 });
+    expect(decide(judged)).toBe('blur-blacklist');
   });
 
-  it('leaves a post under the threshold out of topic, not blacklisted', () => {
-    expect(decide(base({ score: THR - PEEK_BAND - 0.001, block: 0.95 }))).toBe('blur');
-    expect(decide(base({ score: THR - PEEK_BAND, block: 0.95 }))).toBe('peek');
+  it('beats a liked near-identical post', () => {
+    const judged = withSettings({ blacklist: ['systems'] }, { rating: true });
+    expect(decide(judged)).toBe('blur-blacklist');
   });
 
-  it('leaves a post closer to its topic than to the blacklist', () => {
-    expect(decide(base({ score: 0.9, block: 0.89 }))).toBe('reveal');
-  });
-
-  it('overrides a liked near-identical post', () => {
-    expect(decide(base({ score: 0.9, block: 0.95, rating: true }))).toBe(
-      'blur-blacklist',
-    );
-  });
-
-  it('fails open when the post was never scored', () => {
-    expect(decide(base({ score: undefined, block: 0.95 }))).toBe('reveal');
+  it('settles the post before any score exists', () => {
+    const grounds = withSettings({ blacklist: ['systems'] }, { score: undefined });
+    expect(decideWithoutScore(grounds)).toBe('blur-blacklist');
   });
 });
 

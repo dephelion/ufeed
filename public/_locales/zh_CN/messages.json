@@ -6,7 +6,7 @@
     "message": "主题无关 — 点击查看"
   },
   "labelBlacklist": {
-    "message": "黑名单主题 — 点击查看"
+    "message": "屏蔽的关键词 — 点击查看"
   },
   "labelMedia": {
     "message": "无文字可判断 — 点击查看"
@@ -24,7 +24,7 @@
     "message": "uFeed 已模糊此帖子：主题无关。按 Enter 键查看。"
   },
   "spokenBlacklist": {
-    "message": "uFeed 已模糊此帖子：黑名单主题。按 Enter 键查看。"
+    "message": "uFeed 已模糊此帖子：屏蔽的关键词。按 Enter 键查看。"
   },
   "spokenMedia": {
     "message": "uFeed 已模糊此帖子：无文字可判断。按 Enter 键查看。"
@@ -168,13 +168,13 @@
     "message": "每行一个主题，几个词即可。其他内容的帖子会被模糊处理。你随时可以点击被模糊的帖子来查看。"
   },
   "blacklistLabel": {
-    "message": "我不想看的主题（黑名单）"
+    "message": "我不想看的关键词（黑名单）"
   },
   "blacklistPlaceholder": {
-    "message": "产品发布公告\n加密货币抽奖"
+    "message": "抽奖\n广告\nintroducing"
   },
   "blacklistHint": {
-    "message": "每行一个主题。与这些主题比与上方任何主题更接近的帖子会被模糊处理，即使它属于你的主题。点赞和点踩不会改变这个列表。"
+    "message": "每行一个词或短语。包含其中任何一个的帖子都会被模糊处理，即使它属于你的主题。不区分大小写和重音符号，英文单数也会匹配复数。"
   },
   "tipsSummary": {
     "message": "如何写好一个主题"

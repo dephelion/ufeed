@@ -8,8 +8,8 @@
     "description": "Pill over a blurred post whose subject is not one of the reader’s topics."
   },
   "labelBlacklist": {
-    "message": "Blacklisted topic — click to read",
-    "description": "Pill over a blurred post closer to a blacklisted topic than to any wanted topic."
+    "message": "Blocked keyword — click to read",
+    "description": "Pill over a blurred post that contains a keyword the reader blocked."
   },
   "labelMedia": {
     "message": "No text to check — click to view",
@@ -32,7 +32,7 @@
     "description": "Screen-reader announcement."
   },
   "spokenBlacklist": {
-    "message": "Blurred by uFeed: blacklisted topic. Press Enter to read it.",
+    "message": "Blurred by uFeed: blocked keyword. Press Enter to read it.",
     "description": "Screen-reader announcement."
   },
   "spokenMedia": {
@@ -198,14 +198,14 @@
     "message": "One topic per line, a few words each. Posts about anything else get blurred out. You can always click a blurred post to read it."
   },
   "blacklistLabel": {
-    "message": "Topics I don't want to see (blacklist)"
+    "message": "Keywords I don't want to see (blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "product launch announcements\ncrypto giveaways",
-    "description": "Two example topics to block, one per line."
+    "message": "introducing\ngiveaway\nsponsored",
+    "description": "Three example keywords to block, one per line."
   },
   "blacklistHint": {
-    "message": "One topic per line. A post closer to one of these than to any topic above is blurred, even when it is on topic. Thumbs never change this list."
+    "message": "One word or phrase per line. Any post that contains one is blurred, even when it is on topic. Case and accents don't matter, and a singular also blocks its plural."
   },
   "tipsSummary": {
     "message": "How to write a good topic"

@@ -168,24 +168,13 @@ export class EngineClient implements Engine {
           topic: data.topics[i]!,
           lines: data.lines[i]!,
           rating: data.ratings[i] ?? undefined,
-          block: data.blocks[i]!,
         })),
       });
     pending.resolve({});
   }
 
-  setTopics(
-    topics: string[],
-    corrections: TopicCorrections[] = [],
-    blacklist: string[] = [],
-  ): void {
-    this.#send({
-      id: nextRequestId(),
-      type: 'SET_TOPICS',
-      topics,
-      corrections,
-      blacklist,
-    });
+  setTopics(topics: string[], corrections: TopicCorrections[] = []): void {
+    this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, corrections });
   }
 
   score(texts: string[]): Promise<RatedMatch[]> {

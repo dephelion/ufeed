@@ -1,3 +1,4 @@
+import { blursAsBlacklisted } from '../core/blacklist';
 import { ScoreCache, hashText } from '../core/cache';
 import { logger } from '../core/log';
 import type { Translate } from '../core/messages';
@@ -136,11 +137,10 @@ export class FeedFilter {
       this.#settings = next;
       return;
     }
-    const topicsChanged =
-      !topicsEqual(next.topics, this.#settings.topics) ||
-      !topicsEqual(next.blacklist, this.#settings.blacklist);
+    const topicsChanged = !topicsEqual(next.topics, this.#settings.topics);
     const tuningChanged = next.tuneFromFeedback !== this.#settings.tuneFromFeedback;
     const modelChanged = next.model !== this.#settings.model;
+    const blacklistChanged = !topicsEqual(next.blacklist, this.#settings.blacklist);
     const wasActive = this.active;
     this.#settings = next;
     if (!this.active) {
@@ -157,6 +157,7 @@ export class FeedFilter {
     }
     if (topicsChanged) void this.#persist(this.#tuner.keepOnly(next.topics));
     if (topicsChanged || tuningChanged || modelChanged || !wasActive) this.#requery();
+    else if (blacklistChanged) this.#rescan();
     else this.#rescore();
   }
 
@@ -265,23 +266,21 @@ export class FeedFilter {
     const rating = match?.rating;
     const cut = this.#threshold();
     const revealed = isRevealed(post.container);
-    const followsKept = !revealed && this.#conversation?.route(post) === 'keep';
-    const block = match?.block;
-    const judged = { ...this.#grounds(post), score, threshold: cut, rating, block };
+    const followsKept =
+      !revealed &&
+      this.#conversation?.route(post) === 'keep' &&
+      !blursAsBlacklisted(this.#settings, post.text);
+    const judged = { ...this.#grounds(post), score, threshold: cut, rating };
     // A revealed post stays shown whatever the rating, so the badge is the thumb's only confirmation.
     const ratingShown =
       rating !== undefined &&
-      (revealed ||
-        (!followsKept &&
-          decideWithoutScore(judged) === undefined &&
-          decideAction(judged) !== 'blur-blacklist'));
+      (revealed || (!followsKept && decideWithoutScore(judged) === undefined));
     if (this.#settings.showScores)
       stampScore(post.container, {
         score,
         needs: cut,
         chars: post.text.length,
         lines: match?.lines,
-        block,
         rating: ratingShown ? rating : undefined,
       });
     else clearScore(post.container);
@@ -344,6 +343,11 @@ export class FeedFilter {
       this.#decide(post, cached);
       return;
     }
+    if (blursAsBlacklisted(this.#settings, post.text)) {
+      clearScore(post.container);
+      this.#apply(post, 'blur-blacklist');
+      return;
+    }
     // A model that reads every language has nothing to gate, so detection is
     // skipped outright rather than run and ignored.
     if (!gatesLanguage(this.#settings, this.#model())) {
@@ -397,14 +401,22 @@ export class FeedFilter {
     }
   }
 
-  /** Topics, blacklist and corrections all change the query, so both force a re-embed. */
+  /**
+   * Scores stay valid: only the keyword tier moved. A post it blurred was never
+   * scored, so the whole feed is offered again rather than re-applied from cache.
+   */
+  #rescan(): void {
+    this.#conversation?.reset();
+    this.#scanner.reset();
+  }
+
+  /** Topics and corrections both change the query, so both force a re-embed. */
   #requery(): void {
-    const { topics, blacklist, tuneFromFeedback } = this.#settings;
+    const { topics, tuneFromFeedback } = this.#settings;
     this.#sentRatings = tuneFromFeedback ? this.#tuner.signature(topics) : '';
     this.#engine.setTopics(
       topics,
       tuneFromFeedback ? this.#tuner.corrections(topics) : [],
-      blacklist,
     );
     this.#queue.invalidate();
     this.#cache.clear();

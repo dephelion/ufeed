@@ -6,7 +6,7 @@
     "message": "Fora do tema — clique para ler"
   },
   "labelBlacklist": {
-    "message": "Tópico bloqueado — clique para ler"
+    "message": "Palavra bloqueada — clique para ler"
   },
   "labelMedia": {
     "message": "Sem texto para analisar — clique para ver"
@@ -24,7 +24,7 @@
     "message": "Publicação desfocada pelo uFeed: fora do tema. Pressione Enter para lê-la."
   },
   "spokenBlacklist": {
-    "message": "Publicação desfocada pelo uFeed: tópico bloqueado. Pressione Enter para lê-la."
+    "message": "Publicação desfocada pelo uFeed: palavra bloqueada. Pressione Enter para lê-la."
   },
   "spokenMedia": {
     "message": "Publicação desfocada pelo uFeed: sem texto para analisar. Pressione Enter para vê-la."
@@ -168,13 +168,13 @@
     "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
   },
   "blacklistLabel": {
-    "message": "Tópicos que não quero ver (lista negra)"
+    "message": "Palavras-chave que não quero ver (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "anúncios de lançamento de produtos\nsorteios de criptomoedas"
+    "message": "introducing\nsorteio\npatrocinado"
   },
   "blacklistHint": {
-    "message": "Um tópico por linha. Uma publicação mais próxima de um destes do que de qualquer tópico acima fica desfocada, mesmo quando é do tema. Os polegares nunca mudam esta lista."
+    "message": "Uma palavra ou frase por linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"

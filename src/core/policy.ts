@@ -3,6 +3,7 @@ import { modelFor } from './models';
 import { verdictAt } from './scoring';
 import { blursAsOtherLanguage, type Language } from './language';
 import { blursAsThinMedia } from './media';
+import { blursAsBlacklisted } from './blacklist';
 
 /** What to do with a post. No DOM: applying it is the caller's job. */
 export type Action =
@@ -23,13 +24,6 @@ export interface Judgement extends Grounds {
   threshold: number;
   /** A near-identical rated post: true liked, false disliked. Overrides the score. */
   rating?: boolean | undefined;
-  /** Highest similarity to a blacklist line; -1 or undefined when there is none. */
-  block?: number | undefined;
-}
-
-/** Closer to a blacklist line than to any topic. Only a post that would show is blurred for it. */
-export function isBlacklisted({ score, block }: Judgement): boolean {
-  return score !== undefined && block !== undefined && block > score;
 }
 
 /**
@@ -39,6 +33,7 @@ export function isBlacklisted({ score, block }: Judgement): boolean {
  */
 export function decideWithoutScore(grounds: Grounds): Action | undefined {
   const { settings, text, hasMedia, language } = grounds;
+  if (blursAsBlacklisted(settings, text)) return 'blur-blacklist';
   if (blursAsThinMedia(settings, text, hasMedia, language)) return 'blur-media';
   if (blursAsOtherLanguage(settings, language)) return 'blur-language';
   return undefined;
@@ -52,14 +47,10 @@ export function decideWithoutScore(grounds: Grounds): Action | undefined {
 export function decide(judgement: Judgement): Action {
   const settled = decideWithoutScore(judgement);
   if (settled !== undefined) return settled;
-  const action = decideByScore(judgement);
-  return action === 'reveal' && isBlacklisted(judgement) ? 'blur-blacklist' : action;
-}
-
-function decideByScore({ score, threshold, rating, settings }: Judgement): Action {
+  const { score, threshold, rating } = judgement;
   if (rating !== undefined) return rating ? 'reveal' : 'blur';
   if (score === undefined) return 'reveal';
-  const verdict = verdictAt(score, threshold, modelFor(settings.model));
+  const verdict = verdictAt(score, threshold, modelFor(judgement.settings.model));
   if (verdict === 'show') return 'reveal';
   return verdict === 'peek' ? 'peek' : 'blur';
 }

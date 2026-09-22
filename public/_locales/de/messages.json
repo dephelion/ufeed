@@ -6,7 +6,7 @@
     "message": "Themenfremd — zum Lesen klicken"
   },
   "labelBlacklist": {
-    "message": "Gesperrtes Thema — zum Lesen klicken"
+    "message": "Gesperrtes Stichwort — zum Lesen klicken"
   },
   "labelMedia": {
     "message": "Kein Text zum Prüfen — zum Ansehen klicken"
@@ -24,7 +24,7 @@
     "message": "Von uFeed verwischt: themenfremd. Zum Lesen die Eingabetaste drücken."
   },
   "spokenBlacklist": {
-    "message": "Von uFeed verwischt: gesperrtes Thema. Zum Lesen die Eingabetaste drücken."
+    "message": "Von uFeed verwischt: gesperrtes Stichwort. Zum Lesen die Eingabetaste drücken."
   },
   "spokenMedia": {
     "message": "Von uFeed verwischt: kein Text zum Prüfen. Zum Ansehen die Eingabetaste drücken."
@@ -168,13 +168,13 @@
     "message": "Ein Thema pro Zeile, wenige Wörter. Beiträge zu allem anderen werden verwischt. Du kannst einen verwischten Beitrag jederzeit anklicken, um ihn zu lesen."
   },
   "blacklistLabel": {
-    "message": "Themen, die ich nicht sehen möchte (Blacklist)"
+    "message": "Stichwörter, die ich nicht sehen möchte (Blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "Ankündigungen von Produktstarts\nKrypto-Gewinnspiele"
+    "message": "introducing\ngewinnspiel\nanzeige"
   },
   "blacklistHint": {
-    "message": "Ein Thema pro Zeile. Ein Beitrag, der einem dieser Themen näher ist als jedem Thema oben, wird verwischt, auch wenn er zum Thema passt. Daumen ändern diese Liste nie."
+    "message": "Ein Wort oder eine Wortgruppe pro Zeile. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
   },
   "tipsSummary": {
     "message": "So schreibst du ein gutes Thema"

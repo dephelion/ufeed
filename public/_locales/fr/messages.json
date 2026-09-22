@@ -6,7 +6,7 @@
     "message": "Hors sujet — cliquez pour lire"
   },
   "labelBlacklist": {
-    "message": "Sujet bloqué — cliquez pour lire"
+    "message": "Mot-clé bloqué — cliquez pour lire"
   },
   "labelMedia": {
     "message": "Pas de texte à analyser — cliquez pour voir"
@@ -24,7 +24,7 @@
     "message": "Publication floutée par uFeed : hors sujet. Appuyez sur Entrée pour la lire."
   },
   "spokenBlacklist": {
-    "message": "Publication floutée par uFeed : sujet bloqué. Appuyez sur Entrée pour la lire."
+    "message": "Publication floutée par uFeed : mot-clé bloqué. Appuyez sur Entrée pour la lire."
   },
   "spokenMedia": {
     "message": "Publication floutée par uFeed : pas de texte à analyser. Appuyez sur Entrée pour la voir."
@@ -168,13 +168,13 @@
     "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
   },
   "blacklistLabel": {
-    "message": "Sujets que je ne veux pas voir (liste noire)"
+    "message": "Mots-clés que je ne veux pas voir (liste noire)"
   },
   "blacklistPlaceholder": {
-    "message": "annonces de lancements de produits\nconcours crypto"
+    "message": "introducing\nconcours\nsponsorisé"
   },
   "blacklistHint": {
-    "message": "Un sujet par ligne. Une publication plus proche de l’un d’eux que de tout sujet ci-dessus est floutée, même si elle est dans le sujet. Les pouces ne modifient jamais cette liste."
+    "message": "Un mot ou une expression par ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"

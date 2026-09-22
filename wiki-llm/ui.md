@@ -43,13 +43,13 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 `data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`. `blur()` also writes the label's text to `data-lx-label` in the reader's language; the English shown in this page is `en`, see [i18n.md](i18n.md).
 
-| Reason      | Label                               | Set when                                                                                                             |
-| :---------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
-| `topic`     | "Out of topic — click to read"      | The score fell below the threshold, or a near-copy of a thumbed-down post.                                           |
-| `media`     | "No text to check — click to view"  | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place.                             |
-| `language`  | "Another language — click to read"  | `blurOtherLanguages` and CLD placed the post outside the model's language.                                           |
-| `blacklist` | "Blacklisted topic — click to read" | The post passed the threshold but is closer to a blacklist line than to any topic ([model.md](model.md) §Blacklist). |
-| `peek`      | `data-lx-peek` + "— click to read"  | The score landed in the uncertain strip.                                                                             |
+| Reason      | Label                              | Set when                                                                                 |
+| :---------- | :--------------------------------- | :--------------------------------------------------------------------------------------- |
+| `topic`     | "Out of topic — click to read"     | The score fell below the threshold, or a near-copy of a thumbed-down post.               |
+| `media`     | "No text to check — click to view" | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place. |
+| `language`  | "Another language — click to read" | `blurOtherLanguages` and CLD placed the post outside the model's language.               |
+| `blacklist` | "Blocked keyword — click to read"  | The post contains a blacklist keyword (§Blacklist). Checked first, before any score.     |
+| `peek`      | `data-lx-peek` + "— click to read" | The score landed in the uncertain strip.                                                 |
 
 **The peek never touches host DOM.** The opening words ride on `data-lx-peek` and render in our own overlay. Un-blurring them in place means splitting the host's text node — Invariant 3, and dead on the next vendor re-render. `reveal()` clears the attribute, so a recycled node never shows another post's words.
 
@@ -65,7 +65,7 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 **The labels are not interchangeable.** A thin-media post was never judged off topic — the model never saw enough text to judge it. Saying "out of topic" there asserts a verdict that was never reached.
 
-**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They are user policy, not a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` is the pair of them, asked before an inference is spent: a post they claim never reaches the engine.
+**The media and language rules are engine-independent.** They read the DOM, the settings and CLD, never a score, so they cost no inference and cannot be reached by a scoring failure. They are user policy, not a model verdict — that is what keeps them clear of the fail-open invariant. `decideWithoutScore()` holds them and the keyword blacklist, asked before an inference is spent: a post they claim never reaches the engine.
 
 **The language label carries its own colour**, indigo against the topic label's red. It is not a verdict about the subject and must not read as one — [model.md](model.md) has why the score behind it would have been noise.
 
@@ -76,6 +76,16 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 **An unplaceable post is labelled `media`, not `language`.** CLD returning unreliable says the text is too thin to read, not that it is foreign. That is the same claim `MIN_BACKING_CHARS` makes by counting characters, so it lands in the same rule and the same label, and like that rule it needs media present and `blurThinMedia` on.
 
 `position: relative` on the container is the one accepted layout side effect — it anchors the label. Verified on X without shifting.
+
+### Blacklist
+
+Keywords, never the model: an embedding blacklist blurred unrelated posts and read as a broken feed. `core/blacklist.ts`.
+
+- **First tier, before scoring.** A match blurs at once and costs no inference; it beats the score, a rating and a kept conversation.
+- **Literal match.** Case and accents folded. Whole words, lookarounds on `\p{L}\p{N}`; a phrase matches across any whitespace.
+- **Singular matches plural**: `-s`, `-es`, `y` → `-ys`/`-ies`. Never plural to singular: `news` would match `new`.
+- **Han, Hiragana, Katakana match as a substring**: no spaces to bound a word.
+- **Thumbs never touch it.** An edit re-offers the feed from the score cache; only posts it had blurred reach the engine.
 
 ## While a post is being judged
 
@@ -148,7 +158,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 | :-------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                       |
 | Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                 |
-| Blacklist                         | Collapsed disclosure under the topics, open once it holds a line. Same textarea format; saved by the same Apply.                                                 |
+| Blacklist                         | Collapsed disclosure under the topics, open once it holds a line. One keyword or phrase per line; saved by the same Apply.                                       |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                 |
 | Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                             |
 | Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                           |
@@ -231,7 +241,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 ## Score badge
 
-`score 0.793 / needs 0.795 · 105 chars · #1 0.793 · #2 0.791 · #3 0.760 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). Every line's score is always shown, by 1-based position; the score is the highest of them. The lines are absent when the post has none (unscored). A hover swap that hid them behind `ℹ️ 3 topics` was removed in 0.7.0: the scores are the point of the badge. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post. `· blacklist 0.812` follows the lines when a blacklist exists: the best blacklist cosine; the badge goes red whenever it beats the score.
+`score 0.793 / needs 0.795 · 105 chars · #1 0.793 · #2 0.791 · #3 0.760 · marked off topic` on every scored post, from `data-lx-*` attributes stamped by the content script (`src/feed/score-badge.ts`). Every line's score is always shown, by 1-based position; the score is the highest of them. The lines are absent when the post has none (unscored). A hover swap that hid them behind `ℹ️ 3 topics` was removed in 0.7.0: the scores are the point of the badge. `needs` is the strictness threshold. The last field appears when a near-identical rated post decided the verdict (not when the media or language rule, or a kept conversation did), and on every revealed post with a rating — a revealed post is never re-blurred, so the badge is the only sign a thumb registered, and the colour follows that verdict, not the score. Wording is "marked on/off topic", never liked/disliked: a thumb judges topic fit, not the post.
 
 **"Downloading" must mean bandwidth, and only transformers.js knows — so ask the cache instead.** A cache hit is streamed through the same `progress` events as a real fetch (Chrome; Firefox fires a single 100%), and the callback never says which it was, so **every page refresh claimed to be downloading the model again**. `Embedder` now checks `caches.open('transformers-cache')` for a key carrying the model id before loading, and reports `warming` rather than `downloading` when the weights are already there. A cached load is not instant — a few hundred MB off disk plus session startup — so the reader is still told the engine is working: "Starting the model up — already downloaded". An unreadable cache reads as "not cached", which is the old behaviour and never blocks a load.
 

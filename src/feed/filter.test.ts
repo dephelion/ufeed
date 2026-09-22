@@ -34,7 +34,6 @@ const match = (score: number): RatedMatch => ({
   topic: 0,
   lines: [score],
   rating: undefined,
-  block: -1,
 });
 const scored = (texts: string[]) =>
   texts.map((text) => {
@@ -205,16 +204,27 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(true);
   });
 
-  it('blurs an on-topic post closer to a blacklist line, and re-asks when the blacklist changes', async () => {
-    const { engine, filter } = await run(
-      SETTINGS,
-      ['rust ships a new borrow checker'],
-      async (t) => scored(t).map((m) => ({ ...m, block: 0.95 })),
-    );
+  it('blurs a post with a blocked keyword without asking the engine', async () => {
+    const { engine } = await run({ ...SETTINGS, blacklist: ['borrow checker'] }, [
+      'rust ships a new borrow checker',
+    ]);
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(engine.score).not.toHaveBeenCalled();
+  });
+
+  it('re-judges the feed from cache when the blacklist changes', async () => {
+    const { engine, filter } = await run(SETTINGS, ['rust ships a new borrow checker']);
+    expect(isBlurred(post('rust'))).toBe(false);
+
+    filter.applySettings({ ...SETTINGS, blacklist: ['rust'] });
+    await vi.advanceTimersByTimeAsync(200);
     expect(post('rust').dataset.lxReason).toBe('blacklist');
 
-    filter.applySettings({ ...SETTINGS, blacklist: ['launches'] });
-    expect(engine.setTopics).toHaveBeenLastCalledWith(SETTINGS.topics, [], ['launches']);
+    filter.applySettings({ ...SETTINGS, blacklist: [] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(engine.score).toHaveBeenCalledTimes(1);
+    expect(engine.setTopics).toHaveBeenCalledTimes(1);
   });
 
   it('discards scores measured against topics that have since changed', async () => {
@@ -234,7 +244,7 @@ describe('FeedFilter', () => {
     answerOld([match(0.1)]);
     await vi.advanceTimersByTimeAsync(0);
 
-    expect(engine.setTopics).toHaveBeenLastCalledWith(['baking'], [], []);
+    expect(engine.setTopics).toHaveBeenLastCalledWith(['baking'], []);
     expect(isBlurred(post('cake'))).toBe(false);
   });
 

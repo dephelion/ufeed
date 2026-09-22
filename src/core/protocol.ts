@@ -28,8 +28,6 @@ export interface SetTopicsRequest {
   topics: string[];
   /** Rated posts per topic, aligned with `topics`; they override near-identical posts. */
   corrections?: TopicCorrections[];
-  /** Lines that blur a post closer to them than to any topic. Ratings never touch them. */
-  blacklist?: string[];
 }
 
 export interface TopicCorrections {
@@ -58,8 +56,6 @@ export interface ScoresReply {
   lines: number[][];
   /** A near-identical rated post on any line: true liked, false disliked, null none. */
   ratings: (boolean | null)[];
-  /** Each post's highest similarity to a blacklist line, aligned with `scores`; -1 when none. */
-  blocks: number[];
 }
 
 /**
@@ -108,11 +104,7 @@ export function isEngineRequest(data: unknown): data is EngineRequest {
   if (!isRecord(data) || typeof data.id !== 'string') return false;
   if (data.type === 'SCORE') return isStringArray(data.texts);
   if (data.type === 'SET_TOPICS')
-    return (
-      isStringArray(data.topics) &&
-      isCorrections(data.corrections) &&
-      (data.blacklist === undefined || isStringArray(data.blacklist))
-    );
+    return isStringArray(data.topics) && isCorrections(data.corrections);
   if (data.type === 'FEEDBACK')
     return typeof data.text === 'string' && typeof data.liked === 'boolean';
   return false;
@@ -132,9 +124,7 @@ export function isEngineReply(data: unknown): data is EngineReply {
         data.lines.every(isNumberArray) &&
         Array.isArray(data.ratings) &&
         data.ratings.length === data.scores.length &&
-        data.ratings.every((r) => r === null || typeof r === 'boolean') &&
-        isNumberArray(data.blocks) &&
-        data.blocks.length === data.scores.length
+        data.ratings.every((r) => r === null || typeof r === 'boolean')
       );
     case 'VECTOR':
       return (

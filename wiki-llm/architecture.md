@@ -65,8 +65,8 @@ engine  → worker   { type: 'INIT', model }              engine document to its
 content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
 content → engine   { id, type: 'FEEDBACK',   text, liked }
-                   SET_TOPICS also carries each line's liked/disliked vectors and the blacklist lines
-engine  → content  { id, type: 'SCORES',     scores, topics, lines, ratings, blocks }   raw cosine, never booleans; per score: best line index, every line's cosine, near-identical rating (true/false/null), best blacklist cosine (-1 when none)
+                   SET_TOPICS also carries each line's liked/disliked vectors
+engine  → content  { id, type: 'SCORES',     scores, topics, lines, ratings }   raw cosine, never booleans; per score: best line index, every line's cosine, near-identical rating (true/false/null)
 engine  → content  { id, type: 'VECTOR',     vector }   the correction, to persist
 engine  → content  { id, type: 'ACK' }                  no pending entry by design
 engine  → content  { id, type: 'ERROR',      message }

@@ -6,7 +6,7 @@
     "message": "トピック外 — クリックで表示"
   },
   "labelBlacklist": {
-    "message": "ブロックしたトピック — クリックで表示"
+    "message": "ブロックしたキーワード — クリックで表示"
   },
   "labelMedia": {
     "message": "判定できる文章なし — クリックで表示"
@@ -24,7 +24,7 @@
     "message": "uFeed がぼかした投稿: トピック外。Enter キーで表示します。"
   },
   "spokenBlacklist": {
-    "message": "uFeed がぼかした投稿: ブロックしたトピック。Enter キーで表示します。"
+    "message": "uFeed がぼかした投稿: ブロックしたキーワード。Enter キーで表示します。"
   },
   "spokenMedia": {
     "message": "uFeed がぼかした投稿: 判定できる文章なし。Enter キーで表示します。"
@@ -168,13 +168,13 @@
     "message": "1 行に 1 トピック、数語で書きます。それ以外の投稿はぼかされます。ぼかされた投稿は、いつでもクリックして読めます。"
   },
   "blacklistLabel": {
-    "message": "見たくないトピック（ブラックリスト）"
+    "message": "見たくないキーワード（ブラックリスト）"
   },
   "blacklistPlaceholder": {
-    "message": "新製品の発表\n暗号資産のプレゼント企画"
+    "message": "プレゼント企画\n広告\nintroducing"
   },
   "blacklistHint": {
-    "message": "1 行に 1 トピック。上のどのトピックよりもこれらに近い投稿は、トピック内でもぼかされます。👍👎 でこのリストが変わることはありません。"
+    "message": "1 行に 1 つの語句。どれかを含む投稿は、トピック内でもぼかされます。大文字・小文字やアクセントは区別しません。英語の単数形は複数形も対象になります。"
   },
   "tipsSummary": {
     "message": "よいトピックの書き方"
