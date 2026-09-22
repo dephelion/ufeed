@@ -164,17 +164,18 @@ export class FeedFilter {
   /** The popup's switch, for this tab alone. */
   setOn(on: boolean): void {
     if (on === this.#on) return;
-    const wasActive = this.active;
     this.#on = on;
-    if (!this.active) {
-      this.#deactivate();
-      return;
-    }
-    if (wasActive) return;
+    if (!on) this.#deactivate();
+    else if (this.active) this.#activate();
+  }
+
+  /** Starts filtering the page from scratch. */
+  #activate(): void {
     this.#engine.connect(this.#settings.model);
     this.#requery();
   }
 
+  /** Stops filtering and puts every post back the way the host drew it. */
   #deactivate(): void {
     this.#queue.invalidate();
     revealAll(document);
