@@ -168,13 +168,13 @@
     "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
   },
   "blacklistLabel": {
-    "message": "Masquer les publications contenant ces mots-clés (liste noire)"
+    "message": "Masquer si ça mentionne (liste noire)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, concours, sponsorisé"
   },
   "blacklistHint": {
-    "message": "Séparez les mots-clés par des virgules. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
+    "message": "Séparez les mots-clés par des virgules ou des retours à la ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"

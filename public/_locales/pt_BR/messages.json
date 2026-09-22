@@ -168,13 +168,13 @@
     "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
   },
   "blacklistLabel": {
-    "message": "Ocultar publicações com estas palavras-chave (lista negra)"
+    "message": "Ocultar se mencionar (lista negra)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, sorteio, patrocinado"
   },
   "blacklistHint": {
-    "message": "Separe as palavras-chave com vírgulas. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
+    "message": "Separe as palavras-chave com vírgulas ou quebras de linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"

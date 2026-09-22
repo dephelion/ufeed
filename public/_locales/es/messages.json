@@ -168,13 +168,13 @@
     "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
   },
   "blacklistLabel": {
-    "message": "Ocultar publicaciones con estas palabras clave (lista negra)"
+    "message": "Ocultar si mencionan (lista negra)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, sorteo, patrocinado"
   },
   "blacklistHint": {
-    "message": "Separa las palabras clave con comas. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
+    "message": "Separa las palabras clave con comas o saltos de línea. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"

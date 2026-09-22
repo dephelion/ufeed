@@ -57,6 +57,14 @@ describe('parseKeywords', () => {
     ]);
   });
 
+  it('treats every pressed Enter as a new keyword', () => {
+    expect(parseKeywords('crypto\ngiveaway\r\nnft\n')).toEqual([
+      'crypto',
+      'giveaway',
+      'nft',
+    ]);
+  });
+
   it('lowercases, so one word in any capitalisation is one keyword', () => {
     expect(parseKeywords('Jev, jev, jeV')).toEqual(['jev']);
   });

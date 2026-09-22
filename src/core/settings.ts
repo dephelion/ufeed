@@ -1,3 +1,4 @@
+import { parseKeywords } from './blacklist';
 import { isLanguageCode, type LanguageSetting } from './languages';
 import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './models';
 import { clampStrictness } from './scoring';
@@ -59,6 +60,7 @@ export function withDefaults(partial: Partial<Settings> | undefined): Settings {
   if (!isModelKey(merged.model)) merged.model = DEFAULT_MODEL;
   if (merged.language !== 'auto' && !isLanguageCode(merged.language))
     merged.language = 'auto';
+  merged.blacklist = parseKeywords(merged.blacklist.join('\n'));
   return merged;
 }
 

@@ -168,13 +168,13 @@
     "message": "Ein Thema pro Zeile, wenige Wörter. Beiträge zu allem anderen werden verwischt. Du kannst einen verwischten Beitrag jederzeit anklicken, um ihn zu lesen."
   },
   "blacklistLabel": {
-    "message": "Beiträge mit diesen Stichwörtern ausblenden (Blacklist)"
+    "message": "Beiträge ausblenden mit (Blacklist)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, Gewinnspiel, Anzeige"
   },
   "blacklistHint": {
-    "message": "Stichwörter durch Kommas trennen. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
+    "message": "Stichwörter durch Kommas oder Zeilenumbrüche trennen. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
   },
   "tipsSummary": {
     "message": "So schreibst du ein gutes Thema"

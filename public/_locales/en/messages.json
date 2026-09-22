@@ -198,14 +198,14 @@
     "message": "One topic per line, a few words each. Posts about anything else get blurred out. You can always click a blurred post to read it."
   },
   "blacklistLabel": {
-    "message": "Hide posts containing these keywords (blacklist)"
+    "message": "Hide posts mentioning (blacklist)"
   },
   "blacklistPlaceholder": {
     "message": "introducing, giveaway, sponsored",
     "description": "Three example keywords to block, comma-separated."
   },
   "blacklistHint": {
-    "message": "Separate keywords with commas. Any post that contains one is blurred, even when it is on topic. Case and accents don't matter, and a singular also blocks its plural."
+    "message": "Separate keywords with commas or new lines. Any post that contains one is blurred, even when it is on topic. Case and accents don't matter, and a singular also blocks its plural."
   },
   "tipsSummary": {
     "message": "How to write a good topic"
