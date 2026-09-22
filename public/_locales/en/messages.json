@@ -201,7 +201,7 @@
     "message": "Hide posts mentioning (blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing, giveaway, sponsored",
+    "message": "crypto, AI, sponsored",
     "description": "Three example keywords to block, comma-separated."
   },
   "blacklistHint": {
@@ -252,8 +252,9 @@
   "tipQualityBody": {
     "message": "A great post and a poor one about the same thing both stay. uFeed can't tell them apart."
   },
-  "saveTopics": {
-    "message": "Save topics"
+  "saveLists": {
+    "message": "Save lists",
+    "description": "Saves both the whitelist topics and the blacklist keywords."
   },
   "saved": {
     "message": "Saved"

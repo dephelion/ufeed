@@ -171,7 +171,7 @@
     "message": "隐藏提及以下词的帖子（黑名单）"
   },
   "blacklistPlaceholder": {
-    "message": "抽奖，广告，introducing"
+    "message": "加密货币，AI，广告"
   },
   "blacklistHint": {
     "message": "用逗号或换行分隔关键词。包含其中任何一个的帖子都会被模糊处理，即使它属于你的主题。不区分大小写和重音符号，英文单数也会匹配复数。"
@@ -215,8 +215,8 @@
   "tipQualityBody": {
     "message": "同一话题下，好帖和差帖都会保留。uFeed 无法区分它们。"
   },
-  "saveTopics": {
-    "message": "保存主题"
+  "saveLists": {
+    "message": "保存列表"
   },
   "saved": {
     "message": "已保存"

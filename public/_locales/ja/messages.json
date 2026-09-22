@@ -171,7 +171,7 @@
     "message": "含む投稿を隠す（ブラックリスト）"
   },
   "blacklistPlaceholder": {
-    "message": "プレゼント企画、広告、introducing"
+    "message": "暗号資産、AI、広告"
   },
   "blacklistHint": {
     "message": "キーワードは読点（、）、カンマ、または改行で区切ります。どれかを含む投稿は、トピック内でもぼかされます。大文字・小文字やアクセントは区別しません。英語の単数形は複数形も対象になります。"
@@ -215,8 +215,8 @@
   "tipQualityBody": {
     "message": "同じ話題なら、優れた投稿も質の低い投稿も表示されたままです。uFeed には区別できません。"
   },
-  "saveTopics": {
-    "message": "トピックを保存"
+  "saveLists": {
+    "message": "リストを保存"
   },
   "saved": {
     "message": "保存しました"

@@ -171,7 +171,7 @@
     "message": "Ocultar si mencionan (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing, sorteo, patrocinado"
+    "message": "cripto, IA, patrocinado"
   },
   "blacklistHint": {
     "message": "Separa las palabras clave con comas o saltos de línea. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
@@ -215,8 +215,8 @@
   "tipQualityBody": {
     "message": "Una publicación excelente y una mala sobre lo mismo se quedan las dos. uFeed no puede distinguirlas."
   },
-  "saveTopics": {
-    "message": "Guardar temas"
+  "saveLists": {
+    "message": "Guardar listas"
   },
   "saved": {
     "message": "Guardado"

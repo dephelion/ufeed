@@ -171,7 +171,7 @@
     "message": "Beiträge ausblenden mit (Blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing, Gewinnspiel, Anzeige"
+    "message": "Krypto, KI, Anzeige"
   },
   "blacklistHint": {
     "message": "Stichwörter durch Kommas oder Zeilenumbrüche trennen. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
@@ -215,8 +215,8 @@
   "tipQualityBody": {
     "message": "Ein toller und ein schlechter Beitrag zum selben Thema bleiben beide sichtbar. uFeed kann sie nicht unterscheiden."
   },
-  "saveTopics": {
-    "message": "Themen speichern"
+  "saveLists": {
+    "message": "Listen speichern"
   },
   "saved": {
     "message": "Gespeichert"

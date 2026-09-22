@@ -171,7 +171,7 @@
     "message": "Ocultar se mencionar (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing, sorteio, patrocinado"
+    "message": "cripto, IA, patrocinado"
   },
   "blacklistHint": {
     "message": "Separe as palavras-chave com vírgulas ou quebras de linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
@@ -215,8 +215,8 @@
   "tipQualityBody": {
     "message": "Uma publicação ótima e uma ruim sobre a mesma coisa ficam as duas. O uFeed não consegue distingui-las."
   },
-  "saveTopics": {
-    "message": "Salvar tópicos"
+  "saveLists": {
+    "message": "Salvar listas"
   },
   "saved": {
     "message": "Salvo"

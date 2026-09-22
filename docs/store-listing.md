@@ -125,7 +125,7 @@ The content script injects engine.html (a web_accessible_resource) as a hidden i
 
 HOW TO TEST
 1. Install, then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.
-2. Click the toolbar icon, type a topic such as "cooking, recipes, food", and click Save topics.
+2. Click the toolbar icon, type a topic such as "cooking, recipes, food", and click Save lists.
 3. The first run downloads the model; the popup shows progress, then Ready.
 4. Posts that are not about the topic blur. Click one to reveal it.
 ```

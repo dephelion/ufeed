@@ -171,7 +171,7 @@
     "message": "Masquer si ça mentionne (liste noire)"
   },
   "blacklistPlaceholder": {
-    "message": "introducing, concours, sponsorisé"
+    "message": "crypto, IA, sponsorisé"
   },
   "blacklistHint": {
     "message": "Séparez les mots-clés par des virgules ou des retours à la ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
@@ -215,8 +215,8 @@
   "tipQualityBody": {
     "message": "Une excellente publication et une mauvaise sur le même sujet restent toutes les deux. uFeed ne sait pas les distinguer."
   },
-  "saveTopics": {
-    "message": "Enregistrer les sujets"
+  "saveLists": {
+    "message": "Enregistrer les listes"
   },
   "saved": {
     "message": "Enregistré"
