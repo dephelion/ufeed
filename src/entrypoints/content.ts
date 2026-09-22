@@ -22,6 +22,7 @@ import {
   serveEngineStatus,
 } from '../platform/status-channel';
 import { feedbackStoreFor, loadSettings, onSettingsChanged } from '../platform/storage';
+import { serveTabSwitch } from '../platform/tab-switch';
 
 export default defineContentScript({
   matches: [
@@ -88,11 +89,11 @@ async function start(): Promise<void> {
   });
 
   const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'), t);
-  nudge.setVisible(needsTopics(settings));
+  nudge.setVisible(needsTopics(settings, filter.on));
   onSettingsChanged((next) => {
     const modelChanged = next.model !== settings.model;
     settings = next;
-    nudge.setVisible(needsTopics(next));
+    nudge.setVisible(needsTopics(next, filter.on));
     // The store now answers for the new model, so what this tab holds in memory
     // is the old model's ratings until it is told to read again.
     if (modelChanged) void tuner.reload();
@@ -100,6 +101,14 @@ async function start(): Promise<void> {
     badge.setVisible(filter.active);
   });
   tuner.onChange(() => filter.tuningChanged());
+  serveTabSwitch(
+    () => filter.on,
+    (on) => {
+      filter.setOn(on);
+      nudge.setVisible(needsTopics(settings, on));
+      badge.setVisible(filter.active);
+    },
+  );
 
   const feedbackBar = mountFeedbackBar({
     t,

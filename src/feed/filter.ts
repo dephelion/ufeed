@@ -51,6 +51,8 @@ export class FeedFilter {
   readonly #engine: Engine;
   readonly #tuner: Tuning;
   #settings: Settings;
+  /** This tab's switch. Never stored: turning one tab off leaves every other tab filtering. */
+  #on = true;
   readonly #cache = new ScoreCache();
   readonly #languages: LanguageCache;
   readonly #conversation: Conversation | undefined;
@@ -100,7 +102,7 @@ export class FeedFilter {
   }
 
   get active(): boolean {
-    return isActive(this.#settings);
+    return isActive(this.#settings, this.#on);
   }
 
   start(): void {
@@ -139,11 +141,7 @@ export class FeedFilter {
     const wasActive = this.active;
     this.#settings = next;
     if (!this.active) {
-      this.#queue.invalidate();
-      revealAll(document);
-      this.#untrackAll();
-      hideAllSkeletons(document);
-      clearAllScores(document);
+      this.#deactivate();
       return;
     }
     // Every cached score is in the old model's space, and so is every language
@@ -157,6 +155,32 @@ export class FeedFilter {
     if (topicsChanged) void this.#persist(this.#tuner.keepOnly(next.topics));
     if (topicsChanged || tuningChanged || modelChanged || !wasActive) this.#requery();
     else this.#rescore();
+  }
+
+  get on(): boolean {
+    return this.#on;
+  }
+
+  /** The popup's switch, for this tab alone. */
+  setOn(on: boolean): void {
+    if (on === this.#on) return;
+    const wasActive = this.active;
+    this.#on = on;
+    if (!this.active) {
+      this.#deactivate();
+      return;
+    }
+    if (wasActive) return;
+    this.#engine.connect(this.#settings.model);
+    this.#requery();
+  }
+
+  #deactivate(): void {
+    this.#queue.invalidate();
+    revealAll(document);
+    this.#untrackAll();
+    hideAllSkeletons(document);
+    clearAllScores(document);
   }
 
   /** A clear, an import or a thumb in another tab. */
