@@ -109,6 +109,20 @@ content → popup    { type: 'ufeed:status', status }     pushed on change
 
 **Reported changes are throttled** — new state, or progress moved >= 5 points. Per-file download progress fires several times a second.
 
+## Tab switch
+
+A third contract, popup -> content script, `src/platform/tab-switch.ts`. The popup's On switch acts on the active tab alone.
+
+```
+popup   → content  { type: 'ufeed:on?' }                to the ACTIVE tab only
+popup   → content  { type: 'ufeed:on', on }             flip it
+content → popup    boolean (the reply to both)          what the tab now holds
+```
+
+**Held by the tab, never stored.** `FeedFilter` owns it; `isActive(settings, on)` gates everything the switch did when it was a `settings.enabled` field. `withDefaults()` drops a stored `enabled`, so an install that was off globally comes back on.
+
+**No reply disables the switch.** Same reading as the status channel: no content script, nothing to switch.
+
 ## Conversations
 
 **A reply is kept when its lead post is kept.** The lead post is the one its conversation hangs from. Replies lean on context the model never sees; scored alone they blur under a post that passed.

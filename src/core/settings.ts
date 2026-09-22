@@ -3,7 +3,6 @@ import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './
 import { clampStrictness } from './scoring';
 
 export interface Settings {
-  enabled: boolean;
   topics: string[];
   /** Which model scores the feed. Changing it restarts the engine. */
   model: ModelKey;
@@ -23,7 +22,6 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  enabled: true,
   topics: [],
   model: DEFAULT_MODEL,
   strictness: DEFAULT_STRICTNESS,
@@ -68,10 +66,10 @@ const sameType = (value: unknown, fallback: unknown): boolean =>
 /**
  * On, with nothing to do. It is the one inactive state that is not a choice the
  * reader made, so it is the only one worth interrupting them about: everything
- * looks installed and nothing happens.
+ * looks installed and nothing happens. `on` is the tab's own switch.
  */
-export function needsTopics(settings: Settings): boolean {
-  return settings.enabled && settings.topics.length === 0;
+export function needsTopics(settings: Settings, on: boolean): boolean {
+  return on && settings.topics.length === 0;
 }
 
 /**
@@ -90,8 +88,9 @@ export function onlyLanguageChanged(before: Settings, after: Settings): boolean 
   );
 }
 
-export function isActive(settings: Settings): boolean {
-  return settings.enabled && settings.topics.length > 0;
+/** `on` is the tab's own switch, never stored: turning one tab off leaves the others. */
+export function isActive(settings: Settings, on: boolean): boolean {
+  return on && settings.topics.length > 0;
 }
 
 /** One topic per line; blanks and duplicates dropped. */

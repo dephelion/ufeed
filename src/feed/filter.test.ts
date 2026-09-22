@@ -260,9 +260,31 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(true);
     expect(post('cake').dataset.lxScore).toBeDefined();
 
-    filter.applySettings({ ...SETTINGS, showScores: true, enabled: false });
+    filter.setOn(false);
 
+    expect(filter.active).toBe(false);
     expect(isBlurred(post('cake'))).toBe(false);
     expect(post('cake').dataset.lxScore).toBeUndefined();
+  });
+
+  it('asks the engine again when the tab is turned back on', async () => {
+    const { filter, engine } = await run(SETTINGS, ['a chocolate cake recipe']);
+    const sent = engine.setTopics.mock.calls.length;
+
+    filter.setOn(false);
+    filter.setOn(true);
+
+    expect(filter.active).toBe(true);
+    expect(engine.setTopics).toHaveBeenCalledTimes(sent + 1);
+  });
+
+  it('stays off through a settings change until the tab is turned on', async () => {
+    const { filter } = await run(SETTINGS, ['a chocolate cake recipe']);
+    filter.setOn(false);
+
+    filter.applySettings({ ...SETTINGS, strictness: SETTINGS.strictness - 1 });
+
+    expect(filter.active).toBe(false);
+    expect(isBlurred(post('cake'))).toBe(false);
   });
 });

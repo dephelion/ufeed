@@ -146,6 +146,16 @@ h1 {
   box-shadow: 0 0 8px 1px color-mix(in srgb, #16a34a 70%, transparent);
 }
 
+/* No feed on this tab, or no answer yet: nothing to switch, so neither colour. */
+.switch:has(input:disabled) {
+  cursor: default;
+}
+
+.switch input:disabled + span {
+  background: #9ca3af;
+  box-shadow: none;
+}
+
 .switch input:focus-visible + span {
   outline: 2px solid var(--fg);
   outline-offset: 2px;

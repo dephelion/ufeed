@@ -24,6 +24,7 @@ import { logger } from '../../core/log';
 import type { MessageKey } from '../../core/messages';
 import { loadTranslator } from '../../platform/i18n';
 import { askEngineStatus, onEngineStatus } from '../../platform/status-channel';
+import { askTabSwitch, setTabSwitch } from '../../platform/tab-switch';
 import {
   clearFeedback,
   loadFeedback,
@@ -124,13 +125,17 @@ function renderModel(key: ModelKey, blurOther: boolean): void {
   note.hidden = monolingual;
 }
 
-function renderEnabled(on: boolean): void {
-  enabled.checked = on;
-  enabledLabel.textContent = t(on ? 'switchOn' : 'switchOff');
+/** Undefined until the tab answers, and for good on a tab with no feed: there is nothing to switch. */
+let tabOn: boolean | undefined;
+
+function renderEnabled(on: boolean | undefined): void {
+  tabOn = on;
+  enabled.checked = on === true;
+  enabled.disabled = on === undefined;
+  enabledLabel.textContent = t(on === true ? 'switchOn' : 'switchOff');
 }
 
 function render(settings: Settings): void {
-  renderEnabled(settings.enabled);
   topics.value = topicsToText(settings.topics);
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
@@ -153,7 +158,7 @@ function refreshApply(): void {
 }
 
 function describeStatus(settings: Settings): void {
-  if (!settings.enabled) {
+  if (tabOn === false) {
     dot.dataset.state = 'idle';
     statusText.textContent = t('switchOff');
     return;
@@ -206,14 +211,20 @@ async function update(patch: Partial<Settings>): Promise<boolean> {
   return true;
 }
 
+renderEnabled(undefined);
 render(saved);
 describeStatus(saved);
 
+let activeTab: number | undefined;
+
 // Asked fresh every time the popup opens, so switching tabs cannot leave a
 // stale reading on screen, and followed for one tab only.
-void askEngineStatus().then(({ tabId, status }) => {
+void askEngineStatus().then(async ({ tabId, status }) => {
+  activeTab = tabId;
   describeEngineStatus(status);
   onEngineStatus(tabId, describeEngineStatus);
+  renderEnabled(await askTabSwitch(tabId));
+  describeStatus(saved);
 });
 
 languagePicker.addEventListener('change', () => {
@@ -222,8 +233,13 @@ languagePicker.addEventListener('change', () => {
 });
 
 enabled.addEventListener('change', () => {
+  if (activeTab === undefined) return;
   renderEnabled(enabled.checked);
-  void update({ enabled: enabled.checked });
+  describeStatus(saved);
+  void setTabSwitch(activeTab, enabled.checked).then((on) => {
+    renderEnabled(on);
+    describeStatus(saved);
+  });
 });
 
 topics.addEventListener('input', refreshApply);

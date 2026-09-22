@@ -14,34 +14,36 @@ const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
 
 describe('isActive', () => {
   it('is inactive with no topics, so a fresh install blurs nothing', () => {
-    expect(isActive(DEFAULT_SETTINGS)).toBe(false);
+    expect(isActive(DEFAULT_SETTINGS, true)).toBe(false);
   });
 
   it('is active once topics exist', () => {
-    expect(isActive(withTopics)).toBe(true);
+    expect(isActive(withTopics, true)).toBe(true);
   });
 
-  it('respects the global switch', () => {
-    expect(isActive({ ...withTopics, enabled: false })).toBe(false);
+  it("respects the tab's switch", () => {
+    expect(isActive(withTopics, false)).toBe(false);
   });
 });
 
 describe('needsTopics', () => {
   it('speaks up on a fresh install: on, with nothing to do', () => {
-    expect(needsTopics(DEFAULT_SETTINGS)).toBe(true);
+    expect(needsTopics(DEFAULT_SETTINGS, true)).toBe(true);
   });
 
   it('stays quiet once topics exist', () => {
-    expect(needsTopics(withTopics)).toBe(false);
+    expect(needsTopics(withTopics, true)).toBe(false);
   });
 
-  it('stays quiet when the reader turned it off — that was a choice', () => {
-    expect(needsTopics({ ...DEFAULT_SETTINGS, enabled: false })).toBe(false);
+  it('stays quiet when the reader turned the tab off — that was a choice', () => {
+    expect(needsTopics(DEFAULT_SETTINGS, false)).toBe(false);
   });
 
   it('never fires at the same time as isActive', () => {
-    for (const s of [DEFAULT_SETTINGS, withTopics, { ...withTopics, enabled: false }]) {
-      expect(needsTopics(s) && isActive(s)).toBe(false);
+    for (const s of [DEFAULT_SETTINGS, withTopics]) {
+      for (const on of [true, false]) {
+        expect(needsTopics(s, on) && isActive(s, on)).toBe(false);
+      }
     }
   });
 });
@@ -107,9 +109,13 @@ describe('strictness read back from storage', () => {
 
 describe('a settings value of the wrong type', () => {
   it('falls back to the default, as a hand-edited backup can hold anything', () => {
-    const read = withDefaults({ topics: 'rust', enabled: 'yes' } as never);
+    const read = withDefaults({ topics: 'rust', showScores: 'yes' } as never);
     expect(read.topics).toEqual([]);
-    expect(read.enabled).toBe(true);
+    expect(read.showScores).toBe(false);
+  });
+
+  it('drops the old global switch, so no install is left stuck off', () => {
+    expect(withDefaults({ enabled: false } as never)).toEqual(DEFAULT_SETTINGS);
   });
 
   it('drops a topic list holding anything but strings', () => {

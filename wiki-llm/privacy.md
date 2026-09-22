@@ -9,7 +9,7 @@
 | :------------ | :------------------------------------------------------------------------------------------------------------------------ |
 | Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                   |
 | Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                      |
-| Settings      | `storage.local`. Topics, strictness step, per-host toggles, the language picked in the popup (a locale code).             |
+| Settings      | `storage.local`. Topics, strictness step, the checkboxes, the language picked in the popup (a locale code).               |
 | Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                     |
 | Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way. |
 

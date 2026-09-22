@@ -145,7 +145,7 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 | Control                           | Effect                                                                                                                                                           |
 | :-------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| On                                | Global switch. Off reveals everything.                                                                                                                           |
+| On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                       |
 | Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                 |
 | Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                 |
 | Model                             | Right under the slider. English (33MB, default) or every language (197MB). Switching restarts the engine and downloads on first use.                             |
@@ -187,6 +187,8 @@ Apply is disabled until the textarea differs from what is saved.
 
 **Say the download size on the option itself**, not only in the details. 197MB is the whole cost of the choice, and a reader deciding between two options should not have to open anything to see it.
 
+**The On switch belongs to the tab, not the install.** A global switch turned every open feed off at once. The state lives in the tab's content script (`FeedFilter.on`), is never stored, and a reload turns the tab back on — a stored per-tab value would outlive the tab id it names. The popup asks the active tab at open ([architecture.md](architecture.md) §Tab switch).
+
 **A switch keeps everything.** Topics, strictness and every checkbox survive; ratings are kept per model and come back on a switch back ([architecture.md](architecture.md)). The details text says so, because "switching models" otherwise reads as a thing that might cost the reader their work.
 
 ## No-topics card
@@ -207,7 +209,7 @@ Fixed top-right, same dark chip as the thumbs bar so it reads the same on a ligh
 
 A badge, bottom-left: the toolbar icon and "Posts hidden: N". A click opens the popup. `src/feed/hidden-badge.ts`, wired in `content.ts`.
 
-**It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning uFeed off, or an engine error clears it. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
+**It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning the tab off, or an engine error clears it. Each tab counts its own: the set lives in that tab's `FeedFilter`, never in storage. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
 
 **Shown while uFeed is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with no topics (the nudge's state), it is hidden. **Also hidden in a narrow window**: hosts swap to a bottom navigation bar there, which would cover it. It is a width rule in `blur.css`, not a phone check, so a small desktop window behaves the same.
 
