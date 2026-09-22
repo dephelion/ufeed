@@ -10,12 +10,7 @@ import {
   topicsEqual,
   type Settings,
 } from '../core/settings';
-import {
-  decide as decideAction,
-  decideWithoutScore,
-  isBlacklisted,
-  type Action,
-} from '../core/policy';
+import { decide as decideAction, decideWithoutScore, type Action } from '../core/policy';
 import { thresholdForStrictness, type RatedMatch } from '../core/scoring';
 import { blur, isBlurred, isRevealed, peek, reveal, revealAll } from './blur';
 import { hideAllSkeletons, hideSkeleton, isSkeleton, showSkeleton } from './skeleton';
@@ -279,7 +274,7 @@ export class FeedFilter {
       (revealed ||
         (!followsKept &&
           decideWithoutScore(judged) === undefined &&
-          !isBlacklisted(judged)));
+          decideAction(judged) !== 'blur-blacklist'));
     if (this.#settings.showScores)
       stampScore(post.container, {
         score,

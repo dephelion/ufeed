@@ -222,9 +222,9 @@ Concrete beats abstract: posts write about code, not about categories. `tech` sc
 
 ## Blacklist
 
-**A post closer to a blacklist line than to its best topic line blurs** (`isBlacklisted()` in `policy.ts`): `block > score`, both raw cosine in the same space, so no threshold and no per-model constant. Strictness never touches it.
+**A post that would show, but is closer to a blacklist line than to its best topic line, blurs** (`isBlacklisted()` in `policy.ts`): `block > score`, both raw cosine in the same space, so no per-model constant.
 
-- **Overrides every score-based verdict**, a near-identical rating included: the owner's rule, a blacklist always beats the whitelist.
+- **Only a shown post can be blacklisted**, a liked near-identical one included: the owner's rule, a blacklist beats the whitelist. A post under the threshold stays `topic` or `peek` — it is out of topic, not blacklisted.
 - **Needs a whitelist.** Filtering is off without topics; a blacklist alone does nothing.
 - **Ratings never touch it.** Thumbs are filed and matched against whitelist lines only.
 - **Fail-open holds.** No score, no blacklist verdict.

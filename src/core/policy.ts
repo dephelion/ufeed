@@ -27,7 +27,7 @@ export interface Judgement extends Grounds {
   block?: number | undefined;
 }
 
-/** Closer to a blacklist line than to any topic. Overrides the score and any rating. */
+/** Closer to a blacklist line than to any topic. Only a post that would show is blurred for it. */
 export function isBlacklisted({ score, block }: Judgement): boolean {
   return score !== undefined && block !== undefined && block > score;
 }
@@ -52,11 +52,14 @@ export function decideWithoutScore(grounds: Grounds): Action | undefined {
 export function decide(judgement: Judgement): Action {
   const settled = decideWithoutScore(judgement);
   if (settled !== undefined) return settled;
-  const { score, threshold, rating } = judgement;
-  if (isBlacklisted(judgement)) return 'blur-blacklist';
+  const action = decideByScore(judgement);
+  return action === 'reveal' && isBlacklisted(judgement) ? 'blur-blacklist' : action;
+}
+
+function decideByScore({ score, threshold, rating, settings }: Judgement): Action {
   if (rating !== undefined) return rating ? 'reveal' : 'blur';
   if (score === undefined) return 'reveal';
-  const verdict = verdictAt(score, threshold, modelFor(judgement.settings.model));
+  const verdict = verdictAt(score, threshold, modelFor(settings.model));
   if (verdict === 'show') return 'reveal';
   return verdict === 'peek' ? 'peek' : 'blur';
 }

@@ -43,13 +43,13 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 
 `data-lx-reason` on the container picks the label. It is set by `blur()` and cleared by `reveal()`. `blur()` also writes the label's text to `data-lx-label` in the reader's language; the English shown in this page is `en`, see [i18n.md](i18n.md).
 
-| Reason      | Label                               | Set when                                                                                    |
-| :---------- | :---------------------------------- | :------------------------------------------------------------------------------------------ |
-| `topic`     | "Out of topic — click to read"      | The score fell below the threshold, or a near-copy of a thumbed-down post.                  |
-| `media`     | "No text to check — click to view"  | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place.    |
-| `language`  | "Another language — click to read"  | `blurOtherLanguages` and CLD placed the post outside the model's language.                  |
-| `blacklist` | "Blacklisted topic — click to read" | The post is closer to a blacklist line than to any topic ([model.md](model.md) §Blacklist). |
-| `peek`      | `data-lx-peek` + "— click to read"  | The score landed in the uncertain strip.                                                    |
+| Reason      | Label                               | Set when                                                                                                             |
+| :---------- | :---------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `topic`     | "Out of topic — click to read"      | The score fell below the threshold, or a near-copy of a thumbed-down post.                                           |
+| `media`     | "No text to check — click to view"  | `blurThinMedia` and the post has media under 30 chars, or a caption CLD could not place.                             |
+| `language`  | "Another language — click to read"  | `blurOtherLanguages` and CLD placed the post outside the model's language.                                           |
+| `blacklist` | "Blacklisted topic — click to read" | The post passed the threshold but is closer to a blacklist line than to any topic ([model.md](model.md) §Blacklist). |
+| `peek`      | `data-lx-peek` + "— click to read"  | The score landed in the uncertain strip.                                                                             |
 
 **The peek never touches host DOM.** The opening words ride on `data-lx-peek` and render in our own overlay. Un-blurring them in place means splitting the host's text node — Invariant 3, and dead on the next vendor re-render. `reveal()` clears the attribute, so a recycled node never shows another post's words.
 

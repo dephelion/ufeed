@@ -37,6 +37,11 @@ describe('blacklist', () => {
     expect(decide(base({ score: 0.9, block: 0.91 }))).toBe('blur-blacklist');
   });
 
+  it('leaves a post under the threshold out of topic, not blacklisted', () => {
+    expect(decide(base({ score: THR - PEEK_BAND - 0.001, block: 0.95 }))).toBe('blur');
+    expect(decide(base({ score: THR - PEEK_BAND, block: 0.95 }))).toBe('peek');
+  });
+
   it('leaves a post closer to its topic than to the blacklist', () => {
     expect(decide(base({ score: 0.9, block: 0.89 }))).toBe('reveal');
   });
