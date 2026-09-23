@@ -91,7 +91,7 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 
 `.lx-collapse`, added beside `.lx-blur` when `collapseBlurred` is on: `max-height` plus `overflow: hidden` shrinks the post to a 30px row, 46px with a score badge. Container-only, so no adapter knows about it.
 
-**The row slides shut over 1s, and the slide is CSS.** `@keyframes lx-collapse` on the container; `--lx-collapse-time` is the one place the duration is set, shared with the children's fade.
+**The row slides shut over 0.5s, and the slide is CSS.** `@keyframes lx-collapse` on the container; `--lx-collapse-time` is the one place the duration is set, shared with the children's fade.
 
 **A stylesheet cannot animate this alone, so `blur()` measures the post once.** `max-height` starts at `none`, and `none` does not interpolate — MDN's transitions guide says not to animate to or from `auto` at all. `interpolate-size`/`calc-size()` would solve it and are Chrome 129+ only; the floor is Chrome 111 and Firefox 115, so they are unusable. `measure()` reads `offsetHeight` before the class lands and writes it to `--lx-h`, an inline **namespaced custom property** — the one style the extension sets on a host element (Invariant 3). It is inert: it names no property the host paints, the `max-height` still comes from our stylesheet, and `reveal()` removes it.
 
@@ -99,7 +99,7 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 
 **Unmeasured collapses instantly, by construction.** `--lx-h` falls back to `--lx-shut`, so `from` equals `to` and nothing moves. That covers a post with no layout (0 height, happy-dom included) and is exactly the behaviour every path had before the slide existed.
 
-**A clicked post expands, and nothing else does.** `reveal(element, true)`, from `revealPermanently()` only. A settings change or the off switch hands a whole feed back at once and has nothing to single out. `.lx-expand` animates from the shut row back up to `--lx-h`, which is why `reveal()` keeps that variable for an expand and drops it every other time. Both ends are explicit here: the underlying `max-height` is `none`, and `none` does not interpolate. 0.35s, quicker than the collapse — the reader asked for this one and is waiting on it.
+**A clicked post expands, and nothing else does.** `reveal(element, true)`, from `revealPermanently()` only. A settings change or the off switch hands a whole feed back at once and has nothing to single out. `.lx-expand` animates from the shut row back up to `--lx-h`, which is why `reveal()` keeps that variable for an expand and drops it every other time. Both ends are explicit here: the underlying `max-height` is `none`, and `none` does not interpolate. 0.25s against the collapse's 0.5s, and `--lx-expand-time` is where that lives: the reader asked for this one and is waiting on it.
 
 **`.lx-expand` and `.lx-unveil` carry an animation and nothing else**, so a copy left on a post changes how it looks in no way at all. That is what buys them out of a cleanup path: nothing has to take them off, and `prefers-reduced-motion` can drop them to `animation: none` without stranding a post in a half-state.
 
@@ -111,7 +111,7 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 
 **`prefers-reduced-motion: reduce` turns every one of the three off** — collapse, expand and lift — back to the instant states. It is an OS setting, on by default for more readers than it looks, so a "nothing happens" report is worth checking against it before the CSS: macOS System Settings → Accessibility → Display → Reduce motion.
 
-**Two costs, both accepted until a feed argues.** `measure()` reads `offsetHeight` inside the verdict loop, so a batch — a `rescore()` over every judged post most of all — forces one layout per post; and an animating `max-height` reflows the feed every frame for a second instead of once. If either bites, the duration is one custom property (`--lx-collapse-time`) and the reads can be taken for the whole batch before any class is written.
+**Two costs, both accepted until a feed argues.** `measure()` reads `offsetHeight` inside the verdict loop, so a batch — a `rescore()` over every judged post most of all — forces one layout per post; and an animating `max-height` reflows the feed every frame for half a second instead of once. If either bites, the duration is one custom property (`--lx-collapse-time`) and the reads can be taken for the whole batch before any class is written.
 
 ## While a post is being judged
 

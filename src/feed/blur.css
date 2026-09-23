@@ -161,7 +161,7 @@
    and the inset hairline keeps a run of rows apart on a dark or a light feed. */
 .lx-collapse {
   --lx-shut: 30px;
-  --lx-collapse-time: 1s;
+  --lx-collapse-time: 0.5s;
   max-height: var(--lx-shut);
   overflow: hidden;
   box-shadow: inset 0 -1px 0 color-mix(in srgb, currentColor 14%, transparent);
@@ -190,7 +190,8 @@
    the animation ends a hair under it so the drop back to none does not jump. */
 .lx-expand {
   --lx-shut: 30px;
-  animation: lx-expand 0.35s ease-out;
+  --lx-expand-time: 0.25s;
+  animation: lx-expand var(--lx-expand-time) ease-out;
 }
 
 .lx-expand[data-lx-score] {
