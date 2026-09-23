@@ -84,17 +84,15 @@ Use the Gemma model; Chrome e5 and Firefox use the iframe engine instead.
 4. In the offscreen DevTools Console, evaluate `crossOriginIsolated`. It should
    be `true`; this confirms the page can use shared WebAssembly memory, but does
    not alone confirm the thread count.
-5. In **Sources → Threads**, select the engine worker. Set a breakpoint on the
-   `threads = request.threads === 2 && self.crossOriginIsolated ? 2 : 1`
-   assignment in `engine.worker.ts`. When the worker handles its `INIT` message,
-   check `threads` in the Scope pane; it should be `2`.
+5. In the offscreen DevTools Console, look for
+   `[ufeed:worker] creating WASM threads count=2`, immediately before
+   `[ufeed:worker] model selected`. The worker is configured for two WASM
+   threads.
 
-The ordinary logs show the shared engine and worker, but do not print the
-configured thread count. A `two-thread load failed, retrying single-threaded`
-warning means the worker fell back to one thread; no warning plus `threads: 2`
-at `INIT` confirms the two-thread configuration was selected. Chrome's
-DevTools [Threads pane](https://developer.chrome.com/docs/devtools/javascript/reference#change-thread-context)
-switches between worker contexts.
+A `count=1` line means isolation was unavailable when the worker started. A
+`two-thread load failed, retrying single-threaded` warning means the two-thread
+load failed and it retried with one. Open `chrome://inspect/#pages` to inspect
+the offscreen page and its worker.
 
 ### First run
 
