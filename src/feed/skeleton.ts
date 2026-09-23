@@ -71,6 +71,6 @@ export function isSkeleton(element: HTMLElement): boolean {
 
 /** Invariant 2: nothing may leave a feed stuck in a state it cannot get out of. */
 export function hideAllSkeletons(root: ParentNode = document): void {
-  for (const el of root.querySelectorAll<HTMLElement>(`.${SKELETON_CLASS}`))
-    hideSkeleton(el, true);
+  for (const element of root.querySelectorAll<HTMLElement>(`.${SKELETON_CLASS}`))
+    hideSkeleton(element, true);
 }

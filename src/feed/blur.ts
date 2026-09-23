@@ -256,6 +256,8 @@ export function listenForReveal(
 
 /** Blurred posts and the tags on opened ones: turned off, the feed is the host's again. */
 export function revealAll(root: ParentNode = document): void {
-  for (const el of root.querySelectorAll<HTMLElement>(`.${BLUR_CLASS}, [data-lx-opened]`))
-    reveal(el);
+  for (const element of root.querySelectorAll<HTMLElement>(
+    `.${BLUR_CLASS}, [data-lx-opened]`,
+  ))
+    reveal(element);
 }
