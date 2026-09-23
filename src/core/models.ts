@@ -126,7 +126,7 @@ const GEMMA: ModelSpec = {
   // Measured to miscompute q4 on WebGPU too (near 0.353, far 0.375, against 0.597 and
   // 0.138 on WASM), unchanged by onnxruntime-web 1.30 or by turning the optimizer off.
   tryWebGPU: false,
-  batchSize: 5,
+  batchSize: 1,
 };
 
 export const MODELS: Record<ModelKey, ModelSpec> = {
