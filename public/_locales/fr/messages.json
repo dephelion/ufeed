@@ -192,7 +192,7 @@
     "message": "Masquer si ça mentionne (liste noire)"
   },
   "blacklistPlaceholder": {
-    "message": "crypto, IA, sponsorisé, hot take"
+    "message": "crypto, IA, sponsorisé, intelligence artificielle"
   },
   "blacklistHint": {
     "message": "Séparez les mots ou expressions par des virgules ou des retours à la ligne."

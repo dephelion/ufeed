@@ -192,7 +192,7 @@
     "message": "隱藏提及以下詞的貼文（黑名單）"
   },
   "blacklistPlaceholder": {
-    "message": "加密貨幣，AI，廣告，hot take"
+    "message": "加密貨幣，AI，廣告，人工智慧"
   },
   "blacklistHint": {
     "message": "用逗號或換行分隔詞語或片語。"

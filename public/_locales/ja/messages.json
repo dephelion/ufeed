@@ -192,7 +192,7 @@
     "message": "含む投稿を隠す（ブラックリスト）"
   },
   "blacklistPlaceholder": {
-    "message": "暗号資産、AI、広告、hot take"
+    "message": "暗号資産、AI、広告、人工知能"
   },
   "blacklistHint": {
     "message": "単語やフレーズは読点（、）、カンマ、または改行で区切ります。"

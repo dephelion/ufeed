@@ -192,7 +192,7 @@
     "message": "隐藏提及以下词的帖子（黑名单）"
   },
   "blacklistPlaceholder": {
-    "message": "加密货币，AI，广告，hot take"
+    "message": "加密货币，AI，广告，人工智能"
   },
   "blacklistHint": {
     "message": "用逗号或换行分隔词语或短语。"
