@@ -192,10 +192,10 @@
     "message": "Ocultar si mencionan (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "cripto, IA, patrocinado"
+    "message": "cripto, IA, patrocinado, hot take"
   },
   "blacklistHint": {
-    "message": "Separa palabras o frases con comas o saltos de línea. Escribe las frases como texto normal, por ejemplo hot take; solo coinciden si ambas palabras aparecen juntas. Las publicaciones que coincidan se difuminan, aunque sean del tema. No importan las mayúsculas ni los acentos; las palabras sueltas también bloquean su plural."
+    "message": "Separa palabras o frases con comas o saltos de línea."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"

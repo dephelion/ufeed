@@ -192,10 +192,10 @@
     "message": "Beiträge ausblenden mit (Blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "Krypto, KI, Anzeige"
+    "message": "Krypto, KI, Anzeige, hot take"
   },
   "blacklistHint": {
-    "message": "Wörter oder Wortgruppen durch Kommas oder Zeilenumbrüche trennen. Wortgruppen ohne Anführungszeichen eingeben, zum Beispiel hot take; beide Wörter müssen zusammenstehen. Passende Beiträge werden auch dann verwischt, wenn sie zum Thema passen. Groß- und Kleinschreibung und Akzente spielen keine Rolle; einzelne englische Wörter sperren auch ihre Mehrzahl."
+    "message": "Wörter oder Wortgruppen durch Kommas oder Zeilenumbrüche trennen."
   },
   "tipsSummary": {
     "message": "So schreibst du ein gutes Thema"

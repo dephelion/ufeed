@@ -227,11 +227,11 @@
     "message": "Hide posts mentioning (blacklist)"
   },
   "blacklistPlaceholder": {
-    "message": "crypto, AI, sponsored",
+    "message": "crypto, AI, sponsored, hot take",
     "description": "Three example keywords to block, comma-separated."
   },
   "blacklistHint": {
-    "message": "Separate words or phrases with commas or new lines. Enter phrases as plain text, such as hot take; both words must appear together to match. Any matching post is blurred, even when it is on topic. Case and accents don't matter; single words also block their plurals."
+    "message": "Separate words or phrases with commas or new lines."
   },
   "tipsSummary": {
     "message": "How to write a good topic"

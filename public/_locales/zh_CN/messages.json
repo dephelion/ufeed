@@ -192,10 +192,10 @@
     "message": "隐藏提及以下词的帖子（黑名单）"
   },
   "blacklistPlaceholder": {
-    "message": "加密货币，AI，广告"
+    "message": "加密货币，AI，广告，hot take"
   },
   "blacklistHint": {
-    "message": "用逗号或换行分隔词语或短语。短语请直接输入，例如 hot take；只有两个词连续出现时才会匹配。匹配的帖子即使属于你的主题也会被模糊处理。不区分大小写和重音符号；单独输入的英文单数词也会匹配复数。"
+    "message": "用逗号或换行分隔词语或短语。"
   },
   "tipsSummary": {
     "message": "如何写好一个主题"

@@ -192,10 +192,10 @@
     "message": "隱藏提及以下詞的貼文（黑名單）"
   },
   "blacklistPlaceholder": {
-    "message": "加密貨幣，AI，廣告"
+    "message": "加密貨幣，AI，廣告，hot take"
   },
   "blacklistHint": {
-    "message": "用逗號或換行分隔詞語或片語。片語請直接輸入，例如 hot take；只有兩個詞連續出現時才會符合。符合的貼文即使屬於你的主題也會被模糊處理。不區分大小寫和重音符號；單獨輸入的英文單數詞也會比對複數。"
+    "message": "用逗號或換行分隔詞語或片語。"
   },
   "tipsSummary": {
     "message": "如何寫好一個主題"
