@@ -80,10 +80,10 @@ uFeed sends nothing to us. We operate no server that uFeed talks to.
 
 ## Permissions, and why each is needed
 
-| Permission                                             | Why                                                                                       |
-| :----------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on. |
-| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.          |
+| Permission                                             | Why                                                                                                                                                                   |
+| :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on.                                                                             |
+| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.                                                                                      |
 | `offscreen` (Chrome only)                              | To keep a hidden extension page open for the shared multilingual model worker. The page receives post text from uFeed for scoring; it cannot read the website itself. |
 
 The offscreen permission does not give uFeed access to other websites or
