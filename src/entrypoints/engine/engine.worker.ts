@@ -1,6 +1,7 @@
 import {
   isEngineRequest,
   isInitRequest,
+  isRoutedRequest,
   type EngineReply,
   type EngineRequest,
   type SetTopicsRequest,
@@ -43,23 +44,43 @@ interface Topics {
 }
 
 /** Kept past a failed load, so the next load still has the query to embed. */
-let topics: Topics | undefined;
+const topics = new Map<string, Topics>();
 let loading: Promise<void> | undefined;
+let threads = 1;
+let work = Promise.resolve();
 
 /**
  * Set once by INIT, before any request can arrive, and never changed: a worker
- * loads one model for its whole life. Switching models replaces the frame.
+ * loads one model for its whole life. Switching models replaces the client transport.
  */
 let spec: ModelSpec = modelFor(DEFAULT_MODEL);
 
-const post = (reply: EngineReply) => self.postMessage(reply);
+const post = (reply: EngineReply, clientId = '') =>
+  self.postMessage(clientId ? { clientId, reply } : reply);
 
 function ensureLoaded(): Promise<void> {
+  const progress = (p: {
+    state: 'downloading' | 'warming' | 'ready';
+    progress?: number;
+  }) => {
+    if (p.state === 'downloading')
+      log.info('downloading', { percent: Math.round(p.progress ?? 0) });
+    post({ type: 'STATUS', state: p.state, progress: p.progress });
+  };
   loading ??= embedder
-    .load(spec, (p) => {
-      if (p.state === 'downloading')
-        log.info('downloading', { percent: Math.round(p.progress ?? 0) });
-      post({ type: 'STATUS', state: p.state, progress: p.progress });
+    .load(spec, progress, undefined, threads)
+    .catch((error: unknown) => {
+      if (threads === 1) throw error;
+      log.warn('two-thread load failed, retrying single-threaded', {
+        reason: describe(error),
+      });
+      threads = 1;
+      return embedder.load(spec, progress, undefined, 1);
+    })
+    .catch((error: unknown) => {
+      const message = describe(error);
+      post({ type: 'STATUS', state: 'error', message });
+      throw error;
     })
     .then(() => {
       log.info('ready', { model: spec.label, device: embedder.device });
@@ -102,15 +123,15 @@ async function embedTopics(request: SetTopicsRequest): Promise<Vector[]> {
 }
 
 /** A change of ratings alone keeps the embedded topics: thumbs never move them. */
-function next(request: SetTopicsRequest): Topics {
+function next(request: SetTopicsRequest, previous: Topics | undefined): Topics {
   const same =
-    topics !== undefined &&
-    topics.request.topics.length === request.topics.length &&
-    topics.request.topics.every((t, i) => t === request.topics[i]);
+    previous !== undefined &&
+    previous.request.topics.length === request.topics.length &&
+    previous.request.topics.every((t, i) => t === request.topics[i]);
   return {
     request,
     rated: ratedOf(request),
-    embedded: same ? topics?.embedded : undefined,
+    embedded: same ? previous?.embedded : undefined,
   };
 }
 
@@ -127,33 +148,64 @@ self.onmessage = (event: MessageEvent<unknown>) => {
   const request = event.data;
   if (isInitRequest(request)) {
     spec = modelFor(request.model);
+    threads = request.threads === 2 && self.crossOriginIsolated ? 2 : 1;
     log.info('model selected', { model: spec.label, dim: spec.dim });
     return;
   }
-  if (!isEngineRequest(request)) return;
-  if (request.type === 'SET_TOPICS') topics = next(request);
-  void handle(request);
+  if (
+    typeof request === 'object' &&
+    request !== null &&
+    'type' in request &&
+    request.type === 'RELEASE' &&
+    'clientId' in request &&
+    typeof request.clientId === 'string'
+  ) {
+    const clientId = request.clientId;
+    work = work.then(() => {
+      topics.delete(clientId);
+    });
+    return;
+  }
+  const routed = isRoutedRequest(request);
+  const clientId = routed ? request.clientId : '';
+  const message = routed ? request.request : request;
+  if (!isEngineRequest(message)) return;
+  if (routed) {
+    work = work.then(() => {
+      if (message.type === 'SET_TOPICS')
+        topics.set(clientId, next(message, topics.get(clientId)));
+      return handle(message, clientId);
+    });
+  } else {
+    // Keep the per-tab iframe's existing request behavior on Firefox and e5.
+    if (message.type === 'SET_TOPICS')
+      topics.set(clientId, next(message, topics.get(clientId)));
+    void handle(message, clientId);
+  }
 };
 
-async function handle(request: EngineRequest): Promise<void> {
+async function handle(request: EngineRequest, clientId: string): Promise<void> {
   try {
     await ensureLoaded();
   } catch (error: unknown) {
-    post({ id: request.id, type: 'ERROR', message: describe(error) });
+    post({ id: request.id, type: 'ERROR', message: describe(error) }, clientId);
     return;
   }
   try {
-    const current = topics;
+    const current = topics.get(clientId);
     const vectors = await topicVectors(current);
     if (request.type === 'SET_TOPICS') {
-      post({ id: request.id, type: 'ACK' });
+      post({ id: request.id, type: 'ACK' }, clientId);
       return;
     }
     if (request.type === 'FEEDBACK') {
       const [vector] = await embedder.embed([formatPost(request.text, spec)]);
       const topic = vector ? bestMatch(vector, vectors).topic : -1;
       log.info('feedback embedded', { liked: request.liked, topic });
-      post({ id: request.id, type: 'VECTOR', vector: [...(vector ?? [])], topic });
+      post(
+        { id: request.id, type: 'VECTOR', vector: [...(vector ?? [])], topic },
+        clientId,
+      );
       return;
     }
     if (vectors.length === 0) throw new Error('scored before any topics were set');
@@ -173,17 +225,20 @@ async function handle(request: EngineRequest): Promise<void> {
       max: scores.length ? Math.max(...scores).toFixed(3) : undefined,
       rated: ratings.filter((r) => r !== null).length,
     });
-    post({
-      id: request.id,
-      type: 'SCORES',
-      scores,
-      topics: matches.map((m) => m.topic),
-      lines: matches.map((m) => m.lines),
-      ratings,
-    });
+    post(
+      {
+        id: request.id,
+        type: 'SCORES',
+        scores,
+        topics: matches.map((m) => m.topic),
+        lines: matches.map((m) => m.lines),
+        ratings,
+      },
+      clientId,
+    );
   } catch (error: unknown) {
     log.error('request failed', { type: request.type, reason: describe(error) });
-    post({ id: request.id, type: 'ERROR', message: describe(error) });
+    post({ id: request.id, type: 'ERROR', message: describe(error) }, clientId);
   }
 }
 

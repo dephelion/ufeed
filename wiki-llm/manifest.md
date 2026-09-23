@@ -11,10 +11,11 @@ WXT generates one manifest per browser from `wxt.config.ts` plus the entrypoints
 | :-------------------------- | :------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `default_locale`            | `en`                                                                                                                       | Required once `public/_locales/` exists. `i18n` needs no permission ([i18n.md](i18n.md)).                                                          |
 | `description`               | `__MSG_extDescription__`                                                                                                   | Resolved per locale. `name` stays literal.                                                                                                         |
-| `permissions`               | `storage`                                                                                                                  | Settings only.                                                                                                                                     |
+| `permissions`               | `storage`; Chrome also `offscreen`                                                                                         | Settings; Chrome's shared Gemma worker document.                                                                                                   |
 | `host_permissions`          | `*://x.com/*`, `*://twitter.com/*`, `*://linkedin.com/*`, `*://*.linkedin.com/*`, `*://reddit.com/*`, `*://*.reddit.com/*` | Default, not optional — installing uFeed implies wanting it on the sites you use. Both patterns per site: `*.reddit.com` misses the bare domain.   |
 | `web_accessible_resources`  | `engine.html`, `icon-gray/48.png`, `icon/32.png`, `_locales/*/messages.json`                                               | The iframe, the icons the card and badge show (an `<img>` cannot load an unlisted file), the catalogs a picked language reads.                     |
 | `content_security_policy`   | `script-src 'self' 'wasm-unsafe-eval'`                                                                                     | **Mandatory** or ONNX Runtime will not instantiate.                                                                                                |
+| Chrome COOP/COEP            | `same-origin` / `require-corp`                                                                                             | Isolate the offscreen page for shared WASM memory; the injected iframe remains unisolated.                                                         |
 | `browser_specific_settings` | `gecko.id`, `strict_min_version: 115.0`, `data_collection_permissions: { required: ['none'] }`                             | Required to install on Firefox. AMO rejects a new upload without `data_collection_permissions`; Firefox < 140 ignores it (lint warning, harmless). |
 | `content_scripts[].css`     | `blur.css`                                                                                                                 | Declared CSS applies before first paint; injected does not.                                                                                        |
 | `content_scripts[].run_at`  | `document_start`                                                                                                           | Same reason.                                                                                                                                       |
@@ -59,12 +60,12 @@ node -e "const s=require('sharp'),f=require('fs').readFileSync('assets/logo.svg'
 
 `public/ort/` holds `ort-wasm-simd-threaded.jsep.{wasm,mjs}`, synced from `node_modules` by `scripts/sync-ort.mjs` on `postinstall`. `env.backends.onnx.wasm.wasmPaths = '/ort/'`.
 
-**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. jsep only, because the default `onnxruntime-web` entry that transformers.js imports asks for the jsep files by name. Threads are unusable anyway.
+**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. jsep only, because the default `onnxruntime-web` entry that transformers.js imports asks for the jsep files by name.
 
 Package size ~22.5MB, almost entirely that binary.
 
-## No WASM threads
+## WASM threads
 
-An iframe injected into a host page cannot be cross-origin isolated: the host does not send COEP. `crossOriginIsolated` is false on both browsers, so `SharedArrayBuffer` is unusable and ORT runs single-threaded. Chrome exposes the `SharedArrayBuffer` constructor anyway — existence is not usability.
+An iframe injected into a host page cannot be cross-origin isolated: the host does not send COEP. Firefox and Chrome's iframe fallback run single-threaded. Chrome's top-level offscreen page and its worker are isolated by COOP/COEP and use two threads for Gemma. If isolation or a two-thread load fails, the worker retries one thread; if the offscreen engine fails, the client uses its iframe. Chrome exposes the `SharedArrayBuffer` constructor in unisolated contexts too — existence is not usability.
 
 **`optional_host_permissions` is gone.** Reddit was its only entry and is now a default host, so the concept left with it — see [adapters.md](adapters.md). An optional host is not a config flag: it needs a request button in the popup, `permissions.request()` from a user gesture, runtime content-script registration, and a second path through `isActive()`.

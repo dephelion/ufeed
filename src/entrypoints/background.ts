@@ -2,10 +2,65 @@ import browser from 'webextension-polyfill';
 import { defineBackground } from 'wxt/utils/define-background';
 import { adapterFor } from '../adapters';
 import { logger } from '../core/log';
+import { ENSURE_OFFSCREEN } from '../core/protocol';
 import { onPopupRequested } from '../platform/open-popup';
 import { onFeedDetected } from '../platform/status-channel';
 
 const log = logger('background');
+
+interface ChromeOffscreen {
+  offscreen: {
+    createDocument(details: {
+      url: string;
+      reasons: ['WORKERS'];
+      justification: string;
+    }): Promise<void>;
+  };
+  runtime: {
+    getContexts?(filter: {
+      contextTypes: ['OFFSCREEN_DOCUMENT'];
+      documentUrls: string[];
+    }): Promise<unknown[]>;
+  };
+}
+
+let creatingOffscreen: Promise<boolean> | undefined;
+
+async function ensureOffscreen(): Promise<boolean> {
+  const api = (globalThis as unknown as { chrome?: ChromeOffscreen }).chrome;
+  if (!api?.offscreen) return false;
+  creatingOffscreen ??= (async () => {
+    const url = browser.runtime.getURL('offscreen.html');
+    if (api.runtime.getContexts) {
+      const existing = await api.runtime.getContexts({
+        contextTypes: ['OFFSCREEN_DOCUMENT'],
+        documentUrls: [url],
+      });
+      if (existing.length > 0) return true;
+    } else {
+      const existing = await (
+        self as unknown as { clients: { matchAll(): Promise<{ url: string }[]> } }
+      ).clients.matchAll();
+      if (existing.some((client) => client.url === url)) return true;
+    }
+    await api.offscreen.createDocument({
+      url,
+      reasons: ['WORKERS'],
+      justification: 'Share one on-device Gemma worker across feed tabs',
+    });
+    return true;
+  })()
+    .catch((error: unknown) => {
+      log.warn('shared engine unavailable', {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      return false;
+    })
+    .finally(() => {
+      creatingOffscreen = undefined;
+    });
+  return creatingOffscreen;
+}
 
 const SIZES = ['16', '32', '48', '128'] as const;
 
@@ -62,6 +117,16 @@ async function openPopup(): Promise<void> {
  * gray means there was none to find.
  */
 export default defineBackground(() => {
+  browser.runtime.onMessage.addListener((message: unknown) => {
+    if (
+      typeof message === 'object' &&
+      message !== null &&
+      'type' in message &&
+      message.type === ENSURE_OFFSCREEN
+    )
+      return ensureOffscreen();
+    return undefined;
+  });
   onFeedDetected((tabId) => {
     setIcon(tabId, COLOR);
   });

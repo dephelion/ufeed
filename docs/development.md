@@ -59,8 +59,11 @@ The `embedder` line names the model: `Xenova/e5-small-v2` by default,
 popup.
 
 The first missing line locates the failure. `content` and `client` lines appear in
-the page console; `engine` and `worker` lines come from the iframe, so pick the
-`engine.html` context in the devtools frame selector to see them.
+the page console. For Chrome's multilingual model, inspect `engine` and `worker`
+lines in the offscreen document at `chrome://inspect/#pages`; for the default
+English model and Firefox, select the `engine.html` iframe in the page DevTools
+frame selector. The background service worker logs appear in the extension's
+service worker DevTools.
 
 Logging is on only in debug builds: `npm run watch` and `npm run build:debug`.
 The build mode alone decides it, never an environment variable or a

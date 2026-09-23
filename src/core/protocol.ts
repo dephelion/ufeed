@@ -10,10 +10,39 @@ export type EngineState = 'idle' | 'downloading' | 'warming' | 'ready' | 'error'
 export interface InitRequest {
   type: 'INIT';
   model: ModelKey;
+  threads?: 2;
 }
 
 export function isInitRequest(data: unknown): data is InitRequest {
-  return isRecord(data) && data.type === 'INIT' && isModelKey(data.model);
+  return (
+    isRecord(data) &&
+    data.type === 'INIT' &&
+    isModelKey(data.model) &&
+    (data.threads === undefined || data.threads === 2)
+  );
+}
+
+export const ENSURE_OFFSCREEN = 'ufeed:ensure-offscreen';
+export const SHARED_ENGINE = 'ufeed:shared-engine';
+
+export interface RoutedRequest {
+  clientId: string;
+  request: EngineRequest;
+}
+
+export interface RoutedReply {
+  clientId: string;
+  reply: EngineReply;
+}
+
+export function isRoutedRequest(data: unknown): data is RoutedRequest {
+  return (
+    isRecord(data) && typeof data.clientId === 'string' && isEngineRequest(data.request)
+  );
+}
+
+export function isRoutedReply(data: unknown): data is RoutedReply {
+  return isRecord(data) && typeof data.clientId === 'string' && isEngineReply(data.reply);
 }
 
 export interface ScoreRequest {

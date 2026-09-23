@@ -257,24 +257,26 @@ A backend can load, report ready, run fast, and return confident nonsense. ORT's
 
 **WASM is the only backend, for both models.** e5's q8 failed the probe on WebGPU on every load (`near=0.901 far=0.898`, against a required gap of 0.06), and so did Gemma's q4 (`near=0.353 far=0.375`, against `0.597` and `0.138` on WASM) — see `tryWebGPU` below. Every feed tab that tried paid for a WebGPU session it then threw away.
 
-**WASM threads are out for good**, whatever the model: an injected iframe cannot be cross-origin isolated, so `SharedArrayBuffer` is unusable and ORT runs single-threaded ([manifest.md](manifest.md) §No WASM threads). **Separate workers do parallelise** — measured 1.81× at 2, 3.07× at 4, 4.19× at 6 — but each holds its own copy of the weights, and at ~197MB per session that is a memory problem per feed tab before any pool is built. Not implemented; see `.local/embeddinggemma-2026-09-20.md`.
+**The iframe stays single-threaded**, because an injected iframe cannot be cross-origin isolated ([manifest.md](manifest.md) §WASM threads). Chrome's isolated offscreen Gemma worker starts with two WASM threads in one model session; Firefox keeps its iframe. Two independent workers would load two sessions and are not used.
 
-## Making WASM faster: what was measured and rejected
+## Making WASM faster: what was measured
 
 WASM is the only backend either model gets, so its cost is the product's cost. Measured 2026-09-20, native ORT single-threaded (the order is the finding, not the absolute ms). Harnesses in `.local/spikes/multilingual/`.
 
 **Cost is mostly fixed, not per-character.** Fitting the length sweep gives **`cost ≈ 31ms + 0.366ms × chars`**. A third of the cost of a median post is overhead that no amount of trimming touches.
 
-| Lever            | Real gain                    | Cost                                 | Verdict                                    |
-| :--------------- | :--------------------------- | :----------------------------------- | :----------------------------------------- |
-| q8 instead of q4 | **−70%** (168 vs 98 ms/post) | +112MB, +0.006 AUC                   | Rejected. q4 is both faster and smaller.   |
-| Cap text at 240  | 3.7%                         | −0.005 AUC                           | Rejected: not worth a code path.           |
-| Cap text at 160  | 17.5%                        | −0.022 AUC                           | Rejected: real accuracy for a modest gain. |
-| Cap text at 80   | 38%                          | −0.070 AUC                           | Rejected outright.                         |
-| Batching         | none (0.93×)                 | breaks determinism                   | Closed, see §Determinism.                  |
-| WASM threads     | —                            | impossible                           | Closed, no cross-origin isolation.         |
-| Smaller batch    | 0% throughput                | none                                 | **Adopted**, `spec.batchSize`.             |
-| 2 workers        | 45%                          | a second copy of the weights per tab | Open. Needs the engine singleton first.    |
+| Lever            | Real gain                    | Cost                       | Verdict                                    |
+| :--------------- | :--------------------------- | :------------------------- | :----------------------------------------- |
+| q8 instead of q4 | **−70%** (168 vs 98 ms/post) | +112MB, +0.006 AUC         | Rejected. q4 is both faster and smaller.   |
+| Cap text at 240  | 3.7%                         | −0.005 AUC                 | Rejected: not worth a code path.           |
+| Cap text at 160  | 17.5%                        | −0.022 AUC                 | Rejected: real accuracy for a modest gain. |
+| Cap text at 80   | 38%                          | −0.070 AUC                 | Rejected outright.                         |
+| Batching         | none (0.93×)                 | breaks determinism         | Closed, see §Determinism.                  |
+| WASM threads     | 1.81× on 60 posts            | Chrome offscreen isolation | Adopted for Chrome Gemma.                  |
+| Smaller batch    | 0% throughput                | none                       | **Adopted**, `spec.batchSize`.             |
+| 2 workers        | 45%                          | a second model session     | Rejected in favor of threads.              |
+
+**Two-thread browser probe, 2026-09-23:** Chrome for Testing 152 on Apple M2, 60 labelled posts, same Gemma q4 model and bundled ORT WASM. One thread took 19.8–20.0s; two took 11.0s (**1.81×**). All 60 vectors matched exactly across all 768 dimensions; max score difference was zero and no decision changed at threshold 0.188. Both modes classified 40/60 correctly. The all-415-post comparison, resident-memory measurement and end-to-end visible-tab latency remain open. The 197MB model figure is download size, not measured resident memory.
 
 **Truncation looked far better than it is.** The per-post figures (80 chars runs at 0.40× the cost of 320) are for the _longest_ posts. Across the real length distribution — mean 174 chars, median 182, max 325 — a cap at 240 touches 125 of 415 posts and saves under 4%. Short posts cannot be made shorter, and `MAX_CHARS = 1200` never binds on a feed at all.
 

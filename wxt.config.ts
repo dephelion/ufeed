@@ -28,7 +28,7 @@ export default defineConfig({
     // Text lives in public/_locales; the browser picks the locale (wiki-llm/i18n.md).
     default_locale: 'en',
     description: '__MSG_extDescription__',
-    permissions: ['storage'],
+    permissions: browser === 'chrome' ? ['storage', 'offscreen'] : ['storage'],
     host_permissions: FEED_HOSTS,
     /**
      * Grayscale by default: a tab with no feed, or one whose engine has not
@@ -64,6 +64,12 @@ export default defineConfig({
     content_security_policy: {
       extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
     },
+    ...(browser === 'chrome'
+      ? {
+          cross_origin_embedder_policy: { value: 'require-corp' },
+          cross_origin_opener_policy: { value: 'same-origin' },
+        }
+      : {}),
     /**
      * Floor set by `color-mix()`, the newest thing the stylesheets use. Below it
      * the blur label and the no-topics card lose their backgrounds, which is a
