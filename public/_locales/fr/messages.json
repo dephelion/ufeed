@@ -192,10 +192,10 @@
     "message": "Masquer si ça mentionne (liste noire)"
   },
   "blacklistPlaceholder": {
-    "message": "crypto, IA, sponsorisé"
+    "message": "crypto, IA, sponsorisé, intelligence artificielle"
   },
   "blacklistHint": {
-    "message": "Séparez les mots-clés par des virgules ou des retours à la ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
+    "message": "Séparez les mots ou expressions par des virgules ou des retours à la ligne."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"

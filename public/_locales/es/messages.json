@@ -192,10 +192,10 @@
     "message": "Ocultar si mencionan (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "cripto, IA, patrocinado"
+    "message": "cripto, IA, patrocinado, inteligencia artificial"
   },
   "blacklistHint": {
-    "message": "Separa las palabras clave con comas o saltos de línea. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
+    "message": "Separa palabras o frases con comas o saltos de línea."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"

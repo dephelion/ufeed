@@ -82,8 +82,8 @@ A score does not decide blur-or-not; it picks one of three treatments ([model.md
 Keywords, never the model: an embedding blacklist blurred unrelated posts and read as a broken feed. `core/blacklist.ts`.
 
 - **First tier, before scoring.** A match blurs at once and costs no inference; it beats the score, a rating and a kept conversation.
-- **Literal match.** Case and Latin accents (U+0300–036F) folded, then recomposed: stripping every mark turned が into か. Whole words, lookarounds on `\p{L}\p{N}`; a phrase matches across any whitespace.
-- **Singular matches plural**: `-s`, `-es`, `y` → `-ys`/`-ies`. Never plural to singular: `news` would match `new`.
+- **Literal match.** Separate words or phrases by commas or line breaks. Case and Latin accents (U+0300–036F) folded, then recomposed: stripping every mark turned が into か. Whole words, lookarounds on `\p{L}\p{N}`; a phrase such as `hot take` requires both words together in order, across any whitespace.
+- **Single-word singular matches plural**: `-s`, `-es`, `y` → `-ys`/`-ies`. Phrases stay literal: `hot take` does not match `hot takes`. Never plural to singular: `news` would match `new`.
 - **Han, Kana, Hangul, Thai, Lao, Khmer, Myanmar match as a substring**: no spaces to bound a word, or particles glued on (`코인은`).
 - **Thumbs never touch it, and never show on a blacklisted post**, opened or not: a rating could not move the verdict. An edit re-decides every judged post on the spot from the score cache, never through the viewport observer: waiting on it left an on-screen post shown. Only posts the tier had blurred reach the engine.
 

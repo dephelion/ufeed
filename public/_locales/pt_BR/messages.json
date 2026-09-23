@@ -192,10 +192,10 @@
     "message": "Ocultar se mencionar (lista negra)"
   },
   "blacklistPlaceholder": {
-    "message": "cripto, IA, patrocinado"
+    "message": "cripto, IA, patrocinado, inteligência artificial"
   },
   "blacklistHint": {
-    "message": "Separe as palavras-chave com vírgulas ou quebras de linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
+    "message": "Separe palavras ou frases com vírgulas ou quebras de linha."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"

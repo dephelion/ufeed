@@ -33,9 +33,16 @@ describe('blursAsBlacklisted', () => {
     expect(blocks(['box'], 'a pile of boxes')).toBe(true);
   });
 
-  it('matches a phrase across any whitespace', () => {
-    expect(blocks(['product launch'], 'our product\n launch is today')).toBe(true);
-    expect(blocks(['product launch'], 'our product is ready to launch')).toBe(false);
+  it('matches a full phrase literally across any whitespace', () => {
+    for (const text of ['A hot take today', 'A HOT\nTAKE today'])
+      expect(blocks(['hot take'], text)).toBe(true);
+    for (const text of [
+      'A hot topic and a take today',
+      'A take that is hot',
+      'A hot takes roundup',
+      'A hot takedown',
+    ])
+      expect(blocks(['hot take'], text)).toBe(false);
   });
 
   it('treats keyword punctuation literally', () => {
@@ -101,6 +108,9 @@ describe('blockedKeyword', () => {
   it('names the keyword that matched, as the reader wrote it', () => {
     expect(named('Top 5 CRYPTO picks')).toBe('crypto');
     expect(named('Best cafe in town')).toBe('café');
+    expect(
+      blockedKeyword({ ...DEFAULT_SETTINGS, blacklist: ['hot take'] }, 'One HOT TAKE'),
+    ).toBe('hot take');
   });
 
   it('is undefined when nothing matches', () => {

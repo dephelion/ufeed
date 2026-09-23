@@ -192,10 +192,10 @@
     "message": "隱藏提及以下詞的貼文（黑名單）"
   },
   "blacklistPlaceholder": {
-    "message": "加密貨幣，AI，廣告"
+    "message": "加密貨幣，AI，廣告，人工智慧"
   },
   "blacklistHint": {
-    "message": "用逗號或換行分隔關鍵字。包含其中任何一個的貼文都會被模糊處理，即使它屬於你的主題。不區分大小寫和重音符號，英文單數也會比對複數。"
+    "message": "用逗號或換行分隔詞語或片語。"
   },
   "tipsSummary": {
     "message": "如何寫好一個主題"
