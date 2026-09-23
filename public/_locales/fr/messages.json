@@ -195,7 +195,7 @@
     "message": "crypto, IA, sponsorisé"
   },
   "blacklistHint": {
-    "message": "Séparez les mots-clés par des virgules ou des retours à la ligne. Toute publication qui en contient un est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas, et le singulier bloque aussi son pluriel."
+    "message": "Séparez les mots ou expressions par des virgules ou des retours à la ligne. Une expression comme « hot take » ne correspond que si les deux mots se suivent. Toute publication correspondante est floutée, même si elle est dans le sujet. La casse et les accents ne comptent pas ; un mot seul bloque aussi son pluriel."
   },
   "tipsSummary": {
     "message": "Comment rédiger un bon sujet"

@@ -231,7 +231,7 @@
     "description": "Three example keywords to block, comma-separated."
   },
   "blacklistHint": {
-    "message": "Separate keywords with commas or new lines. Any post that contains one is blurred, even when it is on topic. Case and accents don't matter, and a singular also blocks its plural."
+    "message": "Separate words or phrases with commas or new lines. A phrase like “hot take” matches only when both words appear together. Any matching post is blurred, even when it is on topic. Case and accents don't matter; single words also block their plurals."
   },
   "tipsSummary": {
     "message": "How to write a good topic"

@@ -6,7 +6,7 @@ import { clampStrictness } from './scoring';
 export interface Settings {
   /** The whitelist: posts must be about one of these to show. */
   topics: string[];
-  /** The blacklist: a post closer to one of these than to any topic is blurred. */
+  /** Literal blocked words and phrases, checked before topic scoring. */
   blacklist: string[];
   /** Which model scores the feed. Changing it restarts the engine. */
   model: ModelKey;

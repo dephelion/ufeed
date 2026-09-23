@@ -195,7 +195,7 @@
     "message": "cripto, IA, patrocinado"
   },
   "blacklistHint": {
-    "message": "Separe as palavras-chave com vírgulas ou quebras de linha. Qualquer publicação que contenha uma fica desfocada, mesmo quando é do tema. Maiúsculas e acentos não importam, e o singular também bloqueia o plural."
+    "message": "Separe palavras ou frases com vírgulas ou quebras de linha. Uma frase como “hot take” só corresponde quando as duas palavras aparecem juntas. Publicações correspondentes ficam desfocadas, mesmo quando são do tema. Maiúsculas e acentos não importam; palavras isoladas também bloqueiam o plural."
   },
   "tipsSummary": {
     "message": "Como escrever um bom tópico"

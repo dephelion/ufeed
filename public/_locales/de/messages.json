@@ -195,7 +195,7 @@
     "message": "Krypto, KI, Anzeige"
   },
   "blacklistHint": {
-    "message": "Stichwörter durch Kommas oder Zeilenumbrüche trennen. Jeder Beitrag, der eines davon enthält, wird verwischt, auch wenn er zum Thema passt. Groß- und Kleinschreibung und Akzente spielen keine Rolle, und die Einzahl sperrt auch die englische Mehrzahl auf -s."
+    "message": "Wörter oder Wortgruppen durch Kommas oder Zeilenumbrüche trennen. Eine Wortgruppe wie „hot take“ trifft nur, wenn beide Wörter zusammenstehen. Passende Beiträge werden auch dann verwischt, wenn sie zum Thema passen. Groß- und Kleinschreibung und Akzente spielen keine Rolle; einzelne englische Wörter sperren auch ihre Mehrzahl."
   },
   "tipsSummary": {
     "message": "So schreibst du ein gutes Thema"

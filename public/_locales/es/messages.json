@@ -195,7 +195,7 @@
     "message": "cripto, IA, patrocinado"
   },
   "blacklistHint": {
-    "message": "Separa las palabras clave con comas o saltos de línea. Cualquier publicación que contenga una se difumina, aunque sea del tema. No importan las mayúsculas ni los acentos, y el singular también bloquea su plural."
+    "message": "Separa palabras o frases con comas o saltos de línea. Una frase como «hot take» solo coincide si ambas palabras aparecen juntas. Las publicaciones que coincidan se difuminan, aunque sean del tema. No importan las mayúsculas ni los acentos; las palabras sueltas también bloquean su plural."
   },
   "tipsSummary": {
     "message": "Cómo escribir un buen tema"

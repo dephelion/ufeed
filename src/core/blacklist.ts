@@ -17,7 +17,7 @@ const compiled = new WeakMap<readonly string[], Matcher | null>();
 
 /**
  * Literal, never the model: a keyword blurs exactly the posts that contain it.
- * Case and accents are ignored, and a singular also matches its plural.
+ * Case and accents are ignored; single words also match their plurals.
  */
 export function blursAsBlacklisted(settings: Settings, text: string): boolean {
   return blockedKeyword(settings, text) !== undefined;
@@ -62,10 +62,12 @@ function compile(blacklist: readonly string[]): Matcher | null {
 function keywordPattern(keyword: string): string {
   const literal = (s: string) => escape(s).replace(/\s+/g, '\\s+');
   if (UNSPACED.test(keyword)) return literal(keyword);
-  const plural = keyword.endsWith('y')
-    ? `${literal(keyword.slice(0, -1))}(?:ys?|ies)`
-    : `${literal(keyword)}(?:s|es)?`;
-  return `(?<![\\p{L}\\p{N}])${plural}(?![\\p{L}\\p{N}])`;
+  const match = keyword.includes(' ')
+    ? literal(keyword)
+    : keyword.endsWith('y')
+      ? `${literal(keyword.slice(0, -1))}(?:ys?|ies)`
+      : `${literal(keyword)}(?:s|es)?`;
+  return `(?<![\\p{L}\\p{N}])${match}(?![\\p{L}\\p{N}])`;
 }
 
 /** Latin-range accents only: stripping every mark turned が into か and emptied Devanagari vowels. */
