@@ -87,6 +87,28 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 - **Han, Kana, Hangul, Thai, Lao, Khmer, Myanmar match as a substring**: no spaces to bound a word, or particles glued on (`코인은`).
 - **Thumbs never touch it, and never show on a blacklisted post**, opened or not: a rating could not move the verdict. An edit re-decides every judged post on the spot from the score cache, never through the viewport observer: waiting on it left an on-screen post shown. Only posts the tier had blurred reach the engine.
 
+## The collapse
+
+`.lx-collapse`, added beside `.lx-blur` when `collapseBlurred` is on: `max-height` plus `overflow: hidden` shrinks the post to a 30px row, 46px with a score badge. Container-only, so no adapter knows about it.
+
+**The row slides shut over 1s, and the slide is CSS.** `@keyframes lx-collapse` on the container; `--lx-collapse-time` is the one place the duration is set, shared with the children's fade.
+
+**A stylesheet cannot animate this alone, so `blur()` measures the post once.** `max-height` starts at `none`, and `none` does not interpolate — MDN's transitions guide says not to animate to or from `auto` at all. `interpolate-size`/`calc-size()` would solve it and are Chrome 129+ only; the floor is Chrome 111 and Firefox 115, so they are unusable. `measure()` reads `offsetHeight` before the class lands and writes it to `--lx-h`, an inline **namespaced custom property** — the one style the extension sets on a host element (Invariant 3). It is inert: it names no property the host paints, the `max-height` still comes from our stylesheet, and `reveal()` removes it.
+
+**A keyframes animation, not a transition.** A transition needs a resolved previous value, which an element blurred in the same frame it is found does not have; an animation starts from its own `from`. The keyframe has no `to`, so it lands on whatever `max-height` the rules set and the score variant needs no second animation.
+
+**Unmeasured collapses instantly, by construction.** `--lx-h` falls back to `--lx-shut`, so `from` equals `to` and nothing moves. That covers a post with no layout (0 height, happy-dom included) and is exactly the behaviour every path had before the slide existed.
+
+**Never re-measure a collapsed post** — it would read the shut row and the next slide would start from 30px. `blur()` measures only when the class is absent.
+
+**Children fade over the full slide, not the blur's 0.2s.** Gone in 200ms leaves an empty box closing on nothing; fading `ease-in` over the second keeps the post legible while it rolls up and transparent by the time the row is thin enough to clip a sliver.
+
+**The label does not animate.** `::after` is created in the same frame as the class, so it has no previous value to move from, and it should be readable the moment the post is claimed.
+
+**`prefers-reduced-motion: reduce` turns both off**, back to the instant collapse.
+
+**Two costs, both accepted until a feed argues.** `measure()` reads `offsetHeight` inside the verdict loop, so a batch — a `rescore()` over every judged post most of all — forces one layout per post; and an animating `max-height` reflows the feed every frame for a second instead of once. If either bites, the duration is one custom property (`--lx-collapse-time`) and the reads can be taken for the whole batch before any class is written.
+
 ## While a post is being judged
 
 `.lx-pending`, set by `showSkeleton()` when a post is found or re-held, lifted by `hideSkeleton()` when a verdict lands.

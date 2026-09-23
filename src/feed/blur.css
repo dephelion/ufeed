@@ -160,13 +160,37 @@
    No fill of our own: the row shows whatever the host paints behind the post,
    and the inset hairline keeps a run of rows apart on a dark or a light feed. */
 .lx-collapse {
-  max-height: 30px;
+  --lx-shut: 30px;
+  --lx-collapse-time: 1s;
+  max-height: var(--lx-shut);
   overflow: hidden;
   box-shadow: inset 0 -1px 0 color-mix(in srgb, currentColor 14%, transparent);
+  animation: lx-collapse var(--lx-collapse-time) ease;
 }
 
+/* max-height: none does not interpolate and Firefox has no interpolate-size, so
+   blur() measures the post into --lx-h. See wiki-llm/ui.md §The collapse. */
+@keyframes lx-collapse {
+  from {
+    max-height: var(--lx-h, var(--lx-shut));
+  }
+}
+
+/* Fades over the whole slide, not the blur's 0.2s: content gone early leaves an
+   empty box closing on nothing. */
 .lx-collapse > * {
   opacity: 0;
+  transition: opacity var(--lx-collapse-time) ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-collapse {
+    animation: none;
+  }
+
+  .lx-collapse > * {
+    transition: none;
+  }
 }
 
 /* Smaller than the full-height label, and centred in the row. */
@@ -190,7 +214,7 @@
 
 /* The label rises to the top so the score badge fits under it; the row grows to hold both. */
 .lx-collapse[data-lx-score] {
-  max-height: 46px;
+  --lx-shut: 46px;
 }
 
 .lx-collapse[data-lx-score]::after {

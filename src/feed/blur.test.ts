@@ -23,6 +23,13 @@ const post = () => {
   return document.getElementById('p') as HTMLElement;
 };
 
+/** happy-dom lays nothing out, so a post with a height is a post with a stubbed one. */
+const standing = (height: number) => {
+  const el = post();
+  Object.defineProperty(el, 'offsetHeight', { value: height, configurable: true });
+  return el;
+};
+
 describe('blur', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
@@ -92,6 +99,28 @@ describe('blur', () => {
     blur(el, t, 'topic', true);
     reveal(el);
     expect(el.classList.contains('lx-collapse')).toBe(false);
+  });
+
+  it('gives the slide the height the post had, and takes it back on reveal', () => {
+    const el = standing(400);
+    blur(el, t, 'topic', true);
+    expect(el.style.getPropertyValue('--lx-h')).toBe('400px');
+    reveal(el);
+    expect(el.style.getPropertyValue('--lx-h')).toBe('');
+  });
+
+  it('never re-measures a collapsed post: the shut row is not a start height', () => {
+    const el = standing(400);
+    blur(el, t, 'topic', true);
+    Object.defineProperty(el, 'offsetHeight', { value: 30, configurable: true });
+    blur(el, t, 'blacklist', true);
+    expect(el.style.getPropertyValue('--lx-h')).toBe('400px');
+  });
+
+  it('leaves the height unset when the post has no layout, so it collapses at once', () => {
+    const el = standing(0);
+    blur(el, t, 'topic', true);
+    expect(el.style.getPropertyValue('--lx-h')).toBe('');
   });
 });
 
