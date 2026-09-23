@@ -37,17 +37,6 @@
       data-i18n-placeholder="topicsPlaceholder"
     ></textarea>
     <p class="hint" id="topics-hint" data-i18n="topicsHint"></p>
-    <details id="blacklist-details">
-      <summary id="blacklist-label" data-i18n="blacklistLabel"></summary>
-      <textarea
-        id="blacklist"
-        rows="2"
-        spellcheck="false"
-        aria-labelledby="blacklist-label"
-        data-i18n-placeholder="blacklistPlaceholder"
-      ></textarea>
-      <p class="hint" data-i18n="blacklistHint"></p>
-    </details>
     <details>
       <summary data-i18n="tipsSummary"></summary>
       <ul class="hint">
@@ -65,6 +54,14 @@
         </li>
       </ul>
     </details>
+    <label class="field" for="blacklist" data-i18n="blacklistLabel"></label>
+    <textarea
+      id="blacklist"
+      rows="2"
+      spellcheck="false"
+      data-i18n-placeholder="blacklistPlaceholder"
+    ></textarea>
+    <p class="hint" data-i18n="blacklistHint"></p>
 
     <div class="actions">
       <button id="apply" type="button" disabled>
