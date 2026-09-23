@@ -3,6 +3,12 @@ import type { MessageKey, Translate } from '../core/messages';
 const BLUR_CLASS = 'lx-blur';
 const COLLAPSE_CLASS = 'lx-collapse';
 
+/** The height the collapse animates down from, and the expand back up to. */
+const HEIGHT_VAR = '--lx-h';
+
+/** Like `lx-unveil`: animation only, so a copy left behind changes nothing. */
+const EXPAND_CLASS = 'lx-expand';
+
 /**
  * Node-level, deliberately: a reveal lost to virtualized recycling is an
  * accepted tradeoff (wiki-llm/ui.md), not a bug to fix with a persistence layer.
@@ -41,7 +47,8 @@ const PEEK_CHARS = 50;
  * clips whatever is inside, no matter the host's markup — so it works on any
  * adapter without per-site layout code. The badges stay legible because they
  * render on the container's own ::before/::after, never on a child that gets
- * clipped or hidden with it.
+ * clipped or hidden with it. Its one measurement feeds the slide shut, see
+ * `measure` and wiki-llm/ui.md.
  */
 export function blur(
   element: HTMLElement,
@@ -50,11 +57,24 @@ export function blur(
   collapse = false,
 ): void {
   if (revealed.has(element)) return;
+  if (collapse && !element.classList.contains(COLLAPSE_CLASS)) measure(element);
   element.classList.add(BLUR_CLASS);
+  element.classList.remove(EXPAND_CLASS);
   element.classList.toggle(COLLAPSE_CLASS, collapse);
   element.dataset.lxReason = reason;
   element.dataset.lxLabel = t(LABELS[reason]);
   element.setAttribute('aria-hidden', 'true');
+}
+
+/**
+ * Read before the class lands, while the post still stands at its own height, and
+ * never on one already collapsed — that would measure the shut row. A height of 0
+ * (offscreen, or a DOM with no layout) leaves the variable unset, and the keyframe
+ * falls back to collapsing instantly.
+ */
+function measure(element: HTMLElement): void {
+  const height = element.offsetHeight;
+  if (height > 0) element.style.setProperty(HEIGHT_VAR, `${height}px`);
 }
 
 /**
@@ -87,8 +107,17 @@ export function relabelBlurred(t: Translate, root: ParentNode = document): void 
   }
 }
 
-export function reveal(element: HTMLElement): void {
+/**
+ * `expand` runs the collapse backwards, for the one reveal a reader asked for by
+ * clicking. Every other caller — a settings change, the off switch — is putting a
+ * whole feed back at once and has nothing to draw attention to.
+ */
+export function reveal(element: HTMLElement, expand = false): void {
+  const collapsed = element.classList.contains(COLLAPSE_CLASS);
   element.classList.remove(BLUR_CLASS, COLLAPSE_CLASS);
+  element.classList.toggle(EXPAND_CLASS, expand && collapsed);
+  // The expand animates back up to it, so it outlives the collapse by one animation.
+  if (!(expand && collapsed)) element.style.removeProperty(HEIGHT_VAR);
   delete element.dataset.lxReason;
   delete element.dataset.lxLabel;
   delete element.dataset.lxPeek;
@@ -102,7 +131,7 @@ export function revealPermanently(element: HTMLElement, t: Translate): void {
   const reason = element.dataset.lxReason as BlurReason | undefined;
   const keyword = element.dataset.lxKeyword;
   revealed.add(element);
-  reveal(element);
+  reveal(element, true);
   retag(element, t, reason, keyword);
 }
 
@@ -227,6 +256,8 @@ export function listenForReveal(
 
 /** Blurred posts and the tags on opened ones: turned off, the feed is the host's again. */
 export function revealAll(root: ParentNode = document): void {
-  for (const el of root.querySelectorAll<HTMLElement>(`.${BLUR_CLASS}, [data-lx-opened]`))
-    reveal(el);
+  for (const element of root.querySelectorAll<HTMLElement>(
+    `.${BLUR_CLASS}, [data-lx-opened]`,
+  ))
+    reveal(element);
 }

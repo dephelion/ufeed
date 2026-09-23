@@ -87,6 +87,24 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 - **Han, Kana, Hangul, Thai, Lao, Khmer, Myanmar match as a substring**: no spaces to bound a word, or particles glued on (`코인은`).
 - **Thumbs never touch it, and never show on a blacklisted post**, opened or not: a rating could not move the verdict. An edit re-decides every judged post on the spot from the score cache, never through the viewport observer: waiting on it left an on-screen post shown. Only posts the tier had blurred reach the engine.
 
+## The collapse
+
+`.lx-collapse`, added beside `.lx-blur` when `collapseBlurred` is on: `max-height` plus `overflow: hidden` shrinks the post to a 30px row, 46px with a score badge. Container-only, so no adapter knows about it.
+
+It slides shut over `--lx-collapse-time`, and a clicked post runs it backwards over `--lx-expand-time` — `.lx-expand`, from `revealPermanently()` alone. Every other reveal hands a whole feed back at once and stays instant.
+
+**`blur()` measures the post into `--lx-h` because a stylesheet cannot.** `max-height` starts at `none`, which does not interpolate; `interpolate-size` would fix that and is Chrome-only against a Chrome 111 / Firefox 115 floor. The variable is an inline **namespaced custom property** — the one style uFeed sets on a host element (Invariant 3), inert until one of our rules reads it.
+
+**Traps:**
+
+- **Never measure a post already collapsed**, or the next slide starts from the shut row.
+- **`reveal()` keeps `--lx-h` for an expand** and drops it every other time; the expand animates back up to it.
+- **Unmeasured means instant**, not broken: `--lx-h` falls back to `--lx-shut` so `from` equals `to`. A post with no layout, happy-dom included, behaves as it did before the slide existed.
+- **Animations, not transitions, throughout.** A transition needs a resolved previous value; a post blurred in the frame it is found has none, and a removed class has none either. The same reason the label is not animated: its `::after` is born with the class.
+- **`prefers-reduced-motion: reduce` disables all three.** An OS setting, so check it before the CSS when someone reports that nothing happens.
+
+**Cost:** `measure()` forces a layout per post inside the verdict loop, worst on a `rescore()`, and an animating `max-height` reflows the feed every frame. Fix by batching the reads ahead of the writes, or by the durations.
+
 ## While a post is being judged
 
 `.lx-pending`, set by `showSkeleton()` when a post is found or re-held, lifted by `hideSkeleton()` when a verdict lands.
@@ -110,6 +128,19 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 **It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed held — Invariant 2 applies to this state exactly as it applies to a blur.
 
 **That failsafe must outlast the engine's own timeout, and at 1500ms it did not.** Every verdict clears the state, and the engine answers or fails open within 8s, so the timer should only ever fire when nothing answers at all. Sized for e5's milliseconds, it expired mid-batch on the slower model: the post showed in full and blurred a moment later, which is the exact flash this state exists to prevent. Any future per-request timeout change moves this with it.
+
+### The lift
+
+`.lx-unveil`, added by `hideSkeleton(element, true)` as `.lx-pending` comes off, animating the hold's three targets back over `--lx-unveil-time`. A post that cleared the threshold used to snap from held to legible — the flash the hold exists to prevent, arriving at the other end. The failsafe and `hideAllSkeletons()` lift too.
+
+**Traps:**
+
+- **No keyframe names its end.** The implicit one is the host's own colour, which no stylesheet of ours can know; `inherit` is wrong on anything the host colours directly, a link most of all.
+- **Only a post that was really held is lifted** (`#apply` asks `isSkeleton()`). One re-judged from the score cache wears a blur, and the lift would animate it out of a state it was never in.
+- **`showSkeleton()` removes the class, not `hideSkeleton()`.** Re-adding a class is what restarts its animation, so a recycled node's second hold would otherwise lift without one.
+- **`.lx-unveil` and `.lx-expand` carry animation and nothing else**, so a copy left behind is inert and no path has to clean it up.
+
+**Cost:** every text element in the post, plus `blur(96px)` down to none per image — painted once when static, every frame when animated.
 
 **Held from the moment a post is found, through warm-up.** `FeedScanner.onFound` fires in the mutation callback, before the next paint; waiting for the viewport observer paints the real post once first. Waiting for the engine to be ready showed every post on load, then held it, then blurred it — the flash this state exists to prevent.
 

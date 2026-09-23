@@ -3,6 +3,12 @@ import type { Translate } from '../core/messages';
 const SKELETON_CLASS = 'lx-pending';
 
 /**
+ * Carries the lift animation and nothing else, so a copy left on a shown post is
+ * inert — which is why no path has to take it off again.
+ */
+const UNVEIL_CLASS = 'lx-unveil';
+
+/**
  * The loading state, and nothing to do with a blur.
  *
  * A blur is a verdict: the post was judged, the content stays there behind
@@ -35,19 +41,27 @@ const holding = new WeakMap<HTMLElement, ReturnType<typeof setTimeout>>();
 
 /** Caller's job to know whether the post is blurred or revealed; this only holds. */
 export function showSkeleton(element: HTMLElement, t: Translate): void {
+  // Dropped here, not on the lift: re-adding a class is what restarts its animation.
+  element.classList.remove(UNVEIL_CLASS);
   element.classList.add(SKELETON_CLASS);
   element.dataset.lxPending = t('labelPending');
   clearTimeout(holding.get(element));
   holding.set(
     element,
-    setTimeout(() => hideSkeleton(element), SKELETON_MS),
+    setTimeout(() => hideSkeleton(element, true), SKELETON_MS),
   );
 }
 
-export function hideSkeleton(element: HTMLElement): void {
+/**
+ * `unveil` is for a post the verdict let through: it has to travel from held to
+ * plain, and dropping the class alone makes that a flash. A post on its way to a
+ * blur passes it up — the blur is the next thing it wears.
+ */
+export function hideSkeleton(element: HTMLElement, unveil = false): void {
   clearTimeout(holding.get(element));
   holding.delete(element);
   element.classList.remove(SKELETON_CLASS);
+  element.classList.toggle(UNVEIL_CLASS, unveil);
   delete element.dataset.lxPending;
 }
 
@@ -57,6 +71,6 @@ export function isSkeleton(element: HTMLElement): boolean {
 
 /** Invariant 2: nothing may leave a feed stuck in a state it cannot get out of. */
 export function hideAllSkeletons(root: ParentNode = document): void {
-  for (const el of root.querySelectorAll<HTMLElement>(`.${SKELETON_CLASS}`))
-    hideSkeleton(el);
+  for (const element of root.querySelectorAll<HTMLElement>(`.${SKELETON_CLASS}`))
+    hideSkeleton(element, true);
 }
