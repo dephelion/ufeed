@@ -39,12 +39,7 @@ export const linkedinAdapter: SiteAdapter = {
   },
 };
 
-/**
- * First expandable-text-box only. The same node type renders inline comment
- * bodies further down the card, so taking only the first keeps the post's own
- * text and drops any comment — same shape as X's first-tweetText rule, for an
- * unrelated reason.
- */
+/** The first text box is the post; later ones can contain inline comments. */
 function extractText(container: HTMLElement): string {
   const node = container.querySelector(TEXT);
   if (!node) return '';

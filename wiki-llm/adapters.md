@@ -30,7 +30,7 @@ interface SiteAdapter {
 
 **Not `article`.** It leaves separators and padding sharp.
 
-**First `tweetText` only.** A cell can hold a quoted tweet or a thread; joining them scores one blob of unrelated subjects, and a political post carrying a quoted tech tweet reads as tech.
+**All `tweetText` nodes, joined in DOM order.** A quote's outer comment may be too short to name its subject; include the quoted text so it can carry that subject. The quote can also make an otherwise off-topic comment score as relevant.
 
 **`textContent`, not `innerText`.** `innerText` forces a layout reflow per post, which a scrolling feed cannot afford. Whitespace is collapsed, so a re-render hashes identically.
 
@@ -83,9 +83,8 @@ blocklist: an unrecognized module type is excluded by construction.
 
 **`expandable-text-box` is reused for comment bodies, not just post text.**
 LinkedIn renders at least one comment inline under the post by default.
-Taking the **first** `expandable-text-box` in a container is what keeps the
-post's own text and discards the comment — same _shape_ of rule as X's first-
-`tweetText`-only, for an unrelated reason.
+Taking the **first** `expandable-text-box` in a container keeps the post's own
+text and discards the comment.
 
 **The "…more" toggle button is nested inside the text node.** Truncated posts
 already carry their full text in the DOM (no lazy-load), but

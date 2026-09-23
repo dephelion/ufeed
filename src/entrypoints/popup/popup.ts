@@ -53,7 +53,6 @@ const enabled = el<HTMLInputElement>('enabled');
 const enabledLabel = el<HTMLSpanElement>('enabled-label');
 const topics = el<HTMLTextAreaElement>('topics');
 const blacklist = el<HTMLTextAreaElement>('blacklist');
-const blacklistDetails = el<HTMLDetailsElement>('blacklist-details');
 const apply = el<HTMLButtonElement>('apply');
 const applied = el<HTMLSpanElement>('applied');
 const strictness = el<HTMLInputElement>('strictness');
@@ -141,7 +140,6 @@ function renderEnabled(on: boolean | undefined): void {
 function render(settings: Settings): void {
   topics.value = topicsToText(settings.topics);
   blacklist.value = keywordsToText(settings.blacklist);
-  if (settings.blacklist.length > 0) blacklistDetails.open = true;
   strictness.value = String(settings.strictness);
   strictnessValue.textContent = String(settings.strictness);
   strictnessHint.textContent = describeStrictness(settings.strictness, settings.model);
