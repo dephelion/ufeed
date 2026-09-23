@@ -43,6 +43,14 @@ const isTell = (m: unknown): m is Tell =>
 const isFeed = (m: unknown): m is Feed =>
   typeof m === 'object' && m !== null && (m as Feed).type === FEED;
 
+function sendBestEffort(message: Tell | Feed): void {
+  try {
+    void browser.runtime.sendMessage(message).catch(() => {});
+  } catch {
+    // An open tab can retain its old content script after the extension reloads.
+  }
+}
+
 /** Content side: answer whenever asked. `current` is read at answer time. */
 export function serveEngineStatus(current: () => EngineStatus): () => void {
   const listener = (message: unknown) =>
@@ -53,9 +61,7 @@ export function serveEngineStatus(current: () => EngineStatus): () => void {
 
 /** Content side: push a change so an open popup ticks along with the download. */
 export function publishEngineStatus(status: EngineStatus): void {
-  // With no popup open there is no receiver and this rejects. That is the
-  // normal case, not a fault.
-  void browser.runtime.sendMessage({ type: TELL, status } satisfies Tell).catch(() => {});
+  sendBestEffort({ type: TELL, status } satisfies Tell);
 }
 
 export interface TabStatus {
@@ -107,7 +113,7 @@ export function onEngineStatus(
  * is a separate question the icon does not need to answer.
  */
 export function publishFeedDetected(): void {
-  void browser.runtime.sendMessage({ type: FEED } satisfies Feed).catch(() => {});
+  sendBestEffort({ type: FEED } satisfies Feed);
 }
 
 /** Background side: colors a tab's icon the moment that tab confirms a feed. */
