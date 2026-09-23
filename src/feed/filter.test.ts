@@ -217,6 +217,44 @@ describe('FeedFilter', () => {
     expect(engine.score).not.toHaveBeenCalled();
   });
 
+  it('filters with only a blacklist and never starts topic scoring', async () => {
+    const settings = { ...SETTINGS, topics: [], blacklist: ['rust'] };
+    const { engine, filter } = await run(settings, [
+      'rust ships a new borrow checker',
+      'a chocolate cake recipe',
+    ]);
+    expect(filter.active).toBe(true);
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(isBlurred(post('cake'))).toBe(false);
+    expect(post('cake').classList.contains('lx-pending')).toBe(false);
+    expect(engine.connect).not.toHaveBeenCalled();
+    expect(engine.setTopics).not.toHaveBeenCalled();
+    expect(engine.score).not.toHaveBeenCalled();
+
+    filter.applySettings({ ...settings, blacklist: ['cake'] });
+    expect(isBlurred(post('rust'))).toBe(false);
+    expect(post('cake').dataset.lxReason).toBe('blacklist');
+
+    filter.applySettings(SETTINGS);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(engine.connect).toHaveBeenCalled();
+    expect(engine.setTopics).toHaveBeenCalledWith(['programming'], []);
+    expect(isBlurred(post('cake'))).toBe(true);
+  });
+
+  it('reveals former topic blurs when switching to blacklist only', async () => {
+    const { filter } = await run(SETTINGS, [
+      'rust ships a new borrow checker',
+      'a chocolate cake recipe',
+    ]);
+    expect(isBlurred(post('cake'))).toBe(true);
+
+    filter.applySettings({ ...SETTINGS, topics: [], blacklist: ['rust'] });
+    await vi.advanceTimersByTimeAsync(200);
+    expect(post('rust').dataset.lxReason).toBe('blacklist');
+    expect(isBlurred(post('cake'))).toBe(false);
+  });
+
   it('never counts a revealed blacklisted post as hidden when it is offered again', async () => {
     const counts: number[] = [];
     const { filter } = await run(

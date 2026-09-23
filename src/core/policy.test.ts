@@ -47,6 +47,19 @@ describe('blacklist', () => {
     const grounds = withSettings({ blacklist: ['systems'] }, { score: undefined });
     expect(decideWithoutScore(grounds)).toBe('blur-blacklist');
   });
+
+  it('only applies blacklist rules when no topics are set', () => {
+    const judged = withSettings(
+      {
+        topics: [],
+        blacklist: ['systems'],
+        blurThinMedia: true,
+      },
+      { score: undefined, text: 'systems', hasMedia: true, language: 'other' },
+    );
+    expect(decide(judged)).toBe('blur-blacklist');
+    expect(decide({ ...judged, text: 'other post' })).toBe('reveal');
+  });
 });
 
 describe('fail-open', () => {

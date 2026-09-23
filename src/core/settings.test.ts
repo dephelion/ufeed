@@ -11,6 +11,7 @@ import {
 } from './settings';
 
 const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
+const withBlacklist = { ...DEFAULT_SETTINGS, blacklist: ['crypto'] };
 
 describe('isActive', () => {
   it('is inactive with no topics, so a fresh install blurs nothing', () => {
@@ -19,6 +20,11 @@ describe('isActive', () => {
 
   it('is active once topics exist', () => {
     expect(isActive(withTopics, true)).toBe(true);
+  });
+
+  it('is active with only a blacklist', () => {
+    expect(isActive(withBlacklist, true)).toBe(true);
+    expect(isActive(withBlacklist, false)).toBe(false);
   });
 
   it("respects the tab's switch", () => {
@@ -35,12 +41,16 @@ describe('needsTopics', () => {
     expect(needsTopics(withTopics, true)).toBe(false);
   });
 
+  it('stays quiet when a blacklist is the only filter', () => {
+    expect(needsTopics(withBlacklist, true)).toBe(false);
+  });
+
   it('stays quiet when the reader turned the tab off — that was a choice', () => {
     expect(needsTopics(DEFAULT_SETTINGS, false)).toBe(false);
   });
 
   it('never fires at the same time as isActive', () => {
-    for (const s of [DEFAULT_SETTINGS, withTopics]) {
+    for (const s of [DEFAULT_SETTINGS, withTopics, withBlacklist]) {
       for (const on of [true, false]) {
         expect(needsTopics(s, on) && isActive(s, on)).toBe(false);
       }

@@ -164,6 +164,12 @@
   "switchOff": {
     "message": "關"
   },
+  "chipBlacklist": {
+    "message": "黑名單已啟用"
+  },
+  "statusBlacklist": {
+    "message": "僅依黑名單篩選"
+  },
   "statusNoTopics": {
     "message": "請在上方新增主題以開始"
   },

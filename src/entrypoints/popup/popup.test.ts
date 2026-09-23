@@ -126,6 +126,24 @@ describe('the backup row in a rendered popup', () => {
     expect(el('transfer').dataset['state']).toBe('bad');
     expect(JSON.stringify(store['settings'])).toBe(before);
   });
+
+  it('shows blacklist-only filtering as active and allows its backup', async () => {
+    store['feedback'] = undefined;
+    const topics = el('topics') as HTMLTextAreaElement;
+    const blacklist = el('blacklist') as HTMLTextAreaElement;
+    topics.value = '';
+    blacklist.value = 'crypto';
+    blacklist.dispatchEvent(new Event('input'));
+    (el('apply') as HTMLButtonElement).click();
+    await tick();
+
+    expect((store['settings'] as Settings).topics).toEqual([]);
+    expect((store['settings'] as Settings).blacklist).toEqual(['crypto']);
+    expect(el('status').textContent).toBe('Filtering with blacklist only');
+    expect(el('engine-chip-text').textContent).toBe('Blacklist active');
+    expect(el('engine-line').hidden).toBe(true);
+    expect((el('export') as HTMLButtonElement).disabled).toBe(false);
+  });
 });
 
 describe('the language checkbox in a rendered popup', () => {

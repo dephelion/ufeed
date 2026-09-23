@@ -28,13 +28,12 @@ Name the topics you want; uFeed blurs the rest on X, LinkedIn and Reddit. Privat
 
 Social networks are deciding what you see. uFeed lets you decide instead.
 
-🔒 Private and fast. Everything runs on your device. No account, no cloud, no analytics. Your feed is safe.
-
-📖 Open source. Read the code, build it, fork it:
-https://github.com/dephelion/ufeed
+🔒 Private and fast. Everything runs on your device. No account, no cloud, no analytics. Your feed is never uploaded, stored or logged.
 
 📝 Write your topics, one per line. Posts that don't match get blurred and collapsed, never
 deleted. One click shows them.
+
+🚫 Block words or phrases with the blacklist. Matching posts blur even when they are on topic.
 
 🌍 Reads English by default. For any other language, switch to the optional
 multilingual model (197 MB) in the popup.
@@ -43,9 +42,9 @@ multilingual model (197 MB) in the popup.
 
 💾 Backup and import your settings anywhere.
 
-It reads words, not images, and matches subject, not quality. It can miss sarcasm, and it won't be perfect.
+📖 Open source. Read the code, build it, fork it.
 
-❓Bugs or ideas: https://github.com/dephelion/ufeed/issues or the email below.
+It reads words, not images, and matches subject, not quality. It can miss sarcasm, and it won't be perfect.
 
 ## Single purpose
 

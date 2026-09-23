@@ -416,7 +416,7 @@
   height: 14px;
 }
 
-/* First-run card: on, but no topics. Same dark chip as the thumbs bar, because
+/* First-run card: on, but no filters. Same dark chip as the thumbs bar, because
    it has to read the same on a light and a dark feed. */
 .lx-nudge {
   position: fixed;

@@ -164,6 +164,12 @@
   "switchOff": {
     "message": "オフ"
   },
+  "chipBlacklist": {
+    "message": "ブラックリスト有効"
+  },
+  "statusBlacklist": {
+    "message": "ブラックリストのみでフィルタリング中"
+  },
   "statusNoTopics": {
     "message": "上でトピックを追加すると開始します"
   },

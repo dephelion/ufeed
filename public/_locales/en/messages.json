@@ -197,6 +197,12 @@
     "message": "Off",
     "description": "Label of the on/off switch, and the status line when it is off."
   },
+  "chipBlacklist": {
+    "message": "Blacklist active"
+  },
+  "statusBlacklist": {
+    "message": "Filtering with blacklist only"
+  },
   "statusNoTopics": {
     "message": "Add a topic above to start"
   },
