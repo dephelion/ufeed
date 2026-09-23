@@ -8,6 +8,10 @@ A browser extension for X, LinkedIn and Reddit, on Chrome and Firefox. The model
 runs on your device. No account, no server, no cloud AI, and no post text ever
 leaves your browser.
 
+On Chrome, the multilingual model uses one shared offscreen engine across feed
+tabs; Firefox and the default English model keep the per-tab iframe engine. Both
+paths score on-device and keep page access in the content script.
+
 ## The idea
 
 <img width="3900" height="840" alt="feed-showcase-side-by-side-black" src="https://github.com/user-attachments/assets/9352db65-f6f0-47d1-8445-1aa01a643578" />

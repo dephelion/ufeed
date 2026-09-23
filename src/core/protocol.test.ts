@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { isEngineReply, isEngineRequest, nextRequestId } from './protocol';
+import {
+  isEngineReply,
+  isEngineRequest,
+  isRoutedReply,
+  isRoutedRequest,
+  nextRequestId,
+} from './protocol';
 
 describe('isEngineRequest', () => {
   it('accepts a score request', () => {
@@ -75,6 +81,27 @@ describe('nextRequestId', () => {
   it('never repeats, so concurrent batches cannot be confused', () => {
     const ids = new Set(Array.from({ length: 500 }, nextRequestId));
     expect(ids.size).toBe(500);
+  });
+});
+
+describe('shared worker envelopes', () => {
+  it('keeps requests and replies tied to a client', () => {
+    expect(
+      isRoutedRequest({
+        clientId: 'tab-a',
+        request: { id: 'r1', type: 'SCORE', texts: ['post'] },
+      }),
+    ).toBe(true);
+    expect(
+      isRoutedReply({
+        clientId: 'tab-a',
+        reply: { id: 'r1', type: 'ERROR', message: 'failed' },
+      }),
+    ).toBe(true);
+    expect(
+      isRoutedRequest({ clientId: 42, request: { id: 'r1', type: 'SCORE', texts: [] } }),
+    ).toBe(false);
+    expect(isRoutedReply({ clientId: 'tab-a', reply: { type: 'SCORES' } })).toBe(false);
   });
 });
 

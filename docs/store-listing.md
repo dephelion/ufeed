@@ -120,7 +120,7 @@ NETWORK
 The only request is a one-time download of model weights (data files, not code) from huggingface.co, which redirects to its hf.co CDN. The browser then caches them. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics, no accounts, no data collected (data_collection_permissions: none).
 
 WHY THE HIDDEN IFRAME
-The content script injects engine.html (a web_accessible_resource) as a hidden iframe. An MV3 background cannot start a Worker and a content script cannot start one on the extension origin, so the iframe exists only to run the model in a Worker. It receives post text over a MessageChannel and returns scores. It never reads the host page.
+The content script keeps access to feed text and the page DOM. Chrome's multilingual model uses a shared offscreen extension page and worker across feed tabs; Chrome's default English model and Firefox use a per-tab hidden engine.html iframe and worker. Both transports send text to the extension worker and return scores. The engine never reads the host page.
 
 HOW TO TEST
 1. Install, then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.

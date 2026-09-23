@@ -1,17 +1,18 @@
 # Architecture
 
 > **Maintenance Invariant:** Runtime structure, execution contexts, message flow only. Code layers live in [layers.md](layers.md). No selectors ([adapters.md](adapters.md)), no scoring rules ([model.md](model.md)). Update in the SAME commit as any boundary or contract change. Token-optimized: imperative, no prose, no redundancy.
-> **Answers:** The three execution contexts and why each exists. End-to-end flow. Message contract. Invalidation and races.
+> **Answers:** Execution contexts and why each exists. End-to-end flow. Message contract. Invalidation and races.
 
-## Three execution contexts
+## Execution contexts
 
 Where code runs, not how it is layered: that is [layers.md](layers.md).
 
-| Context        | Lives in                                 | Can                               | Cannot                    |
-| :------------- | :--------------------------------------- | :-------------------------------- | :------------------------ |
-| Content script | Host page world (`x.com`)                | Read feed DOM, apply blur         | Spawn an extension worker |
-| Engine iframe  | Extension origin (`chrome-extension://`) | Spawn a same-origin module Worker | See the host DOM          |
-| Worker         | Separate thread, extension origin        | Load the model, embed, score      | Touch any DOM             |
+| Context        | Lives in                                 | Can                                | Cannot                    |
+| :------------- | :--------------------------------------- | :--------------------------------- | :------------------------ |
+| Content script | Host page world (`x.com`)                | Read feed DOM, apply blur          | Spawn an extension worker |
+| Engine iframe  | Extension origin (`chrome-extension://`) | Spawn a same-origin module Worker  | See the host DOM          |
+| Offscreen page | Chrome extension origin                  | Share one Gemma Worker across tabs | See the host DOM          |
+| Worker         | Separate thread, extension origin        | Load the model, embed, score       | Touch any DOM             |
 
 **Why the iframe exists.** Three constraints leave one portable answer:
 
@@ -19,7 +20,7 @@ Where code runs, not how it is layered: that is [layers.md](layers.md).
 - MV3 service workers terminate after ~30s idle, evicting the model repeatedly.
 - A content script cannot `new Worker(runtime.getURL(...))` — cross-origin to the host page, and subject to the host page's CSP.
 
-A document already on the extension origin can spawn the worker. The iframe is that document. It routes messages and owns status; it does no work.
+A document already on the extension origin can spawn the worker. Firefox and e5 use the iframe. Chrome Gemma uses one offscreen page per extension profile; the background creates it on demand. Both documents only route messages and own status.
 
 **The iframe never sees the host DOM.** Strings in, floats out. That is what keeps the ML layer site-agnostic.
 
@@ -27,6 +28,7 @@ A document already on the extension origin can spawn the worker. The iframe is t
 
 ```
 feed DOM ──adapter──► content script ──MessageChannel──► iframe ──postMessage──► worker
+                              └───── Chrome runtime Port ───► offscreen page ───► shared Gemma worker
     ▲                       │                                                      │
     └──── .lx-blur ─────────┴──────────────── scores ◄─────────────────────────────┘
 ```
@@ -40,7 +42,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 
 Steps 1–6 live in `FeedFilter` (`src/feed/filter.ts`). `content.ts` only wires it to storage, the engine client, the popup and the page.
 
-Background service worker: nothing on the hot path. Settings propagate through `storage.onChanged`.
+Background service worker: creates Chrome's offscreen page on demand; scoring does not pass through it. Settings propagate through `storage.onChanged`.
 
 ## Persisted state
 
@@ -50,7 +52,7 @@ Two `storage.local` keys, and no others: `settings`, and `feedback` as `{ model,
 
 **The model stamp is the gate, and ratings are filed under it.** `feedback` is a map keyed by model id, one entry per model that has any. A model reads only its own (`feedbackFor()`); a stamp or width that disagrees reads as none rather than being trusted. A pre-0.8 flat blob is read as `Xenova/e5-small-v2`'s, which is what every install that predates the map holds.
 
-**A model switch destroys nothing.** Each model keeps its own ratings and a switch back restores them; writing one model's never touches another's (read-modify-write in `saveFeedback`). "Clear tuning" clears the running model's, "Reset" clears them all. The engine frame is replaced rather than the model swapped under it — a worker loads one model for its whole life — and `Tuning.reload()` re-reads the store, because the stored value did not change, only which part of it this tab is reading.
+**A model switch destroys nothing.** Each model keeps its own ratings and a switch back restores them; writing one model's never touches another's (read-modify-write in `saveFeedback`). "Clear tuning" clears the running model's, "Reset" clears them all. `EngineClient.restart()` replaces this tab's transport rather than changing a loaded worker's model; the shared Gemma worker continues serving other tabs. `Tuning.reload()` re-reads the store, because the stored value did not change, only which part of it this tab is reading.
 
 Settings never depended on a model and are kept whole across a switch, the language checkbox included — it is ignored while a multilingual model runs, never overwritten.
 
@@ -61,7 +63,7 @@ Settings never depended on a model and are kept whole across a switch, the langu
 `src/core/protocol.ts` owns the types and the guards. Both sides validate; a host page posts its own messages constantly.
 
 ```
-engine  → worker   { type: 'INIT', model }              engine document to its own worker, first message, never over the port
+engine  → worker   { type: 'INIT', model, threads? }    engine document to its own worker, first message, never over the port
 content → engine   { id, type: 'SCORE',      texts }
 content → engine   { id, type: 'SET_TOPICS', topics }
 content → engine   { id, type: 'FEEDBACK',   text, liked }
@@ -75,7 +77,9 @@ engine  → content  { type: 'STATUS', state, progress?, message? }
 
 **The model rides in the frame's URL** (`engine.html?model=<key>`), and the engine document forwards it to the worker as `INIT` before any port exists. It is not part of `EngineRequest` and never crosses the port: the worker must know before the first request, and a host page sharing the parent window must not get a say in which model runs. An unknown key falls back to the default rather than failing.
 
-**Switching models replaces the frame** (`EngineClient.restart()`): pending requests resolve empty so the feed fails open, the port closes, the iframe is removed, and a new one connects on the new model. Anything in flight would otherwise answer in the old model's score space. The score cache and the language cache are cleared with it.
+**Chrome's offscreen page fixes its worker to Gemma.** It wraps each validated request as `{ clientId, request }` and routes `{ clientId, reply }` back to its runtime Port. The worker keeps topic vectors and ratings by client ID; disconnect releases them. One global work chain serializes model calls, so tabs share one session without overlapping inference. Status broadcasts to every connected tab; each tab still owns its own DOM, queue, request IDs, and timeout.
+
+**Switching models replaces this tab's transport** (`EngineClient.restart()`): pending requests resolve empty so the feed fails open, the port closes, the iframe is removed if present, and a new transport connects. Anything in flight would otherwise answer in the old model's score space. The score cache and the language cache are cleared with it.
 
 **The worker embeds a correction, the content script stores it.** Vectors live where the model lives; persistence lives where `storage.local` is reachable. The content script never embeds and the worker never persists.
 
@@ -84,6 +88,8 @@ engine  → content  { type: 'STATUS', state, progress?, message? }
 **Every request carries an id.** Index-order correlation breaks the moment two batches are in flight.
 
 **Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
+
+**Chrome Gemma connection:** content script asks the background to ensure the offscreen page, then opens a named runtime Port directly to that page. Requests buffer until the Port opens. If creation, connection, or the shared worker fails, the client resolves pending scores empty and starts its existing per-tab iframe with the latest topics. Firefox always takes the iframe path.
 
 **The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and uFeed fails open.
 
@@ -99,7 +105,7 @@ content → popup    { type: 'ufeed:status', status }     pushed on change
 
 **The posts-hidden badge asks the background to open the popup** — `content → background { type: 'ufeed:open-popup' }`, `src/platform/open-popup.ts` — because `action.openPopup` is unreachable from a content script. The background honours it only from a tab (`sender.tab`).
 
-**Asked per tab, never stored.** Each feed tab runs its own engine. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.
+**Asked per tab, never stored.** Each feed tab owns its own client and status even when Chrome tabs share a Gemma worker. A shared `storage.local` value showed whichever tab wrote last, went stale the moment the reader switched tabs, and left a durable record of when a feed was last open — see [privacy.md](privacy.md). The popup asks the active tab at open and holds the answer in memory.
 
 **Pushes are filtered by `sender.tab.id`.** Every feed tab broadcasts; without the check a background tab's download overwrites the foreground tab's reading.
 
@@ -150,6 +156,6 @@ content → popup    boolean (the reply to both)          what the tab now holds
 
 ## Failure posture
 
-**One `SCORE` request is in flight at a time.** The worker embeds one post after another on a single thread, so a second request does not start sooner — it waits, while its 8s timeout counts that wait against it. Without the guard, scrolling fast put a request out every time the queue refilled (the batch leaves `#pending` synchronously, before the await), and the later ones timed out on a healthy engine and revealed batches it had never reached. Posts wait in `#pending` instead, where waiting is free, and the timeout measures the engine rather than the queue behind it. `ScoreQueue` drains straight into the next batch rather than waiting out `FLUSH_MS`.
+**One `SCORE` request is in flight per tab.** The worker embeds one post after another, so a second request from that tab does not start sooner — it waits, while its 8s timeout counts that wait against it. Posts wait in `ScoreQueue` instead; it drains straight into the next batch without waiting out `FLUSH_MS`. Chrome's shared worker serializes requests across tabs too; heavy concurrent scrolling can consume the timeout and fail open.
 
 Fail-open everywhere. Unknown score, request timeout (8s), engine `ERROR`, or worker crash all **reveal**. A 15s watchdog logs (debug builds) if the engine never reports in. The worker keeps the last `SET_TOPICS` past a failed load and embeds it on the next request; a `SCORE` with no topics replies `ERROR`, never a score against nothing. No path may leave a post blurred because something broke.

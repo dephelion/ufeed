@@ -3,7 +3,7 @@
 > Source of record for the page published at
 > <https://dephelion.com/ufeed-browser-extension/privacy/>. Edit both together.
 
-**Effective 20 September 2026.** Contact: contact@dephelion.com
+**Effective 23 September 2026.** Contact: contact@dephelion.com
 
 uFeed blurs posts in your social feed that are not about topics you chose. It
 does this on your own device. This policy describes everything it reads, stores
@@ -80,13 +80,15 @@ uFeed sends nothing to us. We operate no server that uFeed talks to.
 
 ## Permissions, and why each is needed
 
-| Permission                                             | Why                                                                                       |
-| :----------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on. |
-| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.          |
+| Permission                                             | Why                                                                                                                                                                   |
+| :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on.                                                                             |
+| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.                                                                                      |
+| `offscreen` (Chrome only)                              | To keep a hidden extension page open for the shared multilingual model worker. The page receives post text from uFeed for scoring; it cannot read the website itself. |
 
-uFeed requests no other permission. It cannot see your browsing history, your
-other tabs, your bookmarks, your passwords, or your identity.
+The offscreen permission does not give uFeed access to other websites or
+additional data. It does not change what uFeed stores or sends. uFeed cannot
+see your browsing history, your bookmarks, your passwords, or your identity.
 
 ## Deleting your data
 

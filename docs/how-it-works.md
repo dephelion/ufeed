@@ -37,27 +37,29 @@ flowchart TB
   end
 
   subgraph ext["Extension origin — chrome-extension://"]
-    frame["hidden iframe<br/>routes messages"]
-    subgraph thr["worker thread"]
-      wk["the model you picked<br/>topic = query, post = passage<br/>embed, then cosine<br/>stack detailed below"]
-    end
-    frame -- "texts" --> wk
-    wk -- "scores" --> frame
+    frame["per-tab hidden iframe<br/>Chrome e5 and Firefox"]
+    offscreen["Chrome offscreen page<br/>shared by feed tabs<br/>Gemma only"]
+    worker["model worker<br/>embed, then cosine"]
+    frame -- "texts / scores" --> worker
+    offscreen -- "texts / scores" --> worker
   end
 
-  cs == "texts" ==> frame
-  frame == "scores" ==> cs
+  cs == "texts and scores" ==> frame
+  cs == "Chrome Gemma: runtime Port" ==> offscreen
 ```
 
-Three execution contexts, each for one reason. The **content script** lives inside the page,
-so it is the only part that can read the feed or blur anything. The **iframe**
-exists because a content script cannot spawn an extension-origin worker, but a
-document already on that origin can. The **worker** is a separate thread, so
-scoring never blocks scrolling.
+The **content script** lives inside the page, so it is the only part that can read
+the feed or blur anything. A **worker** does the scoring off the page's main
+thread. Chrome uses a shared offscreen extension page for the multilingual model,
+so feed tabs reuse one model session and its isolated worker can use two WASM
+threads. Chrome's default English model and both Firefox models use the per-tab
+hidden iframe and a single WASM thread. The iframe is a document on the extension
+origin, which lets it start a worker without giving that worker access to the host
+page.
 
-The iframe never sees the page: strings go in, scores come out. That boundary is
-what keeps post text on your device, and it is why the model layer knows nothing
-about X.
+Neither engine document sees the host page: strings go in, scores come out. The
+content script reads and blurs posts; model work stays in an extension worker.
+That boundary keeps post text on your device and the model layer independent of X.
 
 ## What the model does
 
@@ -132,12 +134,12 @@ other side of the worker boundary.
 
 ```mermaid
 flowchart TB
-  frame["engine.ts — the iframe document<br/>relays, holds no state<br/>MessagePort to the content script"]
+  frame["engine iframe or Chrome offscreen page<br/>routes requests, holds no page DOM"]
 
   subgraph wkr["worker thread — engine.worker.ts"]
     tj["transformers.js<br/>tokenize · mean-pool · normalize"]
     ort["ONNX Runtime (ORT)<br/>executes the graph, node by node"]
-    wasm["wasm execution provider<br/>SIMD, single thread"]
+    wasm["wasm execution provider<br/>SIMD; two threads for isolated Chrome Gemma,<br/>one thread for iframe engines"]
     cpu["CPU<br/>shape ops, on purpose"]
     out["vectors → cosine vs topic vectors<br/>= the score"]
     tj --> ort
@@ -147,8 +149,8 @@ flowchart TB
     cpu --> out
   end
 
-  frame == "SCORE texts<br/>worker.postMessage" ==> tj
-  out == "SCORES, STATUS<br/>self.postMessage" ==> frame
+  frame == "SCORE texts" ==> tj
+  out == "SCORES, STATUS" ==> frame
 
   weights[("hub CDN<br/>weights of the model you picked<br/>fetched once, then cached")] -. "model" .-> tj
   runtime[("bundled /ort/*.wasm<br/>never fetched at runtime")] -. "engine" .-> ort

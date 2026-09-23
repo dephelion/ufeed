@@ -2,9 +2,11 @@ import browser from 'webextension-polyfill';
 import { logger } from '../core/log';
 import type { ModelKey } from '../core/models';
 import {
+  ENSURE_OFFSCREEN,
   HANDSHAKE,
   isEngineReply,
   nextRequestId,
+  SHARED_ENGINE,
   type EngineRequest,
   type StatusEvent,
   type TopicCorrections,
@@ -14,6 +16,7 @@ import type { Correction, Engine } from '../feed/ports';
 
 const REQUEST_TIMEOUT_MS = 8000;
 const CONNECT_WATCHDOG_MS = 15000;
+const SHARED_CONNECT_TIMEOUT_MS = 5000;
 
 const log = logger('client');
 
@@ -29,10 +32,14 @@ type Pending = {
   timer: ReturnType<typeof setTimeout>;
 };
 
-/** Owns the hidden extension-origin iframe and the private port into it. */
+/** Connects this tab to an extension-origin engine and owns its pending requests. */
 export class EngineClient implements Engine {
   #port: MessagePort | undefined;
+  #shared: browser.Runtime.Port | undefined;
   #frame: HTMLIFrameElement | undefined;
+  #connecting = false;
+  #generation = 0;
+  #lastTopics: EngineRequest | undefined;
   #extension = '';
   readonly #pending = new Map<string, Pending>();
   readonly #outbox: EngineRequest[] = [];
@@ -71,11 +78,12 @@ export class EngineClient implements Engine {
   }
 
   /**
-   * Replaces the engine with one on another model. The worker loads a single
-   * model for its whole life, so the frame goes rather than the model changing
-   * under it: anything in flight would answer in the old model's score space.
+   * Replaces this tab's connection on a model switch. A worker loads one model
+   * for its whole life; anything in flight would answer in the old score space.
    */
   restart(model: ModelKey): void {
+    this.#generation += 1;
+    this.#connecting = false;
     for (const [id, pending] of this.#pending) {
       clearTimeout(pending.timer);
       log.info('dropping request, engine restarting', { id });
@@ -85,8 +93,12 @@ export class EngineClient implements Engine {
     this.#outbox.length = 0;
     this.#port?.close();
     this.#port = undefined;
+    const shared = this.#shared;
+    this.#shared = undefined;
+    shared?.disconnect();
     this.#frame?.remove();
     this.#frame = undefined;
+    this.#lastTopics = undefined;
     this.#status = { type: 'STATUS', state: 'idle' };
     this.#onStatus(this.#status);
     this.#updateBusy();
@@ -94,7 +106,83 @@ export class EngineClient implements Engine {
   }
 
   connect(model: ModelKey): void {
-    if (this.#frame) return;
+    if (this.#frame || this.#shared || this.#connecting) return;
+    if (
+      model === 'gemma' &&
+      browser.runtime.getURL('/').startsWith('chrome-extension:')
+    ) {
+      void this.#connectShared();
+      return;
+    }
+    this.#connectFrame(model);
+  }
+
+  async #connectShared(): Promise<void> {
+    const generation = ++this.#generation;
+    this.#connecting = true;
+    try {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const availability = browser.runtime.sendMessage({ type: ENSURE_OFFSCREEN });
+      const timeout = new Promise<false>((resolve) => {
+        timer = setTimeout(() => resolve(false), SHARED_CONNECT_TIMEOUT_MS);
+      });
+      const available = await Promise.race([availability, timeout]).finally(() =>
+        clearTimeout(timer),
+      );
+      if (available !== true) throw new Error('offscreen document unavailable');
+      if (generation !== this.#generation) return;
+      const port = browser.runtime.connect({ name: SHARED_ENGINE });
+      this.#shared = port;
+      let reported = false;
+      const watchdog = setTimeout(() => {
+        if (!reported && this.#shared === port) this.#fallBackToFrame();
+      }, 1500);
+      port.onMessage.addListener((data: unknown) => {
+        if (this.#shared !== port) return;
+        reported = true;
+        clearTimeout(watchdog);
+        if (isEngineReply(data) && data.type === 'STATUS' && data.state === 'error') {
+          this.#fallBackToFrame();
+          return;
+        }
+        this.#receive(data);
+      });
+      port.onDisconnect.addListener(() => {
+        clearTimeout(watchdog);
+        if (this.#shared === port) this.#fallBackToFrame();
+      });
+      for (const request of this.#outbox.splice(0)) port.postMessage(request);
+    } catch (error) {
+      if (generation !== this.#generation) return;
+      log.warn('shared engine unavailable, using iframe', {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      this.#fallBackToFrame();
+    } finally {
+      if (generation === this.#generation) this.#connecting = false;
+    }
+  }
+
+  #fallBackToFrame(): void {
+    this.#generation += 1;
+    this.#connecting = false;
+    const shared = this.#shared;
+    this.#shared = undefined;
+    shared?.disconnect();
+    for (const pending of this.#pending.values()) {
+      clearTimeout(pending.timer);
+      pending.resolve({});
+    }
+    this.#pending.clear();
+    this.#outbox.length = 0;
+    if (this.#lastTopics) this.#outbox.push(this.#lastTopics);
+    this.#status = { type: 'STATUS', state: 'idle' };
+    this.#onStatus(this.#status);
+    this.#updateBusy();
+    this.#connectFrame('gemma');
+  }
+
+  #connectFrame(model: ModelKey): void {
     const frame = document.createElement('iframe');
     this.#extension = browser.runtime.getURL('/');
     // The model rides in the URL: the worker has to know it before the first
@@ -122,9 +210,13 @@ export class EngineClient implements Engine {
   }
 
   #handshake(frame: HTMLIFrameElement): void {
+    if (frame !== this.#frame) return;
+    this.#port?.close();
     const channel = new MessageChannel();
     this.#port = channel.port1;
-    channel.port1.onmessage = (event: MessageEvent<unknown>) => this.#receive(event.data);
+    channel.port1.onmessage = (event: MessageEvent<unknown>) => {
+      if (this.#port === channel.port1) this.#receive(event.data);
+    };
     channel.port1.start();
     // The frame sits in the host DOM: a page that navigates it must not receive the port.
     frame.contentWindow?.postMessage({ type: HANDSHAKE }, this.#extension, [
@@ -174,7 +266,14 @@ export class EngineClient implements Engine {
   }
 
   setTopics(topics: string[], corrections: TopicCorrections[] = []): void {
-    this.#send({ id: nextRequestId(), type: 'SET_TOPICS', topics, corrections });
+    const request = {
+      id: nextRequestId(),
+      type: 'SET_TOPICS',
+      topics,
+      corrections,
+    } as const;
+    this.#lastTopics = request;
+    this.#send(request);
   }
 
   score(texts: string[]): Promise<RatedMatch[]> {
@@ -211,9 +310,10 @@ export class EngineClient implements Engine {
     });
   }
 
-  /** Buffers until the iframe finishes loading; connect() only starts that. */
+  /** Buffers until the selected engine transport opens. */
   #send(request: EngineRequest): void {
-    if (this.#port) this.#port.postMessage(request);
+    if (this.#shared) this.#shared.postMessage(request);
+    else if (this.#port) this.#port.postMessage(request);
     else this.#outbox.push(request);
   }
 }

@@ -59,14 +59,39 @@ The `embedder` line names the model: `Xenova/e5-small-v2` by default,
 popup.
 
 The first missing line locates the failure. `content` and `client` lines appear in
-the page console; `engine` and `worker` lines come from the iframe, so pick the
-`engine.html` context in the devtools frame selector to see them.
+the page console. For Chrome's multilingual model, inspect `engine` and `worker`
+lines in the offscreen document at `chrome://inspect/#pages`; for the default
+English model and Firefox, select the `engine.html` iframe in the page DevTools
+frame selector. The background service worker logs appear in the extension's
+service worker DevTools.
 
 Logging is on only in debug builds: `npm run watch` and `npm run build:debug`.
 The build mode alone decides it, never an environment variable or a
 `.env` file, so `npm run build` and `npm run zip` never log. Debug builds go to
 their own folder (`.output/chrome-mv3-debug`), apart from the one the store zip
 is made from.
+
+### Inspect Chrome's shared Gemma worker
+
+Use the Gemma model; Chrome e5 and Firefox use the iframe engine instead.
+
+1. Build a readable debug extension with `npm run build:debug`, then load
+   `.output/chrome-mv3-debug` from `chrome://extensions`.
+2. Open a feed tab with topics and select _Every language_ in the popup to start
+   the shared engine.
+3. Open `chrome://inspect/#pages`. Find uFeed's `offscreen.html` and click
+   **Inspect**. If it is absent, the shared Gemma engine has not started yet.
+4. In the offscreen DevTools Console, evaluate `crossOriginIsolated`. It should
+   be `true`; this confirms the page can use shared WebAssembly memory, but does
+   not alone confirm the thread count.
+5. In the offscreen DevTools Console, look for
+   `[ufeed:embedder] creating WASM threads count=2`, before the model-loading
+   line. The embedder is configured for two WASM threads.
+
+Without a retry warning, `count=1` means isolation was unavailable when the
+worker started. A `two-thread load failed, retrying single-threaded` warning
+means the embedder retries with one thread and logs `count=1`. Open
+`chrome://inspect/#pages` to inspect the offscreen page and its worker.
 
 ### First run
 
