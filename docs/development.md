@@ -71,6 +71,31 @@ The build mode alone decides it, never an environment variable or a
 their own folder (`.output/chrome-mv3-debug`), apart from the one the store zip
 is made from.
 
+### Inspect Chrome's shared Gemma worker
+
+Use the Gemma model; Chrome e5 and Firefox use the iframe engine instead.
+
+1. Build a readable debug extension with `npm run build:debug`, then load
+   `.output/chrome-mv3-debug` from `chrome://extensions`.
+2. Open a feed tab with topics and select _Every language_ in the popup to start
+   the shared engine.
+3. Open `chrome://inspect/#pages`. Find uFeed's `offscreen.html` and click
+   **Inspect**. If it is absent, the shared Gemma engine has not started yet.
+4. In the offscreen DevTools Console, evaluate `crossOriginIsolated`. It should
+   be `true`; this confirms the page can use shared WebAssembly memory, but does
+   not alone confirm the thread count.
+5. In **Sources → Threads**, select the engine worker. Set a breakpoint on the
+   `threads = request.threads === 2 && self.crossOriginIsolated ? 2 : 1`
+   assignment in `engine.worker.ts`. When the worker handles its `INIT` message,
+   check `threads` in the Scope pane; it should be `2`.
+
+The ordinary logs show the shared engine and worker, but do not print the
+configured thread count. A `two-thread load failed, retrying single-threaded`
+warning means the worker fell back to one thread; no warning plus `threads: 2`
+at `INIT` confirms the two-thread configuration was selected. Chrome's
+DevTools [Threads pane](https://developer.chrome.com/docs/devtools/javascript/reference#change-thread-context)
+switches between worker contexts.
+
 ### First run
 
 The default model is ~33MB and the multilingual one ~197MB; whichever you pick
