@@ -85,14 +85,13 @@ Use the Gemma model; Chrome e5 and Firefox use the iframe engine instead.
    be `true`; this confirms the page can use shared WebAssembly memory, but does
    not alone confirm the thread count.
 5. In the offscreen DevTools Console, look for
-   `[ufeed:worker] creating WASM threads count=2`, immediately before
-   `[ufeed:worker] model selected`. The worker is configured for two WASM
-   threads.
+   `[ufeed:embedder] creating WASM threads count=2`, before the model-loading
+   line. The embedder is configured for two WASM threads.
 
-A `count=1` line means isolation was unavailable when the worker started. A
-`two-thread load failed, retrying single-threaded` warning means the two-thread
-load failed and it retried with one. Open `chrome://inspect/#pages` to inspect
-the offscreen page and its worker.
+Without a retry warning, `count=1` means isolation was unavailable when the
+worker started. A `two-thread load failed, retrying single-threaded` warning
+means the embedder retries with one thread and logs `count=1`. Open
+`chrome://inspect/#pages` to inspect the offscreen page and its worker.
 
 ### First run
 

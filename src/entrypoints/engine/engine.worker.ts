@@ -149,7 +149,6 @@ self.onmessage = (event: MessageEvent<unknown>) => {
   if (isInitRequest(request)) {
     spec = modelFor(request.model);
     threads = request.threads === 2 && self.crossOriginIsolated ? 2 : 1;
-    log.info('creating WASM threads', { count: threads });
     log.info('model selected', { model: spec.label, dim: spec.dim });
     return;
   }

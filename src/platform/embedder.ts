@@ -66,7 +66,10 @@ export class Embedder {
   ): Promise<void> {
     if (this.#embed) return;
 
-    if (env.backends.onnx.wasm) env.backends.onnx.wasm.numThreads = threads;
+    if (env.backends.onnx.wasm) {
+      env.backends.onnx.wasm.numThreads = threads;
+      log.info('creating WASM threads', { count: threads });
+    }
 
     const order: Device[] = forced
       ? [forced]
