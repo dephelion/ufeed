@@ -267,7 +267,8 @@ export class FeedFilter {
     let blurred = 0;
     for (const { post, match } of results) {
       if (!post.container.isConnected) continue;
-      if (this.#adapter.findPosts(post.container)[0]?.text !== post.text) continue;
+      const currentPost = this.#adapter.findPosts(post.container)[0];
+      if (currentPost?.text !== post.text) continue;
       if (match !== undefined) this.#cache.set(post.text, match);
       const action = this.#decide(post, match);
       if (action !== undefined && action !== 'reveal') blurred += 1;
