@@ -122,6 +122,29 @@ describe('blur', () => {
     blur(el, t, 'topic', true);
     expect(el.style.getPropertyValue('--lx-h')).toBe('');
   });
+
+  it('a clicked post expands, keeping the height the collapse measured', () => {
+    const el = standing(400);
+    blur(el, t, 'topic', true);
+    revealPermanently(el, t);
+    expect(el.classList.contains('lx-expand')).toBe(true);
+    expect(el.style.getPropertyValue('--lx-h')).toBe('400px');
+  });
+
+  it('a post revealed any other way does not expand, and gives the height back', () => {
+    const el = standing(400);
+    blur(el, t, 'topic', true);
+    reveal(el);
+    expect(el.classList.contains('lx-expand')).toBe(false);
+    expect(el.style.getPropertyValue('--lx-h')).toBe('');
+  });
+
+  it('never expands a post that was never collapsed: there is nothing to undo', () => {
+    const el = standing(400);
+    blur(el, t, 'topic', false);
+    revealPermanently(el, t);
+    expect(el.classList.contains('lx-expand')).toBe(false);
+  });
 });
 
 describe('relabelBlurred', () => {

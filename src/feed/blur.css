@@ -183,8 +183,35 @@
   transition: opacity var(--lx-collapse-time) ease-in;
 }
 
+/* The click back out, running the collapse in reverse. It is quicker than the
+   collapse: the reader asked for this one and is waiting on it. Both ends are
+   explicit, since the underlying max-height is none and none does not
+   interpolate; --lx-h is the height the collapse measured on the way down, and
+   the animation ends a hair under it so the drop back to none does not jump. */
+.lx-expand {
+  --lx-shut: 30px;
+  animation: lx-expand 0.35s ease-out;
+}
+
+.lx-expand[data-lx-score] {
+  --lx-shut: 46px;
+}
+
+@keyframes lx-expand {
+  from {
+    max-height: var(--lx-shut);
+    overflow: hidden;
+  }
+
+  to {
+    max-height: var(--lx-h, 200vh);
+    overflow: hidden;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .lx-collapse {
+  .lx-collapse,
+  .lx-expand {
     animation: none;
   }
 

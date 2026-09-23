@@ -56,6 +56,42 @@ describe('the skeleton', () => {
   });
 });
 
+describe('the lift', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('marks a post the verdict let through, so it fades in rather than flashing', () => {
+    const el = post();
+    showSkeleton(el, t);
+    hideSkeleton(el, true);
+    expect(el.classList.contains('lx-unveil')).toBe(true);
+    expect(isSkeleton(el)).toBe(false);
+  });
+
+  it('leaves a post on its way to a blur alone: the blur is what it wears next', () => {
+    const el = post();
+    showSkeleton(el, t);
+    hideSkeleton(el);
+    expect(el.classList.contains('lx-unveil')).toBe(false);
+  });
+
+  it('drops the mark when a post is held again, so the next lift animates too', () => {
+    const el = post();
+    showSkeleton(el, t);
+    hideSkeleton(el, true);
+    showSkeleton(el, t);
+    expect(el.classList.contains('lx-unveil')).toBe(false);
+  });
+
+  it('lifts the whole feed out of a hold when the failsafe clears it', () => {
+    const el = post();
+    showSkeleton(el, t);
+    hideAllSkeletons();
+    expect(el.classList.contains('lx-unveil')).toBe(true);
+  });
+});
+
 describe('the failsafe timer', () => {
   beforeEach(() => {
     document.body.innerHTML = '';

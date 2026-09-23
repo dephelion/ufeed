@@ -3,8 +3,11 @@ import type { MessageKey, Translate } from '../core/messages';
 const BLUR_CLASS = 'lx-blur';
 const COLLAPSE_CLASS = 'lx-collapse';
 
-/** The height the collapse animates down from; a stylesheet cannot read one. */
+/** The height the collapse animates down from, and the expand back up to. */
 const HEIGHT_VAR = '--lx-h';
+
+/** Like `lx-unveil`: animation only, so a copy left behind changes nothing. */
+const EXPAND_CLASS = 'lx-expand';
 
 /**
  * Node-level, deliberately: a reveal lost to virtualized recycling is an
@@ -56,6 +59,7 @@ export function blur(
   if (revealed.has(element)) return;
   if (collapse && !element.classList.contains(COLLAPSE_CLASS)) measure(element);
   element.classList.add(BLUR_CLASS);
+  element.classList.remove(EXPAND_CLASS);
   element.classList.toggle(COLLAPSE_CLASS, collapse);
   element.dataset.lxReason = reason;
   element.dataset.lxLabel = t(LABELS[reason]);
@@ -103,9 +107,17 @@ export function relabelBlurred(t: Translate, root: ParentNode = document): void 
   }
 }
 
-export function reveal(element: HTMLElement): void {
+/**
+ * `expand` runs the collapse backwards, for the one reveal a reader asked for by
+ * clicking. Every other caller — a settings change, the off switch — is putting a
+ * whole feed back at once and has nothing to draw attention to.
+ */
+export function reveal(element: HTMLElement, expand = false): void {
+  const collapsed = element.classList.contains(COLLAPSE_CLASS);
   element.classList.remove(BLUR_CLASS, COLLAPSE_CLASS);
-  element.style.removeProperty(HEIGHT_VAR);
+  element.classList.toggle(EXPAND_CLASS, expand && collapsed);
+  // The expand animates back up to it, so it outlives the collapse by one animation.
+  if (!(expand && collapsed)) element.style.removeProperty(HEIGHT_VAR);
   delete element.dataset.lxReason;
   delete element.dataset.lxLabel;
   delete element.dataset.lxPeek;
@@ -119,7 +131,7 @@ export function revealPermanently(element: HTMLElement, t: Translate): void {
   const reason = element.dataset.lxReason as BlurReason | undefined;
   const keyword = element.dataset.lxKeyword;
   revealed.add(element);
-  reveal(element);
+  reveal(element, true);
   retag(element, t, reason, keyword);
 }
 

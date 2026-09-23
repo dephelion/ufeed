@@ -99,13 +99,17 @@ Keywords, never the model: an embedding blacklist blurred unrelated posts and re
 
 **Unmeasured collapses instantly, by construction.** `--lx-h` falls back to `--lx-shut`, so `from` equals `to` and nothing moves. That covers a post with no layout (0 height, happy-dom included) and is exactly the behaviour every path had before the slide existed.
 
+**A clicked post expands, and nothing else does.** `reveal(element, true)`, from `revealPermanently()` only. A settings change or the off switch hands a whole feed back at once and has nothing to single out. `.lx-expand` animates from the shut row back up to `--lx-h`, which is why `reveal()` keeps that variable for an expand and drops it every other time. Both ends are explicit here: the underlying `max-height` is `none`, and `none` does not interpolate. 0.35s, quicker than the collapse — the reader asked for this one and is waiting on it.
+
+**`.lx-expand` and `.lx-unveil` carry an animation and nothing else**, so a copy left on a post changes how it looks in no way at all. That is what buys them out of a cleanup path: nothing has to take them off, and `prefers-reduced-motion` can drop them to `animation: none` without stranding a post in a half-state.
+
 **Never re-measure a collapsed post** — it would read the shut row and the next slide would start from 30px. `blur()` measures only when the class is absent.
 
 **Children fade over the full slide, not the blur's 0.2s.** Gone in 200ms leaves an empty box closing on nothing; fading `ease-in` over the second keeps the post legible while it rolls up and transparent by the time the row is thin enough to clip a sliver.
 
 **The label does not animate.** `::after` is created in the same frame as the class, so it has no previous value to move from, and it should be readable the moment the post is claimed.
 
-**`prefers-reduced-motion: reduce` turns both off**, back to the instant collapse.
+**`prefers-reduced-motion: reduce` turns every one of the three off** — collapse, expand and lift — back to the instant states. It is an OS setting, on by default for more readers than it looks, so a "nothing happens" report is worth checking against it before the CSS: macOS System Settings → Accessibility → Display → Reduce motion.
 
 **Two costs, both accepted until a feed argues.** `measure()` reads `offsetHeight` inside the verdict loop, so a batch — a `rescore()` over every judged post most of all — forces one layout per post; and an animating `max-height` reflows the feed every frame for a second instead of once. If either bites, the duration is one custom property (`--lx-collapse-time`) and the reads can be taken for the whole batch before any class is written.
 
@@ -132,6 +136,22 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 **It clears itself after 10s**, whatever happened. A held batch, a dead worker or a detector that never answers must not leave a feed held — Invariant 2 applies to this state exactly as it applies to a blur.
 
 **That failsafe must outlast the engine's own timeout, and at 1500ms it did not.** Every verdict clears the state, and the engine answers or fails open within 8s, so the timer should only ever fire when nothing answers at all. Sized for e5's milliseconds, it expired mid-batch on the slower model: the post showed in full and blurred a moment later, which is the exact flash this state exists to prevent. Any future per-request timeout change moves this with it.
+
+### The lift
+
+`.lx-unveil`, added by `hideSkeleton(element, true)` as `.lx-pending` comes off. A post that cleared the threshold used to snap from held to legible in one frame, which is the same flash the hold exists to prevent, arriving at the other end.
+
+**A removed class has nothing left to transition**, so the lift is a one-shot animation on the same three targets the hold uses, 0.3s, `ease-out`.
+
+**Each keyframe names only where the post came from.** No `to`, so each one ends on the underlying value — the host's own colour, whatever it is. Naming an end would mean writing the feed's own styling into ours and being wrong on the next vendor change; `color: inherit` would be wrong on any element the host colours directly, a link most of all.
+
+**Only a post that was actually held gets lifted.** `#apply` asks `isSkeleton()` first. A post re-judged from the score cache on a settings change is wearing a blur, not a hold, and the lift would animate it out of a state it was never in.
+
+**The failsafe and `hideAllSkeletons()` lift too.** Both hand posts back to the reader, which is the case the lift is for.
+
+**`showSkeleton()` takes the class off, not `hideSkeleton()`.** Re-adding a class is what restarts its animation, so the removal has to happen on the way in; leaving it to the way out means the second hold on a recycled node lifts without a lift.
+
+**It animates a lot of elements.** Every text node's ancestor in the post, and `blur(96px)` down to none on each image. A static heavy blur is painted once; an animated one repaints every frame. 0.3s was picked to keep that short, and `--lx-unveil-time` is the one place to change it.
 
 **Held from the moment a post is found, through warm-up.** `FeedScanner.onFound` fires in the mutation callback, before the next paint; waiting for the viewport observer paints the real post once first. Waiting for the engine to be ready showed every post on load, then held it, then blurred it — the flash this state exists to prevent.
 

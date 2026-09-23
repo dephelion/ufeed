@@ -317,8 +317,10 @@ export class FeedFilter {
   }
 
   #apply(post: Post, action: Action): Action {
-    // The verdict landed, so the loading state is over whichever way it went.
-    hideSkeleton(post.container);
+    // The verdict landed, so the loading state is over whichever way it went. Only
+    // a post that was actually held has a hold to be lifted out of; one re-judged
+    // from the cache is wearing a blur, and the blur is not what the lift undoes.
+    hideSkeleton(post.container, action === 'reveal' && isSkeleton(post.container));
     this.#track(post.text, action !== 'reveal');
     const collapse = this.#settings.collapseBlurred;
     if (action === 'reveal') reveal(post.container);

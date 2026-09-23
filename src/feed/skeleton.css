@@ -36,3 +36,53 @@
   filter: blur(96px) saturate(0.25);
   opacity: 0.45;
 }
+
+/* Lifting the hold is a class removal, and a removed class has nothing left to
+   transition — the post used to snap from held to legible. See ui.md §The lift. */
+.lx-unveil {
+  --lx-unveil-time: 0.3s;
+}
+
+/* Each keyframe names only where the post came from. The end is left implicit so
+   it lands on the host's own colour, which no stylesheet of ours can know. */
+.lx-unveil > * {
+  animation: lx-unveil-dim var(--lx-unveil-time) ease-out;
+}
+
+.lx-unveil :is(p, span, h1, h2, h3, h4, a, time, strong, em) {
+  animation: lx-unveil-text var(--lx-unveil-time) ease-out;
+}
+
+.lx-unveil :is(img, canvas, svg, video),
+.lx-unveil [style*='background-image'] {
+  animation: lx-unveil-media var(--lx-unveil-time) ease-out;
+}
+
+@keyframes lx-unveil-dim {
+  from {
+    opacity: 0.55;
+  }
+}
+
+@keyframes lx-unveil-text {
+  from {
+    color: transparent;
+    text-shadow: 0 0 18px currentColor;
+  }
+}
+
+@keyframes lx-unveil-media {
+  from {
+    filter: blur(96px) saturate(0.25);
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-unveil > *,
+  .lx-unveil :is(p, span, h1, h2, h3, h4, a, time, strong, em),
+  .lx-unveil :is(img, canvas, svg, video),
+  .lx-unveil [style*='background-image'] {
+    animation: none;
+  }
+}
