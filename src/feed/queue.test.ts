@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { Engine } from './ports';
 import { ScoreQueue, type Scored } from './queue';
 
@@ -12,6 +12,10 @@ const engine = {
   },
 } as unknown as Engine;
 
+const connected = () => document.body.appendChild(document.createElement('div'));
+
+afterEach(() => document.body.replaceChildren());
+
 describe('ScoreQueue', () => {
   it('embeds a long post capped, but hands back the whole post it was given', async () => {
     const results: Scored[] = [];
@@ -20,7 +24,7 @@ describe('ScoreQueue', () => {
       (r) => results.push(...r),
       () => 16,
     );
-    const post = { container: document.createElement('div'), text: 'x'.repeat(5000) };
+    const post = { container: connected(), text: 'x'.repeat(5000) };
 
     queue.add(post);
     await queue.flush();
@@ -36,15 +40,13 @@ describe('ScoreQueue', () => {
       () => {},
       () => size,
     );
-    for (let i = 0; i < 3; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 3; i++) queue.add({ container: connected(), text: `post ${i}` });
     await Promise.resolve();
     expect(sent.at(-1)).toHaveLength(3);
 
     // A model switch changes it under a live queue, so it is read per flush.
     size = 2;
-    for (let i = 0; i < 2; i++)
-      queue.add({ container: document.createElement('div'), text: `later ${i}` });
+    for (let i = 0; i < 2; i++) queue.add({ container: connected(), text: `later ${i}` });
     await Promise.resolve();
     expect(sent.at(-1)).toHaveLength(2);
   });
@@ -67,8 +69,7 @@ describe('ScoreQueue', () => {
       () => {},
       () => 2,
     );
-    for (let i = 0; i < 6; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 6; i++) queue.add({ container: connected(), text: `post ${i}` });
     await Promise.resolve();
 
     // Six posts, a batch of two: without the guard all three went out at once and
@@ -81,6 +82,42 @@ describe('ScoreQueue', () => {
     expect(inFlight).toHaveLength(2);
   });
 
+  it('skips detached backlog entries so a connected post reaches the next batch', async () => {
+    let release: (() => void) | undefined;
+    const sent: string[][] = [];
+    const slow = {
+      ready: true,
+      status: { type: 'STATUS', state: 'ready' },
+      score: (texts: string[]) => {
+        sent.push(texts);
+        if (sent.length > 1) return Promise.resolve(texts.map(() => undefined));
+        return new Promise<undefined[]>((resolve) => {
+          release = () => resolve(texts.map(() => undefined));
+        });
+      },
+    } as unknown as Engine;
+    const queue = new ScoreQueue(
+      slow,
+      () => {},
+      () => 2,
+    );
+
+    queue.add({ container: connected(), text: 'running 1' });
+    queue.add({ container: connected(), text: 'running 2' });
+    const stale = Array.from({ length: 3 }, (_, i) => ({
+      container: connected(),
+      text: `stale ${i}`,
+    }));
+    for (const post of stale) queue.add(post);
+    queue.add({ container: connected(), text: 'visible' });
+    for (const post of stale) post.container.remove();
+
+    release?.();
+    for (let i = 0; i < 8; i++) await Promise.resolve();
+
+    expect(sent).toEqual([['running 1', 'running 2'], ['visible']]);
+  });
+
   it('keeps the posts it could not send yet, rather than dropping them', async () => {
     const seen: Scored[] = [];
     const queue = new ScoreQueue(
@@ -88,8 +125,7 @@ describe('ScoreQueue', () => {
       (r) => seen.push(...r),
       () => 2,
     );
-    for (let i = 0; i < 4; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 4; i++) queue.add({ container: connected(), text: `post ${i}` });
 
     await queue.flush();
     for (let i = 0; i < 8; i++) await Promise.resolve();
@@ -105,8 +141,7 @@ describe('ScoreQueue', () => {
       () => 2,
       (posts) => held.push(posts.map((p) => p.text)),
     );
-    for (let i = 0; i < 4; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 4; i++) queue.add({ container: connected(), text: `post ${i}` });
 
     await queue.flush();
     for (let i = 0; i < 8; i++) await Promise.resolve();
@@ -129,8 +164,8 @@ describe('ScoreQueue', () => {
       () => 2,
       () => order.push('holding'),
     );
-    queue.add({ container: document.createElement('div'), text: 'a' });
-    queue.add({ container: document.createElement('div'), text: 'b' });
+    queue.add({ container: connected(), text: 'a' });
+    queue.add({ container: connected(), text: 'b' });
     await queue.flush();
     for (let i = 0; i < 4; i++) await Promise.resolve();
 
@@ -156,8 +191,7 @@ describe('ScoreQueue', () => {
       (posts) => held.push(posts.map((p) => p.text)),
     );
     // Two go out and block; four more pile up behind them.
-    for (let i = 0; i < 6; i++)
-      queue.add({ container: document.createElement('div'), text: `post ${i}` });
+    for (let i = 0; i < 6; i++) queue.add({ container: connected(), text: `post ${i}` });
     await Promise.resolve();
 
     release?.();

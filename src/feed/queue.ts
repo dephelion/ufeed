@@ -74,6 +74,11 @@ export class ScoreQueue {
       return;
     }
 
+    for (const [element] of this.#pending) {
+      if (!element.isConnected) this.#pending.delete(element);
+    }
+    if (this.#pending.size === 0) return;
+
     const issuedAt = this.#epoch;
     const batch = [...this.#pending.entries()].slice(0, this.batchSize());
     for (const [element] of batch) this.#pending.delete(element);

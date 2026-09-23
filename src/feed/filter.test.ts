@@ -383,6 +383,34 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(false);
   });
 
+  it('ignores a score when a connected feed cell is reused for different text', async () => {
+    let answerOld: (matches: RatedMatch[]) => void = () => {};
+    let answerNew: (matches: RatedMatch[]) => void = () => {};
+    const calls: Promise<RatedMatch[]>[] = [
+      new Promise((resolve) => (answerOld = resolve)),
+      new Promise((resolve) => (answerNew = resolve)),
+    ];
+    const { engine } = await run(SETTINGS, ['a chocolate cake recipe'], async () =>
+      calls.shift()!,
+    );
+    const reused = post('cake');
+    reused.querySelector('[data-testid="tweetText"] span')!.textContent = 'rust news';
+    await vi.advanceTimersByTimeAsync(0);
+
+    answerOld([match(0.1)]);
+    await vi.advanceTimersByTimeAsync(200);
+
+    expect(reused.isConnected).toBe(true);
+    expect(isBlurred(reused)).toBe(false);
+    expect(engine.score).toHaveBeenCalledTimes(2);
+    expect(engine.score).toHaveBeenLastCalledWith(['rust news']);
+
+    answerNew([match(0.9)]);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(isBlurred(reused)).toBe(false);
+    expect(reused.classList.contains('lx-pending')).toBe(false);
+  });
+
   it('leaves posts still waiting on the engine alone when a setting changes', async () => {
     // Twelve posts, a batch of five: one batch scored and blurred, the other seven
     // held behind an engine that never answers again.
