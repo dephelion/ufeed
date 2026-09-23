@@ -19,6 +19,19 @@ export interface Scored {
   match: RatedMatch | undefined;
 }
 
+function viewportPriority(element: HTMLElement): { visible: boolean; position: number } {
+  const rect = element.getBoundingClientRect();
+  const visible = rect.bottom > 0 && rect.top < window.innerHeight;
+  return {
+    visible,
+    position: visible
+      ? rect.top
+      : rect.bottom <= 0
+        ? -rect.bottom
+        : rect.top - window.innerHeight,
+  };
+}
+
 /**
  * Batches posts to the engine. Holds the batch rather than dropping it while the
  * engine is warming, and discards replies issued against a query that has since
@@ -46,7 +59,8 @@ export class ScoreQueue {
 
   add(post: Post): void {
     this.#pending.set(post.container, post);
-    if (this.#pending.size >= this.batchSize()) void this.flush();
+    if (this.batchSize() === 1) this.#schedule(0);
+    else if (this.#pending.size >= this.batchSize()) void this.flush();
     else this.#schedule();
   }
 
@@ -80,7 +94,15 @@ export class ScoreQueue {
     if (this.#pending.size === 0) return;
 
     const issuedAt = this.#epoch;
-    const batch = [...this.#pending.entries()].slice(0, this.batchSize());
+    const batch = [...this.#pending.entries()]
+      .map(([element, post]) => ({ element, post, priority: viewportPriority(element) }))
+      .sort(
+        (a, b) =>
+          Number(b.priority.visible) - Number(a.priority.visible) ||
+          a.priority.position - b.priority.position,
+      )
+      .slice(0, this.batchSize())
+      .map(({ element, post }) => [element, post] as const);
     for (const [element] of batch) this.#pending.delete(element);
 
     this.#inFlight = true;
@@ -104,8 +126,8 @@ export class ScoreQueue {
     if (this.#pending.size > 0) void this.flush();
   }
 
-  #schedule(): void {
+  #schedule(delay = FLUSH_MS): void {
     clearTimeout(this.#timer);
-    this.#timer = setTimeout(() => void this.flush(), FLUSH_MS);
+    this.#timer = setTimeout(() => void this.flush(), delay);
   }
 }

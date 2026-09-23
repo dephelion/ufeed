@@ -82,6 +82,80 @@ describe('ScoreQueue', () => {
     expect(inFlight).toHaveLength(2);
   });
 
+  it('scores visible posts top to bottom before posts in the lookahead area', async () => {
+    let release: (() => void) | undefined;
+    const order: string[] = [];
+    const slow = {
+      ready: true,
+      status: { type: 'STATUS', state: 'ready' },
+      score: (texts: string[]) => {
+        order.push(...texts);
+        if (order.length > 1) return Promise.resolve(texts.map(() => undefined));
+        return new Promise<undefined[]>((resolve) => {
+          release = () => resolve([undefined]);
+        });
+      },
+    } as unknown as Engine;
+    const queue = new ScoreQueue(
+      slow,
+      () => {},
+      () => 1,
+    );
+    const addAt = (text: string, top: number, bottom: number) => {
+      const container = connected();
+      container.getBoundingClientRect = () => ({ top, bottom }) as DOMRect;
+      queue.add({ container, text });
+    };
+
+    addAt('running', 0, 100);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    addAt('below', window.innerHeight + 500, window.innerHeight + 600);
+    addAt('visible lower', 300, 400);
+    addAt('above', -200, -100);
+    addAt('visible upper', 50, 150);
+    addAt('visible upper tie', 50, 150);
+    release?.();
+    for (let i = 0; i < 20; i++) await Promise.resolve();
+
+    expect(order).toEqual([
+      'running',
+      'visible upper',
+      'visible upper tie',
+      'visible lower',
+      'above',
+      'below',
+    ]);
+  });
+
+  it('collects posts in one scan before sending the first single-post request', async () => {
+    const order: string[] = [];
+    const single = {
+      ready: true,
+      status: { type: 'STATUS', state: 'ready' },
+      score: async (texts: string[]) => {
+        order.push(...texts);
+        return texts.map(() => undefined);
+      },
+    } as unknown as Engine;
+    const queue = new ScoreQueue(
+      single,
+      () => {},
+      () => 1,
+    );
+    const below = connected();
+    below.getBoundingClientRect = () =>
+      ({ top: window.innerHeight + 200, bottom: window.innerHeight + 300 }) as DOMRect;
+    const visible = connected();
+    visible.getBoundingClientRect = () => ({ top: 100, bottom: 200 }) as DOMRect;
+
+    queue.add({ container: below, text: 'prefetched' });
+    queue.add({ container: visible, text: 'visible' });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    for (let i = 0; i < 4; i++) await Promise.resolve();
+
+    expect(order).toEqual(['visible', 'prefetched']);
+  });
+
   it('skips detached backlog entries so a connected post reaches the next batch', async () => {
     let release: (() => void) | undefined;
     const sent: string[][] = [];
