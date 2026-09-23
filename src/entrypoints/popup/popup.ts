@@ -171,8 +171,10 @@ function describeStatus(settings: Settings): void {
     return;
   }
   if (settings.topics.length === 0) {
-    dot.dataset.state = 'idle';
-    statusText.textContent = t('statusNoTopics');
+    dot.dataset.state = settings.blacklist.length > 0 ? 'ready' : 'idle';
+    statusText.textContent = t(
+      settings.blacklist.length > 0 ? 'statusBlacklist' : 'statusNoTopics',
+    );
     return;
   }
   dot.dataset.state = 'ready';
@@ -189,6 +191,12 @@ function describeStatus(settings: Settings): void {
  * the chip alone says everything left to say.
  */
 function describeEngineStatus(status: EngineStatus | undefined): void {
+  if (saved.topics.length === 0 && saved.blacklist.length > 0) {
+    chipDot.dataset.state = 'ready';
+    chipText.textContent = t('chipBlacklist');
+    engineLine.hidden = true;
+    return;
+  }
   const short = summarizeEngine(status, t);
   chipDot.dataset.state = short.tone;
   chipText.textContent = short.text;
@@ -211,7 +219,9 @@ async function update(patch: Partial<Settings>): Promise<boolean> {
     return false;
   }
   describeStatus(saved);
+  describeEngineStatus(currentEngineStatus);
   refreshApply();
+  void renderTuning();
   // Reloaded, not re-rendered: the text is set from many places, and a reload
   // cannot leave any of it in the old language.
   if (resolveLanguage(saved.language, browserLanguage) !== language) location.reload();
@@ -223,13 +233,18 @@ render(saved);
 describeStatus(saved);
 
 let activeTab: number | undefined;
+let currentEngineStatus: EngineStatus | undefined;
 
 // Asked fresh every time the popup opens, so switching tabs cannot leave a
 // stale reading on screen, and followed for one tab only.
 void askEngineStatus().then(async ({ tabId, status }) => {
   activeTab = tabId;
+  currentEngineStatus = status;
   describeEngineStatus(status);
-  onEngineStatus(tabId, describeEngineStatus);
+  onEngineStatus(tabId, (next) => {
+    currentEngineStatus = next;
+    describeEngineStatus(next);
+  });
   renderEnabled(await askTabSwitch(tabId));
   describeStatus(saved);
 });
@@ -293,7 +308,8 @@ async function renderTuning(): Promise<void> {
   statTotal.textContent = String(total);
   tuningNote.textContent = total === 0 ? t('tuningNone') : '';
   clearTuning.disabled = total === 0;
-  exportButton.disabled = total === 0 && saved.topics.length === 0;
+  exportButton.disabled =
+    total === 0 && saved.topics.length === 0 && saved.blacklist.length === 0;
 }
 
 void renderTuning();

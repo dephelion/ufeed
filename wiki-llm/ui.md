@@ -237,7 +237,9 @@ Apply is disabled until either textarea differs from what is saved.
 
 ## No-topics card
 
-On, and no topics — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
+On, with no topics and no blacklist — the one inactive state the reader did not choose. The feed looks untouched, which reads as a broken install rather than an unfinished setup. `needsTopics()` in `settings.ts`, card in `src/feed/nudge.ts`.
+
+With only a blacklist, filter matching posts without starting the model or applying topic-dependent media and language rules. Show the popup's blacklist status and allow a backup of that configuration.
 
 Fixed top-right, same dark chip as the thumbs bar so it reads the same on a light and a dark feed. Shows the toolbar icon, because finding that button is the actual task.
 
@@ -255,7 +257,7 @@ A badge, bottom-left: the toolbar icon and "Posts hidden: N". A click opens the 
 
 **It counts posts, not nodes.** `FeedFilter` keeps the content hashes of the posts it is hiding — blur, peek, media and language alike — so a post X remounts as a new node counts once. A reveal, a loosened strictness and a re-judged post take one out; a topic or model change, turning the tab off, or an engine error clears it. Each tab counts its own: the set lives in that tab's `FeedFilter`, never in storage. It is the posts hidden now among those seen since load, not everything ever hidden. Two posts with identical text count once.
 
-**Shown while uFeed is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with no topics (the nudge's state), it is hidden. **Also hidden in a narrow window**: hosts swap to a bottom navigation bar there, which would cover it. It is a width rule in `blur.css`, not a phone check, so a small desktop window behaves the same.
+**Shown while uFeed is active, zero included.** "Posts hidden: 0" is how a quiet feed says the filter is on. Off, or on with neither topics nor blacklist (the nudge's state), it is hidden. **Also hidden in a narrow window**: hosts swap to a bottom navigation bar there, which would cover it. It is a width rule in `blur.css`, not a phone check, so a small desktop window behaves the same.
 
 **The click asks the background.** `platform/open-popup.ts` sends `ufeed:open-popup` and the background calls `action.openPopup()`. Chrome allows that from 127 and the manifest floor is 111; Firefox documents it as user-action-only and this path is unverified there. Where it refuses, the click does nothing and debug builds log why.
 

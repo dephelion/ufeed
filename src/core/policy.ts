@@ -34,6 +34,7 @@ export interface Judgement extends Grounds {
 export function decideWithoutScore(grounds: Grounds): Action | undefined {
   const { settings, text, hasMedia, language } = grounds;
   if (blursAsBlacklisted(settings, text)) return 'blur-blacklist';
+  if (settings.topics.length === 0) return undefined;
   if (blursAsThinMedia(settings, text, hasMedia, language)) return 'blur-media';
   if (blursAsOtherLanguage(settings, language)) return 'blur-language';
   return undefined;

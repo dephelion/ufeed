@@ -164,6 +164,12 @@
   "switchOff": {
     "message": "Desactivado"
   },
+  "chipBlacklist": {
+    "message": "Lista negra activa"
+  },
+  "statusBlacklist": {
+    "message": "Filtrando solo con la lista negra"
+  },
   "statusNoTopics": {
     "message": "Añade un tema arriba para empezar"
   },

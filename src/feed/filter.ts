@@ -109,7 +109,11 @@ export class FeedFilter {
       isActive: () => this.active,
       // Held when found, before the next paint: one frame of the real post is the flash.
       onFound: (post) => {
-        if (this.#conversation?.route(post) !== 'keep') this.#hold(post);
+        if (
+          this.#settings.topics.length > 0 &&
+          this.#conversation?.route(post) !== 'keep'
+        )
+          this.#hold(post);
       },
       onEnterView: (post) => this.#enqueue(post),
     });
@@ -122,7 +126,7 @@ export class FeedFilter {
   start(): void {
     this.#scanner.start();
     if (!this.active) return;
-    this.#engine.connect(this.#settings.model);
+    if (this.#settings.topics.length > 0) this.#engine.connect(this.#settings.model);
     void this.#persist(this.#tuner.keepOnly(this.#settings.topics));
     this.#requery();
   }
@@ -133,6 +137,7 @@ export class FeedFilter {
   }
 
   engineChanged(state: EngineState): void {
+    if (this.#settings.topics.length === 0) return;
     if (state === 'ready') {
       this.#scanner.sweep(document);
       void this.#queue.flush();
@@ -161,10 +166,10 @@ export class FeedFilter {
     }
     // Every cached score is in the old model's space, and so is every language
     // verdict the old model's gate produced. Both go before the new one answers.
-    if (modelChanged) {
+    if (modelChanged && next.topics.length > 0) {
       this.#languages.clear();
       this.#engine.restart(next.model);
-    } else {
+    } else if (next.topics.length > 0) {
       this.#engine.connect(next.model);
     }
     if (topicsChanged) void this.#persist(this.#tuner.keepOnly(next.topics));
@@ -187,7 +192,7 @@ export class FeedFilter {
 
   /** Starts filtering the page from scratch. */
   #activate(): void {
-    this.#engine.connect(this.#settings.model);
+    if (this.#settings.topics.length > 0) this.#engine.connect(this.#settings.model);
     this.#requery();
   }
 
@@ -360,6 +365,10 @@ export class FeedFilter {
 
   /** Cached posts are decided here and never reach the engine. */
   #enqueue(post: Post): void {
+    if (this.#settings.topics.length === 0) {
+      this.#decide(post, undefined);
+      return;
+    }
     const cached = this.#cache.get(post.text);
     const route = this.#conversation?.route(post);
     if (route === 'wait') {
@@ -443,10 +452,11 @@ export class FeedFilter {
   #requery(): void {
     const { topics, tuneFromFeedback } = this.#settings;
     this.#sentRatings = tuneFromFeedback ? this.#tuner.signature(topics) : '';
-    this.#engine.setTopics(
-      topics,
-      tuneFromFeedback ? this.#tuner.corrections(topics) : [],
-    );
+    if (topics.length > 0)
+      this.#engine.setTopics(
+        topics,
+        tuneFromFeedback ? this.#tuner.corrections(topics) : [],
+      );
     this.#queue.invalidate();
     this.#cache.clear();
     this.#untrackAll();

@@ -1,7 +1,7 @@
 import type { Translate } from '../core/messages';
 
 /**
- * The card shown when uFeed is on and has no topics. That state is invisible
+ * The card shown when uFeed is on and has no topics or blacklist. That state is invisible
  * otherwise — the feed looks untouched, which reads as a broken install rather
  * than an unfinished setup, and a reader who cannot tell will just uninstall.
  *
@@ -40,7 +40,7 @@ export function mountNudge(iconUrl: string, t: Translate): Nudge {
   card.hidden = true;
 
   // Gray, not the branded color icon: this card only shows while the tab has
-  // no topics, which is exactly the state that leaves the toolbar icon gray.
+  // no filters, which is exactly the state that leaves the toolbar icon gray.
   const icon = document.createElement('img');
   icon.className = 'lx-nudge-icon';
   icon.alt = '';

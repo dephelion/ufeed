@@ -75,7 +75,7 @@ const sameType = (value: unknown, fallback: unknown): boolean =>
  * looks installed and nothing happens. `on` is the tab's own switch.
  */
 export function needsTopics(settings: Settings, on: boolean): boolean {
-  return on && settings.topics.length === 0;
+  return on && settings.topics.length === 0 && settings.blacklist.length === 0;
 }
 
 /**
@@ -95,7 +95,7 @@ export function onlyLanguageChanged(before: Settings, after: Settings): boolean 
 
 /** `on` is the tab's own switch, never stored: turning one tab off leaves the others. */
 export function isActive(settings: Settings, on: boolean): boolean {
-  return on && settings.topics.length > 0;
+  return on && (settings.topics.length > 0 || settings.blacklist.length > 0);
 }
 
 /** One topic per line; blanks and duplicates dropped. */
