@@ -1,4 +1,5 @@
 import GitHubIcon from './components/GitHubIcon';
+import ChromeIcon from './components/ChromeIcon';
 import { CHROME_STORE_URL, REPOSITORY_URL, SITE_DESCRIPTION, SITE_URL } from './lib/site';
 
 const softwareJsonLd = {
@@ -118,7 +119,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Add to Chrome <span>↗</span>
+              <ChromeIcon /> Add to Chrome <span>↗</span>
             </a>
             <a
               className="button secondary"
