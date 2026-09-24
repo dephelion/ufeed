@@ -114,13 +114,13 @@ export default function HowItWorksPage() {
       </ol>
 
       <section className="how-details">
-        <h2>Made to feel simple—and stay private</h2>
+        <h2>🔒 Made to feel simple—and stay private</h2>
         <p>
           There is no sign-up, account, or uFeed server. The model is downloaded once and
           cached by your browser. Your topics and the posts you read are not sent to us.
           uFeed is free and open source, so you can look through the project yourself.
         </p>
-        <h2>Choose the language that suits you</h2>
+        <h2>🌍 Choose the language that suits you</h2>
         <p>
           The default model works in English. If your feeds are in other languages, you
           can choose the optional multilingual model in the popup. It needs a larger
