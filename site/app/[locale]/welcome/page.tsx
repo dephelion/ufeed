@@ -11,15 +11,18 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const t = translate(locale as Locale);
-  return pageMetadata({
-    title: t('seo.welcomeTitle'),
-    description: t('seo.welcomeDescription'),
-    path: `/${locale}/welcome/`,
-    imageAlt: t('seo.imageAlt'),
-    imagePath: `/${locale}/opengraph-image`,
-    locale: locale as Locale,
-    keywords: t('seo.welcomeKeywords').split('|'),
-  });
+  return {
+    ...pageMetadata({
+      title: t('seo.welcomeTitle'),
+      description: t('seo.welcomeDescription'),
+      path: `/${locale}/welcome/`,
+      imageAlt: t('seo.imageAlt'),
+      imagePath: `/${locale}/opengraph-image`,
+      locale: locale as Locale,
+      keywords: t('seo.welcomeKeywords').split('|'),
+    }),
+    robots: { index: false, follow: true },
+  };
 }
 
 export default async function WelcomePage({

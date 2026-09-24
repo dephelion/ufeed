@@ -37,7 +37,6 @@ export default function Header({ locale }: { locale: Locale }) {
         aria-label={t('nav.main')}
       >
         <Link href={`${prefix}/how-it-works/`}>{t('nav.how')}</Link>
-        <Link href={`${prefix}/welcome/`}>{t('nav.welcome')}</Link>
         <Link href={`${prefix}/privacy/`}>{t('nav.privacy')}</Link>
         <LanguageSelect locale={locale} />
         <a
