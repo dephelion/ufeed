@@ -578,6 +578,8 @@ h1 {
     padding: 12px 10px;
   }
   .header nav .language-select {
+    align-self: flex-start;
+    width: 56px;
     margin: 4px 8px;
   }
   .header .nav-github {
