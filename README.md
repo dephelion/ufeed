@@ -38,10 +38,10 @@ posts without a match stay visible. One click (or Enter) reveals a blurred post.
 - **Choose what to filter.** Use topics to keep posts about subjects you care
   about, a keyword blacklist to blur posts containing words or phrases you
   choose, or both.
-- **Nothing leaves your device.** A small model (33 MB by default) runs inside your
-  browser. There is no cloud mode, because there is no server. The only network
-  request is the one-time model download, and the source is here so you can check
-  that.
+- **Your feed stays on your device.** A small model (33 MB by default) runs inside
+  your browser. Feed text and settings are never sent. On a new Chrome install (Firefox does not), the browser opens a welcome page on ufeed.es; the normal page request reveals your
+  IP address and language path to the site host. The model is downloaded once
+  from Hugging Face, and the source is here so you can check how it works.
 - **English by default, every language if you ask.** The default model reads
   English. Pick the multilingual one in the popup and it reads every language and
   sorts more accurately, for a one-time 197 MB download and more work on every

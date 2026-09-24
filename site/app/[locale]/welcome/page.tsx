@@ -71,6 +71,7 @@ export default async function WelcomePage({
             </article>
           ))}
         </div>
+        <p className="welcome-note">{t('welcome.note')}</p>
       </section>
 
       <p className="welcome-more">

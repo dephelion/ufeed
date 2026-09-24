@@ -232,6 +232,12 @@ a:hover {
   font-size: 14px;
   line-height: 1.7;
 }
+.welcome-note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
 .welcome-more {
   display: flex;
   align-items: center;

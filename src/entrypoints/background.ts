@@ -5,6 +5,7 @@ import { logger } from '../core/log';
 import { ENSURE_OFFSCREEN } from '../core/protocol';
 import { onPopupRequested } from '../platform/open-popup';
 import { onFeedDetected } from '../platform/status-channel';
+import { openWelcomeOnInstall } from '../platform/welcome-page';
 
 const log = logger('background');
 
@@ -117,6 +118,9 @@ async function openPopup(): Promise<void> {
  * gray means there was none to find.
  */
 export default defineBackground(() => {
+  if (import.meta.env.BROWSER === 'chrome') {
+    browser.runtime.onInstalled.addListener(({ reason }) => openWelcomeOnInstall(reason));
+  }
   browser.runtime.onMessage.addListener((message: unknown) => {
     if (
       typeof message === 'object' &&
