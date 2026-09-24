@@ -22,6 +22,47 @@ body {
   font-family: 'JetBrainsMono Nerd Font', 'JetBrainsMono', monospace;
   -webkit-font-smoothing: antialiased;
 }
+.redirect-loader {
+  min-height: 100svh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 16px;
+}
+.redirect-loader__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  animation: redirect-loader-deblur 900ms ease-out both;
+}
+.redirect-loader__wordmark {
+  color: var(--text);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  animation: redirect-loader-deblur 900ms 80ms ease-out both;
+}
+@keyframes redirect-loader-deblur {
+  from {
+    filter: blur(12px);
+    opacity: 0.25;
+    transform: scale(1.04);
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .redirect-loader__icon,
+  .redirect-loader__wordmark {
+    animation: none;
+    filter: blur(0);
+    opacity: 1;
+    transform: none;
+  }
+}
 a {
   color: inherit;
   text-decoration: none;
