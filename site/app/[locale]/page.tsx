@@ -90,11 +90,11 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               <GitHubIcon /> {t('home.explore')}
             </a>
           </div>
-          <div className="quiet-note">
-            <span>✳</span> {t('home.note')}
-          </div>
         </div>
         <ReelPreview label={t('home.reel')} />
+        <div className="quiet-note">
+          <span>✳</span> {t('home.note')}
+        </div>
       </section>
 
       <section className="features wrap" id="how-it-works">
