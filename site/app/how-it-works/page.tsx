@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
 import { SITE_NAME } from '../lib/site';
 
-const title = 'How the uFeed Browser Extension Works — a calmer social feed';
+const title = 'How the uFeed Browser Extension Works | a calmer social feed';
 const description =
   'See how the free uFeed browser extension filters X, LinkedIn and Reddit: choose topics, reveal blurred posts, adjust filtering, and keep your activity private.';
 const path = '/how-it-works/';

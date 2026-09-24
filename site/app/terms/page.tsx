@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
 
-const title = 'uFeed Browser Extension Terms — open-source license and use';
+const title = 'uFeed Browser Extension Terms | open-source license and use';
 const description =
   'Terms for the free, open-source uFeed browser extension: GPL-3.0-or-later license, limitations, liability, supported social sites, and privacy.';
 const path = '/terms/';
