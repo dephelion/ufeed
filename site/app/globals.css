@@ -74,8 +74,21 @@ a:hover {
   font: inherit;
   cursor: pointer;
 }
-.language-select option { background: #20242b; color: var(--text); }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.language-select option {
+  background: #20242b;
+  color: var(--text);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .header .nav-github {
   border: 1px solid #535861;
   border-radius: 7px;
@@ -374,7 +387,7 @@ h1 {
   padding-top: 54px;
   padding-bottom: 100px;
   color: #d1d3d6;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.75;
 }
 .legal .back {
@@ -386,7 +399,7 @@ h1 {
 .legal h1 {
   max-width: none;
   margin: 0 0 5px;
-  font-size: 48px;
+  font-size: 40px;
 }
 .legal-date {
   margin: 0 0 30px;
@@ -396,13 +409,13 @@ h1 {
 .legal-lead {
   margin: 0 0 42px;
   color: #f1f1ee;
-  font-size: 20px;
+  font-size: 17px;
   line-height: 1.6;
 }
 .legal h2 {
   margin: 32px 0 8px;
   color: #f4f4f0;
-  font-size: 20px;
+  font-size: 18px;
   letter-spacing: -0.02em;
 }
 .legal p {
@@ -550,16 +563,16 @@ h1 {
   }
   .legal {
     padding-top: 35px;
-    font-size: 15px;
+    font-size: 14px;
   }
   .legal .back {
     margin-bottom: 30px;
   }
   .legal h1 {
-    font-size: 40px;
+    font-size: 34px;
   }
   .legal-lead {
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
