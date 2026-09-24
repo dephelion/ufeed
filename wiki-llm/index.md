@@ -32,6 +32,6 @@ Two models, picked in the popup: `e5-small-v2` (33MB, English only, default) and
 
 The UI speaks English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and Traditional); the browser's language picks one until the reader picks another in the popup, see [i18n.md](i18n.md).
 
-Not built: Chrome offscreen singleton, worker pool, mobile.
+Not built: worker pool, mobile. Chrome's offscreen singleton is implemented for Gemma.
 
 Every number in these pages came from a measurement harness run against a captured timeline. Both live in gitignored `.local/`: the data is personal, and the method is described where the number is used.
