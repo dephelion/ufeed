@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import { pageMetadata } from '../lib/seo';
 import I18nProvider from '../components/I18nProvider';
 import { translate } from '../i18n/config';
+import '../globals.css';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
