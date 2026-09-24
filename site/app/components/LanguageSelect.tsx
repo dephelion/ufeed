@@ -19,9 +19,13 @@ export default function LanguageSelect({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useTranslation(undefined, { lng: locale });
+  const current = options.find((option) => option.locale === locale);
   return (
     <label className="language-select">
       <span className="sr-only">{t('language.label')}</span>
+      <span className="language-current-flag" aria-hidden="true">
+        {current?.flag}
+      </span>
       <select
         value={locale}
         aria-label={t('language.label')}

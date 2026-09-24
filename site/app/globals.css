@@ -60,19 +60,32 @@ a:hover {
   font-size: 14px;
 }
 .language-select {
+  position: relative;
   display: inline-flex;
-  gap: 5px;
   align-items: center;
 }
 .language-select select {
   appearance: none;
+  width: 56px;
   border: 1px solid #535861;
   border-radius: 7px;
-  padding: 8px 28px 8px 10px;
-  color: var(--text);
+  padding: 8px 21px 8px 10px;
+  color: transparent;
   background: #20242b;
   font: inherit;
   cursor: pointer;
+}
+.language-current-flag {
+  position: absolute;
+  left: 10px;
+  pointer-events: none;
+}
+.language-select::after {
+  position: absolute;
+  right: 9px;
+  color: var(--text);
+  content: '⌄';
+  pointer-events: none;
 }
 .language-select option {
   background: #20242b;
