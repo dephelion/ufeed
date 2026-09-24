@@ -188,7 +188,7 @@ h1 {
 .quiet-note {
   margin-top: 23px;
   color: #a5a9af;
-  font-size: 12px;
+  font-size: 14px;
 }
 .quiet-note span {
   color: var(--yellow);
