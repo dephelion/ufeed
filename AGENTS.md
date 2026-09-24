@@ -9,8 +9,7 @@ uFeed is a Chrome and Firefox extension that blurs off-topic posts on X, LinkedI
 **`wiki-llm/` is the source of truth.** Start every code, architecture, model, selector, UI, permission or testing task at [`wiki-llm/index.md`](wiki-llm/index.md) and open only the page it names.
 
 - **Rules:** [`wiki-llm/conventions.md`](wiki-llm/conventions.md) holds every project rule, stated once — the hard invariants, code and doc rules, and the definition of done. This file adds only how an agent behaves; it never repeats or overrides `conventions.md`.
-- **Check:** `npm run check` (format, typecheck, tests, both builds). CI runs the same script.
-- **Pre-Commit Gate:** Run `npm run check` before every commit; resolve all failures before committing.
+- **Check:** Run `npm run check` (format, typecheck, tests, both builds) before every commit; resolve failures first. CI runs the same script.
 
 ## Agent Behavior
 
