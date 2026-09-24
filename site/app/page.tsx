@@ -29,62 +29,26 @@ const organizationJsonLd = {
   sameAs: [REPOSITORY_URL],
 };
 
-function FeedPreview() {
+function ReelPreview() {
   return (
-    <div className="preview" aria-label="Illustration of uFeed blurring unrelated posts">
+    <div className="preview">
       <div className="preview-top">
         <i />
         <i />
         <i />
-        <span>your feed</span>
+        <span>uFeed in action</span>
       </div>
-      <div className="preview-content">
-        <div className="side-icons">
-          <b>◉</b>
-          <b>⌕</b>
-          <b>▤</b>
-          <b>◎</b>
-        </div>
-        <div className="posts">
-          <article className="post">
-            <div className="avatar yellow">J</div>
-            <div className="post-copy">
-              <b>Jamie Rivera</b>
-              <small>· 2h</small>
-              <p>A little progress every day adds up to something wonderful.</p>
-              <div className="post-actions">♡　◯　↗</div>
-            </div>
-          </article>
-          <article className="post blurred">
-            <div className="avatar blue">A</div>
-            <div className="post-copy">
-              <b>Alex Morgan</b>
-              <small>· 3h</small>
-              <p>Everything you need to know about this weekend’s big game…</p>
-              <span className="blur-tag">Blurred · outside your topics</span>
-            </div>
-          </article>
-          <article className="post">
-            <div className="avatar coral">R</div>
-            <div className="post-copy">
-              <b>Riley Chen</b>
-              <small>· 4h</small>
-              <p>Finally made time to try that recipe. It was worth it!</p>
-              <div className="post-actions">♡　◯　↗</div>
-            </div>
-          </article>
-        </div>
-        <aside className="topics">
-          <b>Your topics</b>
-          <span>Design</span>
-          <span>Cooking</span>
-          <span>Climate</span>
-          <div className="topic-slider">
-            <i />
-          </div>
-          <small>Just right</small>
-        </aside>
-      </div>
+      <video
+        className="preview-video"
+        src="/main-video.mp4"
+        aria-label="uFeed reel video"
+        autoPlay
+        controls
+        loop
+        muted
+        playsInline
+        preload="metadata"
+      />
     </div>
   );
 }
@@ -134,7 +98,7 @@ export default function Home() {
             <span>✳</span> Free, now and always · Open source · Your data stays yours
           </div>
         </div>
-        <FeedPreview />
+        <ReelPreview />
       </section>
 
       <section className="features wrap" id="how-it-works">
