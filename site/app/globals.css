@@ -85,9 +85,13 @@ a:hover {
 .hero::before {
   position: absolute;
   z-index: -1;
-  inset: -24px -12px;
+  top: -24px;
+  left: 50%;
+  width: 100vw;
+  height: calc(100% + 48px);
+  transform: translateX(-50%);
   background: radial-gradient(
-    ellipse 58% 48% at 67% 55%,
+    ellipse 42% 48% at 65% 55%,
     rgba(255, 224, 46, 0.15),
     rgba(255, 224, 46, 0.06) 42%,
     transparent 74%
