@@ -190,19 +190,13 @@ a:hover {
   line-height: 1.7;
 }
 .welcome-animation {
-  min-height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  border: 1px dashed #545a64;
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #343942;
   border-radius: 10px;
   background: #15181d;
-  font-size: 42px;
-}
-.welcome-animation b {
-  color: var(--yellow);
-  font-size: 38px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
 }
 .welcome-start {
   padding-top: 68px;
@@ -724,9 +718,6 @@ h1 {
     grid-template-columns: 1fr;
     gap: 22px;
     padding: 22px;
-  }
-  .welcome-animation {
-    min-height: 140px;
   }
   .welcome-start {
     padding-top: 48px;

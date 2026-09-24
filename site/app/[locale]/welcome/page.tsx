@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { pageMetadata } from '../../lib/seo';
 import { translate } from '../../i18n/config';
 import type { Locale } from '../../i18n/resources';
@@ -45,14 +46,14 @@ export default async function WelcomePage({
           <h2 id="welcome-pin-title">{t('welcome.pinTitle')}</h2>
           <p>{t('welcome.pinDescription')}</p>
         </div>
-        <div
+        <Image
           className="welcome-animation"
-          role="img"
-          aria-label={t('welcome.pinAnimationAlt')}
-        >
-          <span aria-hidden="true">🧩</span>
-          <b aria-hidden="true">↗</b>
-        </div>
+          src="/extension-pin-guide.png"
+          alt={t('welcome.pinAnimationAlt')}
+          width={1024}
+          height={643}
+          sizes="(max-width: 820px) 100vw, 45vw"
+        />
       </section>
 
       <section className="welcome-start" aria-labelledby="welcome-start-title">
