@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import type { Locale } from '../i18n/resources';
+import { LANGUAGE_STORAGE_KEY, type Locale } from '../i18n/resources';
 
 const options: { locale: Locale; flag: string; name: string }[] = [
   { locale: 'en', flag: '🇬🇧', name: 'English — en (default)' },
@@ -30,7 +30,11 @@ export default function LanguageSelect({ locale }: { locale: Locale }) {
         value={locale}
         aria-label={t('language.label')}
         onChange={(event) => {
-          const path = pathname.replace(/^\/[^/]+(?=\/|$)/, `/${event.target.value}`);
+          const selected = event.target.value as Locale;
+          try {
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, selected);
+          } catch {}
+          const path = pathname.replace(/^\/[^/]+(?=\/|$)/, `/${selected}`);
           router.push(path);
         }}
       >

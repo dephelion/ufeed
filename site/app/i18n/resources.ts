@@ -20,9 +20,17 @@ export const resources = {
 
 export const locales = ['en', 'zh-CN', 'zh-TW', 'fr', 'de', 'ja', 'pt-BR', 'es'] as const;
 export type Locale = (typeof locales)[number];
+export const LANGUAGE_STORAGE_KEY = 'ufeed-site-language';
 
 export function isLocale(locale: string): locale is Locale {
   return locales.some((supported) => supported === locale);
+}
+
+export function preferredLocale(
+  saved: string | null,
+  languages: readonly string[],
+): Locale {
+  return saved && isLocale(saved) ? saved : browserLocale(languages);
 }
 
 export function browserLocale(languages: readonly string[]): Locale {

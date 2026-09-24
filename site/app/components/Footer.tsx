@@ -12,7 +12,13 @@ export default function Footer({ locale }: { locale: Locale }) {
       <Link className="brand" href={`${prefix}/`}>
         <span>uFeed</span>
       </Link>
-      <p>© Julio Cesar Martin - 2026</p>
+      <p>
+        ©{' '}
+        <a href="https://x.com/depre_cuba" target="_blank" rel="noopener noreferrer">
+          Julio Cesar Martin
+        </a>{' '}
+        - 2026
+      </p>
       <nav aria-label={t('nav.footer')}>
         <Link href={`${prefix}/how-it-works/`}>{t('nav.how')}</Link>
         <Link href={`${prefix}/privacy/`}>{t('nav.privacy')}</Link>
