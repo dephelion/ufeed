@@ -17,6 +17,7 @@ export default function Header({ locale }: { locale: 'en' | 'es' }) {
       <nav aria-label={t('nav.main')}>
         <Link href={`${prefix}/how-it-works/`}>{t('nav.how')}</Link>
         <Link href={`${prefix}/privacy/`}>{t('nav.privacy')}</Link>
+        <LanguageSelect locale={locale} />
         <a
           className="nav-github github-link"
           href={REPOSITORY_URL}
@@ -24,7 +25,6 @@ export default function Header({ locale }: { locale: 'en' | 'es' }) {
         >
           <GitHubIcon /> <span>GitHub</span>
         </a>
-        <LanguageSelect locale={locale} />
       </nav>
     </header>
   );
