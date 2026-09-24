@@ -30,7 +30,7 @@ const howToJsonLd = {
     {
       '@type': 'HowToStep',
       name: 'Choose your topics',
-      text: 'Add a few subjects you would like to see in your feed.',
+      text: 'Write one subject per line as a short phrase of two to five words people use in posts. Avoid full sentences; commas between related words are optional.',
     },
     {
       '@type': 'HowToStep',
@@ -72,9 +72,10 @@ export default function HowItWorksPage() {
           <div>
             <h2>Start with what you like</h2>
             <p>
-              Open the small uFeed popup and write a few topics, one per line. They can be
-              as broad or as specific as you like: cooking, climate, design, or your
-              industry.
+              Open the uFeed popup and write one subject per line as a short phrase of two
+              to five words. Use words people use in posts—for example, “software
+              engineering” instead of “tech.” Skip full sentences. Commas between related
+              words are optional.
             </p>
           </div>
         </li>
