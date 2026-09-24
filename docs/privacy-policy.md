@@ -1,7 +1,7 @@
 # uFeed — Privacy Policy
 
 > Source of record for the page published at
-> <https://dephelion.com/ufeed-browser-extension/privacy/>. Edit both together.
+> <https://ufeed.es/privacy/>. Edit both together.
 
 **Effective 23 September 2026.** Contact: contact@dephelion.com
 

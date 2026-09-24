@@ -1,5 +1,5 @@
 export const SITE_NAME = 'uFeed';
-export const SITE_URL = 'https://ufeed.github.io';
+export const SITE_URL = 'https://ufeed.es';
 export const REPOSITORY_URL = 'https://github.com/dephelion/ufeed';
 export const CHROME_STORE_URL =
   'https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck';

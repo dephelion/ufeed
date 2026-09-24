@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
+import { SITE_URL } from '../lib/site';
 
 const title = 'uFeed Browser Extension Terms | open-source license and use';
 const description =
@@ -30,7 +31,7 @@ export default function TermsPage() {
               '@type': 'WebPage',
               name: title,
               description,
-              url: 'https://ufeed.github.io/terms/',
+              url: `${SITE_URL}${path}`,
             },
             breadcrumbLd(path, 'Terms of use'),
           ]).replace(/</g, '\\u003c'),

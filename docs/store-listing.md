@@ -12,8 +12,8 @@ asks for. Kept in the repo so the listing and the code change together.
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
-| Support URL    | https://dephelion.com/ufeed-browser-extension/contact/                    |
-| Privacy policy | https://dephelion.com/ufeed-browser-extension/privacy/                    |
+| Support URL    | https://github.com/dephelion/ufeed/issues/new/choose                      |
+| Privacy policy | https://ufeed.es/privacy/                                                 |
 | Visibility     | Public — listed in search and category browsing                           |
 | Store URL      | https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
@@ -136,7 +136,7 @@ HOW TO TEST
       revealed by clicking, the strictness slider with its hint, the model picker,
       the no-topics card.
 - [ ] Small promo tile, 440×280. Optional, but listings without one look unfinished.
-- [ ] Privacy policy live at https://dephelion.com/ufeed-browser-extension/privacy/ (ship the dephelion.com PR first).
+- [ ] Privacy policy live at https://ufeed.es/privacy/.
 
 ## Before each submission
 
