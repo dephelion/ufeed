@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { breadcrumbLd, pageMetadata } from '../../lib/seo';
 import { translate } from '../../i18n/config';
 import type { Locale } from '../../i18n/resources';
+import PinTip from '../../components/PinTip';
 
 export async function generateMetadata({
   params,
@@ -97,6 +98,15 @@ export default async function HowItWorksPage({
           </div>
         </li>
       </ol>
+
+      <PinTip
+        titleId="how-tip-title"
+        kicker={t('welcome.pinKicker')}
+        title={t('welcome.pinTitle')}
+        description={t('welcome.pinDescription')}
+        imageAlt={t('welcome.pinAnimationAlt')}
+        className="how-tip-card"
+      />
 
       <section className="how-details">
         {[0, 1, 2].map((index) => (

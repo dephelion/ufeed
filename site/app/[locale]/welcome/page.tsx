@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { pageMetadata } from '../../lib/seo';
 import { translate } from '../../i18n/config';
 import type { Locale } from '../../i18n/resources';
+import PinTip from '../../components/PinTip';
 
 export async function generateMetadata({
   params,
@@ -43,21 +43,13 @@ export default async function WelcomePage({
         <p className="welcome-lead">{t('welcome.lead')}</p>
       </section>
 
-      <section className="welcome-pin" aria-labelledby="welcome-pin-title">
-        <div>
-          <p className="welcome-kicker">{t('welcome.pinKicker')}</p>
-          <h2 id="welcome-pin-title">{t('welcome.pinTitle')}</h2>
-          <p>{t('welcome.pinDescription')}</p>
-        </div>
-        <Image
-          className="welcome-animation"
-          src="/extension-pin-guide.png"
-          alt={t('welcome.pinAnimationAlt')}
-          width={1024}
-          height={643}
-          sizes="(max-width: 820px) 100vw, 45vw"
-        />
-      </section>
+      <PinTip
+        titleId="welcome-pin-title"
+        kicker={t('welcome.pinKicker')}
+        title={t('welcome.pinTitle')}
+        description={t('welcome.pinDescription')}
+        imageAlt={t('welcome.pinAnimationAlt')}
+      />
 
       <section className="welcome-start" aria-labelledby="welcome-start-title">
         <p className="welcome-kicker">{t('welcome.stepsKicker')}</p>
