@@ -17,9 +17,16 @@
     "homeKeywords": "uFeed|filtro de feed de redes sociais|extensão privada para navegador|extensão de código aberto|IA no dispositivo|filtro de feed do X|filtro de feed do LinkedIn|filtro de feed do Reddit",
     "howKeywords": "como o uFeed funciona|guia de filtro de feed social|filtro de feed por tópicos|extensão privada com IA|filtragem no dispositivo",
     "privacyKeywords": "política de privacidade do uFeed|extensão privada|processamento de dados no dispositivo|uso de dados por extensões",
-    "termsKeywords": "termos de uso do uFeed|licença de código aberto do uFeed|extensão GPL-3.0-or-later|responsabilidade e garantia do uFeed"
+    "termsKeywords": "termos de uso do uFeed|licença de código aberto do uFeed|extensão GPL-3.0-or-later|responsabilidade e garantia do uFeed",
+    "welcomeTitle": "Boas-vindas ao uFeed | Primeiros passos",
+    "welcomeDescription": "Obrigado por instalar o uFeed. Fixe a extensão, escolha o que filtrar e comece em poucos passos.",
+    "welcomeKeywords": "boas-vindas uFeed|começar a usar uFeed|fixar extensão uFeed"
   },
-  "language": { "english": "English", "spanish": "Español", "label": "Idioma" },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "Idioma"
+  },
   "notFound": {
     "title": "Não encontramos essa página.",
     "description": "O endereço pode ter mudado, mas seu feed continua no mesmo lugar.",
@@ -32,7 +39,8 @@
     "privacy": "Privacidade",
     "github": "uFeed no GitHub",
     "footer": "Links do rodapé",
-    "terms": "Termos"
+    "terms": "Termos",
+    "welcome": "Boas-vindas"
   },
   "home": {
     "title": "Um pouco mais do que você veio buscar.",
@@ -186,5 +194,32 @@
         "Estes termos podem ser atualizados; a data acima será alterada quando isso acontecer. Continuar usando o uFeed após uma atualização significa que você aceita os novos termos."
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "TUDO PRONTO",
+    "title": "Obrigado por instalar o uFeed.",
+    "lead": "Personalizar seu feed leva só alguns passos.",
+    "pinKicker": "UMA DICA RÁPIDA",
+    "pinTitle": "Deixe o uFeed por perto",
+    "pinDescription": "Fixe o uFeed no menu de extensões do Chrome para encontrá-lo facilmente.",
+    "pinAnimationAlt": "Como fixar o uFeed no menu de extensões do Chrome.",
+    "stepsKicker": "PRIMEIROS PASSOS",
+    "stepsTitle": "Personalize seu feed",
+    "steps": [
+      {
+        "title": "Escolha o que manter ou bloquear",
+        "description": "Abra o uFeed pelo menu de extensões. Adicione tópicos que quer ver, palavras que quer desfocar, ou os dois."
+      },
+      {
+        "title": "Ajuste o filtro",
+        "description": "Regule a intensidade para definir o quanto as publicações precisam combinar com seus tópicos. Você pode mudar suas escolhas quando quiser."
+      },
+      {
+        "title": "Navegue como sempre",
+        "description": "Acesse X, LinkedIn ou Reddit. Publicações correspondentes ficam levemente desfocadas, nunca são removidas. Selecione uma publicação desfocada para vê-la."
+      }
+    ],
+    "more": "Quer conhecer todos os detalhes?",
+    "howLink": "Veja como funciona"
   }
 }

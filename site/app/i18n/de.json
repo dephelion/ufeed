@@ -17,9 +17,16 @@
     "homeKeywords": "uFeed|Social-Media-Feed-Filter|private Browser-Erweiterung|Open-Source-Browser-Erweiterung|KI auf dem Gerät|X-Feed-Filter|LinkedIn-Feed-Filter|Reddit-Feed-Filter",
     "howKeywords": "So funktioniert uFeed|Anleitung zum Social-Feed-Filter|eigene Themenfilter|private KI-Browser-Erweiterung|Feed-Filter auf dem Gerät",
     "privacyKeywords": "uFeed-Datenschutz|private Browser-Erweiterung|Datenverarbeitung auf dem Gerät|Datennutzung von Browser-Erweiterungen",
-    "termsKeywords": "uFeed-Nutzungsbedingungen|uFeed-Open-Source-Lizenz|GPL-3.0-or-later-Browser-Erweiterung|uFeed-Haftung und Gewährleistung"
+    "termsKeywords": "uFeed-Nutzungsbedingungen|uFeed-Open-Source-Lizenz|GPL-3.0-or-later-Browser-Erweiterung|uFeed-Haftung und Gewährleistung",
+    "welcomeTitle": "Willkommen bei uFeed | Erste Schritte",
+    "welcomeDescription": "Danke, dass du uFeed installiert hast. Pinne die Erweiterung, wähle deine Filter und leg in wenigen Schritten los.",
+    "welcomeKeywords": "uFeed willkommen|mit uFeed loslegen|uFeed Erweiterung anpinnen"
   },
-  "language": { "english": "English", "spanish": "Español", "label": "Sprache" },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "Sprache"
+  },
   "notFound": {
     "title": "Diese Seite wurde nicht gefunden.",
     "description": "Die Adresse wurde möglicherweise geändert, aber dein Feed ist noch da.",
@@ -32,7 +39,8 @@
     "privacy": "Datenschutz",
     "github": "uFeed auf GitHub",
     "footer": "Links im Fußbereich",
-    "terms": "Nutzungsbedingungen"
+    "terms": "Nutzungsbedingungen",
+    "welcome": "Willkommen"
   },
   "home": {
     "title": "Etwas mehr von dem, wonach du gesucht hast.",
@@ -186,5 +194,32 @@
         "Diese Bedingungen können aktualisiert werden; dann wird das Datum oben geändert. Wenn du uFeed danach weiter nutzt, akzeptierst du die aktualisierten Bedingungen."
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "ALLES BEREIT",
+    "title": "Danke, dass du uFeed installiert hast.",
+    "lead": "Mit ein paar kurzen Schritten passt dein Feed besser zu dir.",
+    "pinKicker": "EIN KURZER TIPP",
+    "pinTitle": "uFeed immer griffbereit",
+    "pinDescription": "Pinne uFeed im Erweiterungsmenü von Chrome an, damit du es schnell wiederfindest.",
+    "pinAnimationAlt": "So pinnst du uFeed im Erweiterungsmenü von Chrome an.",
+    "stepsKicker": "ERSTE SCHRITTE",
+    "stepsTitle": "Gestalte deinen Feed",
+    "steps": [
+      {
+        "title": "Wähle, was bleiben oder ausgeblendet werden soll",
+        "description": "Öffne uFeed über dein Erweiterungsmenü. Füge Themen hinzu, die du sehen möchtest, Wörter, die unscharf werden sollen, oder beides."
+      },
+      {
+        "title": "Stelle den Filter ein",
+        "description": "Passe die Strenge an, damit Beiträge mehr oder weniger genau zu deinen Themen passen müssen. Du kannst deine Auswahl jederzeit ändern."
+      },
+      {
+        "title": "Scrolle wie gewohnt weiter",
+        "description": "Besuche X, LinkedIn oder Reddit. Passende Beiträge werden sanft unscharf gemacht, aber nie entfernt. Wähle einen unscharfen Beitrag aus, um ihn zu sehen."
+      }
+    ],
+    "more": "Möchtest du alle Details erfahren?",
+    "howLink": "So funktioniert uFeed"
   }
 }

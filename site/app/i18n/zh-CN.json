@@ -17,9 +17,16 @@
     "homeKeywords": "uFeed|社交媒体信息流过滤|私密浏览器扩展|开源浏览器扩展|设备端人工智能|X 信息流过滤|LinkedIn 信息流过滤|Reddit 信息流过滤",
     "howKeywords": "uFeed 工作原理|社交信息流过滤指南|自定义主题过滤|私密人工智能浏览器扩展|设备端信息流过滤",
     "privacyKeywords": "uFeed 隐私政策|私密浏览器扩展|设备端数据处理|浏览器扩展数据使用",
-    "termsKeywords": "uFeed 使用条款|uFeed 开源许可|GPL-3.0-or-later 浏览器扩展|uFeed 责任与保证"
+    "termsKeywords": "uFeed 使用条款|uFeed 开源许可|GPL-3.0-or-later 浏览器扩展|uFeed 责任与保证",
+    "welcomeTitle": "欢迎使用 uFeed | 开始使用",
+    "welcomeDescription": "感谢安装 uFeed。固定扩展程序，选择要过滤的内容，几步即可开始。",
+    "welcomeKeywords": "uFeed 欢迎页|开始使用 uFeed|固定 uFeed 扩展程序"
   },
-  "language": { "english": "English", "spanish": "Español", "label": "语言" },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "语言"
+  },
   "notFound": {
     "title": "找不到此页面。",
     "description": "地址可能已更改，但您的信息流仍在原处。",
@@ -32,7 +39,8 @@
     "privacy": "隐私",
     "github": "在 GitHub 上查看 uFeed",
     "footer": "页脚链接",
-    "terms": "使用条款"
+    "terms": "使用条款",
+    "welcome": "欢迎使用"
   },
   "home": {
     "title": "多看一些真正想看的内容。",
@@ -177,5 +185,32 @@
         "我们可能更新这些条款；更新时会更改上方日期。更新后继续使用 uFeed，即表示您接受更新后的条款。"
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "一切就绪",
+    "title": "感谢安装 uFeed。",
+    "lead": "只需几步，就能打造更合你心意的信息流。",
+    "pinKicker": "一个小提示",
+    "pinTitle": "将 uFeed 固定在手边",
+    "pinDescription": "在 Chrome 扩展程序菜单中固定 uFeed，以便随时快速打开。",
+    "pinAnimationAlt": "演示如何在 Chrome 扩展程序菜单中固定 uFeed。",
+    "stepsKicker": "开始使用",
+    "stepsTitle": "打造自己的信息流",
+    "steps": [
+      {
+        "title": "选择想保留或屏蔽的内容",
+        "description": "从扩展程序菜单打开 uFeed。添加想看的主题、想模糊处理的词语，或两者都添加。"
+      },
+      {
+        "title": "调整过滤效果",
+        "description": "调整严格程度，设置帖子与主题需要多接近。你可以随时更改这些选择。"
+      },
+      {
+        "title": "照常浏览",
+        "description": "访问 X、LinkedIn 或 Reddit。符合过滤条件的帖子会被轻柔模糊，不会被删除。选择模糊的帖子即可查看。"
+      }
+    ],
+    "more": "想了解完整使用指南？",
+    "howLink": "查看工作原理"
   }
 }

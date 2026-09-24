@@ -17,7 +17,10 @@
     "homeKeywords": "uFeed|social media feed filter|private browser extension|open-source browser extension|on-device AI|X feed filter|LinkedIn feed filter|Reddit feed filter",
     "howKeywords": "how uFeed works|social feed filter guide|custom topic feed filter|private AI browser extension|on-device feed filtering",
     "privacyKeywords": "uFeed privacy policy|private browser extension|on-device data processing|browser extension data use",
-    "termsKeywords": "uFeed terms of use|uFeed open-source license|GPL-3.0-or-later browser extension|uFeed liability and warranty"
+    "termsKeywords": "uFeed terms of use|uFeed open-source license|GPL-3.0-or-later browser extension|uFeed liability and warranty",
+    "welcomeTitle": "Welcome to uFeed | Get started",
+    "welcomeDescription": "Thanks for installing uFeed. Pin the extension, choose what to filter, and get started in a few quick steps.",
+    "welcomeKeywords": "uFeed welcome|getting started with uFeed|pin uFeed extension"
   },
   "language": {
     "english": "English",
@@ -36,7 +39,8 @@
     "privacy": "Privacy",
     "github": "uFeed on GitHub",
     "footer": "Footer links",
-    "terms": "Terms"
+    "terms": "Terms",
+    "welcome": "Welcome"
   },
   "home": {
     "title": "A little more of what you came for.",
@@ -190,5 +194,32 @@
         "These terms may be updated; the date above will change when they are. Continued use after an update means you accept the updated terms."
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "YOU’RE ALL SET",
+    "title": "Thanks for installing uFeed.",
+    "lead": "A more personal feed starts with a few quick steps.",
+    "pinKicker": "ONE QUICK TIP",
+    "pinTitle": "Keep uFeed close",
+    "pinDescription": "Pin uFeed from Chrome’s extensions menu so it’s always easy to find.",
+    "pinAnimationAlt": "Pinning uFeed in the Chrome extensions menu.",
+    "stepsKicker": "GET STARTED",
+    "stepsTitle": "Make your feed your own",
+    "steps": [
+      {
+        "title": "Choose what to keep or block",
+        "description": "Open uFeed from your extensions menu. Add topics you want to see, words you want to blur, or both."
+      },
+      {
+        "title": "Set the feel",
+        "description": "Adjust strictness to decide how closely posts should match your topics. You can change your choices any time."
+      },
+      {
+        "title": "Browse as usual",
+        "description": "Visit X, LinkedIn, or Reddit. Matching posts are gently blurred, never removed. Select any blurred post to reveal it."
+      }
+    ],
+    "more": "Want the full tour?",
+    "howLink": "See how it works"
   }
 }

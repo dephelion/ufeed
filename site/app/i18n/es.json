@@ -17,7 +17,10 @@
     "homeKeywords": "uFeed|filtro para redes sociales|extensión privada para navegador|extensión de código abierto|inteligencia artificial en el dispositivo|filtrar feed de X|filtrar feed de LinkedIn|filtrar feed de Reddit",
     "howKeywords": "cómo funciona uFeed|guía para filtrar el feed|filtro de feed por temas|extensión privada con inteligencia artificial|filtrado en el dispositivo",
     "privacyKeywords": "política de privacidad de uFeed|extensión privada para navegador|procesamiento de datos en el dispositivo|uso de datos en extensiones",
-    "termsKeywords": "términos de uso de uFeed|licencia de código abierto de uFeed|extensión GPL-3.0-or-later|responsabilidad y garantía de uFeed"
+    "termsKeywords": "términos de uso de uFeed|licencia de código abierto de uFeed|extensión GPL-3.0-or-later|responsabilidad y garantía de uFeed",
+    "welcomeTitle": "Te damos la bienvenida a uFeed | Primeros pasos",
+    "welcomeDescription": "Gracias por instalar uFeed. Fija la extensión, elige qué filtrar y empieza en unos pocos pasos.",
+    "welcomeKeywords": "bienvenida a uFeed|empezar con uFeed|fijar extensión uFeed"
   },
   "language": {
     "english": "English",
@@ -36,7 +39,8 @@
     "privacy": "Privacidad",
     "github": "uFeed en GitHub",
     "footer": "Enlaces del pie de página",
-    "terms": "Términos"
+    "terms": "Términos",
+    "welcome": "Bienvenida"
   },
   "home": {
     "title": "Elimina las distracciones.",
@@ -190,5 +194,32 @@
         "Podemos actualizar estos términos; la fecha anterior cambiará cuando lo hagamos. Si sigues usando uFeed después de una actualización, aceptas los términos actualizados."
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "YA ESTÁ TODO LISTO",
+    "title": "Gracias por instalar uFeed.",
+    "lead": "Personalizar tu feed solo te llevará unos pasos.",
+    "pinKicker": "UN CONSEJO RÁPIDO",
+    "pinTitle": "Ten uFeed a mano",
+    "pinDescription": "Fija uFeed desde el menú de extensiones de Chrome para encontrarlo fácilmente.",
+    "pinAnimationAlt": "Cómo fijar uFeed desde el menú de extensiones de Chrome.",
+    "stepsKicker": "PRIMEROS PASOS",
+    "stepsTitle": "Personaliza tu feed",
+    "steps": [
+      {
+        "title": "Elige qué ver o bloquear",
+        "description": "Abre uFeed desde el menú de extensiones. Añade temas que quieras ver, palabras que quieras difuminar o ambas cosas."
+      },
+      {
+        "title": "Ajusta el filtro",
+        "description": "Cambia la intensidad para decidir cuánto deben coincidir las publicaciones con tus temas. Puedes cambiar tus preferencias cuando quieras."
+      },
+      {
+        "title": "Navega con normalidad",
+        "description": "En X, LinkedIn o Reddit, las publicaciones que coincidan se difuminan, pero no se eliminan. Selecciona cualquiera para verla."
+      }
+    ],
+    "more": "¿Quieres ver la guía completa?",
+    "howLink": "Descubre cómo funciona"
   }
 }

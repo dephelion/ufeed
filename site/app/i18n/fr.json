@@ -17,9 +17,16 @@
     "homeKeywords": "uFeed|filtre de fil social|extension privée pour navigateur|extension libre|IA sur l’appareil|filtre du fil X|filtre du fil LinkedIn|filtre du fil Reddit",
     "howKeywords": "fonctionnement de uFeed|guide du filtrage de fil social|filtre de fil par thèmes|extension IA privée|filtrage sur l’appareil",
     "privacyKeywords": "politique de confidentialité uFeed|extension privée|traitement local des données|données des extensions de navigateur",
-    "termsKeywords": "conditions uFeed|licence libre uFeed|extension GPL-3.0-or-later|responsabilité et garantie uFeed"
+    "termsKeywords": "conditions uFeed|licence libre uFeed|extension GPL-3.0-or-later|responsabilité et garantie uFeed",
+    "welcomeTitle": "Bienvenue sur uFeed | Premiers pas",
+    "welcomeDescription": "Merci d’avoir installé uFeed. Épinglez l’extension, choisissez ce que vous souhaitez filtrer et démarrez en quelques étapes.",
+    "welcomeKeywords": "bienvenue uFeed|premiers pas avec uFeed|épingler extension uFeed"
   },
-  "language": { "english": "English", "spanish": "Español", "label": "Langue" },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "Langue"
+  },
   "notFound": {
     "title": "Cette page est introuvable.",
     "description": "L’adresse a peut-être changé, mais votre fil est toujours là.",
@@ -32,7 +39,8 @@
     "privacy": "Confidentialité",
     "github": "uFeed sur GitHub",
     "footer": "Liens de pied de page",
-    "terms": "Conditions"
+    "terms": "Conditions",
+    "welcome": "Bienvenue"
   },
   "home": {
     "title": "Un peu plus de ce que vous êtes venu chercher.",
@@ -186,5 +194,32 @@
         "Ces conditions peuvent être mises à jour ; la date ci-dessus changera alors. En continuant à utiliser uFeed après une mise à jour, vous acceptez les nouvelles conditions."
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "TOUT EST PRÊT",
+    "title": "Merci d’avoir installé uFeed.",
+    "lead": "Quelques étapes suffisent pour personnaliser votre fil.",
+    "pinKicker": "UN PETIT CONSEIL",
+    "pinTitle": "Gardez uFeed à portée de main",
+    "pinDescription": "Épinglez uFeed depuis le menu des extensions de Chrome pour le retrouver facilement.",
+    "pinAnimationAlt": "Comment épingler uFeed depuis le menu des extensions de Chrome.",
+    "stepsKicker": "PREMIERS PAS",
+    "stepsTitle": "Personnalisez votre fil",
+    "steps": [
+      {
+        "title": "Choisissez ce que vous voulez garder ou bloquer",
+        "description": "Ouvrez uFeed depuis le menu des extensions. Ajoutez les sujets que vous voulez voir, les mots à flouter, ou les deux."
+      },
+      {
+        "title": "Réglez le filtrage",
+        "description": "Ajustez la sévérité pour choisir à quel point les publications doivent correspondre à vos sujets. Vous pouvez changer vos choix à tout moment."
+      },
+      {
+        "title": "Naviguez comme d’habitude",
+        "description": "Allez sur X, LinkedIn ou Reddit. Les publications correspondantes sont légèrement floutées, jamais supprimées. Sélectionnez une publication floutée pour la lire."
+      }
+    ],
+    "more": "Envie de découvrir toutes les options ?",
+    "howLink": "Voir comment ça marche"
   }
 }

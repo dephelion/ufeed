@@ -17,9 +17,16 @@
     "homeKeywords": "uFeed|SNS フィードフィルター|プライベートなブラウザー拡張機能|オープンソース拡張機能|端末内 AI|X フィードフィルター|LinkedIn フィードフィルター|Reddit フィードフィルター",
     "howKeywords": "uFeed の仕組み|SNS フィードフィルターガイド|カスタムトピックフィルター|プライベート AI 拡張機能|端末内フィードフィルタリング",
     "privacyKeywords": "uFeed プライバシーポリシー|プライベートな拡張機能|端末内データ処理|ブラウザー拡張機能のデータ利用",
-    "termsKeywords": "uFeed 利用規約|uFeed オープンソースライセンス|GPL-3.0-or-later 拡張機能|uFeed の責任と保証"
+    "termsKeywords": "uFeed 利用規約|uFeed オープンソースライセンス|GPL-3.0-or-later 拡張機能|uFeed の責任と保証",
+    "welcomeTitle": "uFeed へようこそ | はじめに",
+    "welcomeDescription": "uFeed をインストールしていただきありがとうございます。拡張機能を固定し、表示したい内容を選んで、すぐに始めましょう。",
+    "welcomeKeywords": "uFeed ようこそ|uFeed の使い方|uFeed 拡張機能を固定"
   },
-  "language": { "english": "English", "spanish": "Español", "label": "言語" },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "言語"
+  },
   "notFound": {
     "title": "ページが見つかりません。",
     "description": "アドレスが変更された可能性がありますが、フィードはそのままです。",
@@ -32,7 +39,8 @@
     "privacy": "プライバシー",
     "github": "GitHub の uFeed",
     "footer": "フッターリンク",
-    "terms": "利用規約"
+    "terms": "利用規約",
+    "welcome": "ようこそ"
   },
   "home": {
     "title": "見たいものを、もう少し。",
@@ -186,5 +194,32 @@
         "本規約は更新される場合があり、その際は上記の日付が変わります。更新後も uFeed を利用すると、更新後の規約に同意したものとみなされます。"
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "準備完了",
+    "title": "uFeed をインストールしていただきありがとうございます。",
+    "lead": "いくつか設定するだけで、自分に合ったフィードになります。",
+    "pinKicker": "ちょっとしたヒント",
+    "pinTitle": "uFeed をすぐ使える場所に",
+    "pinDescription": "Chrome の拡張機能メニューから uFeed を固定すると、いつでも簡単に開けます。",
+    "pinAnimationAlt": "Chrome の拡張機能メニューで uFeed を固定する方法。",
+    "stepsKicker": "はじめに",
+    "stepsTitle": "フィードを自分好みに",
+    "steps": [
+      {
+        "title": "表示する内容やブロックする内容を選ぶ",
+        "description": "拡張機能メニューから uFeed を開きます。表示したいトピックや、ぼかしたい単語を追加します。両方設定することもできます。"
+      },
+      {
+        "title": "フィルターを調整する",
+        "description": "厳しさを調整して、トピックとの一致度を設定します。設定はいつでも変更できます。"
+      },
+      {
+        "title": "いつもどおり閲覧する",
+        "description": "X、LinkedIn、Reddit を開きます。一致した投稿は削除されず、やさしくぼかされます。ぼかされた投稿を選択すると内容を確認できます。"
+      }
+    ],
+    "more": "詳しい使い方を確認しますか？",
+    "howLink": "仕組みを見る"
   }
 }

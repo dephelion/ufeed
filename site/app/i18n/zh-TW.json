@@ -17,9 +17,16 @@
     "homeKeywords": "uFeed|社群媒體動態消息篩選|私密瀏覽器擴充功能|開源瀏覽器擴充功能|裝置端人工智慧|X 動態消息篩選|LinkedIn 動態消息篩選|Reddit 動態消息篩選",
     "howKeywords": "uFeed 運作方式|社群動態消息篩選指南|自訂主題篩選|私密人工智慧瀏覽器擴充功能|裝置端動態消息篩選",
     "privacyKeywords": "uFeed 隱私權政策|私密瀏覽器擴充功能|裝置端資料處理|瀏覽器擴充功能資料使用",
-    "termsKeywords": "uFeed 使用條款|uFeed 開源授權|GPL-3.0-or-later 瀏覽器擴充功能|uFeed 責任與保證"
+    "termsKeywords": "uFeed 使用條款|uFeed 開源授權|GPL-3.0-or-later 瀏覽器擴充功能|uFeed 責任與保證",
+    "welcomeTitle": "歡迎使用 uFeed | 開始使用",
+    "welcomeDescription": "感謝安裝 uFeed。固定擴充功能、選擇要過濾的內容，幾個步驟就能開始。",
+    "welcomeKeywords": "uFeed 歡迎頁|開始使用 uFeed|固定 uFeed 擴充功能"
   },
-  "language": { "english": "English", "spanish": "Español", "label": "語言" },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "語言"
+  },
   "notFound": {
     "title": "找不到此頁面。",
     "description": "網址可能已變更，但您的動態消息仍在原處。",
@@ -32,7 +39,8 @@
     "privacy": "隱私權",
     "github": "在 GitHub 查看 uFeed",
     "footer": "頁尾連結",
-    "terms": "使用條款"
+    "terms": "使用條款",
+    "welcome": "歡迎使用"
   },
   "home": {
     "title": "多看一些真正想看的內容。",
@@ -183,5 +191,32 @@
         "我們可能更新這些條款；更新時會更改上方日期。更新後繼續使用 uFeed，即表示您接受更新後的條款。"
       ]
     ]
+  },
+  "welcome": {
+    "eyebrow": "一切就緒",
+    "title": "感謝安裝 uFeed。",
+    "lead": "只要幾個步驟，就能打造更合你心意的動態消息。",
+    "pinKicker": "一個小提示",
+    "pinTitle": "將 uFeed 固定在手邊",
+    "pinDescription": "在 Chrome 擴充功能選單中固定 uFeed，方便隨時快速開啟。",
+    "pinAnimationAlt": "示範如何在 Chrome 擴充功能選單中固定 uFeed。",
+    "stepsKicker": "開始使用",
+    "stepsTitle": "打造自己的動態消息",
+    "steps": [
+      {
+        "title": "選擇要保留或封鎖的內容",
+        "description": "從擴充功能選單開啟 uFeed。新增想看的主題、想模糊處理的詞語，或兩者都新增。"
+      },
+      {
+        "title": "調整過濾效果",
+        "description": "調整嚴格程度，設定貼文要多符合你的主題。你可以隨時變更選擇。"
+      },
+      {
+        "title": "照常瀏覽",
+        "description": "前往 X、LinkedIn 或 Reddit。符合條件的貼文會柔和地模糊，不會被刪除。點選任何模糊貼文即可查看。"
+      }
+    ],
+    "more": "想了解完整使用指南嗎？",
+    "howLink": "查看運作方式"
   }
 }
