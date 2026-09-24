@@ -3,3 +3,5 @@
 public/ort
 node_modules
 .local
+site/.next
+site/out

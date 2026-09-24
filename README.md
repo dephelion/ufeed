@@ -155,9 +155,10 @@ it does not score posts. Firefox and Chrome's English model use the iframe path.
 
 ## License
 
-Copyright © 2026 Dephelion. [GPL-3.0](LICENSE). Use it, change it, share it. If
-you distribute a modified version, you must publish its source under the same
-license.
+Copyright © 2026 Dephelion - Julio Cesar Martin. [GPL-3.0](LICENSE).
+
+Use it, change it, share it. If you distribute a modified version, you must
+publish its source under the same license.
 
 The models are not part of this repository and carry their own terms. Your browser
 downloads the one you pick from Hugging Face: e5-small-v2 is MIT-licensed, and
