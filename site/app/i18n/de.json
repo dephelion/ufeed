@@ -5,7 +5,7 @@
     "howTitle": "So funktioniert die uFeed Browser-Erweiterung | Entspannter durch den Feed",
     "howDescription": "Erfahre, wie uFeed X, LinkedIn und Reddit mit Themen, einer eigenständigen Stichwort-Sperrliste oder beidem filtert. Blende unscharfe Beiträge ein und halte deine Nutzung privat.",
     "privacyTitle": "uFeed-Datenschutzerklärung | Gelesene und gespeicherte Daten",
-    "privacyDescription": "Erfahre, was uFeed auf X, LinkedIn und Reddit liest, was in deinem Browser bleibt und wie das Modell heruntergeladen wird. Kein Tracking.",
+    "privacyDescription": "Erfahre, was uFeed liest und speichert und welche Informationen beim Öffnen der Willkommensseite oder beim Modelldownload übertragen werden. Kein Tracking.",
     "termsTitle": "Nutzungsbedingungen der uFeed-Erweiterung | Open-Source-Lizenz",
     "termsDescription": "Bedingungen für die kostenlose Open-Source-uFeed-Erweiterung: GPL-3.0-or-later-Lizenz, Einschränkungen, Haftung, unterstützte soziale Netzwerke und Datenschutz.",
     "imageAlt": "uFeed – etwas mehr von dem, wonach du gesucht hast",
@@ -135,8 +135,8 @@
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "date": "Zuletzt aktualisiert: 23. September 2026",
-    "lead": "uFeed läuft auf deinem Gerät. Es erfasst keine Daten, und wir können weder sehen, was du liest, noch welche Themen du auswählst.",
+    "date": "Zuletzt aktualisiert: 24. September 2026",
+    "lead": "Die Erweiterung lässt Feedtexte und Einstellungen auf deinem Gerät. Bei der ersten Installation in Chrome oder Firefox öffnet dein Browser eine Seite auf ufeed.es; der Website-Host erhält eine normale Seitenanfrage.",
     "sections": [
       [
         "Was uFeed liest",
@@ -152,7 +152,7 @@
       ],
       [
         "Was uFeed sendet",
-        "Wenn ein Sprachmodell erstmals benötigt wird, lädt dein Browser es von Hugging Face herunter. Wie bei jedem Download wird dabei deine IP-Adresse an diesen Dienst übermittelt. Deine Themen und Feed-Inhalte sind nicht enthalten. Der Browser speichert das Modell für später. Das ist die einzige Netzwerkanfrage von uFeed; einen uFeed-Server gibt es nicht."
+        "Bei einer Neuinstallation in Chrome öffnet uFeed seine Willkommensseite auf ufeed.es. Dein Browser sendet eine normale Seitenanfrage. Dadurch erhält der Website-Host deine IP-Adresse, übliche Anfragedetails und den Pfad der gewählten Sprache. Feedtexte, Themen und Erweiterungseinstellungen sind darin nicht enthalten. Separat lädt dein Browser das Sprachmodell beim ersten Bedarf von Hugging Face herunter. Diese Anfrage verrät dem Dienst deine IP-Adresse und das angeforderte Modell. Der Browser speichert das Modell für später. Keine dieser Anfragen enthält Feed-Inhalte oder Einstellungen."
       ],
       [
         "Berechtigungen",
@@ -208,7 +208,7 @@
     "steps": [
       {
         "title": "Wähle, was bleiben oder ausgeblendet werden soll",
-        "description": "Öffne uFeed über dein Erweiterungsmenü. Füge Themen hinzu, die du sehen möchtest, Wörter, die unscharf werden sollen, oder beides."
+        "description": "Klicke auf das uFeed-Erweiterungssymbol. Füge Themen hinzu, die du sehen möchtest, Wörter, die unscharf werden sollen, oder beides."
       },
       {
         "title": "Stelle den Filter ein",
@@ -220,6 +220,7 @@
       }
     ],
     "more": "Möchtest du alle Details erfahren?",
-    "howLink": "So funktioniert uFeed"
+    "howLink": "So funktioniert uFeed",
+    "note": "uFeed wird eingeschaltet (das Symbol wird gelb), wenn du eine unterstützte Feed-Website besuchst."
   }
 }

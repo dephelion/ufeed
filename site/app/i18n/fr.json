@@ -5,7 +5,7 @@
     "howTitle": "Comment fonctionne l’extension uFeed | Un fil social plus serein",
     "howDescription": "Découvrez comment uFeed filtre X, LinkedIn et Reddit avec des thèmes, une liste noire de mots-clés indépendante, ou les deux. Affichez les publications floutées et gardez votre activité privée.",
     "privacyTitle": "Politique de confidentialité uFeed | Données lues et stockées",
-    "privacyDescription": "Découvrez ce que l’extension uFeed lit sur X, LinkedIn et Reddit, ce qui reste dans votre navigateur et comment le modèle est téléchargé. Aucun suivi.",
+    "privacyDescription": "Découvrez ce que uFeed lit et conserve, ainsi que les informations transmises lors de l’ouverture de la page de bienvenue ou du téléchargement du modèle. Aucun suivi.",
     "termsTitle": "Conditions d’utilisation de l’extension uFeed | Licence libre",
     "termsDescription": "Conditions de l’extension uFeed gratuite et libre : licence GPL-3.0-or-later, limites, responsabilité, réseaux sociaux pris en charge et confidentialité.",
     "imageAlt": "uFeed — un peu plus de ce que vous êtes venu chercher",
@@ -135,8 +135,8 @@
   },
   "privacy": {
     "title": "Politique de confidentialité",
-    "date": "Dernière mise à jour : 23 septembre 2026",
-    "lead": "uFeed fonctionne sur votre appareil. Il ne collecte pas vos données et nous ne pouvons pas voir ce que vous lisez ni les thèmes que vous choisissez.",
+    "date": "Dernière mise à jour : 24 septembre 2026",
+    "lead": "L’extension garde le texte du fil et vos réglages sur votre appareil. Lors de la première installation dans Chrome ou Firefox, votre navigateur ouvre une page sur ufeed.es ; le site reçoit une requête web ordinaire.",
     "sections": [
       [
         "Ce que lit uFeed",
@@ -152,7 +152,7 @@
       ],
       [
         "Ce que transmet uFeed",
-        "La première fois qu’un modèle linguistique est nécessaire, votre navigateur le télécharge depuis Hugging Face. Comme tout téléchargement, cette requête révèle votre adresse IP à ce service. Elle ne contient ni vos thèmes ni le contenu de votre fil. Le navigateur met le modèle en cache pour la suite. C’est la seule requête réseau de uFeed ; il n’y a pas de serveur uFeed."
+        "Lors de la première installation dans Chrome ou Firefox, uFeed ouvre sa page de bienvenue sur ufeed.es. Votre navigateur envoie une requête web ordinaire, qui révèle votre adresse IP, les détails habituels de la requête et le chemin correspondant à la langue choisie à l’hébergeur du site. Elle ne contient ni texte du fil, ni thèmes, ni réglages de l’extension. Par ailleurs, la première fois qu’un modèle linguistique est nécessaire, votre navigateur le télécharge depuis Hugging Face. Cette requête révèle votre adresse IP et le modèle demandé à ce service. Le navigateur met le modèle en cache pour la suite. Aucune de ces requêtes ne contient le contenu de votre fil ou vos réglages."
       ],
       [
         "Autorisations",
@@ -208,7 +208,7 @@
     "steps": [
       {
         "title": "Choisissez ce que vous voulez garder ou bloquer",
-        "description": "Ouvrez uFeed depuis le menu des extensions. Ajoutez les sujets que vous voulez voir, les mots à flouter, ou les deux."
+        "description": "Cliquez sur l’icône de l’extension uFeed. Ajoutez les sujets que vous voulez voir, les mots à flouter, ou les deux."
       },
       {
         "title": "Réglez le filtrage",
@@ -220,6 +220,7 @@
       }
     ],
     "more": "Envie de découvrir toutes les options ?",
-    "howLink": "Voir comment ça marche"
+    "howLink": "Voir comment ça marche",
+    "note": "uFeed s’active (son icône devient jaune) lorsque vous visitez un site de fil pris en charge."
   }
 }

@@ -5,7 +5,7 @@
     "howTitle": "Como funciona a extensão uFeed | Um feed social mais tranquilo",
     "howDescription": "Veja como o uFeed filtra X, LinkedIn e Reddit por tópicos, por uma lista independente de palavras bloqueadas ou pelos dois. Revele publicações desfocadas e mantenha sua atividade privada.",
     "privacyTitle": "Política de privacidade do uFeed | Dados lidos e armazenados",
-    "privacyDescription": "Saiba o que a extensão uFeed lê no X, LinkedIn e Reddit, o que fica no navegador e como o modelo é baixado. Sem rastreamento.",
+    "privacyDescription": "Saiba o que o uFeed lê e armazena e quais informações são enviadas ao abrir a página de boas-vindas ou baixar um modelo. Sem rastreamento.",
     "termsTitle": "Termos da extensão uFeed | Licença de código aberto",
     "termsDescription": "Termos da extensão uFeed gratuita e de código aberto: licença GPL-3.0-or-later, limitações, responsabilidade, redes sociais compatíveis e privacidade.",
     "imageAlt": "uFeed — um pouco mais do que você veio buscar",
@@ -135,8 +135,8 @@
   },
   "privacy": {
     "title": "Política de privacidade",
-    "date": "Última atualização: 23 de setembro de 2026",
-    "lead": "O uFeed funciona no seu dispositivo. Ele não coleta seus dados, e não conseguimos ver o que você lê nem os tópicos que escolhe.",
+    "date": "Última atualização: 24 de setembro de 2026",
+    "lead": "A extensão mantém o texto do feed e as configurações no seu dispositivo. Na primeira instalação no Chrome ou Firefox, o navegador abre uma página em ufeed.es; o site recebe uma solicitação normal de página.",
     "sections": [
       [
         "O que o uFeed lê",
@@ -152,7 +152,7 @@
       ],
       [
         "O que o uFeed envia",
-        "Na primeira vez que um modelo de linguagem é necessário, o navegador o baixa do Hugging Face. Como qualquer download, essa solicitação revela seu endereço IP ao serviço. Ela não inclui seus tópicos nem o conteúdo do feed. O navegador armazena o modelo para uso futuro. Essa é a única solicitação de rede do uFeed; não há servidor do uFeed."
+        "Na primeira instalação no Chrome ou Firefox, o uFeed abre a página de boas-vindas em ufeed.es. O navegador faz uma solicitação normal de página, que revela seu endereço IP, os dados técnicos habituais da solicitação e o caminho do idioma escolhido ao host do site. Ela não inclui o texto do feed, seus tópicos nem as configurações da extensão. Separadamente, quando um modelo de linguagem é necessário pela primeira vez, o navegador o baixa do Hugging Face. Essa solicitação revela seu IP e o modelo solicitado ao serviço. O navegador armazena o modelo para uso futuro. Nenhuma dessas solicitações inclui o conteúdo do feed ou suas configurações."
       ],
       [
         "Permissões",
@@ -208,7 +208,7 @@
     "steps": [
       {
         "title": "Escolha o que manter ou bloquear",
-        "description": "Abra o uFeed pelo menu de extensões. Adicione tópicos que quer ver, palavras que quer desfocar, ou os dois."
+        "description": "Clique no ícone da extensão uFeed. Adicione tópicos que quer ver, palavras que quer desfocar, ou os dois."
       },
       {
         "title": "Ajuste o filtro",
@@ -220,6 +220,7 @@
       }
     ],
     "more": "Quer conhecer todos os detalhes?",
-    "howLink": "Veja como funciona"
+    "howLink": "Veja como funciona",
+    "note": "O uFeed é ativado (o ícone fica amarelo) quando você acessa um site de feed compatível."
   }
 }

@@ -48,9 +48,9 @@ It reads words, not images, and matches subject, not quality. It can miss sarcas
 
 ## Single purpose
 
-uFeed has one purpose: to blur posts in a user's social feed that do not
-match topics the user has chosen. Every permission and every code path serves
-that. It does nothing else.
+uFeed has one purpose: help people focus their social feed by blurring posts
+outside topics they choose. The first-install welcome page explains how to get
+started. Every permission and code path supports that purpose.
 
 ## Permission justifications
 
@@ -69,12 +69,14 @@ in local extension storage. Nothing is synced or transmitted.
 **Remote code — none**
 
 uFeed executes no remote code. The ONNX Runtime WebAssembly binary is
-bundled in the package and loaded from an extension-relative path. The only
-network request is a one-time download of the model **weights** (a data file,
-not code) from Hugging Face (`huggingface.co`, redirecting to its `hf.co`
-CDN), which the browser then caches. Only the model the user has chosen is
-requested: about 33 MB for the default, about 197 MB for the optional multilingual
-one.
+bundled in the package and loaded from an extension-relative path. On a first installation in Chrome or Firefox, the extension opens its welcome page at ufeed.es. This normal
+page request reveals the visitor's IP address, standard browser request details
+and language path to the site host. When first needed, the browser downloads
+the selected model **weights** (data files, not code) from Hugging Face
+(`huggingface.co`, redirecting to its `hf.co` CDN), which reveals the IP
+address and requested model to Hugging Face. Neither request includes feed
+content or extension settings. The browser then caches model weights; the
+default model is about 33 MB and the optional multilingual model is about 197 MB.
 
 ## Data usage disclosure
 
@@ -117,13 +119,13 @@ CONTENT SECURITY POLICY
 'wasm-unsafe-eval' on extension pages is needed only to compile that bundled ONNX Runtime WebAssembly. No remote code is executed and nothing uses eval.
 
 NETWORK
-The only request is a one-time download of model weights (data files, not code) from huggingface.co, which redirects to its hf.co CDN. The browser then caches them. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics, no accounts, no data collected (data_collection_permissions: none).
+On a first installation in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
 
 WHY THE HIDDEN IFRAME
 The content script keeps access to feed text and the page DOM. Chrome's multilingual model uses a shared offscreen extension page and worker across feed tabs; Chrome's default English model and Firefox use a per-tab hidden engine.html iframe and worker. Both transports send text to the extension worker and return scores. The engine never reads the host page.
 
 HOW TO TEST
-1. Install, then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.
+1. Install in Chrome; the welcome page opens in a new tab. Then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.
 2. Click the toolbar icon, type a topic such as "cooking, recipes, food", and click Save lists.
 3. The first run downloads the model; the popup shows progress, then Ready.
 4. Posts that are not about the topic blur. Click one to reveal it.

@@ -3,6 +3,7 @@ import { logger } from '../core/log';
 import type { ModelKey } from '../core/models';
 import {
   ENSURE_OFFSCREEN,
+  ENGINE_READY,
   HANDSHAKE,
   isEngineReply,
   nextRequestId,
@@ -37,6 +38,7 @@ export class EngineClient implements Engine {
   #port: MessagePort | undefined;
   #shared: browser.Runtime.Port | undefined;
   #frame: HTMLIFrameElement | undefined;
+  #onFrameReady: ((event: MessageEvent<unknown>) => void) | undefined;
   #connecting = false;
   #generation = 0;
   #lastTopics: EngineRequest | undefined;
@@ -96,6 +98,8 @@ export class EngineClient implements Engine {
     const shared = this.#shared;
     this.#shared = undefined;
     shared?.disconnect();
+    if (this.#onFrameReady) removeEventListener('message', this.#onFrameReady);
+    this.#onFrameReady = undefined;
     this.#frame?.remove();
     this.#frame = undefined;
     this.#lastTopics = undefined;
@@ -148,6 +152,7 @@ export class EngineClient implements Engine {
         this.#receive(data);
       });
       port.onDisconnect.addListener(() => {
+        void browser.runtime.lastError;
         clearTimeout(watchdog);
         if (this.#shared === port) this.#fallBackToFrame();
       });
@@ -192,11 +197,17 @@ export class EngineClient implements Engine {
     frame.setAttribute('tabindex', '-1');
     frame.style.cssText =
       'position:fixed;width:0;height:0;border:0;opacity:0;pointer-events:none;left:-9999px';
-    frame.addEventListener('load', () => this.#handshake(frame));
+    const extensionOrigin = this.#extension.slice(0, -1);
+    this.#onFrameReady = (event: MessageEvent<unknown>) => {
+      if (frame !== this.#frame || !frame.isConnected) return;
+      if (event.origin !== extensionOrigin || event.data !== ENGINE_READY) return;
+      this.#handshake(frame);
+    };
+    addEventListener('message', this.#onFrameReady);
     frame.addEventListener('error', () => log.warn('engine iframe failed to load'));
     log.info('injecting engine iframe', { src: frame.src });
-    document.documentElement.appendChild(frame);
     this.#frame = frame;
+    document.documentElement.appendChild(frame);
 
     setTimeout(() => {
       if (this.#status.state === 'idle') {
@@ -212,16 +223,27 @@ export class EngineClient implements Engine {
   #handshake(frame: HTMLIFrameElement): void {
     if (frame !== this.#frame) return;
     this.#port?.close();
+    this.#port = undefined;
     const channel = new MessageChannel();
-    this.#port = channel.port1;
     channel.port1.onmessage = (event: MessageEvent<unknown>) => {
       if (this.#port === channel.port1) this.#receive(event.data);
     };
     channel.port1.start();
     // The frame sits in the host DOM: a page that navigates it must not receive the port.
-    frame.contentWindow?.postMessage({ type: HANDSHAKE }, this.#extension, [
-      channel.port2,
-    ]);
+    try {
+      if (!frame.contentWindow) throw new Error('engine frame has no window');
+      frame.contentWindow.postMessage({ type: HANDSHAKE }, this.#extension, [
+        channel.port2,
+      ]);
+    } catch (error) {
+      channel.port1.close();
+      channel.port2.close();
+      log.warn('engine handshake could not be sent', {
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      return;
+    }
+    this.#port = channel.port1;
     log.info('handshake sent', { buffered: this.#outbox.length });
     for (const request of this.#outbox.splice(0)) channel.port1.postMessage(request);
   }

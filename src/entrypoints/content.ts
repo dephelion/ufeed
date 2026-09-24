@@ -133,6 +133,9 @@ async function start(): Promise<void> {
   });
 
   filter.start();
+  addEventListener('pageshow', (event) => {
+    if (event.persisted) filter.restore();
+  });
   badge.setVisible(filter.active);
   log.info('content script started', {
     host: location.hostname,

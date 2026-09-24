@@ -131,6 +131,13 @@ export class FeedFilter {
     this.#requery();
   }
 
+  restore(): void {
+    if (!this.active || this.#settings.topics.length === 0) return;
+    this.#deactivate();
+    this.#engine.restart(this.#settings.model);
+    this.#requery();
+  }
+
   stop(): void {
     this.#scanner.stop();
     this.#queue.invalidate();

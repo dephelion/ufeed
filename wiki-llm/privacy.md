@@ -5,13 +5,14 @@
 
 ## Data
 
-| Data          | Where it goes                                                                                                                   |
-| :------------ | :------------------------------------------------------------------------------------------------------------------------------ |
-| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                         |
-| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                            |
-| Settings      | `storage.local`. Topics, blacklist keywords, strictness step, the checkboxes, the language picked in the popup (a locale code). |
-| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                           |
-| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way.       |
+| Data          | Where it goes                                                                                                                                                                               |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                                                                                     |
+| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                                                                                        |
+| Settings      | `storage.local`. Topics, blacklist keywords, strictness step, the checkboxes, the language picked in the popup (a locale code).                                                             |
+| Welcome visit | Open `ufeed.es/welcome/` on a new install in Chrome or Firefox. The normal page request reveals IP, request details and the locale path to the site host; no feed text, topics or settings. |
+| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                                                                                       |
+| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way.                                                                   |
 
 **A blacklist keyword that blocked a post is written into the host DOM** (`data-lx-keyword`), where the page's own scripts can read it, so the opened tag can name it. Accepted by the owner: the site already sees `data-lx-reason="blacklist"` on a post whose text it served, so the exact word adds little. Only matched keywords, never the list; cleared by `reveal()`.
 
@@ -29,7 +30,7 @@
 
 **Engine status is asked, never stored.** The popup queries the active tab over `browser.runtime` messaging and keeps the answer in memory. An earlier version parked it in `storage.local` with a timestamp, which left a durable record of when a feed was last open — settings-adjacent, surviving restarts, and flatly at odds with the claim above. Nothing about engine activity now touches disk. See [architecture.md](architecture.md).
 
-**One class of network request exists: model weights.** Nothing else. No analytics in v1 — a hard constraint, and what makes the "does not collect user data" declaration truthful.
+**Network requests:** the welcome page on a new Chrome or Firefox install, then selected model weights when first needed. Neither includes feed text, topics or extension settings. No analytics.
 
 **Choosing a model does not tell anyone anything more.** Both come from `huggingface.co` and its storage CDN, on the same one-time fetch, with no identifier attached. Picking the multilingual one changes which files are requested and nothing else; the selection itself stays in `storage.local` and is never transmitted.
 
@@ -43,7 +44,7 @@ Listing copy, permission justifications and the data-disclosure answers live in 
 - [ ] Privacy policy live at https://ufeed.es/privacy/ and pasted into the dashboard.
 - [ ] Screenshots (1280x800 or 640x400), at least one.
 - [ ] Load `.output/chrome-mv3` unpacked in a cold profile and walk install -> topic -> first score. No suite covers it.
-- [ ] Network tab clean on that run: `GET` model files from `huggingface.co` and its storage CDN (`*.hf.co`, reached by redirect) only. A `cdn.jsdelivr.net` WASM fetch is remote code execution and a rejection.
+- [ ] Network tab clean on that run: welcome page and its site assets on first install; model files from `huggingface.co` and its storage CDN (`*.hf.co`, reached by redirect) when first needed. A `cdn.jsdelivr.net` WASM fetch is remote code execution and a rejection.
 - [ ] AMO source bundle: unminified source plus reproducible build instructions. Bundled ONNX/WASM binaries make this mandatory. Firefox only.
 - [ ] ORT `.wasm` bundled locally, never CDN.
 - [ ] No platform trademarks in the extension title.

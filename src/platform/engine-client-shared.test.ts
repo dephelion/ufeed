@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ENGINE_READY } from '../core/protocol';
 
 const sendMessage = vi.hoisted(() => vi.fn());
 const connect = vi.hoisted(() => vi.fn());
@@ -47,7 +48,12 @@ describe('Chrome shared engine fallback', () => {
     Object.defineProperty(frame, 'contentWindow', {
       value: { postMessage: vi.fn() },
     });
-    frame.dispatchEvent(new Event('load'));
+    dispatchEvent(
+      new MessageEvent('message', {
+        data: ENGINE_READY,
+        origin: 'chrome-extension://ufeed',
+      }),
+    );
 
     expect(posted).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'SET_TOPICS', topics: ['software'] }),

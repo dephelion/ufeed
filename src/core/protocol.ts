@@ -120,6 +120,7 @@ export interface StatusEvent {
 export type EngineReply = ScoresReply | VectorReply | AckReply | ErrorReply | StatusEvent;
 
 export const HANDSHAKE = 'ufeed:port';
+export const ENGINE_READY = 'ufeed:engine-ready';
 
 export interface Handshake {
   type: typeof HANDSHAKE;

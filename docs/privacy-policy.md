@@ -3,7 +3,7 @@
 > Source of record for the page published at
 > <https://ufeed.es/privacy/>. Edit both together.
 
-**Effective 23 September 2026.** Contact: contact@dephelion.com
+**Effective 24 September 2026.** Contact: contact@dephelion.com
 
 uFeed blurs posts in your social feed that are not about topics you chose. It
 does this on your own device. This policy describes everything it reads, stores
@@ -11,10 +11,11 @@ and sends.
 
 ## Short version
 
-uFeed does not collect your data. Nothing you read, type or rate is sent to us
-or to anyone else. There are no accounts, no analytics, no trackers, and no
-advertising. We cannot see what you read, what your topics are, or that you use
-uFeed at all.
+uFeed does not send feed text, topics or extension settings to us or anyone
+else. There are no accounts, analytics, trackers or advertising. On a first install in Chrome or Firefox, the extension opens a welcome page hosted at ufeed.es. That standard
+page request reveals your IP address, ordinary browser request details and the
+selected language path to the website host. It contains no feed content or
+extension settings.
 
 ## What uFeed reads
 
@@ -60,9 +61,14 @@ file replaces the settings and ratings already stored.
 
 ## What uFeed sends
 
-**One kind of network request exists: downloading the language model.**
+**The browser makes two kinds of requests on your behalf.**
 
-The first time uFeed needs to score a feed, it downloads the model that does
+On a first installation in Chrome or Firefox, uFeed opens `https://ufeed.es/welcome/`. Loading the page
+sends a normal web request to ufeed.es. The site host receives your IP address,
+ordinary browser request details and the localized page path. This request
+contains no feed text, topics or extension settings.
+
+The first time uFeed needs to score a feed, your browser downloads the model that does
 the comparison from Hugging Face at `huggingface.co`, which redirects the larger
 files to its storage CDN at `hf.co`. That is about 33 MB for the default English
 model. If you choose the multilingual model in the popup, it downloads that one
@@ -70,13 +76,14 @@ instead, about 197 MB, the first time you use it. Only the model you have chosen
 is ever requested. Your browser then caches it, and later sessions use the cached
 copy.
 
-Be aware of what this request implies: like any file download, it tells Hugging
-Face's servers your IP address and which file was requested, so which model you
-chose. It carries none of your topics, none of your feed, and no identifier for
-you or for uFeed. Their handling of that request is governed by their own
-privacy policy. These downloads are the only times uFeed contacts any server.
+Like any file download, it tells Hugging Face's servers your IP address and
+which file was requested, so which model you chose. It carries none of your
+topics, none of your feed, and no identifier for you or for uFeed. Their
+handling of that request is governed by their own privacy policy. Neither the
+welcome page request nor the model download carries feed content or settings.
 
-uFeed sends nothing to us. We operate no server that uFeed talks to.
+The extension does not send feed data or settings to a uFeed backend. The
+welcome page is a public website visit, separate from feed filtering.
 
 ## Permissions, and why each is needed
 

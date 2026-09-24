@@ -42,7 +42,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 
 Steps 1–6 live in `FeedFilter` (`src/feed/filter.ts`). `content.ts` only wires it to storage, the engine client, the popup and the page.
 
-Background service worker: creates Chrome's offscreen page on demand; scoring does not pass through it. Settings propagate through `storage.onChanged`.
+Background service worker: opens `https://ufeed.es/welcome/` on a new install in Chrome or Firefox, not on updates; creates Chrome's offscreen page on demand; scoring does not pass through it. Settings propagate through `storage.onChanged`.
 
 ## Persisted state
 
@@ -95,9 +95,11 @@ If two-thread model loading fails, the worker retries the same model with one th
 
 **Every request carries an id.** Index-order correlation breaks the moment two batches are in flight.
 
-**Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
+**Handshake:** engine document installs its listener and signals `ufeed:engine-ready` to the parent → content script accepts only the extension origin and transfers a `MessagePort` with that exact `targetOrigin` → engine replies with its last status. An iframe `load` can fire while its recipient still has a null origin; never transfer the port from `load`. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
 
 **Chrome Gemma connection:** content script asks the background to ensure the offscreen page, then opens a named runtime Port directly to that page. Requests buffer until the Port opens. If creation, connection, or the shared worker fails, the client resolves pending scores empty and starts its existing per-tab iframe with the latest topics. Firefox always takes the iframe path.
+
+**Back/forward restore:** Chrome closes content-script runtime Ports when a page enters the back/forward cache. The offscreen disconnect handler consumes `runtime.lastError` and releases that client's worker state. On a persisted `pageshow`, the feed replaces its engine transport and resends topics and corrections before scoring again.
 
 **The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and uFeed fails open.
 
