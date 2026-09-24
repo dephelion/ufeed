@@ -65,7 +65,7 @@ export default async function WelcomePage({
         <div className="welcome-steps">
           {[0, 1, 2].map((step) => (
             <article className="welcome-step" key={step}>
-              <span className="welcome-step-number">0{step + 1}</span>
+              <span className="welcome-step-number">{step + 1}</span>
               <h3>{t(`welcome.steps.${step}.title`)}</h3>
               <p>{t(`welcome.steps.${step}.description`)}</p>
             </article>
