@@ -94,6 +94,7 @@ export default async function HowItWorksPage({
           <div>
             <h2>{t('how.steps.3.0')}</h2>
             <p>{t('how.steps.3.1')}</p>
+            <p className="how-note">{t('welcome.note')}</p>
           </div>
         </li>
       </ol>
