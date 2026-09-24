@@ -16,7 +16,7 @@ export async function generateMetadata({
     description: t('seo.howDescription'),
     path: `/${locale}/how-it-works/`,
     imageAlt: t('seo.imageAlt'),
-    imagePath: `/${locale}/opengraph-image`,
+    imagePath: `/${locale}/opengraph-image.png`,
     locale: locale as Locale,
     keywords: t('seo.howKeywords').split('|'),
   });
