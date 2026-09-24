@@ -12,8 +12,8 @@ asks for. Kept in the repo so the listing and the code change together.
 | Category       | Productivity                                                              |
 | Language       | English                                                                   |
 | Support email  | contact@dephelion.com                                                     |
-| Support URL    | https://github.com/dephelion/ufeed/issues/new/choose                       |
-| Privacy policy | https://ufeed.es/privacy/                                                   |
+| Support URL    | https://github.com/dephelion/ufeed/issues/new/choose                      |
+| Privacy policy | https://ufeed.es/privacy/                                                 |
 | Visibility     | Public — listed in search and category browsing                           |
 | Store URL      | https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck |
 
