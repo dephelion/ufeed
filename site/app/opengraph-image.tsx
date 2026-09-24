@@ -26,7 +26,7 @@ export default function OpenGraphImage() {
             display: 'flex',
             width: 62,
             height: 62,
-            border: '2px solid #e6e544',
+            border: '2px solid #ffe02e',
             borderRadius: 40,
             alignItems: 'center',
             justifyContent: 'center',
@@ -41,19 +41,19 @@ export default function OpenGraphImage() {
             }}
           >
             <span
-              style={{ width: 41, height: 4, borderRadius: 3, background: '#e6e544' }}
+              style={{ width: 41, height: 4, borderRadius: 3, background: '#ffe02e' }}
             />
             <span
-              style={{ width: 29, height: 4, borderRadius: 3, background: '#e6e544' }}
+              style={{ width: 29, height: 4, borderRadius: 3, background: '#ffe02e' }}
             />
             <span
-              style={{ width: 41, height: 4, borderRadius: 3, background: '#e6e544' }}
+              style={{ width: 41, height: 4, borderRadius: 3, background: '#ffe02e' }}
             />
             <span
-              style={{ width: 24, height: 4, borderRadius: 3, background: '#e6e544' }}
+              style={{ width: 24, height: 4, borderRadius: 3, background: '#ffe02e' }}
             />
             <span
-              style={{ width: 36, height: 4, borderRadius: 3, background: '#e6e544' }}
+              style={{ width: 36, height: 4, borderRadius: 3, background: '#ffe02e' }}
             />
           </div>
         </div>
@@ -61,7 +61,7 @@ export default function OpenGraphImage() {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <span
-          style={{ color: '#e6e544', fontSize: 21, letterSpacing: 4, fontWeight: 700 }}
+          style={{ color: '#ffe02e', fontSize: 21, letterSpacing: 4, fontWeight: 700 }}
         >
           YOUR FEED, YOUR WAY
         </span>
@@ -72,7 +72,7 @@ export default function OpenGraphImage() {
           A private, open-source filter for X, LinkedIn and Reddit.
         </span>
       </div>
-      <div style={{ display: 'flex', color: '#e6e544', fontSize: 19 }}>
+      <div style={{ display: 'flex', color: '#ffe02e', fontSize: 19 }}>
         Free · On-device · Open source
       </div>
     </div>,

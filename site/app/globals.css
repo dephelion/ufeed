@@ -7,7 +7,7 @@
   --line: #343942;
   --text: #f4f4f0;
   --muted: #a9adb2;
-  --yellow: #e6e544;
+  --yellow: #ffe02e;
 }
 * {
   box-sizing: border-box;
@@ -141,7 +141,7 @@ h1 {
 }
 .button.primary:hover {
   color: #18191a;
-  background: #f0ef62;
+  background: var(--yellow);
 }
 .button.secondary {
   border: 1px solid #555a64;
