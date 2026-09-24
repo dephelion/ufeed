@@ -59,14 +59,24 @@ a:hover {
   color: #c2c4c8;
   font-size: 14px;
 }
-.language-switch {
+.language-select {
   display: inline-flex;
   gap: 5px;
   align-items: center;
   margin-left: -18px;
 }
-.language-switch a { padding: 4px; border-radius: 5px; }
-.language-switch a[aria-current='page'] { background: #343942; }
+.language-select select {
+  appearance: none;
+  border: 1px solid #535861;
+  border-radius: 7px;
+  padding: 8px 28px 8px 10px;
+  color: var(--text);
+  background: #20242b;
+  font: inherit;
+  cursor: pointer;
+}
+.language-select option { background: #20242b; color: var(--text); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .header .nav-github {
   border: 1px solid #535861;
   border-radius: 7px;

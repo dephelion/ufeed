@@ -3,7 +3,8 @@ import { notFound } from 'next/navigation';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { pageMetadata } from '../lib/seo';
-import { SITE_DESCRIPTION } from '../lib/site';
+import I18nProvider from '../components/I18nProvider';
+import { translate } from '../i18n/config';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'es' }];
@@ -12,16 +13,20 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
   if (locale !== 'en' && locale !== 'es') notFound();
+  const t = translate(locale);
   return pageMetadata({
-    title: locale === 'es' ? 'uFeed | Una forma más tranquila de usar tus redes' : 'uFeed Browser Extension | Feed Cleaner for Social Networks',
-    description: locale === 'es' ? 'Una extensión gratuita y de código abierto que difumina las publicaciones fuera de tus intereses. Privada por diseño: todo funciona en tu dispositivo.' : SITE_DESCRIPTION,
+    title: t('seo.homeTitle'),
+    description: t('seo.homeDescription'),
     path: `/${locale}/`,
-    keywords: ['uFeed', 'social media feed filter', 'private browser extension'],
+    imageAlt: t('seo.imageAlt'),
+    imagePath: `/${locale}/opengraph-image`,
+    locale,
+    keywords: t('seo.homeKeywords').split('|'),
   });
 }
 
 export default async function LocaleLayout({ children, params }: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string }> }>) {
   const { locale } = await params;
   if (locale !== 'en' && locale !== 'es') notFound();
-  return <><Header locale={locale} /><div lang={locale}>{children}</div><Footer locale={locale} /></>;
+  return <html lang={locale}><body><I18nProvider locale={locale}><Header locale={locale} /><div lang={locale}>{children}</div><Footer locale={locale} /></I18nProvider></body></html>;
 }

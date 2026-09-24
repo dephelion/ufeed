@@ -1,0 +1,194 @@
+{
+  "seo": {
+    "homeTitle": "uFeed | Un feed más tranquilo en tus redes sociales",
+    "homeDescription": "Una extensión gratuita y de código abierto que difumina las publicaciones que no coinciden con tus intereses. Privada desde el diseño: todo funciona en tu dispositivo.",
+    "howTitle": "Cómo funciona la extensión uFeed | una experiencia más tranquila en redes",
+    "howDescription": "Descubre cómo la extensión uFeed filtra X, LinkedIn y Reddit mediante temas, una lista independiente de palabras clave o ambas opciones. Muestra publicaciones difuminadas y mantén tu actividad privada.",
+    "privacyTitle": "Política de privacidad de uFeed | qué datos lee y guarda",
+    "privacyDescription": "Qué lee la extensión uFeed en X, LinkedIn y Reddit, qué permanece en tu navegador y cómo descarga el modelo. Sin seguimiento.",
+    "termsTitle": "Términos de la extensión uFeed | licencia de código abierto y uso",
+    "termsDescription": "Términos de la extensión uFeed gratuita y de código abierto: licencia GPL-3.0-or-later, limitaciones, responsabilidad, redes sociales compatibles y privacidad.",
+    "imageAlt": "uFeed: un poco más de lo que buscas",
+    "howImageAlt": "Ventana de la extensión uFeed con ajustes de temas y lista de bloqueo",
+    "ogEyebrow": "TU FEED, A TU MANERA",
+    "ogTitle": "Un poco más de lo que buscas.",
+    "ogDescription": "Un filtro privado y de código abierto para X, LinkedIn y Reddit.",
+    "ogFooter": "Gratis · En tu dispositivo · Código abierto",
+    "homeKeywords": "uFeed|filtro para redes sociales|extensión privada para navegador|extensión de código abierto|inteligencia artificial en el dispositivo|filtrar feed de X|filtrar feed de LinkedIn|filtrar feed de Reddit",
+    "howKeywords": "cómo funciona uFeed|guía para filtrar el feed|filtro de feed por temas|extensión privada con inteligencia artificial|filtrado en el dispositivo",
+    "privacyKeywords": "política de privacidad de uFeed|extensión privada para navegador|procesamiento de datos en el dispositivo|uso de datos en extensiones",
+    "termsKeywords": "términos de uso de uFeed|licencia de código abierto de uFeed|extensión GPL-3.0-or-later|responsabilidad y garantía de uFeed"
+  },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "Idioma"
+  },
+  "notFound": {
+    "title": "No hemos encontrado esa página.",
+    "description": "Puede que la dirección haya cambiado, pero tu feed sigue donde lo dejaste.",
+    "back": "Volver a uFeed"
+  },
+  "nav": {
+    "home": "Inicio de uFeed",
+    "main": "Navegación principal",
+    "how": "Cómo funciona",
+    "privacy": "Privacidad",
+    "github": "uFeed en GitHub",
+    "footer": "Enlaces del pie de página",
+    "terms": "Términos"
+  },
+  "home": {
+    "title": "Un poco más de lo que buscas.",
+    "eyebrow": "TU FEED, A TU MANERA",
+    "description": "uFeed es una extensión gratuita para el navegador que difumina suavemente las publicaciones que no coinciden con tus intereses, para que encuentres más fácilmente las que sí.",
+    "chrome": "Añadir a Chrome",
+    "explore": "Explorar el proyecto",
+    "note": "Gratis para siempre · Código abierto · Tus datos son tuyos",
+    "reel": "uFeed en acción",
+    "features": [
+      [
+        "Elige lo que te importa",
+        "Añade los temas que te gustan. uFeed puede aprender qué quieres ver más o menos."
+      ],
+      [
+        "Desplázate con más calma",
+        "Las publicaciones filtradas por temas o palabras clave se difuminan suavemente, pero nunca se eliminan. Toca una publicación para verla."
+      ],
+      [
+        "Privacidad desde el diseño",
+        "Tu feed permanece en tu dispositivo. Sin cuentas, seguimiento ni recopilación de datos."
+      ]
+    ],
+    "whyEyebrow": "OTRA FORMA DE FILTRAR",
+    "whyTitle": "Por qué uFeed",
+    "whyLead": "Empieza por lo que quieres ver más. Deja que lo demás pase a un segundo plano.",
+    "reasons": [
+      [
+        "🌱 Elige cómo filtrar",
+        "Usa temas para conservar publicaciones sobre asuntos que te interesan, una lista de palabras clave para difuminar coincidencias, o ambas opciones."
+      ],
+      [
+        "🛡️ Tu feed sigue siendo tuyo",
+        "Las publicaciones se analizan en tu dispositivo. Sin cuenta, analíticas ni servidores de uFeed. El modelo se descarga una vez; nunca recibimos tu feed ni tus temas."
+      ],
+      [
+        "🌍 Elige el idioma del modelo",
+        "El modelo predeterminado funciona en inglés. Puedes elegir un modelo multilingüe opcional para analizar publicaciones en otros idiomas; ocupa más espacio y se descarga una sola vez."
+      ],
+      [
+        "🎚️ Ajústalo a tu gusto",
+        "Ajusta la intensidad del filtro, echa un vistazo a los casos dudosos y, si quieres, usa tus valoraciones para afinar las sugerencias en tu dispositivo."
+      ],
+      [
+        "↩️ Tú tienes el control",
+        "No se elimina nada. Puedes mostrar una publicación difuminada cuando quieras, cambiar tus temas o desactivar uFeed."
+      ],
+      [
+        "💛 Código abierto porque sí",
+        "uFeed es gratuito y de código abierto. Puedes revisar cómo funciona, proponer mejoras o crear tu propia versión."
+      ]
+    ],
+    "qualityNote": "uFeed clasifica por tema, no por calidad, y a veces se equivoca. Una publicación excelente y otra aburrida sobre el mismo tema pueden quedar visibles.",
+    "closing": "Menos ruido. Más de lo que te gusta.",
+    "store": "Descubre uFeed en Chrome Web Store"
+  },
+  "how": {
+    "title": "Cómo funciona uFeed",
+    "lead": "Elige los temas que quieres conservar, añade palabras o frases a una lista de bloqueo, o combina ambas opciones. Esta extensión gratuita difumina suavemente las publicaciones coincidentes; ninguna desaparece.",
+    "steps": [
+      [
+        "Elige qué conservar o bloquear",
+        "Abre la ventana de uFeed y elige qué quieres filtrar. Para filtrar por temas, escribe un tema por línea como una frase breve de dos a cinco palabras. Usa palabras habituales en las publicaciones; por ejemplo, «ingeniería de software» en vez de «tecnología». Evita las frases completas; las comas son opcionales. También puedes usar solo la lista de palabras clave para difuminar publicaciones que contengan las palabras o frases que indiques."
+      ],
+      [
+        "Sigue desplazándote",
+        "En X, LinkedIn o Reddit, uFeed compara cada publicación con tus temas o tu lista de bloqueo. La comprobación de temas ocurre en tu navegador; las coincidencias de la lista se buscan directamente entre las palabras y frases que has indicado."
+      ],
+      [
+        "Decide qué quieres ver",
+        "Al usar temas, se difuminan las publicaciones que no coinciden. La lista de bloqueo también difumina publicaciones con palabras o frases coincidentes, aunque encajen con tus temas. Si solo usas la lista, las publicaciones sin coincidencias permanecen visibles. Toca una publicación difuminada —o selecciónala y pulsa Intro— para verla cuando quieras."
+      ],
+      [
+        "Personalízalo",
+        "Ajusta la intensidad y echa un vistazo a los casos dudosos. Valora publicaciones para que uFeed aprenda qué quieres ver más o menos; tus valoraciones permanecen en tu dispositivo."
+      ]
+    ],
+    "details": [
+      [
+        "🔒 Sencillo y privado",
+        "No hace falta registrarse ni crear una cuenta, y no hay servidores de uFeed. El modelo se descarga una vez y el navegador lo guarda. No recibimos tus temas ni las publicaciones que lees. uFeed es gratuito y de código abierto; puedes revisar el proyecto cuando quieras."
+      ],
+      [
+        "🌍 Elige el idioma que te convenga",
+        "El modelo predeterminado funciona en inglés. Si tus feeds están en otros idiomas, puedes elegir el modelo multilingüe opcional desde la ventana de la extensión. Requiere una descarga inicial mayor; tus temas y ajustes no cambian."
+      ],
+      [
+        "Una ayuda, no un juez infalible",
+        "uFeed reconoce temas, no la calidad. Puede difuminar algo que te interesaba o dejar visible algo que preferirías saltarte. Siempre puedes volver a ver el feed completo con un clic y, si uFeed deja de funcionar, las publicaciones seguirán visibles."
+      ]
+    ]
+  },
+  "privacy": {
+    "title": "Política de privacidad",
+    "date": "Última actualización: 23 de septiembre de 2026",
+    "lead": "uFeed funciona en tu dispositivo. No recopila tus datos y no podemos ver qué lees ni qué temas eliges.",
+    "sections": [
+      [
+        "Qué lee uFeed",
+        "En X (x.com y twitter.com), LinkedIn y Reddit, uFeed lee el texto de las publicaciones para compararlo con tus temas. La comparación ocurre en tu navegador. El texto se conserva temporalmente en memoria mientras se analiza y después se descarta. No se guarda en disco, no se envía por la red ni se registra. uFeed no hace nada en otros sitios web."
+      ],
+      [
+        "Qué permanece en tu dispositivo",
+        "Tus temas y ajustes se guardan en el almacenamiento local de la extensión. Si activas «Aprender de mis valoraciones», uFeed también guarda representaciones numéricas de las publicaciones que valoras. Estas pueden conservar cierta información de la publicación original, por lo que se tratan como datos personales. Permanecen en tu dispositivo, con un máximo de 50 valoraciones positivas y 50 negativas por tema."
+      ],
+      [
+        "",
+        "Si exportas una copia de seguridad, el archivo contiene tus ajustes y las valoraciones guardadas. Guárdalo en un lugar privado. Al importar una copia, se reemplazan los ajustes y las valoraciones de la extensión."
+      ],
+      [
+        "Qué envía uFeed",
+        "La primera vez que se necesita un modelo de lenguaje, tu navegador lo descarga de Hugging Face. Esta solicitud revela tu dirección IP a ese servicio, como ocurre con cualquier descarga. No incluye tus temas ni el contenido de tu feed. El navegador guarda el modelo para usarlo después. Es la única solicitud de red de uFeed; no hay servidores de uFeed."
+      ],
+      [
+        "Permisos",
+        "Sitios web compatibles: leer el texto de las publicaciones y aplicar el difuminado en X, LinkedIn y Reddit.\nAlmacenamiento: guardar tus ajustes y valoraciones opcionales en el dispositivo.\nPágina offscreen (Chrome): ejecutar el modelo multilingüe en un proceso compartido de la extensión. Recibe texto para analizar, pero no puede leer el sitio web."
+      ],
+      [
+        "Cómo borrar tus datos",
+        "Usa «Borrar ajustes de aprendizaje» para eliminar las valoraciones, o «Restablecer» para borrarlas y restaurar los ajustes predeterminados. Desinstalar uFeed elimina los datos guardados localmente. Nosotros no conservamos nada y no hay ninguna cuenta que borrar."
+      ],
+      [
+        "Menores y cambios",
+        "uFeed no está dirigido a menores y no recopila datos de nadie. Si esta política cambia, actualizaremos la fecha de esta página."
+      ]
+    ]
+  },
+  "terms": {
+    "title": "Términos de uso",
+    "date": "Última actualización: 24 de septiembre de 2026",
+    "lead": "uFeed es un programa gratuito y de código abierto publicado bajo la Licencia Pública General de GNU, versión 3 o cualquier versión posterior (GPL-3.0-or-later). La licencia que acompaña al programa explica tus derechos para usarlo, estudiarlo, compartirlo y modificarlo.",
+    "sections": [
+      [
+        "Uso y limitaciones",
+        "uFeed se ofrece «tal cual», sin garantías de ningún tipo, hasta donde lo permita la ley. Utiliza un modelo estadístico y puede difuminar publicaciones que querías ver o dejar visibles otras que no. No dependas de uFeed si pasar por alto una publicación pudiera tener consecuencias. No garantizamos que siempre esté disponible ni que siga funcionando cuando cambien las redes sociales."
+      ],
+      [
+        "Responsabilidad",
+        "Hasta donde lo permita la ley, quienes colaboran con uFeed no se hacen responsables de daños indirectos o consecuentes derivados del uso del programa, incluido el contenido que no viste porque se difuminó. Nada de estos términos limita responsabilidades que legalmente no puedan limitarse."
+      ],
+      [
+        "Redes sociales",
+        "uFeed modifica cómo aparecen las páginas de X, LinkedIn y Reddit en tu navegador. Es independiente de esos servicios y no está respaldado por ellos. Sus nombres pertenecen a sus respectivos titulares. El uso de cada servicio se rige por sus propios términos, y sus cambios pueden afectar al funcionamiento de uFeed."
+      ],
+      [
+        "Tus datos",
+        "uFeed procesa el texto del feed en tu dispositivo y no nos envía el contenido del feed ni tus ajustes."
+      ],
+      [
+        "Cambios",
+        "Podemos actualizar estos términos; la fecha anterior cambiará cuando lo hagamos. Si sigues usando uFeed después de una actualización, aceptas los términos actualizados."
+      ]
+    ]
+  }
+}

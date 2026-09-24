@@ -1,0 +1,194 @@
+{
+  "seo": {
+    "homeTitle": "uFeed Browser Extension | Feed Cleaner for Social Networks",
+    "homeDescription": "A free, open-source browser extension that gently blurs social posts outside your interests. Private by design, with everything running on your device.",
+    "howTitle": "How the uFeed Browser Extension Works | a calmer social feed",
+    "howDescription": "See how the free uFeed browser extension filters X, LinkedIn and Reddit with topics, a standalone keyword blacklist, or both. Reveal blurred posts and keep your activity private.",
+    "privacyTitle": "uFeed Browser Extension Privacy Policy | what it reads and stores",
+    "privacyDescription": "See what the uFeed browser extension reads on X, LinkedIn and Reddit, what stays in your browser, and its one-time model download. No tracking.",
+    "termsTitle": "uFeed Browser Extension Terms | open-source license and use",
+    "termsDescription": "Terms for the free, open-source uFeed browser extension: GPL-3.0-or-later license, limitations, liability, supported social sites, and privacy.",
+    "imageAlt": "uFeed — a little more of what you came for",
+    "howImageAlt": "uFeed browser extension popup showing topic and blacklist settings",
+    "ogEyebrow": "YOUR FEED, YOUR WAY",
+    "ogTitle": "A little more of what you came for.",
+    "ogDescription": "A private, open-source filter for X, LinkedIn and Reddit.",
+    "ogFooter": "Free · On-device · Open source",
+    "homeKeywords": "uFeed|social media feed filter|private browser extension|open-source browser extension|on-device AI|X feed filter|LinkedIn feed filter|Reddit feed filter",
+    "howKeywords": "how uFeed works|social feed filter guide|custom topic feed filter|private AI browser extension|on-device feed filtering",
+    "privacyKeywords": "uFeed privacy policy|private browser extension|on-device data processing|browser extension data use",
+    "termsKeywords": "uFeed terms of use|uFeed open-source license|GPL-3.0-or-later browser extension|uFeed liability and warranty"
+  },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "Language"
+  },
+  "notFound": {
+    "title": "We couldn’t find that page.",
+    "description": "The address may have changed, but your feed is still right where you left it.",
+    "back": "Back to uFeed"
+  },
+  "nav": {
+    "home": "uFeed home",
+    "main": "Main navigation",
+    "how": "How it works",
+    "privacy": "Privacy",
+    "github": "uFeed on GitHub",
+    "footer": "Footer links",
+    "terms": "Terms"
+  },
+  "home": {
+    "title": "A little more of what you came for.",
+    "eyebrow": "YOUR FEED, YOUR WAY",
+    "description": "uFeed is a free browser extension that gently blurs posts outside your interests, so it’s easier to find the ones that are.",
+    "chrome": "Add to Chrome",
+    "explore": "Explore the project",
+    "note": "Free, now and always · Open source · Your data stays yours",
+    "reel": "uFeed in action",
+    "features": [
+      [
+        "Choose what matters",
+        "Add topics you enjoy. uFeed can learn what you want to see more or less of."
+      ],
+      [
+        "A softer scroll",
+        "Posts filtered by topics or keywords are gently blurred, never removed. Tap any post to reveal it."
+      ],
+      [
+        "Private by design",
+        "Your feed stays on your device. No account, tracking, or data collection."
+      ]
+    ],
+    "whyEyebrow": "A BETTER KIND OF FILTER",
+    "whyTitle": "Why uFeed",
+    "whyLead": "Start with what you want more of. Let the rest fade into the background.",
+    "reasons": [
+      [
+        "🌱 Choose how to filter",
+        "Use topics to keep posts about subjects you care about, a keyword blacklist to blur matching words or phrases on its own, or both."
+      ],
+      [
+        "🛡️ Your feed stays yours",
+        "Posts are checked on your device. No account, analytics, or uFeed server. The model downloads once; your feed and topics are never sent to us."
+      ],
+      [
+        "🌍 Choose your language",
+        "English is ready by default. An optional multilingual model can handle posts in other languages, with a larger one-time download."
+      ],
+      [
+        "🎚️ Make it feel right",
+        "Adjust how much uFeed filters, peek at close calls, and optionally use thumbs to tune its suggestions on your device."
+      ],
+      [
+        "↩️ You stay in control",
+        "Nothing is deleted. Reveal a blurred post any time, and change your topics or turn uFeed off whenever you like."
+      ],
+      [
+        "💛 Open source, by choice",
+        "uFeed is free and open source. You can inspect how it works, suggest improvements, or make a version of your own."
+      ]
+    ],
+    "qualityNote": "uFeed sorts by subject, not quality, and it sometimes gets things wrong. A great post and a dull one about the same topic can both stay.",
+    "closing": "Less noise. More of your thing.",
+    "store": "See uFeed in the Chrome Web Store"
+  },
+  "how": {
+    "title": "How uFeed works",
+    "lead": "Choose topics to keep, blacklist words or phrases, or use both. This free browser extension gently blurs matching posts; every post stays right where it is.",
+    "steps": [
+      [
+        "Choose what to keep or block",
+        "Open the uFeed popup and choose what to filter. For topic filtering, write one subject per line as a short phrase of two to five words. Use words people use in posts—for example, “software engineering” instead of “tech.” Skip full sentences; commas are optional. Or use the keyword blacklist on its own to blur posts containing the words or phrases you list."
+      ],
+      [
+        "Keep scrolling",
+        "On X, LinkedIn, or Reddit, uFeed checks each post against your topics or blacklist. Topic checks happen in your browser; blacklist matches are checked directly against the words and phrases you listed."
+      ],
+      [
+        "See more or less of what you want",
+        "When you use topics, posts outside them are gently blurred. A blacklist also blurs posts with matching words or phrases, even when they fit your topics. With only a blacklist, unmatched posts stay visible. Tap a blurred post—or focus it and press Enter—to see it whenever you want."
+      ],
+      [
+        "Make it your own",
+        "Adjust strictness and peek at close calls. Rate posts to help uFeed learn what you want to see more or less of; ratings stay on your device."
+      ]
+    ],
+    "details": [
+      [
+        "🔒 Made to feel simple—and stay private",
+        "There is no sign-up, account, or uFeed server. The model is downloaded once and cached by your browser. Your topics and the posts you read are not sent to us. uFeed is free and open source, so you can look through the project yourself."
+      ],
+      [
+        "🌍 Choose the language that suits you",
+        "The default model works in English. If your feeds are in other languages, you can choose the optional multilingual model in the popup. It needs a larger one-time download; your topics and settings stay the same."
+      ],
+      [
+        "A helpful nudge, not a perfect judge",
+        "uFeed recognises subjects, not quality. It can blur something you would have liked, or leave something you would rather skip. You are always one click away from the full feed, and if uFeed stops working, posts remain visible."
+      ]
+    ]
+  },
+  "privacy": {
+    "title": "Privacy policy",
+    "date": "Last updated 23 September 2026",
+    "lead": "uFeed works on your device. It does not collect your data, and we cannot see what you read or which topics you choose.",
+    "sections": [
+      [
+        "What uFeed reads",
+        "On X (x.com and twitter.com), LinkedIn and Reddit, uFeed reads the text of posts in the page to compare them with your topics. The comparison happens in your browser. Post text is held in memory while it is scored, then discarded. It is not written to disk, sent over the network or logged. uFeed does nothing on other websites."
+      ],
+      [
+        "What stays on your device",
+        "Your topics and settings are saved in your browser’s local extension storage. If you turn on “Learn from my thumbs,” uFeed also saves number-based representations of posts you rate. These can retain some information about the original post, so they are treated as personal data. They stay on your device, with up to 50 positive and 50 negative ratings per topic."
+      ],
+      [
+        "",
+        "If you choose to export a backup, the file contains your settings and any saved ratings. Keep that file somewhere private. Importing a backup replaces the settings and ratings already in the extension."
+      ],
+      [
+        "What uFeed sends",
+        "The first time a language model is needed, your browser downloads it from Hugging Face. This request reveals your IP address to that service, as any download does. It does not include your topics or feed content. Your browser caches the model for later use. This is the only network request uFeed makes; there is no uFeed server."
+      ],
+      [
+        "Permissions",
+        "Supported websites: to read post text and apply the blur on X, LinkedIn and Reddit.\nStorage: to keep your settings and optional ratings on your device.\nOffscreen page (Chrome): to run the multilingual model in a shared extension worker. It receives text for scoring but cannot read the website."
+      ],
+      [
+        "Deleting your data",
+        "Use “Clear tuning” to delete ratings, or “Reset” to clear ratings and restore default settings. Uninstalling uFeed removes its locally stored data. Nothing is held by us, and there is no account to delete."
+      ],
+      [
+        "Children and changes",
+        "uFeed is not directed at children and collects no data from anyone. If this policy changes, this page’s date will be updated."
+      ]
+    ]
+  },
+  "terms": {
+    "title": "Terms of use",
+    "date": "Last updated 24 September 2026",
+    "lead": "uFeed is free, open-source software published under the GNU General Public License, version 3 or any later version (GPL-3.0-or-later). The license that comes with the software explains your rights to use, study, share and modify it.",
+    "sections": [
+      [
+        "Use and limitations",
+        "uFeed is provided “as is,” without warranties of any kind, to the fullest extent permitted by law. It uses a statistical model and can blur posts you wanted to see or leave visible posts you did not. Do not rely on it where missing a post could matter. We do not promise that it will always be available or keep working when social websites change."
+      ],
+      [
+        "Liability",
+        "To the fullest extent allowed by law, the uFeed contributors are not liable for indirect or consequential loss arising from use of the software, including content you missed because it was blurred. Nothing in these terms limits liability that cannot lawfully be limited."
+      ],
+      [
+        "Social websites",
+        "uFeed changes how X, LinkedIn and Reddit pages appear in your own browser. It is independent of those services and is not endorsed by them. Their names belong to their respective owners. Your use of each service remains subject to its own terms, and changes to a service may affect how uFeed works."
+      ],
+      [
+        "Your data",
+        "uFeed processes feed text on your device and sends no feed content or settings to us."
+      ],
+      [
+        "Changes",
+        "These terms may be updated; the date above will change when they are. Continued use after an update means you accept the updated terms."
+      ]
+    ]
+  }
+}
