@@ -3,7 +3,7 @@
   "description": "Name the topics you want; uFeed hides the rest on X, LinkedIn and Reddit. Private, on-device, open source, no account.",
   "private": true,
   "license": "GPL-3.0-or-later",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "type": "module",
   "engines": {
     "node": ">=22.12"
