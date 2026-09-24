@@ -3,7 +3,7 @@
 > **Maintenance Invariant:** Routing table only. One row per page. Prohibit orphan pages. Prohibit content here — content lives in the page. Update this row set in the SAME commit as any new/renamed page.
 > **Answers:** Which wiki page answers my question?
 
-uFeed is a browser extension that blurs off-topic posts in social feeds. The user names topics; an embedding model scores each post on-device; anything below the threshold is blurred, never removed, and one click reveals it. No backend, no account, no post text leaves the device.
+uFeed is a browser extension that filters social feeds by chosen topics, blocked words or phrases, or both. Topic matches are scored on-device; blacklist matches blur directly. Posts are blurred, never removed, and one click reveals them. No backend, no account, no post text leaves the device.
 
 Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 

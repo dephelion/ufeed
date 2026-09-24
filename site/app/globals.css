@@ -416,6 +416,14 @@ h1 {
 .how-steps p {
   margin: 0;
 }
+.how-setup-image {
+  display: block;
+  width: min(100%, 340px);
+  height: auto;
+  margin-top: 20px;
+  border: 1px solid #353a43;
+  border-radius: 10px;
+}
 .how-details {
   margin-top: 45px;
 }

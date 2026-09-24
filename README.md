@@ -19,7 +19,8 @@ paths score on-device and keep page access in the content script.
 Most feed filters ask what you want to get rid of. That list never ends: there is
 always one more thing to block.
 
-uFeed asks the opposite question. You write a few topics, one per line:
+Choose what you want to keep, block, or both. To keep posts about subjects you
+care about, add topics one per line:
 
 ```
 software engineering, programming
@@ -27,14 +28,16 @@ machine learning research
 video games, game design
 ```
 
-Each post is compared with them as you scroll. Posts about your topics stay.
-Everything else is blurred, not deleted, and one click (or Enter) reveals it.
+Posts about your topics stay as you scroll; other posts are blurred, not deleted.
+You can also add words or phrases to a keyword blacklist, which blurs matching
+posts. The blacklist works by itself or alongside topics. With only a blacklist,
+posts without a match stay visible. One click (or Enter) reveals a blurred post.
 
 ## Why uFeed
 
-- **Start from what you want.** A few topic lines are enough to get started. An
-  optional keyword blacklist can narrow matching posts further; it only works
-  alongside your chosen topics.
+- **Choose what to filter.** Use topics to keep posts about subjects you care
+  about, a keyword blacklist to blur posts containing words or phrases you
+  choose, or both.
 - **Nothing leaves your device.** A small model (33 MB by default) runs inside your
   browser. There is no cloud mode, because there is no server. The only network
   request is the one-time model download, and the source is here so you can check

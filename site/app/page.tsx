@@ -108,7 +108,9 @@ export default function Home() {
           </span>
           <div>
             <h2>Choose what matters</h2>
-            <p>Add a few topics you enjoy. uFeed learns what you want to see more of.</p>
+            <p>
+              Add topics you enjoy. uFeed can learn what you want to see more or less of.
+            </p>
           </div>
         </article>
         <article>
@@ -118,8 +120,8 @@ export default function Home() {
           <div>
             <h2>A softer scroll</h2>
             <p>
-              Off-topic posts are gently blurred, never removed. Tap any post to reveal
-              it.
+              Posts filtered by topics or keywords are gently blurred, never removed. Tap
+              any post to reveal it.
             </p>
           </div>
         </article>
@@ -144,10 +146,10 @@ export default function Home() {
         </div>
         <div className="why-grid">
           <article>
-            <h3>🌱 A few topics are enough</h3>
+            <h3>🌱 Choose how to filter</h3>
             <p>
-              Choose a few subjects you care about. If you want, add a keyword blacklist
-              to narrow matching posts further; it works alongside your topics.
+              Use topics to keep posts about subjects you care about, a keyword blacklist
+              to blur matching words or phrases on its own, or both.
             </p>
           </article>
           <article>

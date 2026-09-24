@@ -1,10 +1,11 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
 import { SITE_NAME } from '../lib/site';
 
 const title = 'How the uFeed Browser Extension Works | a calmer social feed';
 const description =
-  'See how the free uFeed browser extension filters X, LinkedIn and Reddit: choose topics, reveal blurred posts, adjust filtering, and keep your activity private.';
+  'See how the free uFeed browser extension filters X, LinkedIn and Reddit with topics, a standalone keyword blacklist, or both. Reveal blurred posts and keep your activity private.';
 const path = '/how-it-works/';
 
 export const metadata = pageMetadata({
@@ -29,13 +30,13 @@ const howToJsonLd = {
   step: [
     {
       '@type': 'HowToStep',
-      name: 'Choose your topics',
-      text: 'Write one subject per line as a short phrase of two to five words people use in posts. Avoid full sentences; commas between related words are optional.',
+      name: 'Choose what to keep or block',
+      text: 'Write topics to keep as one subject per line, or use a keyword blacklist by itself to blur posts containing listed words or phrases.',
     },
     {
       '@type': 'HowToStep',
       name: 'Scroll as usual',
-      text: 'uFeed quietly blurs posts that are outside your chosen topics.',
+      text: 'When you use topics, posts outside them are blurred. A keyword blacklist also blurs posts containing listed words or phrases, even when they match a topic. With only a blacklist, unmatched posts stay visible.',
     },
     {
       '@type': 'HowToStep',
@@ -62,21 +63,30 @@ export default function HowItWorksPage() {
       </Link>
       <h1>How uFeed works</h1>
       <p className="legal-lead">
-        Add a few topics, and this free browser extension gently blurs posts outside them.
-        Everything happens in your browser, and every post stays right where it is.
+        Choose topics to keep, blacklist words or phrases, or use both. This free browser
+        extension gently blurs matching posts; every post stays right where it is.
       </p>
 
       <ol className="how-steps">
         <li>
           <span>1</span>
           <div>
-            <h2>Start with what you like</h2>
+            <h2>Choose what to keep or block</h2>
             <p>
-              Open the uFeed popup and write one subject per line as a short phrase of two
-              to five words. Use words people use in posts—for example, “software
-              engineering” instead of “tech.” Skip full sentences. Commas between related
-              words are optional.
+              Open the uFeed popup and choose what to filter. For topic filtering, write
+              one subject per line as a short phrase of two to five words. Use words
+              people use in posts—for example, “software engineering” instead of “tech.”
+              Skip full sentences; commas are optional. Or use the keyword blacklist on
+              its own to blur posts containing the words or phrases you list.
             </p>
+            <Image
+              className="how-setup-image"
+              src="/extension-setup.png"
+              alt="uFeed browser extension popup showing topic and blacklist settings"
+              width={828}
+              height={1132}
+              sizes="(max-width: 600px) 75vw, 340px"
+            />
           </div>
         </li>
         <li>
@@ -84,19 +94,21 @@ export default function HowItWorksPage() {
           <div>
             <h2>Keep scrolling</h2>
             <p>
-              When you visit X, LinkedIn, or Reddit, uFeed looks at the words in each post
-              and checks how closely the subject fits your topics. That happens in your
-              browser, on your device.
+              On X, LinkedIn, or Reddit, uFeed checks each post against your topics or
+              blacklist. Topic checks happen in your browser; blacklist matches are
+              checked directly against the words and phrases you listed.
             </p>
           </div>
         </li>
         <li>
           <span>3</span>
           <div>
-            <h2>See more of what you came for</h2>
+            <h2>See more or less of what you want</h2>
             <p>
-              Posts that fit stay clear. Other posts are gently blurred, not hidden or
-              deleted. Tap one—or focus it and press Enter—to see it whenever you want.
+              When you use topics, posts outside them are gently blurred. A blacklist also
+              blurs posts with matching words or phrases, even when they fit your topics.
+              With only a blacklist, unmatched posts stay visible. Tap a blurred post—or
+              focus it and press Enter—to see it whenever you want.
             </p>
           </div>
         </li>
@@ -105,9 +117,8 @@ export default function HowItWorksPage() {
           <div>
             <h2>Make it your own</h2>
             <p>
-              Adjust strictness, peek at close calls, and add an optional keyword
-              blacklist to further narrow posts that match your topics. It works alongside
-              your chosen topics, not on its own.
+              Adjust strictness and peek at close calls. Rate posts to help uFeed learn
+              what you want to see more or less of; ratings stay on your device.
             </p>
           </div>
         </li>
