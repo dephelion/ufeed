@@ -1,11 +1,23 @@
 import { ImageResponse } from 'next/og';
+import { notFound } from 'next/navigation';
+import { translate } from '../i18n/config';
+import { isLocale, locales } from '../i18n/resources';
 
-export const alt = 'uFeed — a little more of what you came for';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
-export const dynamic = 'force-static';
 
-export default function OpenGraphImage() {
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
+}
+
+export default async function OpenGraphImage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+  const t = translate(locale);
   return new ImageResponse(
     <div
       style={{
@@ -40,21 +52,12 @@ export default function OpenGraphImage() {
               gap: 4,
             }}
           >
-            <span
-              style={{ width: 41, height: 4, borderRadius: 3, background: '#ffe02e' }}
-            />
-            <span
-              style={{ width: 29, height: 4, borderRadius: 3, background: '#ffe02e' }}
-            />
-            <span
-              style={{ width: 41, height: 4, borderRadius: 3, background: '#ffe02e' }}
-            />
-            <span
-              style={{ width: 24, height: 4, borderRadius: 3, background: '#ffe02e' }}
-            />
-            <span
-              style={{ width: 36, height: 4, borderRadius: 3, background: '#ffe02e' }}
-            />
+            {[41, 29, 41, 24, 36].map((width, index) => (
+              <span
+                key={index}
+                style={{ width, height: 4, borderRadius: 3, background: '#ffe02e' }}
+              />
+            ))}
           </div>
         </div>
         <span style={{ fontSize: 34, fontWeight: 700 }}>uFeed</span>
@@ -63,17 +66,15 @@ export default function OpenGraphImage() {
         <span
           style={{ color: '#ffe02e', fontSize: 21, letterSpacing: 4, fontWeight: 700 }}
         >
-          YOUR FEED, YOUR WAY
+          {t('seo.ogEyebrow')}
         </span>
         <span style={{ maxWidth: 950, fontSize: 68, lineHeight: 1.08, fontWeight: 700 }}>
-          A little more of what you came for.
+          {t('seo.ogTitle')}
         </span>
-        <span style={{ color: '#b7bac0', fontSize: 27 }}>
-          A private, open-source filter for X, LinkedIn and Reddit.
-        </span>
+        <span style={{ color: '#b7bac0', fontSize: 27 }}>{t('seo.ogDescription')}</span>
       </div>
       <div style={{ display: 'flex', color: '#ffe02e', fontSize: 19 }}>
-        Free · On-device · Open source
+        {t('seo.ogFooter')}
       </div>
     </div>,
     { ...size },

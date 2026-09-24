@@ -1,0 +1,225 @@
+{
+  "seo": {
+    "homeTitle": "uFeed Browser-Erweiterung | Mehr Ruhe im Social-Media-Feed",
+    "homeDescription": "Eine kostenlose Open-Source-Browser-Erweiterung, die Beiträge außerhalb deiner Interessen sanft unscharf macht. Datenschutz gehört zum Konzept: Alles läuft auf deinem Gerät.",
+    "howTitle": "So funktioniert die uFeed Browser-Erweiterung | Entspannter durch den Feed",
+    "howDescription": "Erfahre, wie uFeed X, LinkedIn und Reddit mit Themen, einer eigenständigen Stichwort-Sperrliste oder beidem filtert. Blende unscharfe Beiträge ein und halte deine Nutzung privat.",
+    "privacyTitle": "uFeed-Datenschutzerklärung | Gelesene und gespeicherte Daten",
+    "privacyDescription": "Erfahre, was uFeed auf X, LinkedIn und Reddit liest, was in deinem Browser bleibt und wie das Modell heruntergeladen wird. Kein Tracking.",
+    "termsTitle": "Nutzungsbedingungen der uFeed-Erweiterung | Open-Source-Lizenz",
+    "termsDescription": "Bedingungen für die kostenlose Open-Source-uFeed-Erweiterung: GPL-3.0-or-later-Lizenz, Einschränkungen, Haftung, unterstützte soziale Netzwerke und Datenschutz.",
+    "imageAlt": "uFeed – etwas mehr von dem, wonach du gesucht hast",
+    "howImageAlt": "uFeed-Erweiterungsfenster mit Einstellungen für Themen und Sperrliste",
+    "ogEyebrow": "DEIN FEED, DEINE WAHL",
+    "ogTitle": "Etwas mehr von dem, wonach du gesucht hast.",
+    "ogDescription": "Ein privater Open-Source-Filter für X, LinkedIn und Reddit.",
+    "ogFooter": "Kostenlos · Auf deinem Gerät · Open Source",
+    "homeKeywords": "uFeed|Social-Media-Feed-Filter|private Browser-Erweiterung|Open-Source-Browser-Erweiterung|KI auf dem Gerät|X-Feed-Filter|LinkedIn-Feed-Filter|Reddit-Feed-Filter",
+    "howKeywords": "So funktioniert uFeed|Anleitung zum Social-Feed-Filter|eigene Themenfilter|private KI-Browser-Erweiterung|Feed-Filter auf dem Gerät",
+    "privacyKeywords": "uFeed-Datenschutz|private Browser-Erweiterung|Datenverarbeitung auf dem Gerät|Datennutzung von Browser-Erweiterungen",
+    "termsKeywords": "uFeed-Nutzungsbedingungen|uFeed-Open-Source-Lizenz|GPL-3.0-or-later-Browser-Erweiterung|uFeed-Haftung und Gewährleistung",
+    "welcomeTitle": "Willkommen bei uFeed | Erste Schritte",
+    "welcomeDescription": "Danke, dass du uFeed installiert hast. Pinne die Erweiterung, wähle deine Filter und leg in wenigen Schritten los.",
+    "welcomeKeywords": "uFeed willkommen|mit uFeed loslegen|uFeed Erweiterung anpinnen"
+  },
+  "language": {
+    "english": "English",
+    "spanish": "Español",
+    "label": "Sprache"
+  },
+  "notFound": {
+    "title": "Diese Seite wurde nicht gefunden.",
+    "description": "Die Adresse wurde möglicherweise geändert, aber dein Feed ist noch da.",
+    "back": "Zurück zu uFeed"
+  },
+  "nav": {
+    "home": "uFeed-Startseite",
+    "main": "Hauptnavigation",
+    "how": "So funktioniert’s",
+    "privacy": "Datenschutz",
+    "github": "uFeed auf GitHub",
+    "footer": "Links im Fußbereich",
+    "terms": "Nutzungsbedingungen",
+    "welcome": "Willkommen"
+  },
+  "home": {
+    "title": "Etwas mehr von dem, wonach du gesucht hast.",
+    "eyebrow": "DEIN FEED, DEINE WAHL",
+    "description": "uFeed ist eine kostenlose Browser-Erweiterung, die Beiträge außerhalb deiner Interessen sanft unscharf macht, damit du die passenden leichter findest.",
+    "chrome": "Zu Chrome hinzufügen",
+    "explore": "Projekt ansehen",
+    "note": "Für immer kostenlos · Open Source · Deine Daten bleiben deine",
+    "reel": "uFeed in Aktion",
+    "features": [
+      [
+        "Wähle, was dir wichtig ist",
+        "Füge Themen hinzu, die dich interessieren. uFeed kann lernen, was du häufiger oder seltener sehen möchtest."
+      ],
+      [
+        "Entspannter durch den Feed",
+        "Beiträge, die nach Themen oder Stichwörtern gefiltert werden, erscheinen sanft unscharf und werden nie entfernt. Tippe auf einen Beitrag, um ihn einzublenden."
+      ],
+      [
+        "Datenschutz von Anfang an",
+        "Dein Feed bleibt auf deinem Gerät. Kein Konto, kein Tracking und keine Datenerfassung."
+      ]
+    ],
+    "whyEyebrow": "DIE BESSERE ART ZU FILTERN",
+    "whyTitle": "Warum uFeed",
+    "whyLead": "Beginne mit dem, wovon du mehr sehen möchtest. Der Rest rückt in den Hintergrund.",
+    "reasons": [
+      [
+        "🌱 Wähle deine Filter",
+        "Nutze Themen, um Beiträge zu wichtigen Interessen zu behalten, eine Stichwort-Sperrliste, um passende Wörter oder Ausdrücke allein unscharf zu machen, oder beides zusammen."
+      ],
+      [
+        "🛡️ Dein Feed bleibt deiner",
+        "Beiträge werden auf deinem Gerät geprüft. Kein Konto, keine Analyse und kein uFeed-Server. Das Modell wird einmal heruntergeladen; dein Feed und deine Themen werden nie an uns gesendet."
+      ],
+      [
+        "🌍 Wähle die Modellsprache",
+        "Das Standardmodell funktioniert auf Englisch. Ein optionales mehrsprachiges Modell verarbeitet Beiträge in anderen Sprachen, benötigt aber einen größeren einmaligen Download."
+      ],
+      [
+        "🎚️ Stell es passend ein",
+        "Passe die Filterstärke an, wirf einen Blick auf Grenzfälle und nutze bei Bedarf Bewertungen, um Vorschläge direkt auf deinem Gerät anzupassen."
+      ],
+      [
+        "↩️ Du behältst die Kontrolle",
+        "Nichts wird gelöscht. Blende unscharfe Beiträge jederzeit ein, ändere deine Themen oder schalte uFeed aus."
+      ],
+      [
+        "💛 Open Source aus Überzeugung",
+        "uFeed ist kostenlos und Open Source. Du kannst den Code prüfen, Verbesserungen vorschlagen oder deine eigene Version erstellen."
+      ]
+    ],
+    "qualityNote": "uFeed sortiert nach Themen, nicht nach Qualität, und kann sich irren. Ein großartiger und ein langweiliger Beitrag zum selben Thema können beide sichtbar bleiben.",
+    "closing": "Weniger Rauschen. Mehr von deinem Ding.",
+    "store": "uFeed im Chrome Web Store ansehen"
+  },
+  "how": {
+    "title": "So funktioniert uFeed",
+    "lead": "Wähle Themen aus, die bleiben sollen, setze Wörter oder Ausdrücke auf eine Sperrliste oder nutze beides. Diese kostenlose Browser-Erweiterung macht passende Beiträge sanft unscharf, löscht sie aber nicht.",
+    "steps": [
+      [
+        "Wähle, was bleiben oder blockiert werden soll",
+        "Öffne das uFeed-Fenster und wähle, was gefiltert wird. Für Themen schreibst du pro Zeile ein Thema als kurze Wortgruppe mit zwei bis fünf Wörtern. Nutze Begriffe, die in Beiträgen vorkommen, zum Beispiel „Softwareentwicklung“ statt „Technik“. Vermeide ganze Sätze; Kommas sind optional. Du kannst auch nur die Stichwort-Sperrliste nutzen, um Beiträge mit den angegebenen Wörtern oder Ausdrücken unscharf zu machen."
+      ],
+      [
+        "Scrolle wie gewohnt weiter",
+        "Auf X, LinkedIn oder Reddit gleicht uFeed jeden Beitrag mit deinen Themen oder deiner Sperrliste ab. Die Themenprüfung findet im Browser statt; die Sperrliste wird direkt mit den aufgeführten Wörtern und Ausdrücken abgeglichen."
+      ],
+      [
+        "Bestimme, wovon du mehr sehen willst",
+        "Wenn du Themen nutzt, werden Beiträge außerhalb davon unscharf. Eine Sperrliste macht auch Beiträge mit passenden Wörtern oder Ausdrücken unscharf, selbst wenn sie zu deinen Themen passen. Bei alleiniger Sperrliste bleiben Beiträge ohne Treffer sichtbar. Tippe auf einen unscharfen Beitrag oder wähle ihn aus und drücke Enter, um ihn jederzeit anzuzeigen."
+      ],
+      [
+        "Passe uFeed an dich an",
+        "Stelle die Stärke ein und sieh dir Grenzfälle an. Bewerte Beiträge, damit uFeed lernt, wovon du mehr oder weniger sehen möchtest. Deine Bewertungen bleiben auf deinem Gerät."
+      ]
+    ],
+    "details": [
+      [
+        "🔒 Einfach und privat",
+        "Keine Anmeldung, kein Konto und kein uFeed-Server. Das Modell wird einmal heruntergeladen und vom Browser zwischengespeichert. Deine Themen und gelesenen Beiträge werden nicht an uns gesendet. uFeed ist kostenlos und Open Source – du kannst das Projekt selbst ansehen."
+      ],
+      [
+        "🌍 Wähle die passende Sprache",
+        "Das Standardmodell funktioniert auf Englisch. Wenn deine Feeds andere Sprachen enthalten, kannst du im Erweiterungsfenster das optionale mehrsprachige Modell auswählen. Es braucht einen größeren einmaligen Download; Themen und Einstellungen bleiben gleich."
+      ],
+      [
+        "Ein hilfreicher Hinweis, kein perfektes Urteil",
+        "uFeed erkennt Themen, nicht Qualität. Es kann etwas unscharf machen, das dir gefallen hätte, oder etwas anzeigen, das du lieber übersprungen hättest. Mit einem Klick bist du wieder beim vollständigen Feed. Wenn uFeed nicht funktioniert, bleiben Beiträge sichtbar."
+      ]
+    ]
+  },
+  "privacy": {
+    "title": "Datenschutzerklärung",
+    "date": "Zuletzt aktualisiert: 23. September 2026",
+    "lead": "uFeed läuft auf deinem Gerät. Es erfasst keine Daten, und wir können weder sehen, was du liest, noch welche Themen du auswählst.",
+    "sections": [
+      [
+        "Was uFeed liest",
+        "Auf X (x.com und twitter.com), LinkedIn und Reddit liest uFeed den Text der angezeigten Beiträge, um ihn mit deinen Themen abzugleichen. Der Vergleich findet in deinem Browser statt. Der Beitragstext liegt während der Bewertung im Arbeitsspeicher und wird danach verworfen. Er wird weder auf die Festplatte geschrieben noch über das Netzwerk gesendet oder protokolliert. Auf anderen Websites tut uFeed nichts."
+      ],
+      [
+        "Was auf deinem Gerät bleibt",
+        "Deine Themen und Einstellungen werden im lokalen Speicher der Browser-Erweiterung abgelegt. Wenn du „Aus meinen Bewertungen lernen“ aktivierst, speichert uFeed auch Zahlenrepräsentationen der bewerteten Beiträge. Diese können Informationen aus dem Originalbeitrag enthalten und gelten deshalb als personenbezogene Daten. Sie bleiben auf deinem Gerät; pro Thema werden höchstens 50 positive und 50 negative Bewertungen gespeichert."
+      ],
+      [
+        "",
+        "Ein exportiertes Backup enthält deine Einstellungen und gespeicherten Bewertungen. Bewahre die Datei an einem privaten Ort auf. Beim Import werden die vorhandenen Einstellungen und Bewertungen in der Erweiterung ersetzt."
+      ],
+      [
+        "Was uFeed sendet",
+        "Wenn ein Sprachmodell erstmals benötigt wird, lädt dein Browser es von Hugging Face herunter. Wie bei jedem Download wird dabei deine IP-Adresse an diesen Dienst übermittelt. Deine Themen und Feed-Inhalte sind nicht enthalten. Der Browser speichert das Modell für später. Das ist die einzige Netzwerkanfrage von uFeed; einen uFeed-Server gibt es nicht."
+      ],
+      [
+        "Berechtigungen",
+        "Unterstützte Websites: Beitragstext auf X, LinkedIn und Reddit lesen und unscharf darstellen.\nSpeicher: Einstellungen und optionale Bewertungen auf deinem Gerät speichern.\nOffscreen-Seite (Chrome): das mehrsprachige Modell in einem gemeinsam genutzten Erweiterungsprozess ausführen. Sie erhält Text zur Bewertung, kann die Website aber nicht lesen."
+      ],
+      [
+        "Deine Daten löschen",
+        "Mit „Lernanpassungen löschen“ entfernst du Bewertungen. „Zurücksetzen“ löscht Bewertungen und stellt die Standardeinstellungen wieder her. Bei der Deinstallation von uFeed werden lokal gespeicherte Daten entfernt. Wir speichern nichts und es gibt kein Konto, das gelöscht werden müsste."
+      ],
+      [
+        "Kinder und Änderungen",
+        "uFeed richtet sich nicht an Kinder und erfasst keine Daten von irgendjemandem. Wenn sich diese Erklärung ändert, wird das Datum auf dieser Seite aktualisiert."
+      ]
+    ]
+  },
+  "terms": {
+    "title": "Nutzungsbedingungen",
+    "date": "Zuletzt aktualisiert: 24. September 2026",
+    "lead": "uFeed ist kostenlose Open-Source-Software und wird unter der GNU General Public License, Version 3 oder einer späteren Version (GPL-3.0-or-later), veröffentlicht. Die mitgelieferte Lizenz erläutert deine Rechte, die Software zu nutzen, zu untersuchen, weiterzugeben und zu verändern.",
+    "sections": [
+      [
+        "Nutzung und Einschränkungen",
+        "uFeed wird im gesetzlich zulässigen Umfang ohne jegliche Gewährleistung „wie besehen“ bereitgestellt. Es verwendet ein statistisches Modell und kann Beiträge unscharf machen, die du sehen wolltest, oder Beiträge anzeigen, die du lieber übersprungen hättest. Verlasse dich nicht darauf, wenn ein verpasster Beitrag Folgen haben könnte. Wir versprechen weder dauerhafte Verfügbarkeit noch fortlaufende Funktion, wenn sich soziale Netzwerke ändern."
+      ],
+      [
+        "Haftung",
+        "Im gesetzlich zulässigen Umfang haften die Mitwirkenden von uFeed nicht für mittelbare oder Folgeschäden aus der Nutzung der Software, einschließlich Inhalten, die du wegen der Unschärfe verpasst hast. Diese Bedingungen schränken keine Haftung ein, die gesetzlich nicht eingeschränkt werden darf."
+      ],
+      [
+        "Soziale Netzwerke",
+        "uFeed verändert, wie X-, LinkedIn- und Reddit-Seiten in deinem Browser aussehen. Es ist unabhängig von diesen Diensten und wird von ihnen nicht unterstützt. Ihre Namen gehören den jeweiligen Inhabern. Für deine Nutzung gelten weiterhin die Bedingungen der jeweiligen Dienste; Änderungen dort können die Funktion von uFeed beeinflussen."
+      ],
+      [
+        "Deine Daten",
+        "uFeed verarbeitet Feed-Text auf deinem Gerät und sendet weder Feed-Inhalte noch Einstellungen an uns."
+      ],
+      [
+        "Änderungen",
+        "Diese Bedingungen können aktualisiert werden; dann wird das Datum oben geändert. Wenn du uFeed danach weiter nutzt, akzeptierst du die aktualisierten Bedingungen."
+      ]
+    ]
+  },
+  "welcome": {
+    "eyebrow": "ALLES BEREIT",
+    "title": "Danke, dass du uFeed installiert hast.",
+    "lead": "Deine Feeds anzupassen dauert nur ein paar Sekunden.",
+    "pinKicker": "EIN KURZER TIPP",
+    "pinTitle": "uFeed immer griffbereit",
+    "pinDescription": "Pinne uFeed im Erweiterungsmenü von Chrome an, damit du es schnell wiederfindest.",
+    "pinAnimationAlt": "So pinnst du uFeed im Erweiterungsmenü von Chrome an.",
+    "stepsKicker": "ERSTE SCHRITTE",
+    "stepsTitle": "Gestalte deinen Feed",
+    "steps": [
+      {
+        "title": "Wähle, was bleiben oder ausgeblendet werden soll",
+        "description": "Öffne uFeed über dein Erweiterungsmenü. Füge Themen hinzu, die du sehen möchtest, Wörter, die unscharf werden sollen, oder beides."
+      },
+      {
+        "title": "Stelle den Filter ein",
+        "description": "Passe die Strenge an, damit Beiträge mehr oder weniger genau zu deinen Themen passen müssen. Du kannst deine Auswahl jederzeit ändern."
+      },
+      {
+        "title": "Scrolle wie gewohnt weiter",
+        "description": "Besuche X, LinkedIn oder Reddit. Passende Beiträge werden sanft unscharf gemacht, aber nie entfernt. Wähle einen unscharfen Beitrag aus, um ihn zu sehen."
+      }
+    ],
+    "more": "Möchtest du alle Details erfahren?",
+    "howLink": "So funktioniert uFeed"
+  }
+}

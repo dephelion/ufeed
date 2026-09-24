@@ -3,3 +3,6 @@
 public/ort
 node_modules
 .local
+site/.next
+site/out
+site/next-env.d.ts
