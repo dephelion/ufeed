@@ -73,12 +73,27 @@ a:hover {
   white-space: nowrap;
 }
 .hero {
+  position: relative;
+  isolation: isolate;
   min-height: 610px;
   padding: 72px 24px 65px;
   display: grid;
   grid-template-columns: 0.87fr 1.13fr;
   align-items: center;
   gap: 56px;
+}
+.hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: -24px -12px;
+  background: radial-gradient(
+    ellipse 58% 48% at 67% 55%,
+    rgba(255, 224, 46, 0.15),
+    rgba(255, 224, 46, 0.06) 42%,
+    transparent 74%
+  );
+  content: '';
+  pointer-events: none;
 }
 .hero-copy {
   padding-bottom: 5px;
