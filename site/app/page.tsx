@@ -109,8 +109,8 @@ export default function Home() {
           </span>
           <h1>A little more of what you came for.</h1>
           <p>
-            uFeed gently blurs the posts that aren’t about your interests, so it’s easier
-            to find the ones that are.
+            uFeed is a free browser extension that gently blurs posts outside your
+            interests, so it’s easier to find the ones that are.
           </p>
           <div className="actions">
             <a
@@ -182,8 +182,8 @@ export default function Home() {
           <article>
             <h3>🌱 A few topics are enough</h3>
             <p>
-              Tell uFeed about things you care about, like design, cooking, or your
-              industry. There is no endless blocklist to maintain.
+              Choose a few subjects you care about. If you want, add a keyword blacklist
+              to narrow matching posts further; it works alongside your topics.
             </p>
           </article>
           <article>

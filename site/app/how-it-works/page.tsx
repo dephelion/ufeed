@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
 import { SITE_NAME } from '../lib/site';
 
-const title = 'How uFeed works — a simple guide to a calmer social feed';
+const title = 'How the uFeed Browser Extension Works — a calmer social feed';
 const description =
-  'Choose a few topics, scroll as usual, and reveal any post uFeed gently blurs. Learn how setup, privacy, languages, and controls work.';
+  'See how the free uFeed browser extension filters X, LinkedIn and Reddit: choose topics, reveal blurred posts, adjust filtering, and keep your activity private.';
 const path = '/how-it-works/';
 
 export const metadata = pageMetadata({
@@ -60,11 +60,10 @@ export default function HowItWorksPage() {
       <Link className="back" href="/">
         ← {SITE_NAME}
       </Link>
-      <span className="eyebrow">A FEW TOPICS. A CALMER FEED.</span>
       <h1>How uFeed works</h1>
       <p className="legal-lead">
-        Tell uFeed what you came to read about. It softens the distractions while leaving
-        every post right where it is.
+        Add a few topics, and this free browser extension gently blurs posts outside them.
+        Everything happens in your browser, and every post stays right where it is.
       </p>
 
       <ol className="how-steps">
@@ -105,9 +104,9 @@ export default function HowItWorksPage() {
           <div>
             <h2>Make it your own</h2>
             <p>
-              Adjust strictness to blur more or less. Peek at close calls, show scores if
-              you like, and optionally use thumbs to help uFeed better understand your
-              preferences. Your ratings stay on your device.
+              Adjust strictness, peek at close calls, and add an optional keyword
+              blacklist to further narrow posts that match your topics. It works alongside
+              your chosen topics, not on its own.
             </p>
           </div>
         </li>

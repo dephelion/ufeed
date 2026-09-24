@@ -7,7 +7,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: 'uFeed — A private, open-source feed filter for X, LinkedIn and Reddit',
+    title: 'uFeed — Free Private Browser Extension for X, LinkedIn and Reddit',
     description: SITE_DESCRIPTION,
     path: '/',
     keywords: [

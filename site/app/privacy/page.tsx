@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
 
-const title = 'uFeed privacy policy — what the extension reads, stores and sends';
+const title = 'uFeed Browser Extension Privacy Policy — what it reads and stores';
 const description =
-  'Learn what uFeed reads on X, LinkedIn and Reddit, what stays in your browser, and the one-time model download. No account, tracking, or feed uploads.';
+  'See what the uFeed browser extension reads on X, LinkedIn and Reddit, what stays in your browser, and its one-time model download. No tracking.';
 const path = '/privacy/';
 
 export const metadata = pageMetadata({

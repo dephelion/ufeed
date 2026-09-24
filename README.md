@@ -32,8 +32,9 @@ Everything else is blurred, not deleted, and one click (or Enter) reveals it.
 
 ## Why uFeed
 
-- **Start from what you want.** Three lines is a full setup. There is no
-  blocklist to keep up with.
+- **Start from what you want.** A few topic lines are enough to get started. An
+  optional keyword blacklist can narrow matching posts further; it only works
+  alongside your chosen topics.
 - **Nothing leaves your device.** A small model (33 MB by default) runs inside your
   browser. There is no cloud mode, because there is no server. The only network
   request is the one-time model download, and the source is here so you can check
