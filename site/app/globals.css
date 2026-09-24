@@ -439,7 +439,7 @@ h1 {
   display: block;
   width: min(100%, 340px);
   height: auto;
-  margin-top: 20px;
+  margin: 20px auto 0;
   border: 1px solid #353a43;
   border-radius: 10px;
 }
