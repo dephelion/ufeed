@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { SITE_NAME, SITE_URL, SOCIAL_IMAGE } from './site';
+import type { Locale } from '../i18n/resources';
+import { isLocale, locales } from '../i18n/resources';
 
 export function pageMetadata({
   title,
@@ -16,7 +18,7 @@ export function pageMetadata({
   keywords: string[];
   imageAlt?: string;
   imagePath?: string;
-  locale?: 'en' | 'es';
+  locale?: Locale;
 }): Metadata {
   const image = {
     url: imagePath,
@@ -31,10 +33,12 @@ export function pageMetadata({
     keywords,
     alternates: {
       canonical: path,
-      languages: {
-        en: path.replace(/^\/(en|es)(?=\/)/, '/en'),
-        es: path.replace(/^\/(en|es)(?=\/)/, '/es'),
-      },
+      languages: Object.fromEntries(
+        locales.map((language) => [
+          language,
+          `/${language}${path.replace(/^\/[^/]+(?=\/)/, '')}`,
+        ]),
+      ),
     },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
     openGraph: {
@@ -42,7 +46,18 @@ export function pageMetadata({
       description,
       url: path,
       siteName: SITE_NAME,
-      locale: locale === 'es' ? 'es_ES' : 'en_US',
+      locale: (
+        {
+          en: 'en_US',
+          es: 'es_ES',
+          'zh-CN': 'zh_CN',
+          'zh-TW': 'zh_TW',
+          fr: 'fr_FR',
+          de: 'de_DE',
+          ja: 'ja_JP',
+          'pt-BR': 'pt_BR',
+        } satisfies Record<Locale, string>
+      )[locale],
       type: 'website',
       images: [image],
     },
@@ -52,11 +67,18 @@ export function pageMetadata({
 }
 
 export function breadcrumbLd(path: string, label: string) {
+  const routeLocale = path.split('/')[1] ?? '';
+  const locale = isLocale(routeLocale) ? routeLocale : 'en';
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: SITE_NAME, item: `${SITE_URL}/${path.match(/^\/(en|es)(?=\/)/)?.[1] ?? 'en'}/` },
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: SITE_NAME,
+        item: `${SITE_URL}/${locale}/`,
+      },
       { '@type': 'ListItem', position: 2, name: label, item: `${SITE_URL}${path}` },
     ],
   };

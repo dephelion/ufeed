@@ -2,8 +2,9 @@ import Link from 'next/link';
 import GitHubIcon from './GitHubIcon';
 import { REPOSITORY_URL } from '../lib/site';
 import { translate } from '../i18n/config';
+import type { Locale } from '../i18n/resources';
 
-export default function Footer({ locale }: { locale: 'en' | 'es' }) {
+export default function Footer({ locale }: { locale: Locale }) {
   const prefix = `/${locale}`;
   const t = translate(locale);
   return (

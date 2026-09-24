@@ -1,0 +1,190 @@
+{
+  "seo": {
+    "homeTitle": "Extension de navigateur uFeed | Un fil social plus clair",
+    "homeDescription": "Une extension de navigateur gratuite et libre qui floute doucement les publications hors de vos centres d’intérêt. La confidentialité est intégrée : tout fonctionne sur votre appareil.",
+    "howTitle": "Comment fonctionne l’extension uFeed | Un fil social plus serein",
+    "howDescription": "Découvrez comment uFeed filtre X, LinkedIn et Reddit avec des thèmes, une liste noire de mots-clés indépendante, ou les deux. Affichez les publications floutées et gardez votre activité privée.",
+    "privacyTitle": "Politique de confidentialité uFeed | Données lues et stockées",
+    "privacyDescription": "Découvrez ce que l’extension uFeed lit sur X, LinkedIn et Reddit, ce qui reste dans votre navigateur et comment le modèle est téléchargé. Aucun suivi.",
+    "termsTitle": "Conditions d’utilisation de l’extension uFeed | Licence libre",
+    "termsDescription": "Conditions de l’extension uFeed gratuite et libre : licence GPL-3.0-or-later, limites, responsabilité, réseaux sociaux pris en charge et confidentialité.",
+    "imageAlt": "uFeed — un peu plus de ce que vous êtes venu chercher",
+    "howImageAlt": "Fenêtre de l’extension uFeed avec les réglages des thèmes et de la liste noire",
+    "ogEyebrow": "VOTRE FIL, À VOTRE FAÇON",
+    "ogTitle": "Un peu plus de ce que vous êtes venu chercher.",
+    "ogDescription": "Un filtre privé et libre pour X, LinkedIn et Reddit.",
+    "ogFooter": "Gratuit · Sur l’appareil · Libre",
+    "homeKeywords": "uFeed|filtre de fil social|extension privée pour navigateur|extension libre|IA sur l’appareil|filtre du fil X|filtre du fil LinkedIn|filtre du fil Reddit",
+    "howKeywords": "fonctionnement de uFeed|guide du filtrage de fil social|filtre de fil par thèmes|extension IA privée|filtrage sur l’appareil",
+    "privacyKeywords": "politique de confidentialité uFeed|extension privée|traitement local des données|données des extensions de navigateur",
+    "termsKeywords": "conditions uFeed|licence libre uFeed|extension GPL-3.0-or-later|responsabilité et garantie uFeed"
+  },
+  "language": { "english": "English", "spanish": "Español", "label": "Langue" },
+  "notFound": {
+    "title": "Cette page est introuvable.",
+    "description": "L’adresse a peut-être changé, mais votre fil est toujours là.",
+    "back": "Retour à uFeed"
+  },
+  "nav": {
+    "home": "Accueil uFeed",
+    "main": "Navigation principale",
+    "how": "Fonctionnement",
+    "privacy": "Confidentialité",
+    "github": "uFeed sur GitHub",
+    "footer": "Liens de pied de page",
+    "terms": "Conditions"
+  },
+  "home": {
+    "title": "Un peu plus de ce que vous êtes venu chercher.",
+    "eyebrow": "VOTRE FIL, À VOTRE FAÇON",
+    "description": "uFeed est une extension de navigateur gratuite qui floute doucement les publications éloignées de vos centres d’intérêt, pour retrouver plus facilement celles qui vous intéressent.",
+    "chrome": "Ajouter à Chrome",
+    "explore": "Découvrir le projet",
+    "note": "Gratuit, pour toujours · Libre · Vos données restent les vôtres",
+    "reel": "uFeed en action",
+    "features": [
+      [
+        "Choisissez ce qui compte",
+        "Ajoutez les thèmes qui vous intéressent. uFeed peut apprendre ce que vous souhaitez voir davantage ou moins souvent."
+      ],
+      [
+        "Faites défiler plus sereinement",
+        "Les publications filtrées par thèmes ou mots-clés sont doucement floutées, jamais supprimées. Touchez une publication pour l’afficher."
+      ],
+      [
+        "La confidentialité dès la conception",
+        "Votre fil reste sur votre appareil. Aucun compte, suivi ni collecte de données."
+      ]
+    ],
+    "whyEyebrow": "UNE AUTRE FAÇON DE FILTRER",
+    "whyTitle": "Pourquoi uFeed",
+    "whyLead": "Commencez par ce que vous voulez voir davantage. Laissez le reste s’estomper en arrière-plan.",
+    "reasons": [
+      [
+        "🌱 Choisissez votre filtre",
+        "Gardez les publications sur les sujets qui vous intéressent, floutez les mots ou expressions d’une liste noire, ou combinez les deux."
+      ],
+      [
+        "🛡️ Votre fil reste le vôtre",
+        "Les publications sont vérifiées sur votre appareil. Aucun compte, outil d’analyse ni serveur uFeed. Le modèle se télécharge une fois ; votre fil et vos thèmes ne nous sont jamais envoyés."
+      ],
+      [
+        "🌍 Choisissez la langue du modèle",
+        "Le modèle par défaut fonctionne en anglais. Un modèle multilingue facultatif peut traiter des publications dans d’autres langues, avec un téléchargement initial plus volumineux."
+      ],
+      [
+        "🎚️ Trouvez le bon réglage",
+        "Ajustez le filtrage, jetez un œil aux cas limites et, si vous le souhaitez, utilisez vos pouces pour affiner les suggestions sur votre appareil."
+      ],
+      [
+        "↩️ Vous gardez le contrôle",
+        "Rien n’est supprimé. Affichez une publication floutée à tout moment, changez vos thèmes ou désactivez uFeed quand vous le voulez."
+      ],
+      [
+        "💛 Le libre, par choix",
+        "uFeed est gratuit et libre. Vous pouvez examiner son fonctionnement, proposer des améliorations ou créer votre propre version."
+      ]
+    ],
+    "qualityNote": "uFeed classe les sujets, pas la qualité, et peut se tromper. Une excellente publication et une autre sans intérêt sur le même sujet peuvent toutes deux rester visibles.",
+    "closing": "Moins de bruit. Plus de ce qui vous plaît.",
+    "store": "Retrouvez uFeed sur le Chrome Web Store"
+  },
+  "how": {
+    "title": "Comment fonctionne uFeed",
+    "lead": "Choisissez les thèmes à garder, ajoutez des mots ou expressions à une liste noire, ou combinez les deux. Cette extension gratuite floute doucement les publications correspondantes ; aucune n’est supprimée.",
+    "steps": [
+      [
+        "Choisir ce que vous gardez ou bloquez",
+        "Ouvrez la fenêtre uFeed et choisissez quoi filtrer. Pour filtrer par thèmes, écrivez un sujet par ligne sous la forme d’une courte expression de deux à cinq mots. Utilisez les mots que l’on trouve dans les publications, par exemple « ingénierie logicielle » plutôt que « technologie ». Évitez les phrases complètes ; les virgules sont facultatives. Vous pouvez aussi utiliser uniquement la liste noire pour flouter les publications contenant les mots ou expressions indiqués."
+      ],
+      [
+        "Continuez à faire défiler",
+        "Sur X, LinkedIn ou Reddit, uFeed compare chaque publication à vos thèmes ou à votre liste noire. La vérification des thèmes a lieu dans votre navigateur ; les mots de la liste noire sont recherchés directement dans le texte."
+      ],
+      [
+        "Voir plus ou moins de ce que vous voulez",
+        "Avec les thèmes, les publications qui ne correspondent pas sont doucement floutées. La liste noire floute aussi les publications contenant les mots ou expressions choisis, même si elles correspondent à vos thèmes. Avec la liste noire seule, les autres publications restent visibles. Touchez une publication floutée, ou sélectionnez-la et appuyez sur Entrée, pour l’afficher quand vous le souhaitez."
+      ],
+      [
+        "Adaptez uFeed à vos envies",
+        "Réglez la sensibilité et examinez les cas limites. Évaluez des publications pour aider uFeed à apprendre ce que vous voulez voir davantage ou moins souvent ; vos évaluations restent sur votre appareil."
+      ]
+    ],
+    "details": [
+      [
+        "🔒 Simple à utiliser, privé par conception",
+        "Aucune inscription, aucun compte ni serveur uFeed. Le modèle se télécharge une fois et votre navigateur le met en cache. Vos thèmes et les publications que vous lisez ne nous sont pas envoyés. uFeed est gratuit et libre : vous pouvez consulter le projet."
+      ],
+      [
+        "🌍 Choisissez la langue qui vous convient",
+        "Le modèle par défaut fonctionne en anglais. Si vos fils sont dans d’autres langues, choisissez le modèle multilingue facultatif dans la fenêtre de l’extension. Il demande un téléchargement initial plus volumineux ; vos thèmes et réglages ne changent pas."
+      ],
+      [
+        "Un coup de pouce, pas un juge infaillible",
+        "uFeed reconnaît les sujets, pas la qualité. Il peut flouter une publication qui vous aurait plu ou en laisser une visible que vous auriez préféré éviter. Le fil complet reste à un clic et, si uFeed cesse de fonctionner, les publications restent visibles."
+      ]
+    ]
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "date": "Dernière mise à jour : 23 septembre 2026",
+    "lead": "uFeed fonctionne sur votre appareil. Il ne collecte pas vos données et nous ne pouvons pas voir ce que vous lisez ni les thèmes que vous choisissez.",
+    "sections": [
+      [
+        "Ce que lit uFeed",
+        "Sur X (x.com et twitter.com), LinkedIn et Reddit, uFeed lit le texte des publications affichées pour le comparer à vos thèmes. Cette comparaison a lieu dans votre navigateur. Le texte reste en mémoire pendant son analyse, puis est supprimé. Il n’est ni enregistré sur le disque, ni envoyé sur le réseau, ni consigné dans des journaux. uFeed n’intervient sur aucun autre site."
+      ],
+      [
+        "Ce qui reste sur votre appareil",
+        "Vos thèmes et réglages sont enregistrés dans le stockage local de l’extension de votre navigateur. Si vous activez « Apprendre de mes évaluations », uFeed conserve aussi des représentations numériques des publications que vous évaluez. Elles peuvent garder certaines informations de la publication d’origine et sont donc traitées comme des données personnelles. Elles restent sur votre appareil, à raison de 50 évaluations positives et 50 négatives au maximum par thème."
+      ],
+      [
+        "",
+        "Si vous exportez une sauvegarde, le fichier contient vos réglages et les évaluations enregistrées. Conservez-le dans un endroit privé. L’importation d’une sauvegarde remplace les réglages et évaluations présents dans l’extension."
+      ],
+      [
+        "Ce que transmet uFeed",
+        "La première fois qu’un modèle linguistique est nécessaire, votre navigateur le télécharge depuis Hugging Face. Comme tout téléchargement, cette requête révèle votre adresse IP à ce service. Elle ne contient ni vos thèmes ni le contenu de votre fil. Le navigateur met le modèle en cache pour la suite. C’est la seule requête réseau de uFeed ; il n’y a pas de serveur uFeed."
+      ],
+      [
+        "Autorisations",
+        "Sites pris en charge : lire le texte des publications et appliquer le flou sur X, LinkedIn et Reddit.\nStockage : conserver vos réglages et vos évaluations facultatives sur votre appareil.\nPage hors écran (Chrome) : exécuter le modèle multilingue dans un processus partagé de l’extension. Il reçoit du texte à analyser, mais ne peut pas lire le site web."
+      ],
+      [
+        "Supprimer vos données",
+        "Utilisez « Effacer les réglages d’apprentissage » pour supprimer les évaluations, ou « Réinitialiser » pour les effacer et restaurer les réglages par défaut. La désinstallation de uFeed supprime les données enregistrées localement. Nous ne conservons rien et aucun compte n’est à supprimer."
+      ],
+      [
+        "Enfants et modifications",
+        "uFeed ne s’adresse pas aux enfants et ne collecte les données de personne. Si cette politique change, la date de cette page sera mise à jour."
+      ]
+    ]
+  },
+  "terms": {
+    "title": "Conditions d’utilisation",
+    "date": "Dernière mise à jour : 24 septembre 2026",
+    "lead": "uFeed est un logiciel libre et gratuit publié sous la Licence publique générale GNU, version 3 ou toute version ultérieure (GPL-3.0-or-later). La licence fournie avec le logiciel explique vos droits de l’utiliser, de l’étudier, de le partager et de le modifier.",
+    "sections": [
+      [
+        "Utilisation et limites",
+        "uFeed est fourni « en l’état », sans garantie d’aucune sorte, dans toute la mesure permise par la loi. Il utilise un modèle statistique et peut flouter des publications que vous vouliez voir ou laisser visibles celles que vous souhaitiez éviter. Ne vous y fiez pas si manquer une publication peut avoir des conséquences. Nous ne garantissons ni sa disponibilité permanente ni son fonctionnement lorsque les réseaux sociaux changent."
+      ],
+      [
+        "Responsabilité",
+        "Dans toute la mesure permise par la loi, les personnes qui contribuent à uFeed ne sont pas responsables des pertes indirectes ou consécutives liées à l’utilisation du logiciel, y compris les contenus manqués parce qu’ils étaient floutés. Rien dans ces conditions ne limite une responsabilité qui ne peut légalement l’être."
+      ],
+      [
+        "Réseaux sociaux",
+        "uFeed modifie l’affichage des pages X, LinkedIn et Reddit dans votre navigateur. Il est indépendant de ces services et n’est pas approuvé par eux. Leurs noms appartiennent à leurs propriétaires respectifs. Votre utilisation de chaque service reste soumise à ses propres conditions, et ses changements peuvent affecter le fonctionnement de uFeed."
+      ],
+      [
+        "Vos données",
+        "uFeed traite le texte de votre fil sur votre appareil et ne nous envoie ni contenu ni réglages."
+      ],
+      [
+        "Modifications",
+        "Ces conditions peuvent être mises à jour ; la date ci-dessus changera alors. En continuant à utiliser uFeed après une mise à jour, vous acceptez les nouvelles conditions."
+      ]
+    ]
+  }
+}

@@ -2,6 +2,7 @@ import GitHubIcon from '../components/GitHubIcon';
 import ChromeIcon from '../components/ChromeIcon';
 import { CHROME_STORE_URL, REPOSITORY_URL, SITE_URL } from '../lib/site';
 import { translate } from '../i18n/config';
+import type { Locale } from '../i18n/resources';
 
 const organizationJsonLd = {
   '@context': 'https://schema.org',
@@ -38,7 +39,7 @@ function ReelPreview({ label }: { label: string }) {
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = translate(locale as 'en' | 'es');
+  const t = translate(locale as Locale);
   const softwareJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -135,27 +136,31 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </div>
         <div className="why-grid">
           <article>
-            <h3>{t('home.reasons.0.0')}</h3><p>{t('home.reasons.0.1')}</p>
+            <h3>{t('home.reasons.0.0')}</h3>
+            <p>{t('home.reasons.0.1')}</p>
           </article>
           <article>
-            <h3>{t('home.reasons.1.0')}</h3><p>{t('home.reasons.1.1')}</p>
+            <h3>{t('home.reasons.1.0')}</h3>
+            <p>{t('home.reasons.1.1')}</p>
           </article>
           <article>
-            <h3>{t('home.reasons.2.0')}</h3><p>{t('home.reasons.2.1')}</p>
+            <h3>{t('home.reasons.2.0')}</h3>
+            <p>{t('home.reasons.2.1')}</p>
           </article>
           <article>
-            <h3>{t('home.reasons.3.0')}</h3><p>{t('home.reasons.3.1')}</p>
+            <h3>{t('home.reasons.3.0')}</h3>
+            <p>{t('home.reasons.3.1')}</p>
           </article>
           <article>
-            <h3>{t('home.reasons.4.0')}</h3><p>{t('home.reasons.4.1')}</p>
+            <h3>{t('home.reasons.4.0')}</h3>
+            <p>{t('home.reasons.4.1')}</p>
           </article>
           <article>
-            <h3>{t('home.reasons.5.0')}</h3><p>{t('home.reasons.5.1')}</p>
+            <h3>{t('home.reasons.5.0')}</h3>
+            <p>{t('home.reasons.5.1')}</p>
           </article>
         </div>
-        <p className="why-note">
-          {t('home.qualityNote')}
-        </p>
+        <p className="why-note">{t('home.qualityNote')}</p>
       </section>
 
       <section className="closing wrap">
