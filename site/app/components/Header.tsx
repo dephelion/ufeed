@@ -13,7 +13,11 @@ export default function Header() {
       <nav aria-label="Main navigation">
         <Link href="/how-it-works/">How it works</Link>
         <Link href="/privacy/">Privacy</Link>
-        <a className="nav-github" href={REPOSITORY_URL} aria-label="uFeed on GitHub">
+        <a
+          className="nav-github github-link"
+          href={REPOSITORY_URL}
+          aria-label="uFeed on GitHub"
+        >
           <GitHubIcon /> <span>GitHub</span>
         </a>
       </nav>

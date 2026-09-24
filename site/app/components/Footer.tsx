@@ -13,7 +13,7 @@ export default function Footer() {
         <Link href="/how-it-works/">How it works</Link>
         <Link href="/privacy/">Privacy</Link>
         <Link href="/terms/">Terms</Link>
-        <a href={REPOSITORY_URL} aria-label="uFeed on GitHub">
+        <a className="github-link" href={REPOSITORY_URL} aria-label="uFeed on GitHub">
           <GitHubIcon size={15} /> <span>GitHub</span>
         </a>
       </nav>

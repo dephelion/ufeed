@@ -65,6 +65,13 @@ a:hover {
   padding: 9px 14px;
   color: var(--text);
 }
+.github-link {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
 .hero {
   min-height: 610px;
   padding: 72px 24px 65px;
@@ -139,6 +146,7 @@ h1 {
 .button.secondary {
   border: 1px solid #555a64;
   color: var(--text);
+  white-space: nowrap;
 }
 .quiet-note {
   margin-top: 23px;
