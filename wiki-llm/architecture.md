@@ -95,7 +95,7 @@ If two-thread model loading fails, the worker retries the same model with one th
 
 **Every request carries an id.** Index-order correlation breaks the moment two batches are in flight.
 
-**Handshake:** iframe `load` → content script transfers a `MessagePort` → engine replies with its last status. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
+**Handshake:** engine document installs its listener and signals `ufeed:engine-ready` to the parent → content script accepts only the extension origin and transfers a `MessagePort` with that exact `targetOrigin` → engine replies with its last status. An iframe `load` can fire while its recipient still has a null origin; never transfer the port from `load`. Requests issued before the port opens are **buffered and drained**, not dropped; `#port?.postMessage` silently discarded the first `SET_TOPICS` and the model never loaded.
 
 **Chrome Gemma connection:** content script asks the background to ensure the offscreen page, then opens a named runtime Port directly to that page. Requests buffer until the Port opens. If creation, connection, or the shared worker fails, the client resolves pending scores empty and starts its existing per-tab iframe with the latest topics. Firefox always takes the iframe path.
 

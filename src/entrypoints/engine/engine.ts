@@ -2,6 +2,7 @@ import EngineWorker from './engine.worker.ts?worker';
 import { logger } from '../../core/log';
 import { DEFAULT_MODEL, isModelKey } from '../../core/models';
 import {
+  ENGINE_READY,
   isEngineReply,
   isEngineRequest,
   isHandshake,
@@ -76,3 +77,5 @@ addEventListener('message', (event: MessageEvent<unknown>) => {
   port.postMessage(lastStatus);
   log.info('port connected');
 });
+
+window.parent.postMessage(ENGINE_READY, '*');
