@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { breadcrumbLd, pageMetadata } from '../lib/seo';
-import { SITE_URL } from '../lib/site';
+import { breadcrumbLd, pageMetadata } from '../../lib/seo';
+import { SITE_URL } from '../../lib/site';
 
 const title = 'uFeed Browser Extension Terms | open-source license and use';
 const description =

@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { breadcrumbLd, pageMetadata } from '../lib/seo';
-import { SITE_URL } from '../lib/site';
+import { breadcrumbLd, pageMetadata } from '../../lib/seo';
+import { SITE_URL } from '../../lib/site';
 
 const title = 'uFeed Browser Extension Privacy Policy | what it reads and stores';
 const description =
@@ -19,7 +19,11 @@ export const metadata = pageMetadata({
   ],
 });
 
-export default function PrivacyPage() {
+export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const es = locale === 'es';
+  const prefix = `/${locale}`;
+  if (es) return <main className="legal wrap"><Link className="back" href={`${prefix}/`}>← uFeed</Link><h1>Política de privacidad</h1><p className="legal-date">Última actualización: 23 de septiembre de 2026</p><p className="legal-lead">uFeed funciona en tu dispositivo. No recopila tus datos y no podemos ver qué lees ni qué temas eliges.</p><h2>Qué lee uFeed</h2><p>En X (x.com y twitter.com), LinkedIn y Reddit, uFeed lee el texto de las publicaciones para compararlo con tus temas. La comparación ocurre en tu navegador. El texto se conserva temporalmente en memoria mientras se analiza y después se descarta. No se guarda, transmite ni registra. uFeed no actúa en otros sitios web.</p><h2>Qué permanece en tu dispositivo</h2><p>Tus temas y ajustes se guardan en el almacenamiento local de la extensión. Si activas «Aprender de mis valoraciones», uFeed también guarda representaciones numéricas de las publicaciones que valoras. Pueden conservar cierta información de la publicación original, por lo que se tratan como datos personales. Permanecen en tu dispositivo, con un máximo de 50 valoraciones positivas y 50 negativas por tema.</p><p>Una copia exportada contiene tus ajustes y valoraciones guardadas. Guárdala en un lugar privado. Al importar una copia, se reemplazan los ajustes y las valoraciones de la extensión.</p><h2>Qué envía uFeed</h2><p>La primera vez que se necesita un modelo de lenguaje, el navegador lo descarga de Hugging Face. La solicitud revela tu dirección IP a ese servicio, como cualquier descarga, pero no incluye tus temas ni el contenido de tu feed. El navegador guarda el modelo para usarlo después. Es la única solicitud de red de uFeed; no hay un servidor de uFeed.</p><h2>Permisos</h2><ul><li><strong>Sitios compatibles:</strong> leer el texto y aplicar el difuminado en X, LinkedIn y Reddit.</li><li><strong>Almacenamiento:</strong> guardar tus ajustes y valoraciones opcionales en el dispositivo.</li><li><strong>Página offscreen (Chrome):</strong> ejecutar el modelo multilingüe en un proceso compartido de la extensión. Recibe texto para analizar, pero no puede leer el sitio web.</li></ul><h2>Cómo borrar tus datos</h2><p>Usa «Borrar ajustes de aprendizaje» para eliminar las valoraciones, o «Restablecer» para borrarlas y restaurar los ajustes predeterminados. Desinstalar uFeed elimina los datos locales. Nosotros no guardamos nada y no hay ninguna cuenta que borrar.</p><h2>Menores y cambios</h2><p>uFeed no está dirigido a menores y no recopila datos de nadie. Si esta política cambia, actualizaremos la fecha de esta página.</p><p className="legal-end"><Link href={`${prefix}/terms/`}>Términos de uso</Link> · <Link href={`${prefix}/`}>Volver a uFeed</Link></p></main>;
   return (
     <main className="legal wrap">
       <script
@@ -102,7 +106,7 @@ export default function PrivacyPage() {
         changes, this page’s date will be updated.
       </p>
       <p className="legal-end">
-        <Link href="/terms/">Terms of use</Link> · <Link href="/">Back to uFeed</Link>
+        <Link href={`${prefix}/terms/`}>Terms of use</Link> · <Link href={`${prefix}/`}>Back to uFeed</Link>
       </p>
     </main>
   );

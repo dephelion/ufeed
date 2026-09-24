@@ -59,6 +59,14 @@ a:hover {
   color: #c2c4c8;
   font-size: 14px;
 }
+.language-switch {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  margin-left: -18px;
+}
+.language-switch a { padding: 4px; border-radius: 5px; }
+.language-switch a[aria-current='page'] { background: #343942; }
 .header .nav-github {
   border: 1px solid #535861;
   border-radius: 7px;

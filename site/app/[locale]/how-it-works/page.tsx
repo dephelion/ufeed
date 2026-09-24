@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { breadcrumbLd, pageMetadata } from '../lib/seo';
-import { SITE_NAME } from '../lib/site';
+import { breadcrumbLd, pageMetadata } from '../../lib/seo';
+import { SITE_NAME } from '../../lib/site';
 
 const title = 'How the uFeed Browser Extension Works | a calmer social feed';
 const description =
@@ -46,7 +46,10 @@ const howToJsonLd = {
   ],
 };
 
-export default function HowItWorksPage() {
+export default async function HowItWorksPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const es = locale === 'es';
+  const prefix = `/${locale}`;
   return (
     <main className="legal how-page wrap">
       <script
@@ -58,13 +61,12 @@ export default function HowItWorksPage() {
           ]).replace(/</g, '\\u003c'),
         }}
       />
-      <Link className="back" href="/">
+      <Link className="back" href={`${prefix}/`}>
         ← {SITE_NAME}
       </Link>
-      <h1>How uFeed works</h1>
+      <h1>{es ? 'Cómo funciona uFeed' : 'How uFeed works'}</h1>
       <p className="legal-lead">
-        Choose topics to keep, blacklist words or phrases, or use both. This free browser
-        extension gently blurs matching posts; every post stays right where it is.
+        {es ? 'Elige temas que quieras conservar, añade palabras o frases a una lista de bloqueo, o combina ambas opciones. Esta extensión gratuita difumina las publicaciones que coinciden; ninguna desaparece.' : 'Choose topics to keep, blacklist words or phrases, or use both. This free browser extension gently blurs matching posts; every post stays right where it is.'}
       </p>
 
       <ol className="how-steps">
@@ -145,8 +147,8 @@ export default function HowItWorksPage() {
         </p>
       </section>
       <p className="legal-end">
-        <Link href="/privacy/">Read the privacy policy</Link> ·{' '}
-        <Link href="/">Back to uFeed</Link>
+        <Link href={`${prefix}/privacy/`}>{es ? 'Lee la política de privacidad' : 'Read the privacy policy'}</Link> ·{' '}
+        <Link href={`${prefix}/`}>{es ? 'Volver a uFeed' : 'Back to uFeed'}</Link>
       </p>
     </main>
   );
