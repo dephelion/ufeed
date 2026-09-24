@@ -79,6 +79,14 @@ engine  → content  { type: 'STATUS', state, progress?, message? }
 
 **Chrome's offscreen page fixes its worker to Gemma.** It wraps each validated request as `{ clientId, request }` and routes `{ clientId, reply }` back to its runtime Port. The worker keeps topic vectors and ratings by client ID; disconnect releases them. One global work chain serializes model calls, so tabs share one session without overlapping inference. Status broadcasts to every connected tab; each tab still owns its own DOM, queue, request IDs, and timeout.
 
+## WASM threads
+
+**Threads parallelize one inference; they do not split the feed into worker jobs.** Chrome's offscreen page sends `INIT { model: 'gemma', threads: 2 }` once, before requests. The worker accepts two only when `crossOriginIsolated`; otherwise it uses one. `Embedder.load()` sets ONNX Runtime's `wasm.numThreads` before creating the session. ORT's WASM backend then uses its thread pool to parallelize model operations within that one session. No post-to-thread routing or per-thread model copies exist.
+
+**Posts travel as one `SCORE` request containing `texts[]`.** The per-tab `ScoreQueue` forms batches and sends them through the engine client. The worker maps each text through `formatPost()`, calls `embedder.embed()` once with the array, then scores each returned vector against that client's topic vectors. The shared worker's global `work` chain serializes these model calls across tabs; two tabs do not run simultaneous inferences. ORT's two threads cooperate on the active inference. The iframe fallback sends the same request shape but loads with one WASM thread.
+
+If two-thread model loading fails, the worker retries the same model with one thread. If the offscreen engine fails, the client falls back to its per-tab iframe. Keep thread selection at worker initialization and session creation; adding more worker instances would duplicate model sessions and memory. Throughput and accuracy measurements: [model.md](model.md) §Making WASM faster.
+
 **Switching models replaces this tab's transport** (`EngineClient.restart()`): pending requests resolve empty so the feed fails open, the port closes, the iframe is removed if present, and a new transport connects. Anything in flight would otherwise answer in the old model's score space. The score cache and the language cache are cleared with it.
 
 **The worker embeds a correction, the content script stores it.** Vectors live where the model lives; persistence lives where `storage.local` is reachable. The content script never embeds and the worker never persists.

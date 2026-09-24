@@ -113,7 +113,7 @@ no-op in production.
 
 ```
 ┌─ entrypoints/ ─────────────────────────────────────────────────────────────┐
-│  wires it all: content script · popup · background · engine                │
+│  wires: content · popup · background · iframe · offscreen engine           │
 │  ┌─ adapters/ · platform/ ──────────────────────────────────────────────┐  │
 │  │  X · LinkedIn · Reddit       storage · messaging · model runtime     │  │
 │  │  ┌─ feed/ ────────────────────────────────────────────────────────┐  │  │
@@ -124,12 +124,17 @@ no-op in production.
 │  │  └────────────────────────────────────────────────────────────────┘  │  │
 │  └──────────────────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────────────────────┘
-                          imports point inward only
+imports point inward only
 ```
 
 uFeed follows the Dependency Rule from [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html): imports only point inward.
 The rules in `core/` know nothing of the browser, and the page logic in `feed/` knows nothing of the extension, so a new site never touches the filter.
 `npm run check` fails any import that points outward; [`wiki-llm/layers.md`](wiki-llm/layers.md) says where new code goes.
+
+Execution stays separate from these code layers: the content script reads and
+updates the feed DOM; the iframe runs the per-tab engine; Chrome's offscreen page
+runs one shared Gemma engine. The background creates that page and connects tabs;
+it does not score posts. Firefox and Chrome's English model use the iframe path.
 
 ## Read more
 
