@@ -131,7 +131,7 @@ export default function Home() {
             </a>
           </div>
           <div className="quiet-note">
-            <span>✳</span> Free · Open source · Your data stays yours
+            <span>✳</span> Free, now and always · Open source · Your data stays yours
           </div>
         </div>
         <FeedPreview />
