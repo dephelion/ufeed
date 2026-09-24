@@ -197,7 +197,7 @@ export default function Home() {
       <section className="closing wrap">
         <p>Less noise. More of your thing.</p>
         <a href={CHROME_STORE_URL} target="_blank" rel="noopener noreferrer">
-          Give uFeed a try <span>↗</span>
+          See uFeed in the Chrome Web Store <span>↗</span>
         </a>
       </section>
     </main>
