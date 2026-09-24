@@ -8,10 +8,10 @@
     "privacyDescription": "Qué lee la extensión uFeed en X, LinkedIn y Reddit, qué permanece en tu navegador y cómo descarga el modelo. Sin seguimiento.",
     "termsTitle": "Términos de la extensión uFeed | licencia de código abierto y uso",
     "termsDescription": "Términos de la extensión uFeed gratuita y de código abierto: licencia GPL-3.0-or-later, limitaciones, responsabilidad, redes sociales compatibles y privacidad.",
-    "imageAlt": "uFeed: un poco más de lo que buscas",
+    "imageAlt": "uFeed: Elimina las distracciones",
     "howImageAlt": "Ventana de la extensión uFeed con ajustes de temas y lista de bloqueo",
     "ogEyebrow": "TU FEED, A TU MANERA",
-    "ogTitle": "Un poco más de lo que buscas.",
+    "ogTitle": "Elimina las distracciones.",
     "ogDescription": "Un filtro privado y de código abierto para X, LinkedIn y Reddit.",
     "ogFooter": "Gratis · En tu dispositivo · Código abierto",
     "homeKeywords": "uFeed|filtro para redes sociales|extensión privada para navegador|extensión de código abierto|inteligencia artificial en el dispositivo|filtrar feed de X|filtrar feed de LinkedIn|filtrar feed de Reddit",
@@ -39,9 +39,9 @@
     "terms": "Términos"
   },
   "home": {
-    "title": "Un poco más de lo que buscas.",
+    "title": "Elimina las distracciones.",
     "eyebrow": "TU FEED, A TU MANERA",
-    "description": "uFeed es una extensión gratuita para el navegador que difumina suavemente las publicaciones que no coinciden con tus intereses, para que encuentres más fácilmente las que sí.",
+    "description": "uFeed es una extensión gratuita para el navegador que oculta las publicaciones que no coinciden con tus intereses, para que encuentres más fácilmente las que sí.",
     "chrome": "Añadir a Chrome",
     "explore": "Explorar el proyecto",
     "note": "Gratis para siempre · Código abierto · Tus datos son tuyos",
@@ -95,7 +95,7 @@
   },
   "how": {
     "title": "Cómo funciona uFeed",
-    "lead": "Elige los temas que quieres conservar, añade palabras o frases a una lista de bloqueo, o combina ambas opciones. Esta extensión gratuita difumina suavemente las publicaciones coincidentes; ninguna desaparece.",
+    "lead": "Elige los temas que quieres conservar, añade palabras o frases a una lista de bloqueo, o combina ambas opciones. Esta extensión gratuita oculta las publicaciones coincidentes; ninguna desaparece.",
     "steps": [
       [
         "Elige qué conservar o bloquear",
