@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { breadcrumbLd, pageMetadata } from '../lib/seo';
+import { SITE_URL } from '../lib/site';
 
 const title = 'uFeed Browser Extension Privacy Policy | what it reads and stores';
 const description =
@@ -30,7 +31,7 @@ export default function PrivacyPage() {
               '@type': 'WebPage',
               name: title,
               description,
-              url: 'https://ufeed.github.io/privacy/',
+              url: `${SITE_URL}${path}`,
             },
             breadcrumbLd(path, 'Privacy policy'),
           ]).replace(/</g, '\\u003c'),
