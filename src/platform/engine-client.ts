@@ -148,6 +148,7 @@ export class EngineClient implements Engine {
         this.#receive(data);
       });
       port.onDisconnect.addListener(() => {
+        void browser.runtime.lastError;
         clearTimeout(watchdog);
         if (this.#shared === port) this.#fallBackToFrame();
       });

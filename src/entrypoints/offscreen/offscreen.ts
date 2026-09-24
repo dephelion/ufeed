@@ -6,6 +6,7 @@ import {
   isEngineRequest,
   isRoutedReply,
   SHARED_ENGINE,
+  type EngineReply,
   type InitRequest,
   type StatusEvent,
 } from '../../core/protocol';
@@ -15,9 +16,26 @@ const clients = new Map<string, browser.Runtime.Port>();
 let nextClient = 0;
 let lastStatus: StatusEvent = { type: 'STATUS', state: 'idle' };
 
+const release = (clientId: string): void => {
+  if (!clients.has(clientId)) return;
+  clients.delete(clientId);
+  worker?.postMessage({ type: 'RELEASE', clientId });
+};
+
+const send = (clientId: string, reply: EngineReply): void => {
+  const port = clients.get(clientId);
+  if (!port) return;
+  try {
+    port.postMessage(reply);
+  } catch {
+    release(clientId);
+    port.disconnect();
+  }
+};
+
 const broadcast = (status: StatusEvent): void => {
   lastStatus = status;
-  for (const port of clients.values()) port.postMessage(status);
+  for (const clientId of clients.keys()) send(clientId, status);
 };
 
 addEventListener('unhandledrejection', (event) => {
@@ -31,7 +49,7 @@ try {
   worker.postMessage({ type: 'INIT', model: 'gemma', threads: 2 } satisfies InitRequest);
   worker.onmessage = (event: MessageEvent<unknown>) => {
     if (isRoutedReply(event.data)) {
-      clients.get(event.data.clientId)?.postMessage(event.data.reply);
+      send(event.data.clientId, event.data.reply);
     } else if (isEngineReply(event.data) && event.data.type === 'STATUS') {
       broadcast(event.data);
     }
@@ -56,8 +74,9 @@ browser.runtime.onConnect.addListener((port) => {
     if (isEngineRequest(request)) worker?.postMessage({ clientId, request });
   });
   port.onDisconnect.addListener(() => {
-    clients.delete(clientId);
-    worker?.postMessage({ type: 'RELEASE', clientId });
+    // Chrome reports BFCache port closure through lastError; reading it handles the event.
+    void browser.runtime.lastError;
+    release(clientId);
   });
-  port.postMessage(lastStatus);
+  send(clientId, lastStatus);
 });

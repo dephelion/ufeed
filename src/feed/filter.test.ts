@@ -119,6 +119,18 @@ describe('FeedFilter', () => {
     expect(post('cake').classList.contains('lx-pending')).toBe(false);
   });
 
+  it('reveals old scores and resends topics after a cached page is restored', async () => {
+    const { engine, filter } = await run(SETTINGS, ['a chocolate cake recipe']);
+    expect(isBlurred(post('cake'))).toBe(true);
+
+    filter.restore();
+
+    expect(isBlurred(post('cake'))).toBe(false);
+    expect(engine.restart).toHaveBeenCalledWith(SETTINGS.model);
+    expect(engine.setTopics).toHaveBeenCalledTimes(2);
+    expect(engine.setTopics).toHaveBeenLastCalledWith(['programming'], []);
+  });
+
   it('holds a post from the moment it is found, before the engine has warmed', async () => {
     await run(SETTINGS, ['a chocolate cake recipe'], undefined, 'warming');
     expect(post('cake').classList.contains('lx-pending')).toBe(true);

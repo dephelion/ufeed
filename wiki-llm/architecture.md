@@ -99,6 +99,8 @@ If two-thread model loading fails, the worker retries the same model with one th
 
 **Chrome Gemma connection:** content script asks the background to ensure the offscreen page, then opens a named runtime Port directly to that page. Requests buffer until the Port opens. If creation, connection, or the shared worker fails, the client resolves pending scores empty and starts its existing per-tab iframe with the latest topics. Firefox always takes the iframe path.
 
+**Back/forward restore:** Chrome closes content-script runtime Ports when a page enters the back/forward cache. The offscreen disconnect handler consumes `runtime.lastError` and releases that client's worker state. On a persisted `pageshow`, the feed replaces its engine transport and resends topics and corrections before scoring again.
+
 **The port goes to the extension origin only.** The iframe element lives in the host DOM, so the host page can navigate it; with `'*'` the next `load` handed the port — topics and correction vectors included — to whatever page it showed. `targetOrigin` is `runtime.getURL('/')`, which both browsers match (measured, Chrome for Testing 153 and Firefox, headless). The engine accepts the first handshake only: the host page shares the parent window and can post one too. That stops a page taking over a working channel; it does not stop a page that races the content script to the first handshake (both post from the host origin, so the engine cannot tell them apart). Such a page gets a scoring engine and uFeed fails open.
 
 ## Status channel
