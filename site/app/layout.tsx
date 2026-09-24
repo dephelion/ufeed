@@ -1,16 +1,28 @@
 import type { Metadata } from 'next';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import { pageMetadata } from './lib/seo';
+import { SITE_DESCRIPTION } from './lib/site';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'uFeed — Your feed, on your terms',
-  description:
-    'A free, open-source browser extension that gently blurs social posts outside your interests. Private by design, with everything running on your device.',
-  metadataBase: new URL('https://ufeed.github.io'),
-  openGraph: {
-    title: 'uFeed — Your feed, on your terms',
-    description: 'A quieter social feed, shaped around what you care about.',
-    type: 'website',
-  },
+  ...pageMetadata({
+    title: 'uFeed — A private, open-source feed filter for X, LinkedIn and Reddit',
+    description: SITE_DESCRIPTION,
+    path: '/',
+    keywords: [
+      'uFeed',
+      'social media feed filter',
+      'private browser extension',
+      'open-source browser extension',
+      'on-device AI',
+      'X feed filter',
+      'LinkedIn feed filter',
+      'Reddit feed filter',
+    ],
+  }),
+  applicationName: 'uFeed',
+  category: 'technology',
 };
 
 export default function RootLayout({
@@ -18,7 +30,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

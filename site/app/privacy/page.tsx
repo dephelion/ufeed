@@ -1,10 +1,41 @@
 import Link from 'next/link';
+import { breadcrumbLd, pageMetadata } from '../lib/seo';
 
-export const metadata = { title: 'Privacy policy | uFeed' };
+const title = 'uFeed privacy policy — what the extension reads, stores and sends';
+const description =
+  'Learn what uFeed reads on X, LinkedIn and Reddit, what stays in your browser, and the one-time model download. No account, tracking, or feed uploads.';
+const path = '/privacy/';
+
+export const metadata = pageMetadata({
+  title,
+  description,
+  path,
+  keywords: [
+    'uFeed privacy policy',
+    'private browser extension',
+    'on-device data processing',
+    'browser extension data use',
+  ],
+});
 
 export default function PrivacyPage() {
   return (
     <main className="legal wrap">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebPage',
+              name: title,
+              description,
+              url: 'https://ufeed.github.io/privacy/',
+            },
+            breadcrumbLd(path, 'Privacy policy'),
+          ]).replace(/</g, '\\u003c'),
+        }}
+      />
       <Link className="back" href="/">
         ← uFeed
       </Link>

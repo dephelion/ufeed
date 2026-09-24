@@ -48,24 +48,8 @@ a:hover {
   font-weight: 700;
   letter-spacing: -0.04em;
 }
-.mark {
-  width: 29px;
-  height: 29px;
-  border: 1px solid var(--yellow);
+.brand img {
   border-radius: 50%;
-  display: grid;
-  align-content: center;
-  gap: 3px;
-  padding: 0 6px;
-}
-.mark span {
-  display: block;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--yellow);
-}
-.mark span:nth-child(2) {
-  width: 11px;
 }
 .header nav,
 .footer nav {
@@ -361,6 +345,52 @@ h1 {
   font-size: 13px;
   line-height: 1.55;
 }
+.why {
+  padding: 12px 0 72px;
+}
+.section-heading {
+  max-width: 600px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+.section-heading h2 {
+  margin: 11px 0 8px;
+  font-size: clamp(30px, 4vw, 42px);
+  letter-spacing: -0.05em;
+}
+.section-heading p {
+  margin: 0;
+  color: #aeb2b8;
+  line-height: 1.6;
+}
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+}
+.why-grid article {
+  padding: 21px;
+  border: 1px solid #353a43;
+  border-radius: 10px;
+  background: #1d2026;
+}
+.why-grid h3 {
+  margin: 0 0 9px;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+.why-grid p,
+.why-note {
+  margin: 0;
+  color: #aeb2b8;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.why-note {
+  max-width: 720px;
+  margin: 22px auto 0;
+  text-align: center;
+}
 .closing {
   display: flex;
   align-items: center;
@@ -393,10 +423,6 @@ h1 {
 .footer .brand {
   font-size: 16px;
 }
-.footer .mark {
-  width: 24px;
-  height: 24px;
-}
 .footer p {
   color: #858991;
   font-size: 12px;
@@ -404,6 +430,11 @@ h1 {
 .footer nav {
   gap: 21px;
   font-size: 12px;
+}
+.footer nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .legal {
   max-width: 760px;
@@ -458,6 +489,42 @@ h1 {
   color: #aaaeb4;
   font-size: 14px;
 }
+.how-steps {
+  display: grid;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.how-steps li {
+  display: flex;
+  gap: 17px;
+  padding: 21px;
+  border: 1px solid #353a43;
+  border-radius: 10px;
+  background: #1d2026;
+}
+.how-steps li > span {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--yellow);
+  color: #171a1f;
+  font-size: 15px;
+  font-weight: 700;
+}
+.how-steps h2 {
+  margin: 0 0 5px;
+}
+.how-steps p {
+  margin: 0;
+}
+.how-details {
+  margin-top: 45px;
+}
 @media (max-width: 820px) {
   .hero {
     grid-template-columns: 1fr;
@@ -480,6 +547,9 @@ h1 {
   .features article {
     padding: 19px;
   }
+  .why-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media (max-width: 560px) {
   .wrap {
@@ -489,11 +559,11 @@ h1 {
     height: 72px;
   }
   .header nav {
-    gap: 16px;
+    gap: 11px;
     font-size: 12px;
   }
-  .header nav a:first-child {
-    display: none;
+  .header .brand {
+    font-size: 17px;
   }
   .header .nav-github {
     padding: 7px 9px;
@@ -536,6 +606,17 @@ h1 {
   }
   .footer nav {
     gap: 14px;
+    flex-wrap: wrap;
+  }
+  .why-grid {
+    grid-template-columns: 1fr;
+  }
+  .why {
+    padding-bottom: 48px;
+  }
+  .how-steps li {
+    gap: 12px;
+    padding: 17px;
   }
   .legal {
     padding-top: 35px;

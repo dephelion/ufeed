@@ -1,10 +1,41 @@
 import Link from 'next/link';
+import { breadcrumbLd, pageMetadata } from '../lib/seo';
 
-export const metadata = { title: 'Terms of use | uFeed' };
+const title = 'uFeed terms of use — open-source software, warranty and liability';
+const description =
+  'Terms for using uFeed, the free open-source browser extension. Read about its GPL license, limitations, liability, supported social sites, and privacy.';
+const path = '/terms/';
+
+export const metadata = pageMetadata({
+  title,
+  description,
+  path,
+  keywords: [
+    'uFeed terms of use',
+    'uFeed open-source license',
+    'GPL-3.0-or-later browser extension',
+    'uFeed liability and warranty',
+  ],
+});
 
 export default function TermsPage() {
   return (
     <main className="legal wrap">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              '@context': 'https://schema.org',
+              '@type': 'WebPage',
+              name: title,
+              description,
+              url: 'https://ufeed.github.io/terms/',
+            },
+            breadcrumbLd(path, 'Terms of use'),
+          ]).replace(/</g, '\\u003c'),
+        }}
+      />
       <Link className="back" href="/">
         ← uFeed
       </Link>

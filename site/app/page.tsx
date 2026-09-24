@@ -1,18 +1,32 @@
-import Link from 'next/link';
+import GitHubIcon from './components/GitHubIcon';
+import { CHROME_STORE_URL, REPOSITORY_URL, SITE_DESCRIPTION, SITE_URL } from './lib/site';
 
-const repository = 'https://github.com/dephelion/ufeed';
-const chromeStore =
-  'https://chromewebstore.google.com/detail/ahlojbckjlffcfdhmkjepaglnhhpmdck';
+const softwareJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'uFeed',
+  applicationCategory: 'BrowserApplication',
+  operatingSystem: 'Chrome, Firefox',
+  description: SITE_DESCRIPTION,
+  url: SITE_URL,
+  downloadUrl: [CHROME_STORE_URL, REPOSITORY_URL],
+  license: 'https://www.gnu.org/licenses/gpl-3.0.html',
+  isAccessibleForFree: true,
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  publisher: {
+    '@type': 'Person',
+    name: 'Julio Cesar Martin',
+  },
+};
 
-function Mark() {
-  return (
-    <span className="mark" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-    </span>
-  );
-}
+const organizationJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'uFeed',
+  url: SITE_URL,
+  logo: `${SITE_URL}/icon.png`,
+  sameAs: [REPOSITORY_URL],
+};
 
 function FeedPreview() {
   return (
@@ -77,18 +91,15 @@ function FeedPreview() {
 export default function Home() {
   return (
     <main>
-      <header className="header wrap">
-        <Link className="brand" href="/" aria-label="uFeed home">
-          <Mark /> <span>uFeed</span>
-        </Link>
-        <nav aria-label="Main navigation">
-          <a href="#how-it-works">How it works</a>
-          <Link href="/privacy/">Privacy</Link>
-          <a className="nav-github" href={repository}>
-            GitHub ↗
-          </a>
-        </nav>
-      </header>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([softwareJsonLd, organizationJsonLd]).replace(
+            /</g,
+            '\\u003c',
+          ),
+        }}
+      />
 
       <section className="hero wrap">
         <div className="hero-copy">
@@ -101,11 +112,21 @@ export default function Home() {
             to find the ones that are.
           </p>
           <div className="actions">
-            <a className="button primary" href={chromeStore}>
+            <a
+              className="button primary"
+              href={CHROME_STORE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Add to Chrome <span>↗</span>
             </a>
-            <a className="button secondary" href={repository}>
-              Explore the project <span>↗</span>
+            <a
+              className="button secondary"
+              href={REPOSITORY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <GitHubIcon /> Explore the project
             </a>
           </div>
           <div className="quiet-note">
@@ -117,14 +138,18 @@ export default function Home() {
 
       <section className="features wrap" id="how-it-works">
         <article>
-          <span className="feature-icon">⌕</span>
+          <span className="feature-icon" aria-hidden="true">
+            🧭
+          </span>
           <div>
             <h2>Choose what matters</h2>
             <p>Add a few topics you enjoy. uFeed learns what you want to see more of.</p>
           </div>
         </article>
         <article>
-          <span className="feature-icon">◌</span>
+          <span className="feature-icon" aria-hidden="true">
+            🌿
+          </span>
           <div>
             <h2>A softer scroll</h2>
             <p>
@@ -134,7 +159,9 @@ export default function Home() {
           </div>
         </article>
         <article>
-          <span className="feature-icon">⌂</span>
+          <span className="feature-icon" aria-hidden="true">
+            🔒
+          </span>
           <div>
             <h2>Private by design</h2>
             <p>
@@ -144,24 +171,68 @@ export default function Home() {
         </article>
       </section>
 
+      <section className="why wrap">
+        <div className="section-heading">
+          <span className="eyebrow">A BETTER KIND OF FILTER</span>
+          <h2>Why uFeed</h2>
+          <p>Start with what you want more of. Let the rest fade into the background.</p>
+        </div>
+        <div className="why-grid">
+          <article>
+            <h3>🌱 A few topics are enough</h3>
+            <p>
+              Tell uFeed about things you care about, like design, cooking, or your
+              industry. There is no endless blocklist to maintain.
+            </p>
+          </article>
+          <article>
+            <h3>🛡️ Your feed stays yours</h3>
+            <p>
+              Posts are checked on your device. No account, analytics, or uFeed server.
+              The model downloads once; your feed and topics are never sent to us.
+            </p>
+          </article>
+          <article>
+            <h3>🌍 Choose your language</h3>
+            <p>
+              English is ready by default. An optional multilingual model can handle posts
+              in other languages, with a larger one-time download.
+            </p>
+          </article>
+          <article>
+            <h3>🎚️ Make it feel right</h3>
+            <p>
+              Adjust how much uFeed filters, peek at close calls, and optionally use
+              thumbs to tune its suggestions on your device.
+            </p>
+          </article>
+          <article>
+            <h3>↩️ You stay in control</h3>
+            <p>
+              Nothing is deleted. Reveal a blurred post any time, and change your topics
+              or turn uFeed off whenever you like.
+            </p>
+          </article>
+          <article>
+            <h3>💛 Open source, by choice</h3>
+            <p>
+              uFeed is free and open source. You can inspect how it works, suggest
+              improvements, or make a version of your own.
+            </p>
+          </article>
+        </div>
+        <p className="why-note">
+          uFeed sorts by subject, not quality, and it sometimes gets things wrong. A great
+          post and a dull one about the same topic can both stay.
+        </p>
+      </section>
+
       <section className="closing wrap">
         <p>Less noise. More of your thing.</p>
-        <a href={chromeStore}>
+        <a href={CHROME_STORE_URL} target="_blank" rel="noopener noreferrer">
           Give uFeed a try <span>↗</span>
         </a>
       </section>
-      <footer className="footer wrap">
-        <Link className="brand" href="/">
-          <Mark />
-          <span>uFeed</span>
-        </Link>
-        <p>Made for a more intentional scroll.</p>
-        <nav aria-label="Policies">
-          <Link href="/privacy/">Privacy</Link>
-          <Link href="/terms/">Terms</Link>
-          <a href={repository}>GitHub</a>
-        </nav>
-      </footer>
     </main>
   );
 }

@@ -1,0 +1,142 @@
+import Link from 'next/link';
+import { breadcrumbLd, pageMetadata } from '../lib/seo';
+import { SITE_NAME } from '../lib/site';
+
+const title = 'How uFeed works — a simple guide to a calmer social feed';
+const description =
+  'Choose a few topics, scroll as usual, and reveal any post uFeed gently blurs. Learn how setup, privacy, languages, and controls work.';
+const path = '/how-it-works/';
+
+export const metadata = pageMetadata({
+  title,
+  description,
+  path,
+  keywords: [
+    'how uFeed works',
+    'social feed filter guide',
+    'custom topic feed filter',
+    'private AI browser extension',
+    'on-device feed filtering',
+  ],
+});
+
+const howToJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to make your social feed feel more like yours with uFeed',
+  description,
+  totalTime: 'PT2M',
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Choose your topics',
+      text: 'Add a few subjects you would like to see in your feed.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Scroll as usual',
+      text: 'uFeed quietly blurs posts that are outside your chosen topics.',
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Reveal or adjust',
+      text: 'Tap any blurred post to reveal it, or change topics and strictness in the popup.',
+    },
+  ],
+};
+
+export default function HowItWorksPage() {
+  return (
+    <main className="legal how-page wrap">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            howToJsonLd,
+            breadcrumbLd(path, 'How it works'),
+          ]).replace(/</g, '\\u003c'),
+        }}
+      />
+      <Link className="back" href="/">
+        ← {SITE_NAME}
+      </Link>
+      <span className="eyebrow">A FEW TOPICS. A CALMER FEED.</span>
+      <h1>How uFeed works</h1>
+      <p className="legal-lead">
+        Tell uFeed what you came to read about. It softens the distractions while leaving
+        every post right where it is.
+      </p>
+
+      <ol className="how-steps">
+        <li>
+          <span>1</span>
+          <div>
+            <h2>Start with what you like</h2>
+            <p>
+              Open the small uFeed popup and write a few topics, one per line. They can be
+              as broad or as specific as you like: cooking, climate, design, or your
+              industry.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span>2</span>
+          <div>
+            <h2>Keep scrolling</h2>
+            <p>
+              When you visit X, LinkedIn, or Reddit, uFeed looks at the words in each post
+              and checks how closely the subject fits your topics. That happens in your
+              browser, on your device.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span>3</span>
+          <div>
+            <h2>See more of what you came for</h2>
+            <p>
+              Posts that fit stay clear. Other posts are gently blurred, not hidden or
+              deleted. Tap one—or focus it and press Enter—to see it whenever you want.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span>4</span>
+          <div>
+            <h2>Make it your own</h2>
+            <p>
+              Adjust strictness to blur more or less. Peek at close calls, show scores if
+              you like, and optionally use thumbs to help uFeed better understand your
+              preferences. Your ratings stay on your device.
+            </p>
+          </div>
+        </li>
+      </ol>
+
+      <section className="how-details">
+        <h2>Made to feel simple—and stay private</h2>
+        <p>
+          There is no sign-up, account, or uFeed server. The model is downloaded once and
+          cached by your browser. Your topics and the posts you read are not sent to us.
+          uFeed is free and open source, so you can look through the project yourself.
+        </p>
+        <h2>Choose the language that suits you</h2>
+        <p>
+          The default model works in English. If your feeds are in other languages, you
+          can choose the optional multilingual model in the popup. It needs a larger
+          one-time download; your topics and settings stay the same.
+        </p>
+        <h2>A helpful nudge, not a perfect judge</h2>
+        <p>
+          uFeed recognises subjects, not quality. It can blur something you would have
+          liked, or leave something you would rather skip. You are always one click away
+          from the full feed, and if uFeed stops working, posts remain visible.
+        </p>
+      </section>
+      <p className="legal-end">
+        <Link href="/privacy/">Read the privacy policy</Link> ·{' '}
+        <Link href="/">Back to uFeed</Link>
+      </p>
+    </main>
+  );
+}
