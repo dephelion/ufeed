@@ -42,7 +42,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 
 Steps 1–6 live in `FeedFilter` (`src/feed/filter.ts`). `content.ts` only wires it to storage, the engine client, the popup and the page.
 
-Background service worker: opens `https://ufeed.es/welcome/` on a new Chrome install, not on updates or Firefox installs; creates Chrome's offscreen page on demand; scoring does not pass through it. Settings propagate through `storage.onChanged`.
+Background service worker: opens `https://ufeed.es/welcome/` on a new install in Chrome or Firefox, not on updates; creates Chrome's offscreen page on demand; scoring does not pass through it. Settings propagate through `storage.onChanged`.
 
 ## Persisted state
 

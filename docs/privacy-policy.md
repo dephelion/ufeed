@@ -12,7 +12,7 @@ and sends.
 ## Short version
 
 uFeed does not send feed text, topics or extension settings to us or anyone
-else. There are no accounts, analytics, trackers or advertising. On a new Chrome install, the extension opens a welcome page hosted at ufeed.es. That standard
+else. There are no accounts, analytics, trackers or advertising. On a first install in Chrome or Firefox, the extension opens a welcome page hosted at ufeed.es. That standard
 page request reveals your IP address, ordinary browser request details and the
 selected language path to the website host. It contains no feed content or
 extension settings.
@@ -63,7 +63,7 @@ file replaces the settings and ratings already stored.
 
 **The browser makes two kinds of requests on your behalf.**
 
-On a new Chrome installation, uFeed opens `https://ufeed.es/welcome/`; Firefox does not. Loading the page
+On a first installation in Chrome or Firefox, uFeed opens `https://ufeed.es/welcome/`. Loading the page
 sends a normal web request to ufeed.es. The site host receives your IP address,
 ordinary browser request details and the localized page path. This request
 contains no feed text, topics or extension settings.

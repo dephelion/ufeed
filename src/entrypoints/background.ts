@@ -118,9 +118,7 @@ async function openPopup(): Promise<void> {
  * gray means there was none to find.
  */
 export default defineBackground(() => {
-  if (import.meta.env.BROWSER === 'chrome') {
-    browser.runtime.onInstalled.addListener(({ reason }) => openWelcomeOnInstall(reason));
-  }
+  browser.runtime.onInstalled.addListener(({ reason }) => openWelcomeOnInstall(reason));
   browser.runtime.onMessage.addListener((message: unknown) => {
     if (
       typeof message === 'object' &&

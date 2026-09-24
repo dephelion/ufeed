@@ -49,7 +49,7 @@ It reads words, not images, and matches subject, not quality. It can miss sarcas
 ## Single purpose
 
 uFeed has one purpose: help people focus their social feed by blurring posts
-outside topics they choose. The Chrome first-install welcome page explains how to get
+outside topics they choose. The first-install welcome page explains how to get
 started. Every permission and code path supports that purpose.
 
 ## Permission justifications
@@ -69,8 +69,7 @@ in local extension storage. Nothing is synced or transmitted.
 **Remote code — none**
 
 uFeed executes no remote code. The ONNX Runtime WebAssembly binary is
-bundled in the package and loaded from an extension-relative path. On a new Chrome
-installation, the extension opens its welcome page; Firefox does not at ufeed.es. This normal
+bundled in the package and loaded from an extension-relative path. On a first installation in Chrome or Firefox, the extension opens its welcome page at ufeed.es. This normal
 page request reveals the visitor's IP address, standard browser request details
 and language path to the site host. When first needed, the browser downloads
 the selected model **weights** (data files, not code) from Hugging Face
@@ -120,7 +119,7 @@ CONTENT SECURITY POLICY
 'wasm-unsafe-eval' on extension pages is needed only to compile that bundled ONNX Runtime WebAssembly. No remote code is executed and nothing uses eval.
 
 NETWORK
-On a new Chrome installation, uFeed opens its welcome page at ufeed.es; Firefox does not. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
+On a first installation in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
 
 WHY THE HIDDEN IFRAME
 The content script keeps access to feed text and the page DOM. Chrome's multilingual model uses a shared offscreen extension page and worker across feed tabs; Chrome's default English model and Firefox use a per-tab hidden engine.html iframe and worker. Both transports send text to the extension worker and return scores. The engine never reads the host page.

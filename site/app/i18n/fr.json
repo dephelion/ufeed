@@ -136,7 +136,7 @@
   "privacy": {
     "title": "Politique de confidentialité",
     "date": "Dernière mise à jour : 24 septembre 2026",
-    "lead": "L’extension garde le texte du fil et vos réglages sur votre appareil. Lors de la première installation dans Chrome, votre navigateur ouvre une page sur ufeed.es ; le site reçoit une requête web ordinaire.",
+    "lead": "L’extension garde le texte du fil et vos réglages sur votre appareil. Lors de la première installation dans Chrome ou Firefox, votre navigateur ouvre une page sur ufeed.es ; le site reçoit une requête web ordinaire.",
     "sections": [
       [
         "Ce que lit uFeed",
@@ -152,7 +152,7 @@
       ],
       [
         "Ce que transmet uFeed",
-        "Lors d’une nouvelle installation dans Chrome, uFeed ouvre sa page de bienvenue sur ufeed.es. Votre navigateur envoie une requête web ordinaire, qui révèle votre adresse IP, les détails habituels de la requête et le chemin correspondant à la langue choisie à l’hébergeur du site. Elle ne contient ni texte du fil, ni thèmes, ni réglages de l’extension. Par ailleurs, la première fois qu’un modèle linguistique est nécessaire, votre navigateur le télécharge depuis Hugging Face. Cette requête révèle votre adresse IP et le modèle demandé à ce service. Le navigateur met le modèle en cache pour la suite. Aucune de ces requêtes ne contient le contenu de votre fil ou vos réglages."
+        "Lors de la première installation dans Chrome ou Firefox, uFeed ouvre sa page de bienvenue sur ufeed.es. Votre navigateur envoie une requête web ordinaire, qui révèle votre adresse IP, les détails habituels de la requête et le chemin correspondant à la langue choisie à l’hébergeur du site. Elle ne contient ni texte du fil, ni thèmes, ni réglages de l’extension. Par ailleurs, la première fois qu’un modèle linguistique est nécessaire, votre navigateur le télécharge depuis Hugging Face. Cette requête révèle votre adresse IP et le modèle demandé à ce service. Le navigateur met le modèle en cache pour la suite. Aucune de ces requêtes ne contient le contenu de votre fil ou vos réglages."
       ],
       [
         "Autorisations",

@@ -136,7 +136,7 @@
   "privacy": {
     "title": "Política de privacidad",
     "date": "Última actualización: 24 de septiembre de 2026",
-    "lead": "La extensión mantiene el texto del feed y tus ajustes en el dispositivo. Al instalarla por primera vez en Chrome, el navegador abre una página de ufeed.es y el sitio recibe una solicitud web normal.",
+    "lead": "La extensión mantiene el texto del feed y tus ajustes en el dispositivo. Al instalarla por primera vez en Chrome o Firefox, el navegador abre una página de ufeed.es y el sitio recibe una solicitud web normal.",
     "sections": [
       [
         "Qué lee uFeed",
@@ -152,7 +152,7 @@
       ],
       [
         "Qué envía uFeed",
-        "Al instalar uFeed por primera vez en Chrome, se abre su página de bienvenida en ufeed.es. Tu navegador realiza una solicitud web normal que revela tu dirección IP, los datos técnicos habituales de la solicitud y la ruta del idioma elegido al sitio que aloja la página. No incluye el texto de tu feed, tus temas ni los ajustes de la extensión. Por separado, la primera vez que se necesita un modelo, el navegador lo descarga de Hugging Face. Esa solicitud revela tu IP y el modelo solicitado a ese servicio. El navegador guarda el modelo para usarlo después. Ninguna de estas solicitudes incluye el contenido de tu feed ni tus ajustes."
+        "Al instalar uFeed por primera vez en Chrome o Firefox, se abre su página de bienvenida en ufeed.es. Tu navegador realiza una solicitud web normal que revela tu dirección IP, los datos técnicos habituales de la solicitud y la ruta del idioma elegido al sitio que aloja la página. No incluye el texto de tu feed, tus temas ni los ajustes de la extensión. Por separado, la primera vez que se necesita un modelo, el navegador lo descarga de Hugging Face. Esa solicitud revela tu IP y el modelo solicitado a ese servicio. El navegador guarda el modelo para usarlo después. Ninguna de estas solicitudes incluye el contenido de tu feed ni tus ajustes."
       ],
       [
         "Permisos",

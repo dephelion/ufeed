@@ -136,7 +136,7 @@
   "privacy": {
     "title": "Datenschutzerklärung",
     "date": "Zuletzt aktualisiert: 24. September 2026",
-    "lead": "Die Erweiterung lässt Feedtexte und Einstellungen auf deinem Gerät. Bei der ersten Installation in Chrome öffnet dein Browser eine Seite auf ufeed.es; der Website-Host erhält eine normale Seitenanfrage.",
+    "lead": "Die Erweiterung lässt Feedtexte und Einstellungen auf deinem Gerät. Bei der ersten Installation in Chrome oder Firefox öffnet dein Browser eine Seite auf ufeed.es; der Website-Host erhält eine normale Seitenanfrage.",
     "sections": [
       [
         "Was uFeed liest",

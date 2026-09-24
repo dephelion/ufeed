@@ -5,14 +5,14 @@
 
 ## Data
 
-| Data          | Where it goes                                                                                                                                                                                           |
-| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                                                                                                 |
-| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                                                                                                    |
-| Settings      | `storage.local`. Topics, blacklist keywords, strictness step, the checkboxes, the language picked in the popup (a locale code).                                                                         |
-| Welcome visit | Open `ufeed.es/welcome/` on a new Chrome install; Firefox does not open it. The normal page request reveals IP, request details and the locale path to the site host; no feed text, topics or settings. |
-| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                                                                                                   |
-| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way.                                                                               |
+| Data          | Where it goes                                                                                                                                                                               |
+| :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Post text     | Read from the DOM, embedded in the worker, discarded. Never persisted, never transmitted, never logged.                                                                                     |
+| Scores        | In-memory LRU keyed by text hash, cleared on reload.                                                                                                                                        |
+| Settings      | `storage.local`. Topics, blacklist keywords, strictness step, the checkboxes, the language picked in the popup (a locale code).                                                             |
+| Welcome visit | Open `ufeed.es/welcome/` on a new install in Chrome or Firefox. The normal page request reveals IP, request details and the locale path to the site host; no feed text, topics or settings. |
+| Model weights | Fetched once from the CDN, cached by the browser. Only the model the reader selected is ever fetched.                                                                                       |
+| Corrections   | Embeddings of thumbed posts, `storage.local`, keyed by model id then topic line and post hash. Vectors only, 50 each way.                                                                   |
 
 **A blacklist keyword that blocked a post is written into the host DOM** (`data-lx-keyword`), where the page's own scripts can read it, so the opened tag can name it. Accepted by the owner: the site already sees `data-lx-reason="blacklist"` on a post whose text it served, so the exact word adds little. Only matched keywords, never the list; cleared by `reveal()`.
 
@@ -30,7 +30,7 @@
 
 **Engine status is asked, never stored.** The popup queries the active tab over `browser.runtime` messaging and keeps the answer in memory. An earlier version parked it in `storage.local` with a timestamp, which left a durable record of when a feed was last open — settings-adjacent, surviving restarts, and flatly at odds with the claim above. Nothing about engine activity now touches disk. See [architecture.md](architecture.md).
 
-**Network requests:** the welcome page on a new Chrome install (Firefox does not open it), then selected model weights when first needed. Neither includes feed text, topics or extension settings. No analytics.
+**Network requests:** the welcome page on a new Chrome or Firefox install, then selected model weights when first needed. Neither includes feed text, topics or extension settings. No analytics.
 
 **Choosing a model does not tell anyone anything more.** Both come from `huggingface.co` and its storage CDN, on the same one-time fetch, with no identifier attached. Picking the multilingual one changes which files are requested and nothing else; the selection itself stays in `storage.local` and is never transmitted.
 
