@@ -144,16 +144,19 @@
     "message": "Modelo pronto"
   },
   "engineFailed": {
-    "message": "Não foi possível carregar o modelo. Recarregue esta aba para tentar novamente. Se falhar de novo, reinicie o navegador."
+    "message": "O mecanismo parou de funcionar. Use o botão de recarregar para reiniciar o uFeed e depois recarregue esta aba."
   },
   "engineFailedWhy": {
-    "message": "Não foi possível carregar o modelo — $REASON$. Recarregue esta aba para tentar novamente. Se falhar de novo, reinicie o navegador.",
+    "message": "O mecanismo parou de funcionar — $REASON$. Use o botão de recarregar para reiniciar o uFeed e depois recarregue esta aba.",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "Limpar o cache do modelo e reiniciar o uFeed"
   },
   "statusInitial": {
     "message": "Verificando as configurações…"

@@ -255,6 +255,13 @@ export class EngineClient implements Engine {
         log.info('engine status', { state: data.state, reason: data.message });
       }
       this.#status = data;
+      if (data.state === 'error') {
+        for (const pending of this.#pending.values()) {
+          clearTimeout(pending.timer);
+          pending.resolve({});
+        }
+        this.#pending.clear();
+      }
       this.#onStatus(data);
       this.#updateBusy();
       return;
@@ -299,7 +306,7 @@ export class EngineClient implements Engine {
   }
 
   score(texts: string[]): Promise<RatedMatch[]> {
-    if (texts.length === 0) return Promise.resolve([]);
+    if (texts.length === 0 || this.#status.state === 'error') return Promise.resolve([]);
     const id = nextRequestId();
     return new Promise<RatedMatch[]>((resolve) => {
       const timer = setTimeout(() => {

@@ -3,8 +3,10 @@ import { readFileSync } from 'node:fs';
 import { LANGUAGES } from '../../core/languages';
 import { DEFAULT_SETTINGS, type Settings } from '../../core/settings';
 
+const runtimeReload = vi.hoisted(() => vi.fn());
 const store: Record<string, unknown> = {};
 const listeners: unknown[] = [];
+const deleteCache = vi.fn().mockResolvedValue(true);
 vi.mock('webextension-polyfill', async () => ({
   default: {
     // The English catalog from vitest.setup.ts.
@@ -12,10 +14,14 @@ vi.mock('webextension-polyfill', async () => ({
     runtime: {
       getURL: (path: string) => path,
       getManifest: () => ({ version: '9.9.9' }),
+      reload: runtimeReload,
       sendMessage: async () => undefined,
       onMessage: { addListener: () => {}, removeListener: () => {} },
     },
-    tabs: { query: async () => [{ id: 1, url: 'https://x.com/home' }] },
+    tabs: {
+      query: async () => [{ id: 1, url: 'https://x.com/home' }],
+      sendMessage: async () => ({ state: 'error', message: 'network error' }),
+    },
     storage: {
       local: {
         get: async (k: string) => (k in store ? { [k]: store[k] } : {}),
@@ -34,6 +40,7 @@ vi.mock('webextension-polyfill', async () => ({
 vi.stubGlobal('fetch', async (url: string) => ({
   json: async () => JSON.parse(readFileSync(`public${url}`, 'utf8')),
 }));
+vi.stubGlobal('caches', { delete: deleteCache });
 
 const html = readFileSync('src/entrypoints/popup/index.html', 'utf8');
 document.body.innerHTML = html.slice(html.indexOf('<body>') + 6, html.indexOf('</body>'));
@@ -226,5 +233,29 @@ describe('the language menu in a rendered popup', () => {
 
     expect((store['settings'] as Settings).language).toBe('ja');
     expect(reload).toHaveBeenCalled();
+  });
+});
+
+describe('engine recovery in a rendered popup', () => {
+  it('offers restart beside an engine error while retaining user data', async () => {
+    const topics = el('topics') as HTMLTextAreaElement;
+    const blacklist = el('blacklist') as HTMLTextAreaElement;
+    topics.value = 'software engineering';
+    blacklist.value = '';
+    topics.dispatchEvent(new Event('input'));
+    blacklist.dispatchEvent(new Event('input'));
+    (el('apply') as HTMLButtonElement).click();
+    await tick();
+
+    const repair = el('engine-repair') as HTMLButtonElement;
+    expect(repair.hidden).toBe(false);
+    expect(el('engine-status').textContent).toContain('network error');
+
+    repair.click();
+    await tick();
+
+    expect(deleteCache).toHaveBeenCalledWith('transformers-cache');
+    expect((store['settings'] as Settings).topics).toEqual(['software engineering']);
+    expect(runtimeReload).toHaveBeenCalledOnce();
   });
 });

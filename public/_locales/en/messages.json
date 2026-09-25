@@ -174,10 +174,10 @@
     "message": "Model ready"
   },
   "engineFailed": {
-    "message": "Model failed to load. Reload this tab to retry. If it fails again, restart your browser."
+    "message": "The engine stopped working. Use the refresh button to restart uFeed, then reload this tab."
   },
   "engineFailedWhy": {
-    "message": "Model failed to load — $REASON$. Reload this tab to retry. If it fails again, restart your browser.",
+    "message": "The engine stopped working — $REASON$. Use the refresh button to restart uFeed, then reload this tab.",
     "description": "The reason is the engine’s own error text and is not translated.",
     "placeholders": {
       "reason": {
@@ -185,6 +185,9 @@
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "Clear the model cache and restart uFeed"
   },
   "statusInitial": {
     "message": "Checking settings…"

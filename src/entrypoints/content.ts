@@ -7,11 +7,13 @@ import { toStatus, worthReporting, type EngineStatus } from '../core/engine-stat
 import { logger } from '../core/log';
 import type { Translate } from '../core/messages';
 import { needsTopics } from '../core/settings';
+import type { EngineState, StatusEvent } from '../core/protocol';
 import { listenForReveal, relabelBlurred } from '../feed/blur';
 import { mountFeedbackBar } from '../feed/feedback-bar';
 import { FeedFilter } from '../feed/filter';
 import { mountHiddenBadge } from '../feed/hidden-badge';
 import { mountNudge } from '../feed/nudge';
+import type { SiteAdapter } from '../feed/ports';
 import { Tuning } from '../feed/tuning';
 import { EngineClient } from '../platform/engine-client';
 import { translatorFor } from '../platform/i18n';
@@ -36,22 +38,49 @@ export default defineContentScript({
   runAt: 'document_start',
   cssInjectionMode: 'manifest',
   main: () => {
-    start().catch((error: unknown) => {
-      log.error('content script failed to start', {
-        reason: error instanceof Error ? error.message : String(error),
-      });
+    const adapter = adapterFor(location.hostname);
+    if (!adapter) {
+      log.info('no adapter for host, standing down', { host: location.hostname });
+      return;
+    }
+    // Answer even if startup fails before the engine exists.
+    serveEngineStatus(() => engineStatus);
+    addEventListener('unhandledrejection', (event) => {
+      event.preventDefault();
+      reportEngineFailure(event.reason);
+    });
+    addEventListener('error', (event) => {
+      if (!event.filename.startsWith(browser.runtime.getURL('/'))) return;
+      event.preventDefault();
+      reportEngineFailure(event.error ?? event.message);
+    });
+    start(adapter).catch((error: unknown) => {
+      reportEngineFailure(error);
     });
   },
 });
 
 const log = logger('content');
+let engineStatus: EngineStatus = { state: 'idle' };
+let engineChanged: (state: EngineState) => void = () => {};
+let fatalContentError = false;
 
-async function start(): Promise<void> {
-  const adapter = adapterFor(location.hostname);
-  if (!adapter) {
-    log.info('no adapter for host, standing down', { host: location.hostname });
-    return;
-  }
+function receiveEngineStatus(next: StatusEvent): void {
+  if (fatalContentError && next.state !== 'error') return;
+  const status = toStatus(next);
+  if (worthReporting(engineStatus, status)) publishEngineStatus(status);
+  engineStatus = status;
+  engineChanged(next.state);
+}
+
+function reportEngineFailure(error: unknown): void {
+  fatalContentError = true;
+  const message = error instanceof Error ? error.message : String(error);
+  log.error('content script stopped after an unhandled error', { reason: message });
+  receiveEngineStatus({ type: 'STATUS', state: 'error', message });
+}
+
+async function start(adapter: SiteAdapter): Promise<void> {
   publishFeedDetected();
 
   // Tracked here because the feedback store reads the model on every call: it
@@ -77,16 +106,8 @@ async function start(): Promise<void> {
     onHiddenChange: (count) => badge.setCount(count),
   });
 
-  // Held in memory and served on request. The popup cannot see into this tab,
-  // and without an answer a first-run download looks like a broken install.
-  let engineStatus: EngineStatus = { state: 'idle' };
-  serveEngineStatus(() => engineStatus);
-  engine.onStatus((next) => {
-    const status = toStatus(next);
-    if (worthReporting(engineStatus, status)) publishEngineStatus(status);
-    engineStatus = status;
-    filter.engineChanged(next.state);
-  });
+  engineChanged = (state) => filter.engineChanged(state);
+  engine.onStatus(receiveEngineStatus);
 
   const nudge = mountNudge(browser.runtime.getURL('icon-gray/48.png'), t);
   nudge.setVisible(needsTopics(settings, filter.on));

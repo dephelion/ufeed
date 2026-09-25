@@ -144,16 +144,19 @@
     "message": "モデルの準備完了"
   },
   "engineFailed": {
-    "message": "モデルを読み込めませんでした。このタブを再読み込みして、もう一度お試しください。再び失敗する場合は、ブラウザを再起動してください。"
+    "message": "エンジンが停止しました。更新ボタンでuFeedを再起動してから、このタブを再読み込みしてください。"
   },
   "engineFailedWhy": {
-    "message": "モデルを読み込めませんでした — $REASON$。このタブを再読み込みして、もう一度お試しください。再び失敗する場合は、ブラウザを再起動してください。",
+    "message": "エンジンが停止しました — $REASON$。更新ボタンでuFeedを再起動してから、このタブを再読み込みしてください。",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "モデルのキャッシュを削除してuFeedを再起動"
   },
   "statusInitial": {
     "message": "設定を確認中…"

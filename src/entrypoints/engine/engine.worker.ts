@@ -69,6 +69,7 @@ function ensureLoaded(): Promise<void> {
     state: 'downloading' | 'warming' | 'ready';
     progress?: number;
   }) => {
+    if (unexpectedFailure) return;
     if (p.state === 'downloading')
       log.info('downloading', { percent: Math.round(p.progress ?? 0) });
     post({ type: 'STATUS', state: p.state, progress: p.progress });

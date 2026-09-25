@@ -217,7 +217,7 @@ Apply is disabled until either textarea differs from what is saved.
 
 **Engine state is shown twice, on purpose.** The popup runs past Chrome's 600px cap, so the footer opens below the fold — the header chip is the only engine state most readers ever see (`Downloading 45%`, `Ready · wasm`, `Failed`, `No feed here`). The footer line carries what will not fit in a 380px header row: that the download happens once, and the failure reason a bug report needs. It hides itself once ready, when the chip says everything left to say. Both lights read from one tone, so they can never disagree.
 
-**A failed engine always names recovery.** Keep the short header chip as `Failed`; the footer says to reload the tab and, after a repeated failure, restart the browser. Append the engine's own reason when one exists. A reload creates a new iframe worker; on Chrome a shared-engine failure already falls back to that worker.
+**A failed engine always offers recovery.** Keep the short header chip as `Failed` and show a refresh button beside it; the footer appends the engine's own reason. The button deletes cached model files and restarts the extension; preserve settings and ratings. Tell the reader to reload the feed tab afterwards: extension reload does not revive an old content script. Hide it in every non-error state.
 
 **Destructive controls explain themselves where they sit.** Reset was a bare ghost button in the footer that silently deleted every thumb rating.
 

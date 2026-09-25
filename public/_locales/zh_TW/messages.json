@@ -144,16 +144,19 @@
     "message": "模型已就緒"
   },
   "engineFailed": {
-    "message": "模型載入失敗。請重新載入此分頁以重試。如果仍然失敗，請重新啟動瀏覽器。"
+    "message": "引擎已停止運作。請使用重新整理按鈕重新啟動 uFeed，然後重新載入此分頁。"
   },
   "engineFailedWhy": {
-    "message": "模型載入失敗 — $REASON$。請重新載入此分頁以重試。如果仍然失敗，請重新啟動瀏覽器。",
+    "message": "引擎已停止運作 — $REASON$。請使用重新整理按鈕重新啟動 uFeed，然後重新載入此分頁。",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "清除模型快取並重新啟動 uFeed"
   },
   "statusInitial": {
     "message": "正在檢查設定…"

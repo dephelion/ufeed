@@ -80,4 +80,43 @@ describe('the engine handshake', () => {
       expect.objectContaining({ type: 'SET_TOPICS', topics: ['programming'] }),
     );
   });
+
+  it('reveals a pending score and ignores a late result after the engine fails', async () => {
+    const ports: { onmessage?: (event: { data: unknown }) => void }[] = [];
+    vi.stubGlobal(
+      'MessageChannel',
+      class {
+        port1 = {
+          onmessage: undefined,
+          postMessage: vi.fn(),
+          start: vi.fn(),
+          close: vi.fn(),
+        };
+        port2 = { close: vi.fn() };
+        constructor() {
+          ports.push(this.port1);
+        }
+      },
+    );
+    const client = new EngineClient();
+    client.connect('e5-small');
+    const frame = document.querySelector('iframe')!;
+    Object.defineProperty(frame, 'contentWindow', {
+      value: { postMessage: vi.fn() },
+    });
+    dispatchEvent(
+      new MessageEvent('message', {
+        data: ENGINE_READY,
+        origin: 'chrome-extension://ufeed',
+      }),
+    );
+    const receive = ports[0]?.onmessage;
+    expect(receive).toBeDefined();
+    receive?.({ data: { type: 'STATUS', state: 'ready' } });
+    const score = client.score(['a post']);
+    receive?.({ data: { type: 'STATUS', state: 'error', message: 'network error' } });
+    expect(await score).toEqual([]);
+    expect(client.ready).toBe(false);
+    expect(await client.score(['another post'])).toEqual([]);
+  });
 });

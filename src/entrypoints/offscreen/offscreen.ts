@@ -15,6 +15,7 @@ const log = logger('shared-engine');
 const clients = new Map<string, browser.Runtime.Port>();
 let nextClient = 0;
 let lastStatus: StatusEvent = { type: 'STATUS', state: 'idle' };
+let fatalError = false;
 
 const release = (clientId: string): void => {
   if (!clients.has(clientId)) return;
@@ -40,6 +41,7 @@ const broadcast = (status: StatusEvent): void => {
 
 addEventListener('unhandledrejection', (event) => {
   event.preventDefault();
+  fatalError = true;
   const reason =
     event.reason instanceof Error ? event.reason.message : String(event.reason);
   log.warn('shared engine stopped after an unhandled rejection', { reason });
@@ -51,6 +53,7 @@ try {
   worker = new EngineWorker();
   worker.postMessage({ type: 'INIT', model: 'gemma', threads: 2 } satisfies InitRequest);
   worker.onmessage = (event: MessageEvent<unknown>) => {
+    if (fatalError) return;
     if (isRoutedReply(event.data)) {
       send(event.data.clientId, event.data.reply);
     } else if (isEngineReply(event.data) && event.data.type === 'STATUS') {
@@ -59,6 +62,7 @@ try {
   };
   worker.onerror = (event) => {
     event.preventDefault();
+    fatalError = true;
     broadcast({ type: 'STATUS', state: 'error', message: event.message });
   };
 } catch (error) {
