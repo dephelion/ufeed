@@ -51,6 +51,7 @@ HTMLAnchorElement.prototype.click = function (this: HTMLAnchorElement) {
 };
 
 store['settings'] = {
+  model: 'e5-small',
   topics: ['software engineering'],
   strictness: 3,
 };

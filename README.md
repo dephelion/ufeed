@@ -8,9 +8,9 @@ A browser extension for X, LinkedIn and Reddit, on Chrome and Firefox. The model
 runs on your device. No account, no server, no cloud AI, and no post text ever
 leaves your browser.
 
-On Chrome, the multilingual model uses one shared offscreen engine across feed
-tabs; Firefox and the default English model keep the per-tab iframe engine. Both
-paths score on-device and keep page access in the content script.
+On Chrome, the default multilingual model uses one shared offscreen engine across
+feed tabs; Firefox and the optional English model keep the per-tab iframe engine.
+Both paths score on-device and keep page access in the content script.
 
 ## The idea
 
@@ -38,15 +38,14 @@ posts without a match stay visible. One click (or Enter) reveals a blurred post.
 - **Choose what to filter.** Use topics to keep posts about subjects you care
   about, a keyword blacklist to blur posts containing words or phrases you
   choose, or both.
-- **Your feed stays on your device.** A small model (33 MB by default) runs inside
+- **Your feed stays on your device.** An on-device model (197 MB by default) runs inside
   your browser. Feed text and settings are never sent. On a first install in Chrome or Firefox, the browser opens a welcome page on ufeed.es; the normal page request reveals your
   IP address and language path to the site host. The model is downloaded once
   from Hugging Face, and the source is here so you can check how it works.
-- **English by default, every language if you ask.** The default model reads
-  English. Pick the multilingual one in the popup and it reads every language and
-  sorts more accurately, for a one-time 197 MB download and more work on every
-  post. Your topics and settings carry over, and each model keeps its own thumb
-  ratings.
+- **Every language by default.** Gemma reads every language and is fast enough for
+  a good first-run experience. The smaller English-only model is available in the
+  popup for a one-time 33 MB download. Your topics and settings carry over, and
+  each model keeps its own thumb ratings.
 - **In your language.** The popup and the labels follow your browser's language,
   and the flag next to the title switches both to another: English, Spanish,
   German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and
@@ -60,8 +59,7 @@ posts without a match stay visible. One click (or Enter) reveals a blurred post.
 ## What it cannot do
 
 - **It reads words, not pictures.** A photo with no caption cannot be judged on
-  content. The default model also reads English only, so a post in another
-  language gets a meaningless score; the multilingual model reads every language.
+  content. Gemma reads every language; the optional English-only model does not.
 - **It matches subjects, not quality.** A great post and a poor one about the same
   thing both stay.
 - **It is not perfect.** Stricter settings blur more, including some posts you
@@ -83,9 +81,9 @@ time, so a wrong call can be explained and corrected.
 **Firefox** — build from source for now (below).
 
 Then open the toolbar popup, add a topic, and visit x.com, linkedin.com or
-reddit.com. The model downloads once (~33 MB) and is cached by the browser.
-Nothing blurs until it has loaded. If your feed is not in English, choose _Every
-language_ under _Model_ in the popup instead (a one-time ~197 MB download).
+reddit.com. The model downloads once (~197 MB by default) and is cached by the
+browser. Nothing blurs until it has loaded. If you prefer the smaller English-only
+model, choose it under _Model_ in the popup instead (a one-time ~33 MB download).
 
 ## Build from source
 
@@ -138,7 +136,8 @@ The rules in `core/` know nothing of the browser, and the page logic in `feed/` 
 Execution stays separate from these code layers: the content script reads and
 updates the feed DOM; the iframe runs the per-tab engine; Chrome's offscreen page
 runs one shared Gemma engine. The background creates that page and connects tabs;
-it does not score posts. Firefox and Chrome's English model use the iframe path.
+it does not score posts. Firefox and Chrome's optional English model use the iframe
+path.
 
 ## Read more
 

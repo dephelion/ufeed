@@ -27,7 +27,8 @@ vi.mock('webextension-polyfill', () => ({
   },
 }));
 
-const { DEFAULT_MODEL, modelFor } = await import('../core/models');
+const { modelFor } = await import('../core/models');
+const { DEFAULT_MODEL } = await import('../core/models');
 const MODEL = modelFor(DEFAULT_MODEL);
 
 /** Which model the simulated tab is scoring with; a switch moves it. */
@@ -108,26 +109,28 @@ describe('a feed tab open while storage changes underneath it', () => {
 });
 
 describe('a model change', () => {
+  const first = modelFor('e5-small');
+
   it("keeps each model's ratings and shows only the running one's", async () => {
     const gemma = modelFor('gemma');
     await saveSettings({ topics: ['software engineering'], strictness: 4 });
     await saveFeedback(
-      MODEL,
+      gemma,
       rate(EMPTY_FEEDBACK, 'software engineering', 'k', vector(1), true),
     );
 
-    await saveSettings({ model: 'gemma' });
-    expect(count(await loadFeedback(gemma))).toBe(0);
+    await saveSettings({ model: 'e5-small' });
+    expect(count(await loadFeedback(modelFor('e5-small')))).toBe(0);
 
     await saveFeedback(
-      gemma,
+      first,
       rate(EMPTY_FEEDBACK, 'software engineering', 'g', vector(2), false),
     );
-    expect(count(await loadFeedback(gemma))).toBe(1);
+    expect(count(await loadFeedback(first))).toBe(1);
 
     // Switching back restores what the first model wrote, untouched.
-    await saveSettings({ model: 'e5-small' });
-    expect(count(await loadFeedback(MODEL))).toBe(1);
+    await saveSettings({ model: 'gemma' });
+    expect(count(await loadFeedback(gemma))).toBe(1);
 
     const settings = await loadSettings();
     expect(settings.topics).toEqual(['software engineering']);
@@ -136,23 +139,23 @@ describe('a model change', () => {
 
   it("clears every model's ratings when no model is named", async () => {
     const gemma = modelFor('gemma');
-    await saveFeedback(MODEL, rate(EMPTY_FEEDBACK, 't', 'a', vector(1), true));
+    await saveFeedback(first, rate(EMPTY_FEEDBACK, 't', 'a', vector(1), true));
     await saveFeedback(gemma, rate(EMPTY_FEEDBACK, 't', 'b', vector(2), true));
 
     await clearFeedback();
 
-    expect(count(await loadFeedback(MODEL))).toBe(0);
+    expect(count(await loadFeedback(first))).toBe(0);
     expect(count(await loadFeedback(gemma))).toBe(0);
   });
 
   it('clears only the model it is given', async () => {
     const gemma = modelFor('gemma');
-    await saveFeedback(MODEL, rate(EMPTY_FEEDBACK, 't', 'a', vector(1), true));
+    await saveFeedback(first, rate(EMPTY_FEEDBACK, 't', 'a', vector(1), true));
     await saveFeedback(gemma, rate(EMPTY_FEEDBACK, 't', 'b', vector(2), true));
 
     await clearFeedback(gemma);
 
-    expect(count(await loadFeedback(MODEL))).toBe(1);
+    expect(count(await loadFeedback(first))).toBe(1);
     expect(count(await loadFeedback(gemma))).toBe(0);
   });
 });

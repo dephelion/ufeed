@@ -54,8 +54,7 @@ export interface ModelSpec {
 
 /**
  * Chosen by measurement over all-MiniLM-L6-v2 and bge-small-en-v1.5 on 205
- * labelled posts, and the default because it is a tenth the size of the other
- * and fast enough to be invisible. It reads English only.
+ * labelled posts. It reads English only.
  */
 const E5_SMALL: ModelSpec = {
   key: 'e5-small',
@@ -91,8 +90,8 @@ const E5_SMALL: ModelSpec = {
 
 /**
  * Reads every language, and separates better than e5-small-v2 even in English.
- * It costs about nine times the compute per post and six times the download, so
- * it is opt-in until that is measured in a browser rather than in node.
+ * It is the default because it handles every language and is now fast enough
+ * for a good first-run experience.
  *
  * Its thresholds, probe bounds and ratingNear are PROVISIONAL — derived so a
  * feed looks sane, not measured the way e5-small-v2's were. See wiki-llm/model.md.
@@ -134,7 +133,7 @@ export const MODELS: Record<ModelKey, ModelSpec> = {
   gemma: GEMMA,
 };
 
-export const DEFAULT_MODEL: ModelKey = 'e5-small';
+export const DEFAULT_MODEL: ModelKey = 'gemma';
 
 export function isModelKey(value: unknown): value is ModelKey {
   return typeof value === 'string' && Object.hasOwn(MODELS, value);
@@ -151,8 +150,8 @@ export function modelById(id: unknown): ModelSpec | undefined {
 }
 
 /**
- * Best F1 on the labelled set for e5-small-v2. The step means the same thing in
- * both tables — roughly 30% of a feed shown — so it survives a model switch.
+ * The starting step for a new install. The step means the same thing in both
+ * tables — roughly 30% of a feed shown — so it survives a model switch.
  */
 export const DEFAULT_STRICTNESS = 7;
 

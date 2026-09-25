@@ -78,7 +78,7 @@
       ],
       [
         "🌍 Choose your language",
-        "English is ready by default. An optional multilingual model can handle posts in other languages, with a larger one-time download."
+        "Every language is ready by default with Gemma. A smaller English-only model is available with a one-time download."
       ],
       [
         "🎚️ Make it feel right",
@@ -125,7 +125,7 @@
       ],
       [
         "🌍 Choose the language that suits you",
-        "The default model works in English. If your feeds are in other languages, you can choose the optional multilingual model in the popup. It needs a larger one-time download; your topics and settings stay the same."
+        "The default Gemma model works in every language. If you prefer a smaller download, choose the English-only model in the popup; your topics and settings stay the same."
       ],
       [
         "A helpful nudge, not a perfect judge",
@@ -152,11 +152,11 @@
       ],
       [
         "What uFeed sends",
-        "On a first install in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. Your browser makes a normal page request, which reveals your IP address, standard request details and the selected language path to the site host. It contains no feed text, topics or extension settings. Separately, the first time a language model is needed, your browser downloads it from Hugging Face. That request reveals your IP address and the requested model to that service. Your browser caches the model for later use. Neither request includes feed content or settings."
+        "On a first install in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. Your browser makes a normal page request, which reveals your IP address, standard request details and the selected language path to the site host. It contains no feed text, topics or extension settings. Separately, the first time a model is needed, your browser downloads it from Hugging Face. The default model is EmbeddingGemma (about 197 MB); the optional English-only model, e5-small-v2, is about 33 MB. That request reveals your IP address and the requested model to the service. Your browser caches the model for later use. Neither request includes feed content or settings."
       ],
       [
         "Permissions",
-        "Supported websites: to read post text and apply the blur on X, LinkedIn and Reddit.\nStorage: to keep your settings and optional ratings on your device.\nOffscreen page (Chrome): to run the multilingual model in a shared extension worker. It receives text for scoring but cannot read the website."
+        "Supported websites: to read post text and apply the blur on X, LinkedIn and Reddit.\nStorage: to keep your settings and optional ratings on your device.\nOffscreen page (Chrome): to run the default Gemma model in a shared extension worker. It receives text for scoring but cannot read the website."
       ],
       [
         "Deleting your data",

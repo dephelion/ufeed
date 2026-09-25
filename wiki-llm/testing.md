@@ -16,7 +16,7 @@
 
 **The model suite covers both models and is the only place the second embedder path is exercised.** EmbeddingGemma is a different graph with different prefixes and its own pooled output (`sentence_embedding`, not mean pooling), so it is verified through the shipped `Embedder`, not a spike: its own probe passes, its vectors are 768 wide, a Spanish topic claims a Spanish post above the calibrated threshold, a Spanish topic outranks across languages, English separation survives, and scores land in its band rather than e5's. Determinism is asserted for it too — alone vs in a batch to six digits.
 
-**First run downloads ~197MB** for Gemma on top of e5's 33MB. CI runs `npm run check` only, so it never pays that; a contributor running `test:model` does, once.
+**First run downloads both models** when `test:model` is run: ~197MB for Gemma and ~33MB for e5. CI runs `npm run check` only, so it never pays that.
 
 **What no test covers: the browser.** Both models run on node CPU here. WASM throughput, memory per tab, and whether a future ORT computes Gemma's q4 correctly on WebGPU (today it does not) are unmeasured by any suite — the worker logs `device` and `msPerPost` for exactly that reason, and the answer comes from a debug build in a real browser.
 

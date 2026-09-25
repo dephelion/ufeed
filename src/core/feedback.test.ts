@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_MODEL, modelFor } from './models';
+import { modelFor } from './models';
 import {
   EMPTY_FEEDBACK,
   emptyFor,
@@ -174,7 +174,7 @@ describe('counts', () => {
 });
 
 describe('the model stamp', () => {
-  const spec = modelFor(DEFAULT_MODEL);
+  const spec = modelFor('e5-small');
   const mine = () => emptyFor(spec);
 
   it('reads corrections written before the stamp existed as e5-small-v2', () => {

@@ -35,8 +35,8 @@ deleted. One click shows them.
 
 🚫 Block words or phrases with the blacklist. Matching posts blur even when they are on topic.
 
-🌍 Reads English by default. For any other language, switch to the optional
-multilingual model (197 MB) in the popup.
+🌍 Reads every language by default with Gemma. A smaller English-only model
+(33 MB) is available in the popup.
 
 👍 Optional thumbs let you correct it. Off by default, kept only on your device.
 
@@ -76,7 +76,7 @@ the selected model **weights** (data files, not code) from Hugging Face
 (`huggingface.co`, redirecting to its `hf.co` CDN), which reveals the IP
 address and requested model to Hugging Face. Neither request includes feed
 content or extension settings. The browser then caches model weights; the
-default model is about 33 MB and the optional multilingual model is about 197 MB.
+default model is about 197 MB and the optional English-only model is about 33 MB.
 
 ## Data usage disclosure
 
@@ -119,10 +119,10 @@ CONTENT SECURITY POLICY
 'wasm-unsafe-eval' on extension pages is needed only to compile that bundled ONNX Runtime WebAssembly. No remote code is executed and nothing uses eval.
 
 NETWORK
-On a first installation in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is Xenova/e5-small-v2 (about 33 MB). The optional multilingual model, onnx-community/embeddinggemma-300m-ONNX (about 197 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
+On a first installation in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is onnx-community/embeddinggemma-300m-ONNX (about 197 MB). The optional English-only model, Xenova/e5-small-v2 (about 33 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
 
 WHY THE HIDDEN IFRAME
-The content script keeps access to feed text and the page DOM. Chrome's multilingual model uses a shared offscreen extension page and worker across feed tabs; Chrome's default English model and Firefox use a per-tab hidden engine.html iframe and worker. Both transports send text to the extension worker and return scores. The engine never reads the host page.
+The content script keeps access to feed text and the page DOM. Chrome's default Gemma model uses a shared offscreen extension page and worker across feed tabs; Chrome's optional English model and Firefox use a per-tab hidden engine.html iframe and worker. Both transports send text to the extension worker and return scores. The engine never reads the host page.
 
 HOW TO TEST
 1. Install in Chrome; the welcome page opens in a new tab. Then open https://www.reddit.com/r/programming/ (no login needed). X and LinkedIn work the same when logged in.

@@ -13,6 +13,12 @@ import {
 const withTopics = { ...DEFAULT_SETTINGS, topics: ['software'] };
 const withBlacklist = { ...DEFAULT_SETTINGS, blacklist: ['crypto'] };
 
+describe('defaults', () => {
+  it('uses Gemma for new installs', () => {
+    expect(DEFAULT_SETTINGS.model).toBe('gemma');
+  });
+});
+
 describe('isActive', () => {
   it('is inactive with no topics, so a fresh install blurs nothing', () => {
     expect(isActive(DEFAULT_SETTINGS, true)).toBe(false);

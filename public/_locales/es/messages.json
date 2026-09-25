@@ -60,7 +60,7 @@
     "message": "uFeed aún no tiene temas"
   },
   "nudgeBody": {
-    "message": "Está activado, pero no sabe qué quieres ver, así que no se difumina nada. Abre el icono de arriba, en la barra de herramientas del navegador, y añade uno o dos temas."
+    "message": "Está activado, pero no sabe qué quieres ver, así que no se oculta nada. Abre el icono de arriba, en la barra de herramientas del navegador, y añade uno o dos temas."
   },
   "nudgeDismiss": {
     "message": "Ocultar hasta la próxima carga de página"

@@ -78,7 +78,7 @@
       ],
       [
         "🌍 Wähle die Modellsprache",
-        "Das Standardmodell funktioniert auf Englisch. Ein optionales mehrsprachiges Modell verarbeitet Beiträge in anderen Sprachen, benötigt aber einen größeren einmaligen Download."
+        "Das standardmäßige Gemma-Modell funktioniert in allen Sprachen. Ein kleineres Modell nur für Englisch ist mit einem einmaligen Download verfügbar."
       ],
       [
         "🎚️ Stell es passend ein",
@@ -125,7 +125,7 @@
       ],
       [
         "🌍 Wähle die passende Sprache",
-        "Das Standardmodell funktioniert auf Englisch. Wenn deine Feeds andere Sprachen enthalten, kannst du im Erweiterungsfenster das optionale mehrsprachige Modell auswählen. Es braucht einen größeren einmaligen Download; Themen und Einstellungen bleiben gleich."
+        "Das standardmäßige Gemma-Modell funktioniert in allen Sprachen. Wenn du einen kleineren Download bevorzugst, wähle im Erweiterungsfenster das Modell nur für Englisch; Themen und Einstellungen bleiben gleich."
       ],
       [
         "Ein hilfreicher Hinweis, kein perfektes Urteil",
@@ -152,11 +152,11 @@
       ],
       [
         "Was uFeed sendet",
-        "Bei einer Neuinstallation in Chrome öffnet uFeed seine Willkommensseite auf ufeed.es. Dein Browser sendet eine normale Seitenanfrage. Dadurch erhält der Website-Host deine IP-Adresse, übliche Anfragedetails und den Pfad der gewählten Sprache. Feedtexte, Themen und Erweiterungseinstellungen sind darin nicht enthalten. Separat lädt dein Browser das Sprachmodell beim ersten Bedarf von Hugging Face herunter. Diese Anfrage verrät dem Dienst deine IP-Adresse und das angeforderte Modell. Der Browser speichert das Modell für später. Keine dieser Anfragen enthält Feed-Inhalte oder Einstellungen."
+        "Bei einer Neuinstallation in Chrome oder Firefox öffnet uFeed seine Willkommensseite auf ufeed.es. Dein Browser sendet eine normale Seitenanfrage. Dadurch erhält der Website-Host deine IP-Adresse, übliche Anfragedetails und den Pfad der gewählten Sprache. Feedtexte, Themen und Erweiterungseinstellungen sind darin nicht enthalten. Separat lädt dein Browser beim ersten Bedarf ein Modell von Hugging Face herunter. Das Standardmodell ist EmbeddingGemma (etwa 197 MB); das optionale Modell nur für Englisch, e5-small-v2, ist etwa 33 MB groß. Diese Anfrage verrät dem Dienst deine IP-Adresse und das angeforderte Modell. Der Browser speichert das Modell für später. Keine dieser Anfragen enthält Feed-Inhalte oder Einstellungen."
       ],
       [
         "Berechtigungen",
-        "Unterstützte Websites: Beitragstext auf X, LinkedIn und Reddit lesen und unscharf darstellen.\nSpeicher: Einstellungen und optionale Bewertungen auf deinem Gerät speichern.\nOffscreen-Seite (Chrome): das mehrsprachige Modell in einem gemeinsam genutzten Erweiterungsprozess ausführen. Sie erhält Text zur Bewertung, kann die Website aber nicht lesen."
+        "Unterstützte Websites: Beitragstext auf X, LinkedIn und Reddit lesen und unscharf darstellen.\nSpeicher: Einstellungen und optionale Bewertungen auf deinem Gerät speichern.\nOffscreen-Seite (Chrome): das standardmäßige Gemma-Modell in einem gemeinsam genutzten Erweiterungsprozess ausführen. Sie erhält Text zur Bewertung, kann die Website aber nicht lesen."
       ],
       [
         "Deine Daten löschen",

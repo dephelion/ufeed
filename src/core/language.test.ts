@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS } from './settings';
-import { DEFAULT_MODEL, MODELS, modelFor } from './models';
+import { MODELS, modelFor } from './models';
 import {
   blursAsOtherLanguage,
   classify,
@@ -8,7 +8,7 @@ import {
   type Detection,
 } from './language';
 
-const spec = modelFor(DEFAULT_MODEL);
+const spec = modelFor('e5-small');
 
 const cld = (isReliable: boolean, ...languages: [string, number][]): Detection => ({
   isReliable,

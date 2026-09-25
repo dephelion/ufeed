@@ -78,7 +78,7 @@
       ],
       [
         "🌍 Choisissez la langue du modèle",
-        "Le modèle par défaut fonctionne en anglais. Un modèle multilingue facultatif peut traiter des publications dans d’autres langues, avec un téléchargement initial plus volumineux."
+        "Le modèle Gemma par défaut traite toutes les langues. Un modèle plus petit, limité à l’anglais, est disponible avec un téléchargement unique."
       ],
       [
         "🎚️ Trouvez le bon réglage",
@@ -125,7 +125,7 @@
       ],
       [
         "🌍 Choisissez la langue qui vous convient",
-        "Le modèle par défaut fonctionne en anglais. Si vos fils sont dans d’autres langues, choisissez le modèle multilingue facultatif dans la fenêtre de l’extension. Il demande un téléchargement initial plus volumineux ; vos thèmes et réglages ne changent pas."
+        "Le modèle Gemma par défaut traite toutes les langues. Si vous préférez un téléchargement plus petit, choisissez le modèle limité à l’anglais dans la fenêtre de l’extension ; vos thèmes et réglages ne changent pas."
       ],
       [
         "Un coup de pouce, pas un juge infaillible",
@@ -152,11 +152,11 @@
       ],
       [
         "Ce que transmet uFeed",
-        "Lors de la première installation dans Chrome ou Firefox, uFeed ouvre sa page de bienvenue sur ufeed.es. Votre navigateur envoie une requête web ordinaire, qui révèle votre adresse IP, les détails habituels de la requête et le chemin correspondant à la langue choisie à l’hébergeur du site. Elle ne contient ni texte du fil, ni thèmes, ni réglages de l’extension. Par ailleurs, la première fois qu’un modèle linguistique est nécessaire, votre navigateur le télécharge depuis Hugging Face. Cette requête révèle votre adresse IP et le modèle demandé à ce service. Le navigateur met le modèle en cache pour la suite. Aucune de ces requêtes ne contient le contenu de votre fil ou vos réglages."
+        "Lors de la première installation dans Chrome ou Firefox, uFeed ouvre sa page de bienvenue sur ufeed.es. Votre navigateur envoie une requête web ordinaire, qui révèle votre adresse IP, les détails habituels de la requête et le chemin correspondant à la langue choisie à l’hébergeur du site. Elle ne contient ni texte du fil, ni thèmes, ni réglages de l’extension. Par ailleurs, la première fois qu’un modèle est nécessaire, votre navigateur le télécharge depuis Hugging Face. Le modèle par défaut est EmbeddingGemma (environ 197 Mo) ; le modèle facultatif limité à l’anglais, e5-small-v2, fait environ 33 Mo. Cette requête révèle votre adresse IP et le modèle demandé à ce service. Le navigateur met le modèle en cache pour la suite. Aucune de ces requêtes ne contient le contenu de votre fil ou vos réglages."
       ],
       [
         "Autorisations",
-        "Sites pris en charge : lire le texte des publications et appliquer le flou sur X, LinkedIn et Reddit.\nStockage : conserver vos réglages et vos évaluations facultatives sur votre appareil.\nPage hors écran (Chrome) : exécuter le modèle multilingue dans un processus partagé de l’extension. Il reçoit du texte à analyser, mais ne peut pas lire le site web."
+        "Sites pris en charge : lire le texte des publications et appliquer le flou sur X, LinkedIn et Reddit.\nStockage : conserver vos réglages et vos évaluations facultatives sur votre appareil.\nPage hors écran (Chrome) : exécuter le modèle Gemma par défaut dans un processus partagé de l’extension. Il reçoit du texte à analyser, mais ne peut pas lire le site web."
       ],
       [
         "Supprimer vos données",

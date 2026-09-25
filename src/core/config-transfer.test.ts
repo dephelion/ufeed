@@ -89,7 +89,7 @@ describe('a file that cannot be trusted', () => {
     expect(refused(JSON.stringify({ ...file, model: { id: 'other', dim: 384 } }))).toBe(
       'other-model',
     );
-    expect(refused(JSON.stringify({ ...file, model: { id: MODEL.id, dim: 768 } }))).toBe(
+    expect(refused(JSON.stringify({ ...file, model: { id: MODEL.id, dim: 384 } }))).toBe(
       'other-model',
     );
   });
