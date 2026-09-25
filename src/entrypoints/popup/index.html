@@ -19,10 +19,22 @@
           ></select>
         </label>
       </div>
-      <span class="chip" id="engine-chip">
-        <span class="dot" id="engine-chip-dot"></span>
-        <span id="engine-chip-text" data-i18n="chipInitial"></span>
-      </span>
+      <div class="engine-control">
+        <span class="chip" id="engine-chip">
+          <span class="dot" id="engine-chip-dot"></span>
+          <span id="engine-chip-text" data-i18n="chipInitial"></span>
+        </span>
+        <button
+          id="engine-repair"
+          class="engine-repair"
+          type="button"
+          data-i18n-aria-label="engineRepairLabel"
+          data-i18n-title="engineRepairLabel"
+          hidden
+        >
+          ↻
+        </button>
+      </div>
       <label class="switch">
         <input type="checkbox" id="enabled" />
         <span id="enabled-label"></span>

@@ -49,6 +49,13 @@ header .switch {
   justify-self: end;
 }
 
+.engine-control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
 .title {
   display: flex;
   align-items: center;
@@ -399,6 +406,29 @@ footer {
   align-items: center;
   gap: 8px;
   margin: 0;
+}
+
+#engine-status {
+  min-width: 0;
+}
+
+.engine-repair {
+  flex: none;
+  padding: 1px 7px 3px;
+  color: var(--muted);
+  background: transparent;
+  border-color: var(--line);
+  font-size: 17px;
+  line-height: 1;
+}
+
+.engine-repair[hidden] {
+  display: none;
+}
+
+.engine-repair:hover {
+  color: var(--fg);
+  border-color: var(--muted);
 }
 
 /* Last line in the popup, which is where a reader looks for a way to reply.

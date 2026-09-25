@@ -144,16 +144,19 @@
     "message": "Modell bereit"
   },
   "engineFailed": {
-    "message": "Modell konnte nicht geladen werden"
+    "message": "Die Engine funktioniert nicht mehr. Starte uFeed mit der Schaltfläche zum Neuladen neu und lade dann diesen Tab neu."
   },
   "engineFailedWhy": {
-    "message": "Modell konnte nicht geladen werden — $REASON$",
+    "message": "Die Engine funktioniert nicht mehr — $REASON$. Starte uFeed mit der Schaltfläche zum Neuladen neu und lade dann diesen Tab neu.",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "Modell-Cache löschen und uFeed neu starten"
   },
   "statusInitial": {
     "message": "Einstellungen werden geprüft…"

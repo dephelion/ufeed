@@ -18,18 +18,23 @@ import {
 const log = logger('engine');
 log.info('engine starting', { origin: location.origin });
 
-addEventListener('unhandledrejection', (event) => {
-  event.preventDefault();
-  log.error('unhandled rejection in engine', { reason: String(event.reason) });
-});
-
 let port: MessagePort | undefined;
 let lastStatus: StatusEvent = { type: 'STATUS', state: 'idle' };
+let fatalError = false;
 
 const fail = (message: string): void => {
   lastStatus = { type: 'STATUS', state: 'error', message };
   port?.postMessage(lastStatus);
 };
+
+addEventListener('unhandledrejection', (event) => {
+  event.preventDefault();
+  fatalError = true;
+  const reason =
+    event.reason instanceof Error ? event.reason.message : String(event.reason);
+  log.warn('engine stopped after an unhandled rejection', { reason });
+  fail(reason);
+});
 
 /**
  * The content script picks the model and puts it in this frame's URL. Read here
@@ -55,12 +60,14 @@ if (worker) {
   worker.onmessage = (event: MessageEvent<unknown>) => {
     const reply = event.data;
     if (!isEngineReply(reply)) return;
+    if (fatalError) return;
     if (reply.type === 'STATUS') lastStatus = reply;
     port?.postMessage(reply satisfies EngineReply);
   };
 
   worker.onerror = (event) => {
     event.preventDefault();
+    fatalError = true;
     log.error('worker error', { reason: event.message });
     fail(event.message || 'worker failed to start');
   };

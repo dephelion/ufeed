@@ -144,16 +144,19 @@
     "message": "Modelo listo"
   },
   "engineFailed": {
-    "message": "No se pudo cargar el modelo"
+    "message": "El motor dejó de funcionar. Usa el botón de recarga para reiniciar uFeed y después recarga esta pestaña."
   },
   "engineFailedWhy": {
-    "message": "No se pudo cargar el modelo — $REASON$",
+    "message": "El motor dejó de funcionar — $REASON$. Usa el botón de recarga para reiniciar uFeed y después recarga esta pestaña.",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "Borrar la caché del modelo y reiniciar uFeed"
   },
   "statusInitial": {
     "message": "Comprobando ajustes…"

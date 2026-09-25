@@ -144,16 +144,19 @@
     "message": "模型已就绪"
   },
   "engineFailed": {
-    "message": "模型加载失败"
+    "message": "引擎已停止运行。请使用刷新按钮重启 uFeed，然后重新加载此标签页。"
   },
   "engineFailedWhy": {
-    "message": "模型加载失败 — $REASON$",
+    "message": "引擎已停止运行 — $REASON$。请使用刷新按钮重启 uFeed，然后重新加载此标签页。",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "清除模型缓存并重启 uFeed"
   },
   "statusInitial": {
     "message": "正在检查设置…"

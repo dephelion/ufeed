@@ -113,6 +113,8 @@ describe('describeEngine', () => {
     );
     expect(tone).toBe('error');
     expect(text).toContain('model returns wrong vectors');
+    expect(text).toMatch(/refresh button/i);
+    expect(text).toMatch(/restart uFeed/i);
   });
 });
 

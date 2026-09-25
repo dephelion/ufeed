@@ -36,6 +36,8 @@ How a translation fits. Every locale is checked for keys, placeholders, length a
 
 Model loading and real scoring in a browser. Those need a build loaded in Chrome or Firefox and the popup status watched. A green suite is not a working extension.
 
+**Force download recovery in Chrome.** Load a debug build; inspect the offscreen document from `chrome://inspect/#pages`; delete `transformers-cache` in Application → Cache Storage; disconnect the computer from the network; reload the extension from `chrome://extensions`; reload a feed tab. The shared worker and iframe fallback both fail, the popup reaches `Failed`, and its refresh button appears. Reconnect before pressing refresh; expect the saved settings and a new model download after reloading the feed tab.
+
 The backend self-check ([model.md](model.md)) is the runtime substitute: it catches a miscomputing backend on the user's hardware, which no CI can.
 
 ## Full check

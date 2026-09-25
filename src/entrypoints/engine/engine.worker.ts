@@ -30,11 +30,6 @@ captureConsole('runtime');
 const log = logger('worker');
 const embedder = new Embedder();
 
-self.addEventListener('unhandledrejection', (event) => {
-  event.preventDefault();
-  log.error('unhandled rejection in worker', { reason: describe(event.reason) });
-});
-
 interface Topics {
   request: SetTopicsRequest;
   /** Every line's ratings together; see `pooled`. */
@@ -46,6 +41,7 @@ interface Topics {
 /** Kept past a failed load, so the next load still has the query to embed. */
 const topics = new Map<string, Topics>();
 let loading: Promise<void> | undefined;
+let unexpectedFailure: Error | undefined;
 let threads = 1;
 let work = Promise.resolve();
 
@@ -58,11 +54,22 @@ let spec: ModelSpec = modelFor(DEFAULT_MODEL);
 const post = (reply: EngineReply, clientId = '') =>
   self.postMessage(clientId ? { clientId, reply } : reply);
 
+self.addEventListener('unhandledrejection', (event) => {
+  event.preventDefault();
+  unexpectedFailure = asError(event.reason);
+  log.warn('worker stopped after an unhandled rejection', {
+    reason: unexpectedFailure.message,
+  });
+  post({ type: 'STATUS', state: 'error', message: unexpectedFailure.message });
+});
+
 function ensureLoaded(): Promise<void> {
+  if (unexpectedFailure) return Promise.reject(unexpectedFailure);
   const progress = (p: {
     state: 'downloading' | 'warming' | 'ready';
     progress?: number;
   }) => {
+    if (unexpectedFailure) return;
     if (p.state === 'downloading')
       log.info('downloading', { percent: Math.round(p.progress ?? 0) });
     post({ type: 'STATUS', state: p.state, progress: p.progress });
@@ -77,12 +84,8 @@ function ensureLoaded(): Promise<void> {
       threads = 1;
       return embedder.load(spec, progress, undefined, 1);
     })
-    .catch((error: unknown) => {
-      const message = describe(error);
-      post({ type: 'STATUS', state: 'error', message });
-      throw error;
-    })
     .then(() => {
+      if (unexpectedFailure) throw unexpectedFailure;
       log.info('ready', { model: spec.label, device: embedder.device });
       post({ type: 'STATUS', state: 'ready' });
     })
@@ -251,4 +254,8 @@ function toVectors(rows: number[][] | undefined): Vector[] {
 
 function describe(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+function asError(error: unknown): Error {
+  return error instanceof Error ? error : new Error(String(error));
 }

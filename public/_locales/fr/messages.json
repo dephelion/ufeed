@@ -144,16 +144,19 @@
     "message": "Modèle prêt"
   },
   "engineFailed": {
-    "message": "Le modèle n'a pas pu se charger"
+    "message": "Le moteur a cessé de fonctionner. Utilisez le bouton d'actualisation pour redémarrer uFeed, puis rechargez cet onglet."
   },
   "engineFailedWhy": {
-    "message": "Le modèle n'a pas pu se charger — $REASON$",
+    "message": "Le moteur a cessé de fonctionner — $REASON$. Utilisez le bouton d'actualisation pour redémarrer uFeed, puis rechargez cet onglet.",
     "placeholders": {
       "reason": {
         "content": "$1",
         "example": "out of memory"
       }
     }
+  },
+  "engineRepairLabel": {
+    "message": "Vider le cache du modèle et redémarrer uFeed"
   },
   "statusInitial": {
     "message": "Vérification des réglages…"

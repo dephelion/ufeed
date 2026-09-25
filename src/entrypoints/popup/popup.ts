@@ -24,6 +24,7 @@ import { LANGUAGES, isLanguageCode, resolveLanguage } from '../../core/languages
 import { logger } from '../../core/log';
 import type { MessageKey } from '../../core/messages';
 import { loadTranslator } from '../../platform/i18n';
+import { restartExtension } from '../../platform/recovery';
 import { askEngineStatus, onEngineStatus } from '../../platform/status-channel';
 import { askTabSwitch, setTabSwitch } from '../../platform/tab-switch';
 import {
@@ -83,6 +84,7 @@ const dot = el<HTMLSpanElement>('dot');
 const engineText = el<HTMLSpanElement>('engine-status');
 const engineDot = el<HTMLSpanElement>('engine-dot');
 const engineLine = el<HTMLParagraphElement>('engine-line');
+const engineRepair = el<HTMLButtonElement>('engine-repair');
 const chipText = el<HTMLSpanElement>('engine-chip-text');
 const chipDot = el<HTMLSpanElement>('engine-chip-dot');
 const languagePicker = el<HTMLSelectElement>('language');
@@ -193,6 +195,7 @@ function describeEngineStatus(status: EngineStatus | undefined): void {
     chipDot.dataset.state = 'ready';
     chipText.textContent = t('chipBlacklist');
     engineLine.hidden = true;
+    engineRepair.hidden = true;
     return;
   }
   const short = summarizeEngine(status, t);
@@ -203,6 +206,7 @@ function describeEngineStatus(status: EngineStatus | undefined): void {
   engineDot.dataset.state = full.tone;
   engineText.textContent = full.text;
   engineLine.hidden = full.tone === 'ready';
+  engineRepair.hidden = status?.state !== 'error';
 }
 
 /** A refused write puts the controls back to what is actually stored. */
@@ -245,6 +249,16 @@ void askEngineStatus().then(async ({ tabId, status }) => {
   });
   renderEnabled(await askTabSwitch(tabId));
   describeStatus(saved);
+});
+
+engineRepair.addEventListener('click', () => {
+  engineRepair.disabled = true;
+  void restartExtension().catch((error: unknown) => {
+    engineRepair.disabled = false;
+    const message = error instanceof Error ? error.message : String(error);
+    log.warn('model cache could not be cleared', { reason: message });
+    engineText.textContent = describeEngine({ state: 'error', message }, t).text;
+  });
 });
 
 languagePicker.addEventListener('change', () => {
