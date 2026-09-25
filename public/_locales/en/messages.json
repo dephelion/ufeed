@@ -174,10 +174,10 @@
     "message": "Model ready"
   },
   "engineFailed": {
-    "message": "Model failed to load"
+    "message": "Model failed to load. Reload this tab to retry. If it fails again, restart your browser."
   },
   "engineFailedWhy": {
-    "message": "Model failed to load — $REASON$",
+    "message": "Model failed to load — $REASON$. Reload this tab to retry. If it fails again, restart your browser.",
     "description": "The reason is the engine’s own error text and is not translated.",
     "placeholders": {
       "reason": {

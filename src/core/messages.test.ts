@@ -19,7 +19,7 @@ describe('createTranslator', () => {
 
   it('reads a value as text, whatever characters it holds', () => {
     expect(t('engineFailedWhy', 'out $& of memory')).toBe(
-      'Model failed to load — out $& of memory',
+      'Model failed to load — out $& of memory. Reload this tab to retry. If it fails again, restart your browser.',
     );
   });
 

@@ -144,10 +144,10 @@
     "message": "模型已就绪"
   },
   "engineFailed": {
-    "message": "模型加载失败"
+    "message": "模型加载失败。请重新加载此标签页以重试。如果仍然失败，请重启浏览器。"
   },
   "engineFailedWhy": {
-    "message": "模型加载失败 — $REASON$",
+    "message": "模型加载失败 — $REASON$。请重新加载此标签页以重试。如果仍然失败，请重启浏览器。",
     "placeholders": {
       "reason": {
         "content": "$1",

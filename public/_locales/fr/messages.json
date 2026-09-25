@@ -144,10 +144,10 @@
     "message": "Modèle prêt"
   },
   "engineFailed": {
-    "message": "Le modèle n'a pas pu se charger"
+    "message": "Le modèle n'a pas pu se charger. Rechargez cet onglet pour réessayer. Si le problème persiste, redémarrez votre navigateur."
   },
   "engineFailedWhy": {
-    "message": "Le modèle n'a pas pu se charger — $REASON$",
+    "message": "Le modèle n'a pas pu se charger — $REASON$. Rechargez cet onglet pour réessayer. Si le problème persiste, redémarrez votre navigateur.",
     "placeholders": {
       "reason": {
         "content": "$1",

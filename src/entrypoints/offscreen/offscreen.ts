@@ -40,7 +40,10 @@ const broadcast = (status: StatusEvent): void => {
 
 addEventListener('unhandledrejection', (event) => {
   event.preventDefault();
-  log.error('unhandled rejection in shared engine', { reason: String(event.reason) });
+  const reason =
+    event.reason instanceof Error ? event.reason.message : String(event.reason);
+  log.warn('shared engine stopped after an unhandled rejection', { reason });
+  broadcast({ type: 'STATUS', state: 'error', message: reason });
 });
 
 let worker: Worker | undefined;

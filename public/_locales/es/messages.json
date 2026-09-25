@@ -144,10 +144,10 @@
     "message": "Modelo listo"
   },
   "engineFailed": {
-    "message": "No se pudo cargar el modelo"
+    "message": "No se pudo cargar el modelo. Recarga esta pestaña para volver a intentarlo. Si vuelve a fallar, reinicia el navegador."
   },
   "engineFailedWhy": {
-    "message": "No se pudo cargar el modelo — $REASON$",
+    "message": "No se pudo cargar el modelo — $REASON$. Recarga esta pestaña para volver a intentarlo. Si vuelve a fallar, reinicia el navegador.",
     "placeholders": {
       "reason": {
         "content": "$1",

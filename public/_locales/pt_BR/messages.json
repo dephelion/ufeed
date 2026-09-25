@@ -144,10 +144,10 @@
     "message": "Modelo pronto"
   },
   "engineFailed": {
-    "message": "Não foi possível carregar o modelo"
+    "message": "Não foi possível carregar o modelo. Recarregue esta aba para tentar novamente. Se falhar de novo, reinicie o navegador."
   },
   "engineFailedWhy": {
-    "message": "Não foi possível carregar o modelo — $REASON$",
+    "message": "Não foi possível carregar o modelo — $REASON$. Recarregue esta aba para tentar novamente. Se falhar de novo, reinicie o navegador.",
     "placeholders": {
       "reason": {
         "content": "$1",

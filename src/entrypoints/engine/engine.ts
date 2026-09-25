@@ -18,11 +18,6 @@ import {
 const log = logger('engine');
 log.info('engine starting', { origin: location.origin });
 
-addEventListener('unhandledrejection', (event) => {
-  event.preventDefault();
-  log.error('unhandled rejection in engine', { reason: String(event.reason) });
-});
-
 let port: MessagePort | undefined;
 let lastStatus: StatusEvent = { type: 'STATUS', state: 'idle' };
 
@@ -30,6 +25,14 @@ const fail = (message: string): void => {
   lastStatus = { type: 'STATUS', state: 'error', message };
   port?.postMessage(lastStatus);
 };
+
+addEventListener('unhandledrejection', (event) => {
+  event.preventDefault();
+  const reason =
+    event.reason instanceof Error ? event.reason.message : String(event.reason);
+  log.warn('engine stopped after an unhandled rejection', { reason });
+  fail(reason);
+});
 
 /**
  * The content script picks the model and puts it in this frame's URL. Read here

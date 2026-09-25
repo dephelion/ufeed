@@ -24,8 +24,8 @@ vi.mock('../engine/engine.worker.ts?worker', () => ({
   },
 }));
 
-describe('offscreen port lifecycle', () => {
-  it('consumes a BFCache disconnect error and releases the worker client once', async () => {
+describe('offscreen lifecycle', () => {
+  it('releases a disconnected client and turns an unhandled rejection into status', async () => {
     await import('./offscreen');
     const onConnect = state.connect.mock.calls[0]?.[0] as (port: unknown) => void;
     let disconnect: () => void = () => {};
@@ -49,6 +49,24 @@ describe('offscreen port lifecycle', () => {
     expect(state.workerPost).toHaveBeenLastCalledWith({
       type: 'RELEASE',
       clientId: 'c1',
+    });
+
+    const active = {
+      name: 'ufeed:shared-engine',
+      postMessage: vi.fn(),
+      onMessage: { addListener: vi.fn() },
+      onDisconnect: { addListener: vi.fn() },
+    };
+    onConnect(active);
+    const rejection = new Event('unhandledrejection', { cancelable: true });
+    Object.defineProperty(rejection, 'reason', { value: new Error('network error') });
+    dispatchEvent(rejection);
+
+    expect(rejection.defaultPrevented).toBe(true);
+    expect(active.postMessage).toHaveBeenLastCalledWith({
+      type: 'STATUS',
+      state: 'error',
+      message: 'network error',
     });
   });
 });

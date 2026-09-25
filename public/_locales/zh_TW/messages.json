@@ -144,10 +144,10 @@
     "message": "模型已就緒"
   },
   "engineFailed": {
-    "message": "模型載入失敗"
+    "message": "模型載入失敗。請重新載入此分頁以重試。如果仍然失敗，請重新啟動瀏覽器。"
   },
   "engineFailedWhy": {
-    "message": "模型載入失敗 — $REASON$",
+    "message": "模型載入失敗 — $REASON$。請重新載入此分頁以重試。如果仍然失敗，請重新啟動瀏覽器。",
     "placeholders": {
       "reason": {
         "content": "$1",
