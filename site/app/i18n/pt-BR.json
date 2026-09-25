@@ -152,11 +152,11 @@
       ],
       [
         "O que o uFeed envia",
-        "Na primeira instalação no Chrome ou Firefox, o uFeed abre a página de boas-vindas em ufeed.es. O navegador faz uma solicitação normal de página, que revela seu endereço IP, os dados técnicos habituais da solicitação e o caminho do idioma escolhido ao host do site. Ela não inclui o texto do feed, seus tópicos nem as configurações da extensão. Separadamente, quando um modelo de linguagem é necessário pela primeira vez, o navegador o baixa do Hugging Face. Essa solicitação revela seu IP e o modelo solicitado ao serviço. O navegador armazena o modelo para uso futuro. Nenhuma dessas solicitações inclui o conteúdo do feed ou suas configurações."
+        "Na primeira instalação no Chrome ou Firefox, o uFeed abre a página de boas-vindas em ufeed.es. O navegador faz uma solicitação normal de página, que revela seu endereço IP, os dados técnicos habituais da solicitação e o caminho do idioma escolhido ao host do site. Ela não inclui o texto do feed, seus tópicos nem as configurações da extensão. Separadamente, quando um modelo é necessário pela primeira vez, o navegador o baixa do Hugging Face. O modelo padrão é o EmbeddingGemma (cerca de 197 MB); o modelo opcional somente em inglês, e5-small-v2, tem cerca de 33 MB. Essa solicitação revela seu IP e o modelo solicitado ao serviço. O navegador armazena o modelo para uso futuro. Nenhuma dessas solicitações inclui o conteúdo do feed ou suas configurações."
       ],
       [
         "Permissões",
-        "Sites compatíveis: ler o texto das publicações e aplicar o desfoque no X, LinkedIn e Reddit.\nArmazenamento: manter suas configurações e avaliações opcionais no dispositivo.\nPágina offscreen (Chrome): executar o modelo multilíngue em um processo compartilhado da extensão. Ela recebe texto para análise, mas não consegue ler o site."
+        "Sites compatíveis: ler o texto das publicações e aplicar o desfoque no X, LinkedIn e Reddit.\nArmazenamento: manter suas configurações e avaliações opcionais no dispositivo.\nPágina offscreen (Chrome): executar o modelo Gemma padrão em um processo compartilhado da extensão. Ela recebe texto para análise, mas não consegue ler o site."
       ],
       [
         "Como apagar seus dados",

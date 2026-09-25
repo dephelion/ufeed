@@ -152,11 +152,11 @@
       ],
       [
         "Qué envía uFeed",
-        "Al instalar uFeed por primera vez en Chrome o Firefox, se abre su página de bienvenida en ufeed.es. Tu navegador realiza una solicitud web normal que revela tu dirección IP, los datos técnicos habituales de la solicitud y la ruta del idioma elegido al sitio que aloja la página. No incluye el texto de tu feed, tus temas ni los ajustes de la extensión. Por separado, la primera vez que se necesita un modelo, el navegador lo descarga de Hugging Face. Esa solicitud revela tu IP y el modelo solicitado a ese servicio. El navegador guarda el modelo para usarlo después. Ninguna de estas solicitudes incluye el contenido de tu feed ni tus ajustes."
+        "Al instalar uFeed por primera vez en Chrome o Firefox, se abre su página de bienvenida en ufeed.es. Tu navegador realiza una solicitud web normal que revela tu dirección IP, los datos técnicos habituales de la solicitud y la ruta del idioma elegido al sitio que aloja la página. No incluye el texto de tu feed, tus temas ni los ajustes de la extensión. Por separado, la primera vez que se necesita un modelo, el navegador lo descarga de Hugging Face. El modelo predeterminado es EmbeddingGemma (unos 197 MB); el modelo opcional solo para inglés, e5-small-v2, ocupa unos 33 MB. Esa solicitud revela tu IP y el modelo solicitado a ese servicio. El navegador guarda el modelo para usarlo después. Ninguna de estas solicitudes incluye el contenido de tu feed ni tus ajustes."
       ],
       [
         "Permisos",
-        "Sitios web compatibles: leer el texto de las publicaciones y aplicar el difuminado en X, LinkedIn y Reddit.\nAlmacenamiento: guardar tus ajustes y valoraciones opcionales en el dispositivo.\nPágina offscreen (Chrome): ejecutar el modelo multilingüe en un proceso compartido de la extensión. Recibe texto para analizar, pero no puede leer el sitio web."
+        "Sitios web compatibles: leer el texto de las publicaciones y aplicar el difuminado en X, LinkedIn y Reddit.\nAlmacenamiento: guardar tus ajustes y valoraciones opcionales en el dispositivo.\nPágina offscreen (Chrome): ejecutar el modelo Gemma predeterminado en un proceso compartido de la extensión. Recibe texto para analizar, pero no puede leer el sitio web."
       ],
       [
         "Cómo borrar tus datos",
