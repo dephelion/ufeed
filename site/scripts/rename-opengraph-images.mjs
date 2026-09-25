@@ -1,5 +1,6 @@
 import { access, readFile, readdir, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { Script } from 'node:vm';
 
 const outputDirectory = new URL('../out/', import.meta.url);
 
@@ -37,6 +38,17 @@ await Promise.all(
 
 for (const file of await htmlFiles(outputDirectory.pathname)) {
   const html = await readFile(file, 'utf8');
-  const fixedHtml = html.replace(/opengraph-image\?[^"']+/g, 'opengraph-image.png');
+  const fixedHtml = html.replace(
+    /opengraph-image\?[a-zA-Z0-9_-]+/g,
+    'opengraph-image.png',
+  );
   if (fixedHtml !== html) await writeFile(file, fixedHtml);
+
+  for (const [, attributes, source] of fixedHtml.matchAll(
+    /<script\b([^>]*)>([\s\S]*?)<\/script>/g,
+  )) {
+    if (!/\bsrc=|\btype="application\/ld\+json"/.test(attributes)) {
+      new Script(source, { filename: file });
+    }
+  }
 }

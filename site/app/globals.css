@@ -110,38 +110,44 @@ a:hover {
   display: inline-flex;
   align-items: center;
 }
-.language-select select {
-  appearance: none;
-  width: 56px;
-  border: 1px solid #535861;
-  border-radius: 7px;
-  padding: 8px 21px 8px 10px;
-  color: transparent;
-  background: #20242b;
+.language-trigger {
+  border: 0;
+  padding: 8px;
+  color: var(--text);
+  background: transparent;
   font: inherit;
   cursor: pointer;
 }
-.language-current-flag {
-  position: absolute;
-  left: 10px;
-  pointer-events: none;
+.language-trigger:hover {
+  color: var(--yellow);
 }
-.language-select::after {
-  position: absolute;
-  top: 50%;
-  right: 9px;
-  width: 6px;
-  height: 6px;
-  border-right: 1px solid var(--text);
-  border-bottom: 1px solid var(--text);
-  color: var(--text);
-  content: '';
-  pointer-events: none;
-  transform: translateY(-70%) rotate(45deg);
+.language-trigger:focus-visible,
+.language-options a:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 2px;
 }
-.language-select option {
-  background: #20242b;
-  color: var(--text);
+.language-options {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}
+.language-options a {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.language-options a:hover,
+.language-options a[aria-current='true'] {
+  background: var(--line);
 }
 .sr-only {
   position: absolute;
@@ -764,7 +770,6 @@ h1 {
   }
   .header nav .language-select {
     align-self: flex-start;
-    width: 56px;
     margin: 4px 8px;
   }
   .header .nav-github {
