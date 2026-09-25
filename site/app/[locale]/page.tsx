@@ -172,9 +172,14 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
       <section className="closing wrap">
         <p>{t('home.closing')}</p>
-        <a href={FIREFOX_STORE_URL} target="_blank" rel="noopener noreferrer">
-          {t('home.store')} <span>↗</span>
-        </a>
+        <div className="closing-links">
+          <a href={CHROME_STORE_URL} target="_blank" rel="noopener noreferrer">
+            {t('home.chromeStore')} <span>↗</span>
+          </a>
+          <a href={FIREFOX_STORE_URL} target="_blank" rel="noopener noreferrer">
+            {t('home.store')} <span>↗</span>
+          </a>
+        </div>
       </section>
     </main>
   );

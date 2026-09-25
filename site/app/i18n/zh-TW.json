@@ -94,6 +94,7 @@
     ],
     "qualityNote": "uFeed 依主題而非品質分類，有時也會判斷錯誤。同一主題下，精彩的貼文和乏味的貼文都可能保留下來。",
     "closing": "少些干擾，多看所愛。",
+    "chromeStore": "前往 Chrome 線上應用程式商店查看 uFeed",
     "store": "前往 Firefox 附加元件查看 uFeed"
   },
   "how": {

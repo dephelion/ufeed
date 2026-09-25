@@ -557,7 +557,13 @@ h1 {
   font-weight: 700;
   letter-spacing: -0.025em;
 }
-.closing a {
+.closing-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+}
+.closing-links a {
   color: var(--yellow);
   font-size: 14px;
   font-weight: 700;
@@ -814,6 +820,9 @@ h1 {
     flex-direction: column;
     gap: 15px;
     padding: 22px;
+  }
+  .closing-links {
+    align-items: flex-start;
   }
   .footer {
     padding-block: 20px;

@@ -97,6 +97,7 @@
     ],
     "qualityNote": "uFeed classe les sujets, pas la qualité, et peut se tromper. Une excellente publication et une autre sans intérêt sur le même sujet peuvent toutes deux rester visibles.",
     "closing": "Moins de bruit. Plus de ce qui vous plaît.",
+    "chromeStore": "Retrouvez uFeed sur le Chrome Web Store",
     "store": "Retrouvez uFeed sur Firefox Add-ons"
   },
   "how": {

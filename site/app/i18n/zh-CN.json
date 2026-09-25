@@ -91,6 +91,7 @@
     ],
     "qualityNote": "uFeed 按主题而非质量分类，有时也会判断错误。同一主题下，精彩的帖子和乏味的帖子都可能保留下来。",
     "closing": "少些干扰，多看所爱。",
+    "chromeStore": "前往 Chrome 应用商店查看 uFeed",
     "store": "前往 Firefox 附加组件查看 uFeed"
   },
   "how": {
