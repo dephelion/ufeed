@@ -376,6 +376,7 @@ h1 {
 .button.secondary {
   border: 1px solid #555a64;
   color: var(--text);
+  box-shadow: 0 0 14px rgb(255 255 255 / 18%);
   white-space: nowrap;
 }
 .quiet-note {
