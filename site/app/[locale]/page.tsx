@@ -1,6 +1,11 @@
-import GitHubIcon from '../components/GitHubIcon';
 import ChromeIcon from '../components/ChromeIcon';
-import { CHROME_STORE_URL, REPOSITORY_URL, SITE_URL } from '../lib/site';
+import FirefoxIcon from '../components/FirefoxIcon';
+import {
+  CHROME_STORE_URL,
+  FIREFOX_STORE_URL,
+  REPOSITORY_URL,
+  SITE_URL,
+} from '../lib/site';
 import { translate } from '../i18n/config';
 import type { Locale } from '../i18n/resources';
 
@@ -48,7 +53,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     operatingSystem: 'Chrome, Firefox',
     description: t('seo.homeDescription'),
     url: SITE_URL,
-    downloadUrl: [CHROME_STORE_URL, REPOSITORY_URL],
+    downloadUrl: [CHROME_STORE_URL, FIREFOX_STORE_URL],
     license: 'https://www.gnu.org/licenses/gpl-3.0.html',
     isAccessibleForFree: true,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -84,11 +89,11 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </a>
             <a
               className="button secondary"
-              href={REPOSITORY_URL}
+              href={FIREFOX_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <GitHubIcon /> {t('home.explore')}
+              <FirefoxIcon /> {t('home.explore')}
             </a>
           </div>
         </div>
@@ -165,7 +170,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
       <section className="closing wrap">
         <p>{t('home.closing')}</p>
-        <a href={CHROME_STORE_URL} target="_blank" rel="noopener noreferrer">
+        <a href={FIREFOX_STORE_URL} target="_blank" rel="noopener noreferrer">
           {t('home.store')} <span>↗</span>
         </a>
       </section>

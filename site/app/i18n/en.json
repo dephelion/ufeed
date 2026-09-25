@@ -47,7 +47,7 @@
     "eyebrow": "YOUR FEED, YOUR WAY",
     "description": "uFeed is a free browser extension that gently blurs posts outside your interests, so it’s easier to find the ones that are.",
     "chrome": "Add to Chrome",
-    "explore": "Explore the project",
+    "explore": "Add to Firefox",
     "note": "Free, now and always · Open source · Your data stays yours",
     "reel": "uFeed in action",
     "features": [
@@ -95,7 +95,7 @@
     ],
     "qualityNote": "uFeed sorts by subject, not quality, and it sometimes gets things wrong. A great post and a dull one about the same topic can both stay.",
     "closing": "Less noise. More of your thing.",
-    "store": "See uFeed in the Chrome Web Store"
+    "store": "See uFeed in Firefox Add-ons"
   },
   "how": {
     "title": "How uFeed works",
