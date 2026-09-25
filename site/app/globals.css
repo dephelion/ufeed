@@ -111,10 +111,15 @@ a:hover {
   align-items: center;
 }
 .language-trigger {
-  border: 0;
-  padding: 8px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid #535861;
+  border-radius: 7px;
+  padding: 0;
   color: var(--text);
-  background: transparent;
+  background: var(--panel);
   font: inherit;
   cursor: pointer;
 }
