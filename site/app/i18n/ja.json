@@ -47,7 +47,9 @@
     "eyebrow": "フィードを、自分らしく",
     "description": "uFeed は無料のブラウザー拡張機能です。興味のない投稿をやさしくぼかすことで、見たい投稿を見つけやすくします。",
     "chrome": "Chrome に追加",
-    "explore": "プロジェクトを見る",
+    "explore": "Firefox に追加",
+    "chromeTitle": "Chrome ウェブストアで見る",
+    "firefoxTitle": "Firefox Add-ons で見る",
     "note": "ずっと無料 · オープンソース · データはあなたのもの",
     "reel": "uFeed の動作イメージ",
     "features": [
@@ -95,7 +97,8 @@
     ],
     "qualityNote": "uFeed が分類するのは話題であり、投稿の質ではありません。判定を誤ることもあります。同じ話題の素晴らしい投稿と退屈な投稿が、どちらも残る場合があります。",
     "closing": "ノイズを減らして、好きなものを。",
-    "store": "Chrome ウェブストアで uFeed を見る"
+    "chromeStore": "Chrome ウェブストアで uFeed を見る",
+    "store": "Firefox Add-ons で uFeed を見る"
   },
   "how": {
     "title": "uFeed の仕組み",

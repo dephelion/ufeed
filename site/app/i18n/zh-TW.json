@@ -47,7 +47,9 @@
     "eyebrow": "你的動態消息，由你決定",
     "description": "uFeed 是一款免費的瀏覽器擴充功能，會輕柔地模糊與您興趣不符的貼文，讓您更容易找到真正想看的內容。",
     "chrome": "新增至 Chrome",
-    "explore": "瀏覽專案",
+    "explore": "新增至 Firefox",
+    "chromeTitle": "在 Chrome 線上應用程式商店查看",
+    "firefoxTitle": "在 Firefox 附加元件中查看",
     "note": "永遠免費 · 開源 · 您的資料由您掌控",
     "reel": "uFeed 使用示範",
     "features": [
@@ -92,7 +94,8 @@
     ],
     "qualityNote": "uFeed 依主題而非品質分類，有時也會判斷錯誤。同一主題下，精彩的貼文和乏味的貼文都可能保留下來。",
     "closing": "少些干擾，多看所愛。",
-    "store": "前往 Chrome 線上應用程式商店查看 uFeed"
+    "chromeStore": "前往 Chrome 線上應用程式商店查看 uFeed",
+    "store": "前往 Firefox 附加元件查看 uFeed"
   },
   "how": {
     "title": "uFeed 的運作方式",

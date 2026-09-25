@@ -47,7 +47,9 @@
     "eyebrow": "TU FEED, A TU MANERA",
     "description": "uFeed es una extensión gratuita para el navegador que oculta las publicaciones que no coinciden con tus intereses, para que encuentres más fácilmente las que sí.",
     "chrome": "Añadir a Chrome",
-    "explore": "Explorar el proyecto",
+    "explore": "Añadir a Firefox",
+    "chromeTitle": "Ver en Chrome Web Store",
+    "firefoxTitle": "Ver en Firefox Add-ons",
     "note": "Gratis para siempre · Código abierto · Tus datos son tuyos",
     "reel": "uFeed en acción",
     "features": [
@@ -95,7 +97,8 @@
     ],
     "qualityNote": "uFeed clasifica por tema, no por calidad, y a veces se equivoca. Una publicación excelente y otra aburrida sobre el mismo tema pueden quedar visibles.",
     "closing": "Menos ruido. Más de lo que te gusta.",
-    "store": "Descubre uFeed en Chrome Web Store"
+    "chromeStore": "Descubre uFeed en Chrome Web Store",
+    "store": "Descubre uFeed en Firefox Add-ons"
   },
   "how": {
     "title": "Cómo funciona uFeed",

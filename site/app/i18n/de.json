@@ -47,7 +47,9 @@
     "eyebrow": "DEIN FEED, DEINE WAHL",
     "description": "uFeed ist eine kostenlose Browser-Erweiterung, die Beiträge außerhalb deiner Interessen sanft unscharf macht, damit du die passenden leichter findest.",
     "chrome": "Zu Chrome hinzufügen",
-    "explore": "Projekt ansehen",
+    "explore": "Zu Firefox hinzufügen",
+    "chromeTitle": "Im Chrome Web Store ansehen",
+    "firefoxTitle": "Bei Firefox Add-ons ansehen",
     "note": "Für immer kostenlos · Open Source · Deine Daten bleiben deine",
     "reel": "uFeed in Aktion",
     "features": [
@@ -95,7 +97,8 @@
     ],
     "qualityNote": "uFeed sortiert nach Themen, nicht nach Qualität, und kann sich irren. Ein großartiger und ein langweiliger Beitrag zum selben Thema können beide sichtbar bleiben.",
     "closing": "Weniger Rauschen. Mehr von deinem Ding.",
-    "store": "uFeed im Chrome Web Store ansehen"
+    "chromeStore": "uFeed im Chrome Web Store ansehen",
+    "store": "uFeed bei Firefox Add-ons ansehen"
   },
   "how": {
     "title": "So funktioniert uFeed",

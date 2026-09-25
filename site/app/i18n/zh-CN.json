@@ -47,7 +47,9 @@
     "eyebrow": "你的信息流，由你决定",
     "description": "uFeed 是一款免费的浏览器扩展，会轻柔地模糊与您兴趣无关的帖子，让您更容易找到真正想看的内容。",
     "chrome": "添加到 Chrome",
-    "explore": "查看项目",
+    "explore": "添加到 Firefox",
+    "chromeTitle": "在 Chrome 应用商店查看",
+    "firefoxTitle": "在 Firefox 附加组件中查看",
     "note": "永久免费 · 开源 · 您的数据由您掌控",
     "reel": "uFeed 使用演示",
     "features": [
@@ -89,7 +91,8 @@
     ],
     "qualityNote": "uFeed 按主题而非质量分类，有时也会判断错误。同一主题下，精彩的帖子和乏味的帖子都可能保留下来。",
     "closing": "少些干扰，多看所爱。",
-    "store": "前往 Chrome 应用商店查看 uFeed"
+    "chromeStore": "前往 Chrome 应用商店查看 uFeed",
+    "store": "前往 Firefox 附加组件查看 uFeed"
   },
   "how": {
     "title": "uFeed 的工作原理",
