@@ -14,14 +14,14 @@
 ## Non-goals
 
 - No cloud or LLM inference, hosted or bring-your-own-key. Violates the Privacy invariant in `AGENTS.md`.
-- No competing on model accuracy with cloud LLMs. Compete on privacy, size (~33MB by default), predictability. A larger opt-in model is allowed; making it the default is a positioning decision, not just a measurement.
+- No competing on model accuracy with cloud LLMs. Compete on privacy, predictable on-device filtering, and a model fast enough for a good first-run experience. The larger Gemma model is the default because it handles every language; the smaller English-only model remains available.
 - Platform count is not a goal. X, LinkedIn, Reddit ship. Add no adapter without an explicit decision.
 - No accounts or backend in the core filter.
 
 ## Copy rules
 
 - Claim only what is true today. "Nothing leaves the device" carries one exception: the one-time model weights download.
-- State limits plainly: English only on the default model, words not images, subjects not quality, not perfect. Say which model a limit belongs to — "uFeed only understands English" stops being true when the reader picks the multilingual one.
+- State limits plainly: words not images, subjects not quality, not perfect. Say which model a limit belongs to — the optional e5-small model reads English only, while the default Gemma model reads every language.
 - Lead store copy with privacy and open source before features. Link the repo. Never name the license in store copy.
 - Name no competitor in user-facing text.
 - One short description, three places, identical: `public/_locales/en/messages.json` (`extDescription`, which the manifest reads), `package.json`, `docs/store-listing.md`. Store limit 132 chars. A change means every other locale's `extDescription` changes with it.

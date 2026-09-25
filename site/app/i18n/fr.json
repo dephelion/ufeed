@@ -78,7 +78,7 @@
       ],
       [
         "🌍 Choisissez la langue du modèle",
-        "Le modèle par défaut fonctionne en anglais. Un modèle multilingue facultatif peut traiter des publications dans d’autres langues, avec un téléchargement initial plus volumineux."
+        "Le modèle Gemma par défaut traite toutes les langues. Un modèle plus petit, limité à l’anglais, est disponible avec un téléchargement unique."
       ],
       [
         "🎚️ Trouvez le bon réglage",
@@ -125,7 +125,7 @@
       ],
       [
         "🌍 Choisissez la langue qui vous convient",
-        "Le modèle par défaut fonctionne en anglais. Si vos fils sont dans d’autres langues, choisissez le modèle multilingue facultatif dans la fenêtre de l’extension. Il demande un téléchargement initial plus volumineux ; vos thèmes et réglages ne changent pas."
+        "Le modèle Gemma par défaut traite toutes les langues. Si vous préférez un téléchargement plus petit, choisissez le modèle limité à l’anglais dans la fenêtre de l’extension ; vos thèmes et réglages ne changent pas."
       ],
       [
         "Un coup de pouce, pas un juge infaillible",

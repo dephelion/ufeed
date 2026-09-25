@@ -9,8 +9,8 @@ Two, and the reader picks. Both are downloaded once and cached by the browser (C
 
 | Key        | Model                                     | dtype | Size   | Reads          | Default |
 | :--------- | :---------------------------------------- | :---- | :----- | :------------- | :------ |
-| `e5-small` | `Xenova/e5-small-v2`                      | q8    | ~33MB  | English only   | **yes** |
-| `gemma`    | `onnx-community/embeddinggemma-300m-ONNX` | q4    | ~197MB | Every language | no      |
+| `gemma`    | `onnx-community/embeddinggemma-300m-ONNX` | q4    | ~197MB | Every language | **yes** |
+| `e5-small` | `Xenova/e5-small-v2`                      | q8    | ~33MB  | English only   | no      |
 
 **Retrieval models, not similarity models.** The task is a short topic against a longer post — asymmetric. Prefixes are mandatory, asymmetric, and **per model**:
 
@@ -64,7 +64,7 @@ Gemma wins 11 of 12 rows in the pooled block; e5-small-v2 takes one (`politics`)
 
 **It is also far less sensitive to phrasing**, which is what the popup's topic guidance exists to work around: across the owner's three phrasings e5-small-v2 ranges 0.706 – 0.881, Gemma 0.896 – 0.946. A one-word topic works with Gemma.
 
-**Its English edge over the default is real but modest** (+0.050 [+0.001, +0.098]) — not on its own a reason to pay 6× the download and ~9× the compute. Reading every language is.
+**Its English edge over Gemma is real but modest** (+0.050 [+0.001, +0.098]) — not on its own a reason to give up every-language support. Gemma is the default now that browser speed measurements make its first-run experience acceptable.
 
 **Topic language matters more than the model's reach.** An English topic scores Spanish posts lower: `politics` pooled reads 0.759 against 0.930 within Spanish and 0.867 within English. Topics typed in the posts' language work best, and a post matching any line stays visible, so a bilingual reader adds both.
 

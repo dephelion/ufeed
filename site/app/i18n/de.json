@@ -78,7 +78,7 @@
       ],
       [
         "🌍 Wähle die Modellsprache",
-        "Das Standardmodell funktioniert auf Englisch. Ein optionales mehrsprachiges Modell verarbeitet Beiträge in anderen Sprachen, benötigt aber einen größeren einmaligen Download."
+        "Das standardmäßige Gemma-Modell funktioniert in allen Sprachen. Ein kleineres Modell nur für Englisch ist mit einem einmaligen Download verfügbar."
       ],
       [
         "🎚️ Stell es passend ein",
@@ -125,7 +125,7 @@
       ],
       [
         "🌍 Wähle die passende Sprache",
-        "Das Standardmodell funktioniert auf Englisch. Wenn deine Feeds andere Sprachen enthalten, kannst du im Erweiterungsfenster das optionale mehrsprachige Modell auswählen. Es braucht einen größeren einmaligen Download; Themen und Einstellungen bleiben gleich."
+        "Das standardmäßige Gemma-Modell funktioniert in allen Sprachen. Wenn du einen kleineren Download bevorzugst, wähle im Erweiterungsfenster das Modell nur für Englisch; Themen und Einstellungen bleiben gleich."
       ],
       [
         "Ein hilfreicher Hinweis, kein perfektes Urteil",

@@ -24,14 +24,14 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
 ## Status
 
-**Working end to end on X, LinkedIn and Reddit.** Content script finds posts and applies the blur. Chrome shares one offscreen Gemma worker across feed tabs; Chrome e5 and Firefox use a per-tab iframe worker. Popup sets topics, strictness, and reset.
+**Working end to end on X, LinkedIn and Reddit.** Content script finds posts and applies the blur. Chrome shares one offscreen Gemma worker across feed tabs; Firefox uses a per-tab iframe worker. Popup sets topics, strictness, and reset.
 
 Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model, so WASM is the only backend.
 
-Two models, picked in the popup: `e5-small-v2` (33MB, English only, default) and EmbeddingGemma-300m (197MB, every language). The multilingual one is opt-in until its cost is measured in a browser rather than in node, and its strictness scale is provisional.
+Two models, picked in the popup: EmbeddingGemma-300m (197MB, every language, default) and `e5-small-v2` (33MB, English only). Gemma is now fast enough for the default first-run experience; its strictness scale remains provisional.
 
 The UI speaks English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and Traditional); the browser's language picks one until the reader picks another in the popup, see [i18n.md](i18n.md).
 
-Not built: worker pool, mobile. Chrome's offscreen singleton is implemented for Gemma.
+Not built: worker pool, mobile. Chrome's offscreen singleton is implemented for the default Gemma path.
 
 Every number in these pages came from a measurement harness run against a captured timeline. Both live in gitignored `.local/`: the data is personal, and the method is described where the number is used.

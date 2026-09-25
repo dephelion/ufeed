@@ -70,9 +70,9 @@ contains no feed text, topics or extension settings.
 
 The first time uFeed needs to score a feed, your browser downloads the model that does
 the comparison from Hugging Face at `huggingface.co`, which redirects the larger
-files to its storage CDN at `hf.co`. That is about 33 MB for the default English
-model. If you choose the multilingual model in the popup, it downloads that one
-instead, about 197 MB, the first time you use it. Only the model you have chosen
+files to its storage CDN at `hf.co`. That is about 197 MB for the default multilingual
+model. If you choose the English-only model in the popup, it downloads that one
+instead, about 33 MB, the first time you use it. Only the model you have chosen
 is ever requested. Your browser then caches it, and later sessions use the cached
 copy.
 
@@ -87,11 +87,11 @@ welcome page is a public website visit, separate from feed filtering.
 
 ## Permissions, and why each is needed
 
-| Permission                                             | Why                                                                                                                                                                   |
-| :----------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on.                                                                             |
-| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.                                                                                      |
-| `offscreen` (Chrome only)                              | To keep a hidden extension page open for the shared multilingual model worker. The page receives post text from uFeed for scoring; it cannot read the website itself. |
+| Permission                                             | Why                                                                                                                                                            |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on.                                                                      |
+| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.                                                                               |
+| `offscreen` (Chrome only)                              | To keep a hidden extension page open for the shared Gemma model worker. The page receives post text from uFeed for scoring; it cannot read the website itself. |
 
 The offscreen permission does not give uFeed access to other websites or
 additional data. It does not change what uFeed stores or sends. uFeed cannot

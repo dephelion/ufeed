@@ -48,21 +48,21 @@ logged — counts, scores, states and errors only.
 [ufeed:content] content script started host=x.com adapter=x topics=1 active=true
 [ufeed:client]  injecting engine iframe src=chrome-extension://.../engine.html
 [ufeed:engine]  engine starting origin=chrome-extension://...
-[ufeed:embedder] loading model device=wasm model=Xenova/e5-small-v2
+[ufeed:embedder] loading model device=wasm model=onnx-community/embeddinggemma-300m-ONNX
 [ufeed:worker]  ready
 [ufeed:worker]  scored posts=5 msPerPost=12 max=0.812 rated=0
 [ufeed:content] batch applied posts=5 blurred=3 rated=0 threshold=0.790
 ```
 
-The `embedder` line names the model: `Xenova/e5-small-v2` by default,
-`onnx-community/embeddinggemma-300m-ONNX` once you pick _Every language_ in the
+The `embedder` line names the model: `onnx-community/embeddinggemma-300m-ONNX` by
+default, or `Xenova/e5-small-v2` after you pick the smaller English model in the
 popup.
 
 The first missing line locates the failure. `content` and `client` lines appear in
-the page console. For Chrome's multilingual model, inspect `engine` and `worker`
-lines in the offscreen document at `chrome://inspect/#pages`; for the default
-English model and Firefox, select the `engine.html` iframe in the page DevTools
-frame selector. The background service worker logs appear in the extension's
+the page console. For Chrome's default Gemma model, inspect `engine` and `worker`
+lines in the offscreen document at `chrome://inspect/#pages`; for the English
+model and Firefox, select the `engine.html` iframe in the page DevTools frame
+selector. The background service worker logs appear in the extension's
 service worker DevTools.
 
 Logging is on only in debug builds: `npm run watch` and `npm run build:debug`.
@@ -73,12 +73,12 @@ is made from.
 
 ### Inspect Chrome's shared Gemma worker
 
-Use the Gemma model; Chrome e5 and Firefox use the iframe engine instead.
+Use the Gemma model; Chrome's English model and Firefox use the iframe engine
+instead.
 
 1. Build a readable debug extension with `npm run build:debug`, then load
    `.output/chrome-mv3-debug` from `chrome://extensions`.
-2. Open a feed tab with topics and select _Every language_ in the popup to start
-   the shared engine.
+2. Open a feed tab with topics; the default Gemma model starts the shared engine.
 3. Open `chrome://inspect/#pages`. Find uFeed's `offscreen.html` and click
    **Inspect**. If it is absent, the shared Gemma engine has not started yet.
 4. In the offscreen DevTools Console, evaluate `crossOriginIsolated`. It should
@@ -95,7 +95,7 @@ means the embedder retries with one thread and logs `count=1`. Open
 
 ### First run
 
-The default model is ~33MB and the multilingual one ~197MB; whichever you pick
+The default model is ~197MB and the English-only one ~33MB; whichever you pick
 downloads once, then lives in the browser's cache. Nothing blurs until it is
 loaded: a broken or slow engine always reveals rather than leaving you with a
 blurred wall. Loading from the cache takes a few seconds, and posts wait under a
@@ -111,8 +111,8 @@ npm run compile          # tsc --noEmit
 npm run test:model       # both real models on real feed text, ~6s
 ```
 
-The first `test:model` run downloads ~197MB for the multilingual model on top of
-the default's 33MB. `npm run check` never does.
+The first `test:model` run downloads both models, ~197MB for Gemma and ~33MB for
+e5-small. `npm run check` never does.
 
 Full check before committing:
 

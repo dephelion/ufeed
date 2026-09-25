@@ -26,6 +26,7 @@ class InView {
 
 const SETTINGS: Settings = {
   ...DEFAULT_SETTINGS,
+  model: 'e5-small',
   topics: ['programming'],
   blurOtherLanguages: false,
 };

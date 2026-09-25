@@ -16,7 +16,7 @@ Four choices shape everything else. Each one gives something up.
   keyboard) from readable, so a wrong call costs a click, not a missed post.
 - **An embedding model, not a chat model.** uFeed turns text into numbers and
   compares them. It does not reason about a post. That is what keeps the model
-  small (33 MB by default), lets it run in your browser, and makes it give the same
+  small enough to run in your browser, and makes it give the same
   answer every time for the same post. The cost: it cannot weigh sarcasm or "this
   topic, but not the hype" the way a large cloud model can.
 - **Nothing to trust.** There is no server, so there is no cloud mode and no
@@ -38,7 +38,7 @@ flowchart TB
 
   subgraph ext["Extension origin — chrome-extension://"]
     frame["per-tab hidden iframe<br/>Chrome e5 and Firefox"]
-    offscreen["Chrome offscreen page<br/>shared by feed tabs<br/>Gemma only"]
+    offscreen["Chrome offscreen page<br/>shared by feed tabs<br/>Gemma default"]
     worker["model worker<br/>embed, then cosine"]
     frame -- "texts / scores" --> worker
     offscreen -- "texts / scores" --> worker
@@ -50,9 +50,9 @@ flowchart TB
 
 The **content script** lives inside the page, so it is the only part that can read
 the feed or blur anything. A **worker** does the scoring off the page's main
-thread. Chrome uses a shared offscreen extension page for the multilingual model,
+thread. Chrome uses a shared offscreen extension page for the default Gemma model,
 so feed tabs reuse one model session and its isolated worker can use two WASM
-threads. Chrome's default English model and both Firefox models use the per-tab
+threads. Chrome's optional English model and both Firefox models use the per-tab
 hidden iframe and a single WASM thread. The iframe is a document on the extension
 origin, which lets it start a worker without giving that worker access to the host
 page.
@@ -66,10 +66,10 @@ That boundary keeps post text on your device and the model layer independent of 
 uFeed does not train a classifier on your topics. It uses a text _embedding_
 model, and you pick which one under _Model_ in the popup:
 
-| Model                         | Reads          | Download | Work per post         |
-| :---------------------------- | :------------- | :------- | :-------------------- |
-| **e5-small-v2** (the default) | English only   | 33 MB    | small                 |
-| **EmbeddingGemma** (opt-in)   | Every language | 197 MB   | about nine times more |
+| Model                            | Reads          | Download | Work per post             |
+| :------------------------------- | :------------- | :------- | :------------------------ |
+| **EmbeddingGemma** (the default) | Every language | 197 MB   | fast enough for first use |
+| **e5-small-v2**                  | English only   | 33 MB    | smaller                   |
 
 e5-small-v2 comes from Microsoft ([E5 paper](https://arxiv.org/abs/2212.03533); v2 is
 a later release by the same authors, using the same method). EmbeddingGemma is
@@ -114,11 +114,10 @@ own scale.
 
 **What it cannot do.**
 
-- **Read other languages, on the default model.** e5 was trained and evaluated on
-  English. Text in another language still gets a score, but that score is noise.
-  uFeed checks a post's language before trusting its score. EmbeddingGemma reads
-  every language, so it has no such check and the popup's language option switches
-  itself off.
+- **Read other languages.** e5 was trained and evaluated on English. Text in
+  another language still gets a score, but that score is noise. EmbeddingGemma
+  reads every language, so it has no such check and the popup's language option
+  switches itself off.
 - **Match exact strings reliably.** The paper notes that embedding models still
   trail keyword search when a match depends on exact wording or a niche domain. A
   topic that is only a product name or a ticker matches less reliably than plain

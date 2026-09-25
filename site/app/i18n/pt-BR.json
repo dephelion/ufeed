@@ -78,7 +78,7 @@
       ],
       [
         "🌍 Escolha o idioma do modelo",
-        "O modelo padrão funciona em inglês. Um modelo multilíngue opcional pode analisar publicações em outros idiomas, mas requer um download inicial maior."
+        "O modelo Gemma padrão funciona em todos os idiomas. Um modelo menor, somente em inglês, está disponível com um download único."
       ],
       [
         "🎚️ Ajuste do seu jeito",
@@ -125,7 +125,7 @@
       ],
       [
         "🌍 Escolha o idioma ideal",
-        "O modelo padrão funciona em inglês. Se seus feeds estiverem em outros idiomas, você pode escolher o modelo multilíngue opcional na janela da extensão. Ele exige um download inicial maior; seus tópicos e configurações continuam iguais."
+        "O modelo Gemma padrão funciona em todos os idiomas. Se preferir um download menor, escolha o modelo somente em inglês na janela da extensão; seus tópicos e configurações continuam iguais."
       ],
       [
         "Uma ajuda, não um juiz perfeito",
