@@ -1,6 +1,7 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { LANGUAGE_STORAGE_KEY, type Locale } from '../i18n/resources';
 
@@ -17,33 +18,62 @@ const options: { locale: Locale; flag: string; name: string }[] = [
 
 export default function LanguageSelect({ locale }: { locale: Locale }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { t } = useTranslation(undefined, { lng: locale });
   const current = options.find((option) => option.locale === locale);
+  const [open, setOpen] = useState(false);
+  const container = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function closeOnOutsideClick(event: PointerEvent) {
+      if (!container.current?.contains(event.target as Node)) setOpen(false);
+    }
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        container.current?.querySelector('button')?.focus();
+      }
+    }
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [open]);
+
   return (
-    <label className="language-select">
-      <span className="sr-only">{t('language.label')}</span>
-      <span className="language-current-flag" aria-hidden="true">
-        {current?.flag}
-      </span>
-      <select
-        value={locale}
+    <div className="language-select" ref={container}>
+      <button
+        type="button"
+        className="language-trigger"
         aria-label={t('language.label')}
-        onChange={(event) => {
-          const selected = event.target.value as Locale;
-          try {
-            localStorage.setItem(LANGUAGE_STORAGE_KEY, selected);
-          } catch {}
-          const path = pathname.replace(/^\/[^/]+(?=\/|$)/, `/${selected}`);
-          router.push(path);
-        }}
+        aria-expanded={open}
+        aria-controls={open ? 'language-options' : undefined}
+        onClick={() => setOpen((value) => !value)}
       >
-        {options.map((option) => (
-          <option key={option.locale} value={option.locale}>
-            {option.flag} {option.name}
-          </option>
-        ))}
-      </select>
-    </label>
+        <span aria-hidden="true">{current?.flag}</span>
+      </button>
+      {open && (
+        <ul id="language-options" className="language-options">
+          {options.map((option) => (
+            <li key={option.locale}>
+              <a
+                href={pathname.replace(/^\/[^/]+(?=\/|$)/, `/${option.locale}`)}
+                lang={option.locale}
+                aria-current={option.locale === locale ? 'true' : undefined}
+                onClick={() => {
+                  try {
+                    localStorage.setItem(LANGUAGE_STORAGE_KEY, option.locale);
+                  } catch {}
+                }}
+              >
+                <span aria-hidden="true">{option.flag}</span> {option.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
