@@ -45,10 +45,6 @@ export default defineContentScript({
     }
     // Answer even if startup fails before the engine exists.
     serveEngineStatus(() => engineStatus);
-    addEventListener('unhandledrejection', (event) => {
-      event.preventDefault();
-      reportEngineFailure(event.reason);
-    });
     addEventListener('error', (event) => {
       if (!event.filename.startsWith(browser.runtime.getURL('/'))) return;
       event.preventDefault();
@@ -117,7 +113,7 @@ async function start(adapter: SiteAdapter): Promise<void> {
     nudge.setVisible(needsTopics(next, filter.on));
     // The store now answers for the new model, so what this tab holds in memory
     // is the old model's ratings until it is told to read again.
-    if (modelChanged) void tuner.reload();
+    if (modelChanged) void tuner.reload().catch(reportEngineFailure);
     filter.applySettings(next);
     badge.setVisible(filter.active);
   });
@@ -144,13 +140,15 @@ async function start(adapter: SiteAdapter): Promise<void> {
   onSettingsChanged((next) => {
     if (next.language === language) return;
     language = next.language;
-    void translatorFor(language).then((picked) => {
-      translator = picked;
-      badge.relabel();
-      nudge.relabel();
-      feedbackBar.relabel();
-      relabelBlurred(t);
-    });
+    void translatorFor(language)
+      .then((picked) => {
+        translator = picked;
+        badge.relabel();
+        nudge.relabel();
+        feedbackBar.relabel();
+        relabelBlurred(t);
+      })
+      .catch(reportEngineFailure);
   });
 
   filter.start();
