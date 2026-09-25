@@ -83,7 +83,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               className="button secondary"
               href={CHROME_STORE_URL}
               data-tooltip={t('home.chromeTitle')}
-              title={t('home.chromeTitle')}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -93,7 +92,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               className="button secondary"
               href={FIREFOX_STORE_URL}
               data-tooltip={t('home.firefoxTitle')}
-              title={t('home.firefoxTitle')}
               target="_blank"
               rel="noopener noreferrer"
             >
