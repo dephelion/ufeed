@@ -20,6 +20,7 @@
 
 ## Copy rules
 
+- Lead the English site and social card with "Take back your feeds." Keep the headline tied to controlling one's own feeds, not judging post quality.
 - Claim only what is true today. "Nothing leaves the device" carries one exception: the one-time model weights download.
 - State limits plainly: words not images, subjects not quality, not perfect. Say which model a limit belongs to — the optional e5-small model reads English only, while the default Gemma model reads every language.
 - Lead store copy with privacy and open source before features. Link the repo. Never name the license in store copy.
