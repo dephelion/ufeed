@@ -48,6 +48,8 @@
     "description": "uFeed est une extension de navigateur gratuite qui floute doucement les publications éloignées de vos centres d’intérêt, pour retrouver plus facilement celles qui vous intéressent.",
     "chrome": "Ajouter à Chrome",
     "explore": "Ajouter à Firefox",
+    "chromeTitle": "Voir dans le Chrome Web Store",
+    "firefoxTitle": "Voir sur Firefox Add-ons",
     "note": "Gratuit, pour toujours · Libre · Vos données restent les vôtres",
     "reel": "uFeed en action",
     "features": [

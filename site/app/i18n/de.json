@@ -48,6 +48,8 @@
     "description": "uFeed ist eine kostenlose Browser-Erweiterung, die Beiträge außerhalb deiner Interessen sanft unscharf macht, damit du die passenden leichter findest.",
     "chrome": "Zu Chrome hinzufügen",
     "explore": "Zu Firefox hinzufügen",
+    "chromeTitle": "Im Chrome Web Store ansehen",
+    "firefoxTitle": "Bei Firefox Add-ons ansehen",
     "note": "Für immer kostenlos · Open Source · Deine Daten bleiben deine",
     "reel": "uFeed in Aktion",
     "features": [

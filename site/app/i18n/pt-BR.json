@@ -48,6 +48,8 @@
     "description": "O uFeed é uma extensão gratuita para navegador que desfoca com cuidado as publicações fora dos seus interesses, para facilitar a descoberta das que combinam com você.",
     "chrome": "Adicionar ao Chrome",
     "explore": "Adicionar ao Firefox",
+    "chromeTitle": "Ver na Chrome Web Store",
+    "firefoxTitle": "Ver no Firefox Add-ons",
     "note": "Gratuito para sempre · Código aberto · Seus dados são seus",
     "reel": "uFeed em ação",
     "features": [

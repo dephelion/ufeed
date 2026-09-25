@@ -82,6 +82,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <a
               className="button secondary"
               href={CHROME_STORE_URL}
+              title={t('home.chromeTitle')}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -90,6 +91,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             <a
               className="button secondary"
               href={FIREFOX_STORE_URL}
+              title={t('home.firefoxTitle')}
               target="_blank"
               rel="noopener noreferrer"
             >

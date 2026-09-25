@@ -48,6 +48,8 @@
     "description": "uFeed 是一款免費的瀏覽器擴充功能，會輕柔地模糊與您興趣不符的貼文，讓您更容易找到真正想看的內容。",
     "chrome": "新增至 Chrome",
     "explore": "新增至 Firefox",
+    "chromeTitle": "在 Chrome 線上應用程式商店查看",
+    "firefoxTitle": "在 Firefox 附加元件中查看",
     "note": "永遠免費 · 開源 · 您的資料由您掌控",
     "reel": "uFeed 使用示範",
     "features": [
