@@ -8,7 +8,7 @@ export function pageMetadata({
   description,
   path,
   keywords,
-  imageAlt = 'uFeed — a little more of what you came for',
+  imageAlt = 'uFeed — Take back your feeds',
   imagePath = SOCIAL_IMAGE,
   locale = 'en',
 }: {
