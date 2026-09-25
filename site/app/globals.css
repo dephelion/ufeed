@@ -373,14 +373,6 @@ h1 {
   transform: translateY(-1px);
   text-decoration: none;
 }
-.button.primary {
-  color: #18191a;
-  background: var(--yellow);
-}
-.button.primary:hover {
-  color: #18191a;
-  background: var(--yellow);
-}
 .button.secondary {
   border: 1px solid #555a64;
   color: var(--text);

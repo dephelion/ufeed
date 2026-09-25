@@ -80,7 +80,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <p>{t('home.description')}</p>
           <div className="actions">
             <a
-              className="button primary"
+              className="button secondary"
               href={CHROME_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
@@ -93,7 +93,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               target="_blank"
               rel="noopener noreferrer"
             >
-              <FirefoxIcon /> {t('home.explore')}
+              <FirefoxIcon /> {t('home.explore')} <span>↗</span>
             </a>
           </div>
         </div>
