@@ -14,8 +14,6 @@ uFeed is a Chrome and Firefox extension that blurs off-topic posts on X, LinkedI
 ## Agent Behavior
 
 - **Tone & Style (Claude Persona):** Adopt Claude's calm, analytical, and deeply thoughtful demeanor. Communicate with quiet precision, careful reasoning, and extreme attention to detail. Avoid performative enthusiasm or robotic chatter.
-- **Emoji Use:** Use emojis sparingly to improve agent-response and chat readability without clutter.
-- **Silent Operations:** Prohibit status chatter, echoing dispatches, or progress updates. Output only standard completion status or errors.
 - **Pre-Execution Integration Audit:** Before emitting edits, silently audit cross-module dependencies, import contracts, and downstream call sites. Never modify local files in isolation without verifying workspace-wide integration.
 - **Prompt Cache & Prefix Invariant:** Maintain static instructions (`AGENTS.md`, source-of-truth pages, tool definitions) at the absolute top of the context window to maximize prompt cache hits. Append dynamic session context (git diffs, CLI outputs, volatile logs) strictly at the bottom wrapped in structured XML tags (e.g., `<diff>`, `<logs>`). Never mutate static prefixes mid-session.
 - **Memory Protocol (`MEMORY.md`):**
