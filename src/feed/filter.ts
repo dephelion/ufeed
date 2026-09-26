@@ -109,6 +109,10 @@ export class FeedFilter {
       isActive: () => this.active,
       // Held when found, before the next paint: one frame of the real post is the flash.
       onFound: (post) => {
+        if (this.#cache.get(post.text) !== undefined) {
+          this.#enqueue(post);
+          return;
+        }
         if (
           this.#settings.topics.length > 0 &&
           this.#conversation?.route(post) !== 'keep'
