@@ -11,6 +11,10 @@ function isStatusPath(pathname: string): boolean {
   return /^\/[^/]+\/status\/\d+/.test(pathname);
 }
 
+function isNotificationsPath(pathname: string): boolean {
+  return /^\/notifications(?:\/|$)/.test(pathname);
+}
+
 /** Blurs the cell, not the article: the article leaves separators and padding sharp. */
 export const xAdapter: SiteAdapter = {
   id: 'x',
@@ -32,6 +36,7 @@ export const xAdapter: SiteAdapter = {
     '[data-testid="videoComponent"], video',
 
   findPosts(root) {
+    if (isNotificationsPath(location.pathname)) return [];
     const containers = new Set<Element>();
     if (root instanceof Element && root.matches(CONTAINER)) containers.add(root);
     for (const el of root.querySelectorAll(CONTAINER)) containers.add(el);

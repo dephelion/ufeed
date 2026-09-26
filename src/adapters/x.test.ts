@@ -28,6 +28,19 @@ describe('xAdapter.matches', () => {
 });
 
 describe('xAdapter.findPosts', () => {
+  beforeEach(() => history.replaceState(null, '', '/home'));
+
+  it.each(['/notifications', '/notifications/mentions'])(
+    'leaves notification cells alone on %s',
+    (path) => {
+      history.replaceState(null, '', path);
+      const html = `<div data-testid="cellInnerDiv"><article data-testid="notification">
+        <article data-testid="tweet"><div data-testid="tweetText">${LONG}</div></article>
+      </article></div>`;
+      expect(xAdapter.findPosts(mount(html))).toHaveLength(0);
+    },
+  );
+
   it('finds a post and extracts its text', () => {
     const posts = xAdapter.findPosts(mount(cell(LONG)));
     expect(posts).toHaveLength(1);

@@ -36,6 +36,8 @@ interface SiteAdapter {
 
 **`article` is the post signal, not text.** A caption-less media post has NO `tweetText` node — identical to a follow or trend module. Requiring `article` keeps the media post and drops the module. Promoted tweets are real articles: they get scored like any post.
 
+**Skip `/notifications` and its subpaths.** X renders notification cells with `article` and `tweetText`, including nested tweets. They are notifications, not feed posts; leave them untouched on direct loads and SPA navigation.
+
 **No length floor.** Every post reaches the engine. The old 30-char drop was a MiniLM-era workaround; e5 does not shift with length ([model.md](model.md)), and a dropped post could never be blurred by any rule.
 
 **Empty text never reaches the engine.** An embedding of nothing is not a score. Empty means unscorable, which reveals unless the media rule claims it ([ui.md](ui.md)).

@@ -137,6 +137,25 @@ describe('FeedFilter', () => {
     expect(post('cake').classList.contains('lx-pending')).toBe(true);
   });
 
+  it.each([
+    ['rust ships a new borrow checker', 'rust', false],
+    ['a chocolate cake recipe', 'cake', true],
+  ])(
+    'restores a cached verdict without a loading flash when X remounts %s',
+    async (text, word, blurred) => {
+      const { engine } = await run(SETTINGS, [text]);
+      expect(isBlurred(post(word))).toBe(blurred);
+
+      InView.quiet = true;
+      document.body.innerHTML = cell(text);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(post(word).classList.contains('lx-pending')).toBe(false);
+      expect(isBlurred(post(word))).toBe(blurred);
+      expect(engine.score).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it('lifts what it held when a first-run download starts', async () => {
     const { filter } = await run(
       SETTINGS,

@@ -144,6 +144,8 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 
 **Held from the moment a post is found, through warm-up.** `FeedScanner.onFound` fires in the mutation callback, before the next paint; waiting for the viewport observer paints the real post once first. Waiting for the engine to be ready showed every post on load, then held it, then blurred it — the flash this state exists to prevent.
 
+**Reapply cached verdicts on discovery.** If X remounts a post after a Like, a cached score decides it before paint; a skeleton would flash even though no inference is needed.
+
 **Not held through a download.** A first-run download (`downloading`) is minutes, so the skeleton lifts when it starts and nothing is held until it ends; that first load shows one skeleton flash before the worker reports which it is. A cached load reports `warming` and is held through. The opened post (`route` says keep) is never held.
 
 ## Reveal
