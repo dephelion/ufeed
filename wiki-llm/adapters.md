@@ -34,6 +34,8 @@ interface SiteAdapter {
 
 **`textContent`, not `innerText`.** `innerText` forces a layout reflow per post, which a scrolling feed cannot afford. Whitespace is collapsed, so a re-render hashes identically.
 
+**`tweet-text-show-more-link` marks truncated text.** X replaces that text with a longer prefix match when opened. Keep an already completed verdict on that cell; an unjudged cell still needs the longer text scored. Treat other text changes as new content.
+
 **`article` is the post signal, not text.** A caption-less media post has NO `tweetText` node — identical to a follow or trend module. Requiring `article` keeps the media post and drops the module. Promoted tweets are real articles: they get scored like any post.
 
 **Skip `/notifications` and its subpaths.** X renders notification cells with `article` and `tweetText`, including nested tweets. They are notifications, not feed posts; leave them untouched on direct loads and SPA navigation.

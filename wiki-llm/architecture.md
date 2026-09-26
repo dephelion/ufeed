@@ -34,7 +34,7 @@ feed DOM ──adapter──► content script ──MessageChannel──► ifr
 ```
 
 1. `MutationObserver` on `document.documentElement` → `sweep(node)`.
-2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo mounts later or whose text changes is offered again: X can mount a cell before either, and LinkedIn can swap a card's body after first paint. Other inner mutations never re-offer.
+2. Adapter returns posts; unseen ones go to an `IntersectionObserver` (`rootMargin: 150% 0px`). An offered post whose photo mounts later or whose text changes is offered again: X can mount a cell before either, and LinkedIn can swap a card's body after first paint. X's Show more expansion keeps a completed verdict when the expanded text starts with the original; an unjudged post is offered again. Other inner mutations never re-offer.
 3. On discovery: a cache hit re-applies its verdict before paint, without a skeleton. On intersection: a kept conversation, or the media or language rule decides immediately; otherwise queue.
 4. Queue flushes at the model's batch size (e5 five, Gemma one) or a 100ms debounce; discard detached posts and choose visible ones from top to bottom, then the closest prefetched ones.
 5. Worker embeds, scores against topic vectors, replies with **raw scores**.

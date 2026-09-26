@@ -20,6 +20,7 @@ export interface ScannerOptions {
 interface Shape {
   text: string;
   media: boolean;
+  expandable: boolean;
 }
 
 /**
@@ -38,6 +39,7 @@ function changed(before: Shape, after: Shape): boolean {
 export class FeedScanner {
   #seen = new WeakSet<HTMLElement>();
   #offered = new WeakMap<HTMLElement, Shape>();
+  #judged = new WeakSet<HTMLElement>();
   readonly #viewport: IntersectionObserver;
   readonly #mutations: MutationObserver;
 
@@ -89,7 +91,14 @@ export class FeedScanner {
   }
 
   #shape(post: Post): Shape {
-    return { text: post.text, media: hasMedia(post.container, this.options.adapter) };
+    return {
+      text: post.text,
+      media: hasMedia(post.container, this.options.adapter),
+      expandable: this.options.adapter.textExpansionSelector
+        ? post.container.querySelector(this.options.adapter.textExpansionSelector) !==
+          null
+        : false,
+    };
   }
 
   #offer(post: Post): void {
@@ -102,7 +111,25 @@ export class FeedScanner {
     const before = this.#offered.get(container);
     if (!before || !this.options.isActive()) return;
     const post = this.options.adapter.findPosts(container)[0];
-    if (post && changed(before, this.#shape(post))) this.#offer(post);
+    if (!post) return;
+    const after = this.#shape(post);
+    if (
+      this.#judged.has(container) &&
+      before.expandable &&
+      !after.expandable &&
+      after.text.startsWith(before.text) &&
+      after.text.length > before.text.length &&
+      before.media === after.media
+    ) {
+      this.#offered.set(container, after);
+      return;
+    }
+    if (changed(before, after)) this.#offer(post);
+  }
+
+  /** A completed verdict can survive the host expanding the same post's text. */
+  judged(container: HTMLElement): void {
+    this.#judged.add(container);
   }
 
   /** Whether this post has entered view and been handed over for judging. */
@@ -119,6 +146,7 @@ export class FeedScanner {
   reset(): void {
     this.#seen = new WeakSet();
     this.#offered = new WeakMap();
+    this.#judged = new WeakSet();
     this.sweep(document);
   }
 

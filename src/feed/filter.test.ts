@@ -69,8 +69,9 @@ async function run(
   score: (texts: string[]) => Promise<RatedMatch[]> = async (t) => scored(t),
   state: EngineState = 'ready',
   onHiddenChange?: (count: number) => void,
+  initialHtml?: string,
 ) {
-  document.body.innerHTML = texts.map(cell).join('');
+  document.body.innerHTML = initialHtml ?? texts.map(cell).join('');
   const engine = {
     ready: state === 'ready',
     status: { type: 'STATUS', state },
@@ -113,6 +114,38 @@ describe('FeedFilter', () => {
     expect(isBlurred(post('cake'))).toBe(true);
     expect(isBlurred(post('rust'))).toBe(false);
   });
+
+  it.each([
+    ['a chocolate cake recipe', true],
+    ['rust ships a new borrow checker', false],
+  ])(
+    'keeps a classified X post settled when Show more expands %s',
+    async (text, hidden) => {
+      const { engine } = await run(
+        SETTINGS,
+        [],
+        undefined,
+        'ready',
+        undefined,
+        `<div data-testid="cellInnerDiv"><article>
+        <div data-testid="tweetText"><span>${text}</span></div>
+        <button data-testid="tweet-text-show-more-link">Show more</button>
+      </article></div>`,
+      );
+      const container = post(text);
+      const body = container.querySelector('[data-testid="tweetText"] span')!;
+      const button = container.querySelector(
+        '[data-testid="tweet-text-show-more-link"]',
+      )!;
+      button.remove();
+      body.textContent = `${text} with more details`;
+      await vi.advanceTimersByTimeAsync(200);
+
+      expect(isBlurred(container)).toBe(hidden);
+      expect(container.classList.contains('lx-pending')).toBe(false);
+      expect(engine.score).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it('fails open when the engine answers nothing, and leaves nothing dimmed', async () => {
     await run(SETTINGS, ['a chocolate cake recipe'], async () => []);

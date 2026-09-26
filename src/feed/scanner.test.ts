@@ -89,6 +89,18 @@ describe('FeedScanner', () => {
     expect(offered.map((p) => p.text)).toEqual(['First', 'Swapped']);
   });
 
+  it('offers a pending post again when its Show more text expands', async () => {
+    document.body.innerHTML = cell(
+      '<div data-testid="tweetText"><span>First</span></div><button data-testid="tweet-text-show-more-link">Show more</button>',
+    );
+    await flush();
+    document.querySelector('[data-testid="tweet-text-show-more-link"]')!.remove();
+    document.querySelector('[data-testid="tweetText"] span')!.textContent =
+      'First and more';
+    await flush();
+    expect(offered.map((p) => p.text)).toEqual(['First', 'First and more']);
+  });
+
   it('leaves a finished post alone when the host re-renders inside it', async () => {
     document.body.innerHTML = cell('<div data-testid="tweetText">Some text</div>');
     await flush();
