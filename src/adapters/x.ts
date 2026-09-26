@@ -31,6 +31,8 @@ export const xAdapter: SiteAdapter = {
 
   containerSelector: CONTAINER,
 
+  textExpansionSelector: '[data-testid="tweet-text-show-more-link"]',
+
   mediaSelector:
     '[data-testid="tweetPhoto"], [data-testid="videoPlayer"], ' +
     '[data-testid="videoComponent"], video',

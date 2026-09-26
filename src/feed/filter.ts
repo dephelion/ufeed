@@ -318,6 +318,7 @@ export class FeedFilter {
     else clearScore(post.container);
     const action = followsKept ? 'reveal' : decideAction(judged);
     if (revealed) {
+      this.#scanner.judged(post.container);
       retag(post.container, this.#t, reasonOf(action), this.#keywordFor(post, action));
       this.#settle(post.container, true);
       return undefined;
@@ -335,6 +336,7 @@ export class FeedFilter {
   }
 
   #apply(post: Post, action: Action): Action {
+    this.#scanner.judged(post.container);
     // The verdict landed, so the loading state is over whichever way it went. Only
     // a post that was actually held has a hold to be lifted out of; one re-judged
     // from the cache is wearing a blur, and the blur is not what the lift undoes.
