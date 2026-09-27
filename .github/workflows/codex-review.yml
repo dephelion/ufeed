@@ -46,7 +46,7 @@ jobs:
         uses: openai/codex-action@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-          model: gpt-luna-6
+          model: gpt-6-luna
           effort: medium
           permission-profile: ':workspace'
           prompt-file: ${{ runner.temp }}/codex-prompt.md
