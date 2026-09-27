@@ -3,6 +3,7 @@ name: Codex review
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
 
 concurrency:
   group: codex-review-${{ github.event.pull_request.number }}
