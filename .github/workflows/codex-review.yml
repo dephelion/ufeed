@@ -1,7 +1,8 @@
 name: Codex review
 
 on:
-  pull_request:
+  # Runs the workflow, prompt and scripts from main, so a PR cannot rewrite its own review.
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [main]
 
@@ -15,7 +16,7 @@ permissions:
 jobs:
   review:
     name: review
-    # Forks get no secrets, and drafts are still moving.
+    # pull_request_target hands secrets to forks; never review them. Drafts are still moving.
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     outputs:
@@ -23,10 +24,17 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
+          sparse-checkout: .github/codex
+          persist-credentials: false
+
+      - uses: actions/checkout@v5
+        with:
           ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          path: pr
           persist-credentials: false
 
       - name: Fetch base and head refs
+        working-directory: pr
         env:
           PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -49,6 +57,7 @@ jobs:
           model: gpt-6-luna
           effort: medium
           permission-profile: ':workspace'
+          working-directory: ${{ github.workspace }}/pr
           prompt-file: ${{ runner.temp }}/codex-prompt.md
           output-schema-file: .github/codex/review-schema.json
 
