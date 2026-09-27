@@ -20,28 +20,51 @@ const summary = ({ findings, confidence, justification }, inline) => {
   return lines.join('\n');
 };
 
+const BOT = 'github-actions[bot]';
+
+// A stale approval would outlive a later push that lowered confidence.
+const dismissApprovals = async (github, pull) => {
+  const reviews = await github.paginate(github.rest.pulls.listReviews, pull);
+  for (const review of reviews) {
+    if (review.user?.login !== BOT || review.state !== 'APPROVED') continue;
+    await github.rest.pulls.dismissReview({
+      ...pull,
+      review_id: review.id,
+      message: 'Codex confidence dropped below High.',
+    });
+  }
+};
+
 export default async function postReview({ github, context, core }) {
   const result = JSON.parse(process.env.REVIEW);
-  const review = {
-    ...context.repo,
-    pull_number: context.payload.pull_request.number,
-    commit_id: context.payload.pull_request.head.sha,
-    event: 'COMMENT',
-  };
-  try {
-    await github.rest.pulls.createReview({
-      ...review,
-      body: summary(result, true),
-      comments: result.findings.map((finding) => ({
-        path: finding.path,
-        line: finding.line,
-        side: 'RIGHT',
-        body: comment(finding),
-      })),
-    });
-  } catch (error) {
-    // A line outside the diff rejects the whole review; keep the findings in the summary.
-    core.warning(`Inline review failed: ${error.message}`);
-    await github.rest.pulls.createReview({ ...review, body: summary(result, false) });
+  const pull = { ...context.repo, pull_number: context.payload.pull_request.number };
+  const event = result.confidence === 'high' ? 'APPROVE' : 'COMMENT';
+  if (event === 'COMMENT') await dismissApprovals(github, pull);
+
+  const inline = result.findings.map((finding) => ({
+    path: finding.path,
+    line: finding.line,
+    side: 'RIGHT',
+    body: comment(finding),
+  }));
+  // A line outside the diff rejects inline comments; a repo that bars Actions from approving rejects APPROVE.
+  const events = event === 'APPROVE' ? ['APPROVE', 'COMMENT'] : ['COMMENT'];
+  const attempts = events.flatMap((each) => [
+    { event: each, body: summary(result, true), comments: inline },
+    { event: each, body: summary(result, false) },
+  ]);
+
+  for (const [index, attempt] of attempts.entries()) {
+    try {
+      await github.rest.pulls.createReview({
+        ...pull,
+        commit_id: context.payload.pull_request.head.sha,
+        ...attempt,
+      });
+      return;
+    } catch (error) {
+      if (index === attempts.length - 1) throw error;
+      core.warning(`Review attempt ${index + 1} failed: ${error.message}`);
+    }
   }
 }
