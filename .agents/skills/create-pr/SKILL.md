@@ -33,24 +33,26 @@ Apply this workflow when creating or updating a Pull Request. Inspect changed fi
 
 Select the highest matching level based on blast radius, reversibility, and architectural depth:
 
-- 🟢 **Low:** Localized, fully reversible changes with no cross-layer dependencies (e.g., UI tweaks, docs, isolated utility functions).
-- 🟡 **Medium:** Behavior changes contained within a single layer or feature module; moderate blast radius, fully testable.
-- 🔴 **High:** Cross-layer changes, breaking API/schema modifications, core business logic (auth, payments, global state), or changes risking application availability.
+- 🟢 **Low:** Localized, fully reversible changes with no cross-architectural-layer dependencies (e.g., UI tweaks, docs, isolated utility functions).
+- 🟡 **Medium:** Behavior changes contained within a single architectural layer or feature module; moderate blast radius, fully testable.
+- 🔴 **High:** Changes spanning multiple architectural layers (e.g., UI, Domain, Infrastructure), breaking API/schema modifications, core business logic (auth, payments, global state), or changes risking application availability.
 
 ---
 
-## 3. PR Description Template
+## 3. PR Description Template Adaptation
 
-Use this format for the PR body:
+Inspect the repository's PR template (e.g., `.github/PULL_REQUEST_TEMPLATE.md`) before drafting the PR body. Adapt the output to fit the template while preserving its structure. Integrate Risk, Proof of Work, Contrarian review findings, and Confidence Score into matching template sections. Add only missing sections to the PR body. Never replace the template or treat these additions as a reason to omit any existing step or check. Keep existing project checks even when they duplicate proof evidence; report their actual status in the template.
+
+If no PR template exists in the repository, use this fallback format:
 
 ```markdown
 ## Summary of Changes
 
-- <Concise WHAT WHY, a and bulleted changes including list of summary>
+- <Concise WHAT and WHY, including a bulleted list of changes>
 
 ## Risk
 
-🟢 Low / 🟡 Medium / 🔴 High — <Concise and based blast justification layer, on radius, reversibility>
+🟢 Low / 🟡 Medium / 🔴 High — <Concise justification based on blast radius, architectural layer, and reversibility>
 
 ## Proof of Work
 
@@ -59,13 +61,13 @@ Use this format for the PR body:
 - [ ] Production Build — `<command>`: <outcome or reason>
 - [ ] DOM Snapshots / Visuals — `<command>`: <outcome or reason>
 - [ ] Real-Browser E2E — `<tool/command>`: <scenario and outcome>
-- [ ] Manual E2E Gate — <outcome or reason; required for cross-layer/breaking changes lacking automated verification>
+- [ ] Manual E2E Gate — <outcome or reason; required for multi-layer/breaking changes lacking automated verification>
 - Fixed during Contrarian review — <one concise line per issue, or None>
 - Unresolved findings — <finding and impact, or None>
 
 ## Confidence Score
 
-<0–10>/10 — <Brief and coverage grounded in justification remaining test uncertainty>
+<0–10>/10 — <Brief justification grounded in test coverage and remaining uncertainty>
 ```
 
 ---
