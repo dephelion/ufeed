@@ -1,0 +1,81 @@
+name: Codex review
+
+on:
+  # Runs the workflow, prompt and scripts from main, so a PR cannot rewrite its own review.
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+
+concurrency:
+  group: codex-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    name: review
+    # pull_request_target hands secrets to forks; never review them. Drafts are still moving.
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    outputs:
+      final_message: ${{ steps.codex.outputs.final-message }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: .github/codex
+          persist-credentials: false
+
+      - uses: actions/checkout@v5
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/merge
+          path: pr
+          persist-credentials: false
+
+      - name: Fetch base and head refs
+        working-directory: pr
+        env:
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: git fetch --no-tags origin "$PR_BASE_REF" "+refs/pull/$PR_NUMBER/head"
+
+      - name: Build prompt
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: .github/codex/build-prompt.sh
+
+      - name: Run Codex
+        id: codex
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          model: gpt-6-luna
+          effort: medium
+          permission-profile: ':workspace'
+          working-directory: ${{ github.workspace }}/pr
+          prompt-file: ${{ runner.temp }}/codex-prompt.md
+          output-schema-file: .github/codex/review-schema.json
+
+  comment:
+    name: comment
+    needs: review
+    if: needs.review.outputs.final_message != ''
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: .github/codex
+          persist-credentials: false
+
+      - uses: actions/github-script@v7
+        env:
+          REVIEW: ${{ needs.review.outputs.final_message }}
+        with:
+          script: await (await import(`${process.env.GITHUB_WORKSPACE}/.github/codex/post-review.js`)).default({ github, context, core })
