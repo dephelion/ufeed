@@ -39,13 +39,7 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: |
-          {
-            cat .github/codex/review.md
-            printf '\n## Pull request #%s\n\n' "$PR_NUMBER"
-            printf 'Diff: `git diff %s...%s`\n\n' "$BASE_SHA" "$HEAD_SHA"
-            printf 'Title: %s\n\nBody:\n\n%s\n' "$PR_TITLE" "$PR_BODY"
-          } > "$RUNNER_TEMP/codex-prompt.md"
+        run: .github/codex/build-prompt.sh
 
       - name: Run Codex
         id: codex
@@ -66,38 +60,13 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: .github/codex
+          persist-credentials: false
+
       - uses: actions/github-script@v7
         env:
           REVIEW: ${{ needs.review.outputs.final_message }}
         with:
-          script: |
-            const { findings, confidence, justification } = JSON.parse(process.env.REVIEW);
-            const levels = { high: '🟢 High', medium: '🟡 Medium', low: '🔴 Low' };
-            const icons = { critical: '🔴', major: '🟠', minor: '🟡' };
-            const comment = (finding) => `${icons[finding.severity]} **${finding.title}**\n\n${finding.body}`;
-            const summary = (inline) => {
-              const lines = ['## Codex review', ''];
-              if (findings.length === 0) lines.push('No findings.', '');
-              else if (!inline) {
-                lines.push(...findings.map((finding) => `- \`${finding.path}:${finding.line}\` ${comment(finding).replace(/\n\n/g, ' — ')}`), '');
-              }
-              lines.push('### Confidence', '', levels[confidence], '', justification);
-              return lines.join('\n');
-            };
-            const review = {
-              ...context.repo,
-              pull_number: context.payload.pull_request.number,
-              commit_id: context.payload.pull_request.head.sha,
-              event: 'COMMENT',
-            };
-            try {
-              await github.rest.pulls.createReview({
-                ...review,
-                body: summary(true),
-                comments: findings.map((finding) => ({ path: finding.path, line: finding.line, side: 'RIGHT', body: comment(finding) })),
-              });
-            } catch (error) {
-              // A line outside the diff rejects the whole review; keep the findings in the summary.
-              core.warning(`Inline review failed: ${error.message}`);
-              await github.rest.pulls.createReview({ ...review, body: summary(false) });
-            }
+          script: await (await import(`${process.env.GITHUB_WORKSPACE}/.github/codex/post-review.js`)).default({ github, context, core })
