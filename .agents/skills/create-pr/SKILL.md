@@ -22,10 +22,11 @@ Apply this workflow when creating or updating a Pull Request. Inspect changed fi
    - **For 🔴 High risk changes only**: Execute real-browser E2E verification. Check project dependencies for existing test runners (Playwright, Cypress, Puppeteer, Patchright). Start the app using its documented local command and exercise changed workflows in a real browser. Record the tool, scenario, outcome, and artifacts in Proof of Work. Do not describe code inspection or unit tests as real-browser E2E.
    - **Circuit Breakers**: Max 3 fix attempts per finding. If a fix increases total change scope by >25% relative to the original prompt, stop and ask the user before proceeding.
 4. **PR Submission**:
-   - Check existing PR status: `gh pr view --json url,state`.
+   - Check existing PR status: `gh pr view --json number,url,state`.
+   - Write the description to a temporary file; never pass multi-line Markdown inline via `--body`.
    - If confidence is <7/10 or critical findings remain unresolved, append `--draft` when creating the PR.
-   - If PR exists: Update title and body via `gh pr edit --title "<title>" --body "<description>"`.
-   - If PR does not exist: Open PR via `gh pr create --title "<title>" --body "<description>"`.
+   - If PR exists: Update title and body via `gh api -X PATCH repos/{owner}/{repo}/pulls/<number> -f title="<title>" -F body=@<body-file>` (avoids `gh pr edit` failing on the Projects (classic) deprecation).
+   - If PR does not exist: Open PR via `gh pr create --title "<title>" --body-file <body-file>`.
 
 ---
 
