@@ -78,13 +78,13 @@
     }
   },
   "thumbUp": {
-    "message": "Dans le sujet"
+    "message": "Évaluation uFeed : dans le sujet"
   },
   "thumbDown": {
-    "message": "Hors sujet"
+    "message": "Évaluation uFeed : hors sujet"
   },
   "thumbBusy": {
-    "message": "Vérification des publications, un instant"
+    "message": "Évaluation uFeed : vérification des publications, un instant"
   },
   "chipInitial": {
     "message": "Inactif"
@@ -189,7 +189,7 @@
     }
   },
   "topicsLabel": {
-    "message": "Sujets que je veux voir (liste blanche)"
+    "message": "Sujets que je veux voir (🟢 liste blanche)"
   },
   "topicsPlaceholder": {
     "message": "génie logiciel, programmation\nrecherche en apprentissage automatique\njeux vidéo, conception de jeux"
@@ -198,7 +198,7 @@
     "message": "Un sujet par ligne, quelques mots chacun. Les publications sur tout le reste sont floutées. Vous pouvez toujours cliquer sur une publication floutée pour la lire."
   },
   "blacklistLabel": {
-    "message": "Masquer si ça mentionne (liste noire)"
+    "message": "Masquer si ça mentionne (🔴 liste noire)"
   },
   "blacklistPlaceholder": {
     "message": "crypto, IA, sponsorisé, intelligence artificielle"
@@ -261,7 +261,7 @@
     "message": "Plus de sévérité floute davantage, y compris certaines publications que vous voudriez voir. Les publications floutées restent à un clic."
   },
   "modelLabel": {
-    "message": "Modèle"
+    "message": "Modèle local à utiliser"
   },
   "modelOptionEnglish": {
     "message": "🇬🇧 Anglais · Rapide — 33 Mo"
@@ -291,7 +291,7 @@
     "message": "Lit toutes les langues et trie votre fil plus précisément, même en anglais. Il est plus tolérant sur la formulation d'un sujet. En contrepartie : un téléchargement unique de 197 Mo et plus de calcul sur chaque publication."
   },
   "modelDetailsKept": {
-    "message": "Vos sujets, votre sévérité et vos évaluations par pouces sont conservés quand vous changez. Les évaluations sont stockées par modèle : chacun garde les siennes, et revenir en arrière les restaure."
+    "message": "Vos sujets, votre sévérité et vos évaluations sont conservés quand vous changez. Les évaluations sont stockées par modèle : chacun garde les siennes, et revenir en arrière les restaure."
   },
   "blurMediaLabel": {
     "message": "Flouter les images et vidéos sans texte"
@@ -324,31 +324,31 @@
     "message": "Ajoute une petite étiquette à chaque publication avec le score obtenu, le score nécessaire pour rester visible et sa longueur. Utile pour comprendre pourquoi quelque chose a été flouté. L'étiquette est toujours en anglais."
   },
   "thumbsLabel": {
-    "message": "Apprendre de mes pouces"
+    "message": "Apprendre de mes évaluations"
   },
   "thumbsIntro": {
-    "message": "Survolez une publication pour lui donner un pouce levé ou baissé."
+    "message": "Chaque publication que vous pouvez évaluer affiche deux boutons sur son bord droit."
   },
   "thumbsUpMeans": {
-    "message": "👍 signifie que ce contenu appartient au sujet."
+    "message": "La flèche signifie que ce contenu appartient au sujet."
   },
   "thumbsDownMeans": {
-    "message": "👎 signifie que ce contenu n'appartient pas au sujet."
+    "message": "La corbeille signifie que ce contenu n'appartient pas au sujet."
   },
   "thumbsCorrect": {
     "message": "Une bonne décision — floutée ou affichée — n'a pas besoin de correction."
   },
   "thumbsScope": {
-    "message": "Un pouce ne modifie que les publications presque identiques à celle que vous avez évaluée, comme un repost ou une citation. Tout le reste est jugé par vos sujets comme d'habitude : un pouce ne cache donc jamais une bonne publication par accident."
+    "message": "Une évaluation ne modifie que les publications presque identiques à celle que vous avez évaluée, comme un repost ou une citation. Tout le reste est jugé par vos sujets comme d'habitude : une évaluation ne cache donc jamais une bonne publication par accident."
   },
   "thumbsPrivacy": {
     "message": "Vos évaluations restent sur cet appareil. Un bémol : seuls les mots d'une publication sont comparés. Si le vrai contenu est dans l'image ou la vidéo et que les mots sont anodins, passez votre tour. Laissez cette option désactivée et les boutons restent masqués."
   },
   "statKept": {
-    "message": "👍 Gardées"
+    "message": "Gardées"
   },
   "statBlurred": {
-    "message": "👎 Floutées"
+    "message": "Floutées"
   },
   "statRated": {
     "message": "Évaluées"
@@ -369,7 +369,7 @@
     "message": "Importer"
   },
   "backupHint": {
-    "message": "Enregistre vos réglages et vos évaluations par pouces dans un fichier. L'import remplace ce qui se trouve ici actuellement."
+    "message": "Enregistre vos réglages et vos évaluations dans un fichier. L'import remplace ce qui se trouve ici actuellement."
   },
   "exportFailed": {
     "message": "Échec de l'export"
@@ -415,7 +415,7 @@
     "message": "Réinitialiser"
   },
   "resetHint": {
-    "message": "Rétablit les valeurs par défaut et supprime vos évaluations par pouces. Vos sujets et la langue sont conservés."
+    "message": "Rétablit les valeurs par défaut et supprime vos évaluations. Vos sujets et la langue sont conservés."
   },
   "reportIssue": {
     "message": "📥 Signaler un problème ou partager une idée"

@@ -78,13 +78,13 @@
     }
   },
   "thumbUp": {
-    "message": "Zum Thema"
+    "message": "uFeed-Bewertung: zum Thema"
   },
   "thumbDown": {
-    "message": "Nicht zum Thema"
+    "message": "uFeed-Bewertung: nicht zum Thema"
   },
   "thumbBusy": {
-    "message": "Beiträge werden geprüft, einen Moment"
+    "message": "uFeed-Bewertung: Beiträge werden geprüft, einen Moment"
   },
   "chipInitial": {
     "message": "Leerlauf"
@@ -189,7 +189,7 @@
     }
   },
   "topicsLabel": {
-    "message": "Themen, die ich sehen möchte (Whitelist)"
+    "message": "Themen, die ich sehen möchte (🟢 Whitelist)"
   },
   "topicsPlaceholder": {
     "message": "Softwareentwicklung, Programmierung\nForschung zu maschinellem Lernen\nVideospiele, Spieldesign"
@@ -198,7 +198,7 @@
     "message": "Ein Thema pro Zeile, wenige Wörter. Beiträge zu allem anderen werden verwischt. Du kannst einen verwischten Beitrag jederzeit anklicken, um ihn zu lesen."
   },
   "blacklistLabel": {
-    "message": "Beiträge ausblenden mit (Blacklist)"
+    "message": "Beiträge ausblenden mit (🔴 Blacklist)"
   },
   "blacklistPlaceholder": {
     "message": "Krypto, KI, Anzeige, künstliche Intelligenz"
@@ -261,7 +261,7 @@
     "message": "Strenger verwischt mehr, auch einige Beiträge, die du sehen wolltest. Verwischte Beiträge sind nur einen Klick entfernt."
   },
   "modelLabel": {
-    "message": "Modell"
+    "message": "Zu verwendendes lokales Modell"
   },
   "modelOptionEnglish": {
     "message": "🇬🇧 Englisch · Schnell — 33 MB"
@@ -291,7 +291,7 @@
     "message": "Liest alle Sprachen und sortiert deinen Feed genauer, auch auf Englisch. Es ist toleranter bei der Formulierung eines Themas. Der Preis: ein einmaliger Download von 197 MB und mehr Rechenarbeit bei jedem Beitrag."
   },
   "modelDetailsKept": {
-    "message": "Deine Themen, die Strenge und deine Daumen-Bewertungen bleiben beim Wechseln erhalten. Bewertungen werden pro Modell gespeichert: Jedes Modell behält seine eigenen, und beim Zurückwechseln sind sie wieder da."
+    "message": "Deine Themen, die Strenge und deine Bewertungen bleiben beim Wechseln erhalten. Bewertungen werden pro Modell gespeichert: Jedes Modell behält seine eigenen, und beim Zurückwechseln sind sie wieder da."
   },
   "blurMediaLabel": {
     "message": "Bilder und Videos ohne Text verwischen"
@@ -324,31 +324,31 @@
     "message": "Fügt jedem Beitrag ein kleines Label hinzu: die erreichte Punktzahl, die zum Sichtbarbleiben nötige Punktzahl und die Länge des Beitrags. Nützlich, um herauszufinden, warum etwas verwischt wurde. Das Label ist immer auf Englisch."
   },
   "thumbsLabel": {
-    "message": "Aus meinen Daumen lernen"
+    "message": "Aus meinen Bewertungen lernen"
   },
   "thumbsIntro": {
-    "message": "Fahre mit der Maus über einen Beitrag, um ihm einen Daumen nach oben oder unten zu geben."
+    "message": "Jeder Beitrag, den du bewerten kannst, zeigt zwei Schaltflächen an seinem rechten Rand."
   },
   "thumbsUpMeans": {
-    "message": "👍 bedeutet: Dieser Inhalt gehört zum Thema."
+    "message": "Der Pfeil bedeutet: Dieser Inhalt gehört zum Thema."
   },
   "thumbsDownMeans": {
-    "message": "👎 bedeutet: Dieser Inhalt gehört nicht zum Thema."
+    "message": "Der Papierkorb bedeutet: Dieser Inhalt gehört nicht zum Thema."
   },
   "thumbsCorrect": {
     "message": "Eine richtige Entscheidung — verwischt oder angezeigt — braucht keine Korrektur."
   },
   "thumbsScope": {
-    "message": "Ein Daumen ändert nur Beiträge, die fast identisch mit dem bewerteten sind, etwa ein Repost oder ein Zitat. Alles andere wird wie gewohnt nach deinen Themen beurteilt, ein Daumen verbirgt also nie versehentlich einen guten Beitrag."
+    "message": "Eine Bewertung ändert nur Beiträge, die fast identisch mit dem bewerteten sind, etwa ein Repost oder ein Zitat. Alles andere wird wie gewohnt nach deinen Themen beurteilt, eine Bewertung verbirgt also nie versehentlich einen guten Beitrag."
   },
   "thumbsPrivacy": {
     "message": "Deine Bewertungen bleiben auf diesem Gerät. Ein Haken: Es werden nur die Wörter eines Beitrags verglichen. Steckt der eigentliche Inhalt im Bild oder Video und die Wörter sagen wenig, lass es sein. Bleibt das ausgeschaltet, bleiben die Buttons verborgen."
   },
   "statKept": {
-    "message": "👍 Behalten"
+    "message": "Behalten"
   },
   "statBlurred": {
-    "message": "👎 Verwischt"
+    "message": "Verwischt"
   },
   "statRated": {
     "message": "Bewertet"
@@ -369,7 +369,7 @@
     "message": "Importieren"
   },
   "backupHint": {
-    "message": "Speichert deine Einstellungen und Daumen-Bewertungen in einer Datei. Beim Importieren wird ersetzt, was jetzt hier ist."
+    "message": "Speichert deine Einstellungen und Bewertungen in einer Datei. Beim Importieren wird ersetzt, was jetzt hier ist."
   },
   "exportFailed": {
     "message": "Export fehlgeschlagen"
@@ -415,7 +415,7 @@
     "message": "Zurücksetzen"
   },
   "resetHint": {
-    "message": "Stellt die Standardwerte wieder her und löscht deine Daumen-Bewertungen. Deine Themen und die Sprache bleiben erhalten."
+    "message": "Stellt die Standardwerte wieder her und löscht deine Bewertungen. Deine Themen und die Sprache bleiben erhalten."
   },
   "reportIssue": {
     "message": "📥 Problem melden oder Idee teilen"

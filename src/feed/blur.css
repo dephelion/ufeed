@@ -304,66 +304,101 @@
   background: color-mix(in srgb, #7f1d1d 50%, transparent);
 }
 
-/* Thumbs. One floating element over the hovered post, never injected into it. */
+/* Rating buttons. One floating column per visible post, at its right edge, never
+   injected into it. Tune size and colours through the variables. */
 .lx-fb {
+  --lx-fb-size: 17px;
+  --lx-fb-hit: 30px;
+  --lx-fb-idle: #8b8f96;
+  --lx-fb-keep: #22c55e;
+  --lx-fb-drop: #ef4444;
+  --lx-fb-keep-light: #16a34a;
+  --lx-fb-drop-light: #dc2626;
   position: absolute;
-  /* Anchored on the post's top-centre point, so the bar's own width never matters. */
-  transform: translate(-50%, 0);
+  /* Anchored on the post's right-middle point, so the element's own size never matters. */
+  transform: translate(-100%, -50%);
   z-index: 2147483000;
-  display: none;
-  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   padding: 3px;
   border-radius: 999px;
-  background: color-mix(in srgb, #1c1917 82%, transparent);
+  background: color-mix(in srgb, #1c1917 20%, transparent);
   border: 1px solid color-mix(in srgb, #78716c 40%, transparent);
   backdrop-filter: blur(6px);
 }
 
-.lx-fb-on {
-  display: flex;
+/* A see-through dark chip turns muddy grey on a white feed, so light feeds get a light one. */
+.lx-fb.lx-fb-light {
+  --lx-fb-keep: var(--lx-fb-keep-light);
+  --lx-fb-drop: var(--lx-fb-drop-light);
+  background: color-mix(in srgb, #ffffff 55%, transparent);
+  border-color: color-mix(in srgb, #a8a29e 45%, transparent);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+}
+
+/* Touch screens: 44px is the smallest target a finger hits reliably. */
+@media (pointer: coarse) {
+  .lx-fb {
+    --lx-fb-size: 20px;
+    --lx-fb-hit: 44px;
+  }
 }
 
 .lx-fb button {
   all: unset;
   cursor: pointer;
-  width: 26px;
-  height: 26px;
+  display: grid;
+  place-items: center;
+  width: var(--lx-fb-hit);
+  height: var(--lx-fb-hit);
   border-radius: 50%;
-  text-align: center;
-  line-height: 26px;
-  font-size: 13px;
-  opacity: 0.75;
   transition:
     opacity 0.15s ease,
-    background 0.15s ease;
+    color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
 }
 
-.lx-fb button:hover {
-  opacity: 1;
-  background: color-mix(in srgb, #fafaf9 18%, transparent);
+.lx-fb svg {
+  width: var(--lx-fb-size);
+  height: var(--lx-fb-size);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.lx-fb button.lx-fb-active {
-  opacity: 1;
+/* Two classes: `.lx-fb button` resets colour with `all: unset` and outranks one. */
+.lx-fb .lx-fb-up {
+  color: var(--lx-fb-keep);
 }
 
+.lx-fb .lx-fb-down {
+  color: var(--lx-fb-drop);
+}
+
+.lx-fb-up:hover,
 .lx-fb-up.lx-fb-active {
-  background: color-mix(in srgb, #4ade80 30%, transparent);
+  background: color-mix(in srgb, var(--lx-fb-keep) 24%, transparent);
 }
 
+.lx-fb-down:hover,
 .lx-fb-down.lx-fb-active {
-  background: color-mix(in srgb, #f87171 32%, transparent);
+  background: color-mix(in srgb, var(--lx-fb-drop) 26%, transparent);
 }
 
-.lx-fb-busy button,
-.lx-fb-busy button:hover {
+.lx-fb.lx-fb-busy button,
+.lx-fb.lx-fb-busy button:hover {
   opacity: 0.3;
+  color: var(--lx-fb-idle);
   background: none;
   cursor: progress;
 }
 
-.lx-fb-done {
-  border-color: color-mix(in srgb, #4ade80 60%, transparent);
+.lx-fb-done .lx-fb-active {
+  transform: scale(1.2);
 }
 
 /* Posts-hidden counter, styled after the score badge. */

@@ -159,16 +159,26 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 - Focus entering a blurred post is spoken through one `.lx-sr` live region of ours ("Blurred by uFeed: out of topic. Press Enter to read it."), once per post. Cleared, then set 50ms later: a region whose text did not change is not re-read, and consecutive posts share a reason.
 - Second click: normal interaction.
 - Revealed posts are held in a `WeakSet` and never re-blurred.
-- An opened post keeps a small tag with the reason, minus "click to read" (`data-lx-opened` + `data-lx-label`, `opened*` keys). The blacklist tag names the keyword that matched, "Blocked keyword (crypto)", from `data-lx-keyword` set when the post was blurred ([privacy.md](privacy.md)). Top-centre and click-through: the corners hold the host's avatar and menu buttons once the post shows. The thumbs bar covers it while hovered. `revealAll()` removes it with the blurs. It follows the current verdict (`retag()`), never the one the post was opened under: removing the keyword that blocked it drops the tag, or names the reason that still applies.
+- An opened post keeps a small tag with the reason, minus "click to read" (`data-lx-opened` + `data-lx-label`, `opened*` keys). The blacklist tag names the keyword that matched, "Blocked keyword (crypto)", from `data-lx-keyword` set when the post was blurred ([privacy.md](privacy.md)). Top-centre and click-through: the corners hold the host's avatar and menu buttons once the post shows. `revealAll()` removes it with the blurs. It follows the current verdict (`retag()`), never the one the post was opened under: removing the keyword that blocked it drops the tag, or names the reason that still applies.
 - Revealing a post also reveals its blurred replies ([architecture.md](architecture.md) §Conversations).
 
 **Node-level is sufficient.** A reveal lost to virtualized recycling is an accepted tradeoff, not a bug. Do not add a persistence layer for it.
 
 ## Thumbs
 
-One floating `.lx-fb` element top-centred over the hovered post, appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
+Two always-visible buttons per visible ratable post: keep (document with up arrow) and drop (bin). Inline SVG in `currentColor`; size and colours are the `--lx-fb-*` properties on `.lx-fb`. Each is one floating `.lx-fb` appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
 
-**Top-centred, not in a corner.** The top-right belongs to the vendor's post menu, and the blur label sits there too. It is anchored horizontally on the post's centre point with a `translate(-50%, 0)`, and vertically on the post's top edge, so the bar's own width never enters the maths.
+**Mount removes any existing `.lx-fb`**, for the same Firefox reason as the card: always visible, a dead set would sit beside the live one.
+
+**Pointer-only, out of the tab order.** Buttons are `tabindex="-1"` inside an `aria-hidden` column: always-visible, focusable controls there would be Tab stops screen readers cannot see, appended after the whole page. Keyboard and screen-reader rating needs each column tied to its post; not built.
+
+**Tooltips name uFeed** ("uFeed rating: on topic"): always-visible buttons sitting on a host post must not read as the host's own.
+
+**Always visible, not on hover.** Hover does not exist on touch, and a bar popping over the author line interrupted reading. Green keep, red drop, always; grey only while the engine is busy, so the colour itself says whether a click will land. Hover and the active rating add a tinted background. Both sit on a see-through chip: bare icons vanished on busy posts. The chip follows the feed, not the OS: dark on a dark post, light (`.lx-fb-light`, deeper green and red) on a light one, from the first opaque background up from the post, re-read every recheck because X switches theme live. A single dark chip turned muddy grey on white. Buttons are 30px, 44px under `(pointer: coarse)`, the smallest reliable finger target.
+
+**A vertical column at the post's right edge, centred on its height**, 3px inside the container. No per-site anchor: an action-row placement (`ratingSlot` per adapter) was tried and looked wrong on every feed, and cost three selectors to maintain.
+
+**Repositioned, not re-decided, on scroll.** Scroll (captured, so inner scrollers count) and resize reposition on the next frame. Ratability is re-read every 300ms (`RECHECK_MS`), which also catches X moving cells by transform with no scroll event. All rects are read before any button moves: interleaving forces a layout per post. A click re-reads the post first: X may have recycled the cell since the last check. No ratable post under it drops the click and the buttons, never rates the cached post.
 
 Hidden on a post its conversation kept (`Conversation.keeps`): the opened post and replies to a kept lead post were never judged, so there is nothing to rate ([architecture.md](architecture.md) §Conversations).
 
@@ -188,24 +198,24 @@ The bar sits outside `.lx-blur`, so the reveal click handler never sees its clic
 
 ## Popup
 
-| Control                           | Effect                                                                                                                                                                                  |
-| :-------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                                              |
-| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                                        |
-| Blacklist                         | Always-visible field below the topic-writing tips. Keywords or phrases split on commas (`，` and `、` too) or new lines, stored lowercased, wrapped, no bands; saved by the same Apply. |
-| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                                        |
-| Model                             | Right under the slider. Every language (197MB, default) or English (33MB). Switching restarts the engine and downloads on first use.                                                    |
-| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                                                  |
-| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection. **Disabled** while a multilingual model runs.                                                                |
-| Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                                            |
-| Learn from thumbs                 | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear.                                                                                                            |
-| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                                                |
-| Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                                            |
-| Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm.                                                             |
-| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics, blacklist and language.                                                                      |
-| Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Sets the language of the popup and the feed ([i18n.md](i18n.md)).                            |
-| Engine chip                       | Header, centred between the title and the switch. Two or three words plus a light.                                                                                                      |
-| Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, GitHub mark linking to the repo (same row, no added height).                        |
+| Control                           | Effect                                                                                                                                                                                                                                                      |
+| :-------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| On                                | This tab only, like an ad blocker. Off reveals everything here; other tabs keep filtering. Disabled on a tab with no feed.                                                                                                                                  |
+| Topics + Apply                    | Takes effect only on Apply, so a half-typed edit never filters a feed. One striped row per topic, never wrapped.                                                                                                                                            |
+| Blacklist                         | Always-visible field below the topic-writing tips. Keywords or phrases split on commas (`，` and `、` too) or new lines, stored lowercased, wrapped, no bands; saved by the same Apply.                                                                     |
+| Strictness                        | 0-10 slider, default 7; each step is a measured threshold. Re-applies from cache, no inference. 0 blurs nothing.                                                                                                                                            |
+| Model                             | Right under the slider. Every language (197MB, default) or English (33MB). Switching restarts the engine and downloads on first use.                                                                                                                        |
+| Blur media                        | Default off. Blurs media posts under 30 chars of text.                                                                                                                                                                                                      |
+| Blur posts that aren't in English | Default on. Blurs posts outside the model's language; off skips detection. **Disabled** while a multilingual model runs.                                                                                                                                    |
+| Collapse blurred posts            | Default on. Shrinks a blurred or peeked post to a thin row over the host's own background instead of leaving it full height.                                                                                                                                |
+| Learn from my ratings             | Its own block, in the main flow. Checkbox, kept/blurred/rated counts, clear. The feed's keep and drop icons mark their help lines and counts: one SVG `<symbol>` sprite in `index.html`, copied from `feedback-bar.ts`.                                     |
+| Clear tuning                      | In that block. Deletes every correction; Reset does too.                                                                                                                                                                                                    |
+| Show scores                       | Default off. The only gate on the score badge, in any build.                                                                                                                                                                                                |
+| Export / Import                   | Own block above Reset. Writes a backup file; reads one back, replacing settings and ratings. Imports on select, no confirm.                                                                                                                                 |
+| Reset                             | Own block, explained where it sits: restores defaults, deletes every rating, keeps topics, blacklist and language.                                                                                                                                          |
+| Language                          | Header, a flag right after the title. Opens the browser's own list, each entry flag first. Sets the language of the popup and the feed ([i18n.md](i18n.md)).                                                                                                |
+| Engine chip                       | Header, centred between the title and the switch. Two or three words plus a light.                                                                                                                                                                          |
+| Footer                            | Settings line, engine line, "📥 Report an issue or share an idea" link to the GitHub issue chooser, then a row with `v<version>` (from the manifest, which WXT fills from `package.json`) bottom-left and the GitHub mark linking to the repo bottom-right. |
 
 **The popup follows the reader's language, the browser's until one is picked.** A control's text is a key filled at load ([i18n.md](i18n.md)); it never changes what a control does. Hints keep the rules below in every language.
 
@@ -220,6 +230,10 @@ Apply is disabled until either textarea differs from what is saved.
 **Engine state is shown twice, on purpose.** The popup runs past Chrome's 600px cap, so the footer opens below the fold — the header chip is the only engine state most readers ever see (`Downloading 45%`, `Ready · wasm`, `Failed`, `No feed here`). The footer line carries what will not fit in a 380px header row: that the download happens once, and the failure reason a bug report needs. It hides itself once ready, when the chip says everything left to say. Both lights read from one tone, so they can never disagree.
 
 **A failed engine always offers recovery.** Keep the short header chip as `Failed` and show a refresh button beside it; the footer appends the engine's own reason. The button deletes cached model files and restarts the extension; preserve settings and ratings. Tell the reader to reload the feed tab afterwards: extension reload does not revive an old content script. Hide it in every non-error state.
+
+**Both list boxes always show a vertical scrollbar.** Overlay scrollbars (macOS, mobile) hid that a list had more lines. Chrome: styled `::-webkit-scrollbar`, which draws a permanent bar; never add `scrollbar-color` there, it disables that styling. Firefox: `scrollbar-color` only; it still follows the OS overlay setting, and nothing in CSS overrides that.
+
+**Section titles carry an emoji.** 🟢 and 🔴 sit inside the whitelist/blacklist parenthesis, so they live in `topicsLabel`/`blacklistLabel` in every locale. 💾 backup and 🔄 start over are an `aria-hidden` `.emoji` span in `index.html`, wrapped with the title in one span: `.field` is `space-between` and would push a lone emoji to the far side. Checkbox labels, strictness and the model picker carry none.
 
 **Destructive controls explain themselves where they sit.** Reset was a bare ghost button in the footer that silently deleted every thumb rating.
 
@@ -289,7 +303,7 @@ Debug mode does **not** turn the score badge on; the setting is its only gate.
 
 **Position, never the topic text.** `data-lx-*` sits in the vendor's DOM, readable by the site's own scripts; a topic string would hand them the reader's interests.
 
-**Bottom-right corner.** Top-left sat under the thumbs bar, which is centred on the post's top edge, and pushed the peek text down. Bottom-right meets nothing on a full-height post. A collapsed row grows to 46px with its label at the top, so the badge fits underneath.
+**Bottom-right corner.** Top-left pushed the peek text down. Bottom-right meets nothing on a full-height post. A collapsed row grows to 46px with its label at the top, so the badge fits underneath.
 
 **Stays English in every language**: a diagnostic readout, and its screenshots reach bug reports ([i18n.md](i18n.md)). The popup hint for it says so.
 

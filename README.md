@@ -45,13 +45,13 @@ posts without a match stay visible. One click (or Enter) reveals a blurred post.
 - **Every language by default.** Gemma reads every language and is fast enough for
   a good first-run experience. The smaller English-only model is available in the
   popup for a one-time 33 MB download. Your topics and settings carry over, and
-  each model keeps its own thumb ratings.
+  each model keeps its own ratings.
 - **In your language.** The popup and the labels follow your browser's language,
   and the flag next to the title switches both to another: English, Spanish,
   German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and
   Traditional).
 - **You can see why, and steer it.** A 0–10 strictness slider, an option to show
-  every post's score, a peek strip that keeps close calls readable, and thumbs
+  every post's score, a peek strip that keeps close calls readable, and ratings
   that correct near-copies of posts you rated.
 - **You stay in charge.** A blurred post is always one click, or one Enter, away. If anything
   breaks, the feed shows instead of staying blurred.

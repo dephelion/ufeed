@@ -48,7 +48,7 @@ extension.
   `passage: <text>`. E5 was trained with those two tags, and its scores get worse
   without them.
 - A post's score is its highest cosine similarity against any topic line.
-- Everything after that — the strictness thresholds, the peek strip, thumbs — is
+- Everything after that — the strictness thresholds, the peek strip, ratings — is
   uFeed, not the paper.
 
 The paper also explains what the model cannot do: it trails keyword search when a

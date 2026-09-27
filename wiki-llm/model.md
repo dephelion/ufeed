@@ -247,7 +247,7 @@ No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pai
 
 **One rating per post, keyed by `hashText`.** Re-clicking the same thumb un-rates; the other thumb flips it in place.
 
-**Off by default**, behind `tuneFromFeedback` ("Learn from my thumbs" in the popup).
+**Off by default**, behind `tuneFromFeedback` ("Learn from my ratings" in the popup).
 
 **Ratings are kept per model, not deleted on a switch.** Vectors are stamped with the model that made them and stored under its id ([architecture.md](architecture.md)); a model reads only its own, and a switch back restores them untouched. The post text was discarded at rating time, so nothing can be re-embedded across models — but nothing needs to be. `ratingNear` is model-specific and must be re-measured with any new model.
 

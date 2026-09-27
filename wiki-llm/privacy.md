@@ -22,7 +22,7 @@
 
 **Corrections are scoped to the topic line that produced them.** Editing a line discards its corrections rather than applying them to a query they were never about.
 
-**Nothing is stored until the user opts in.** `tuneFromFeedback` is off by default; with it off the thumbs are hidden and no vector is written. "Clear tuning", under "Learn from my thumbs" in the popup, deletes every correction, and Reset does the same.
+**Nothing is stored until the user opts in.** `tuneFromFeedback` is off by default; with it off the thumbs are hidden and no vector is written. "Clear tuning", under "Learn from my ratings" in the popup, deletes every correction, and Reset does the same.
 
 **Export writes those vectors to a file the reader chooses.** Settings and corrections leave as one JSON file and come back the same way, on the reader's click and no other trigger — no automatic export, no scheduled backup, no cloud target, ever. The extension still transmits nothing; what changes is that a partially invertible derivative of read posts can now sit in a synced folder. **The policy carries that disclosure, not the popup** — [`docs/privacy-policy.md`](../docs/privacy-policy.md) and the published page say what the file holds rather than calling it anonymous; the popup hint says only what the buttons do. Import replaces what is stored, and refuses a file from another model whole (see [architecture.md](architecture.md)).
 

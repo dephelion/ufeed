@@ -97,6 +97,7 @@ const language = resolveLanguage(saved.language, browserLanguage);
 const t = await loadTranslator(language);
 document.documentElement.lang = language.replace('_', '-');
 localizePage(document, t);
+el('version').textContent = `v${browser.runtime.getManifest().version}`;
 
 for (const { code, flag, name } of LANGUAGES) {
   const option = document.createElement('option');
