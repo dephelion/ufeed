@@ -12,6 +12,8 @@ concurrency:
 
 permissions:
   contents: read
+  # Earlier review threads feed the prompt (build-prompt.sh).
+  pull-requests: read
 
 jobs:
   review:
@@ -42,6 +44,7 @@ jobs:
 
       - name: Build prompt
         env:
+          GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
