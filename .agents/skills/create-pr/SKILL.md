@@ -19,8 +19,7 @@ Apply this workflow when creating or updating a Pull Request. Inspect changed fi
 3. **Contrarian Review**:
    - Inspect the git diff (`git diff main...HEAD`).
    - Probe web application edge cases: unhandled async/network failures, missing loading/error UI states, breaking API payload contracts, memory/event listener leaks, and RBAC/auth checks.
-   - **For 🔴 High risk changes only**: Execute real-browser E2E verification. Check project dependencies for existing browser runners. Prefer [Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright); fall back to Playwright when Patchright is unavailable or incompatible. Patchright supports Chromium only; use Playwright for Firefox or WebKit coverage. Start the app using its documented local command and exercise changed workflows in a real browser. Record the tool, browser, scenario, outcome, and artifacts in Proof of Work. Do not describe code inspection or unit tests as real-browser E2E.
-   - Contrarian review is best-effort at levels proportionate to risk: code inspection, edge-case analysis, integration checks, and real-browser E2E where required or useful. Record levels performed, issues fixed, and unresolved findings in Proof of Work.
+   - **For 🔴 High risk changes only**: Execute real-browser E2E verification. Check project dependencies for existing test runners (Playwright, Cypress, Puppeteer, Patchright). Start the app using its documented local command and exercise changed workflows in a real browser. Record the tool, scenario, outcome, and artifacts in Proof of Work. Do not describe code inspection or unit tests as real-browser E2E.
    - **Circuit Breakers**: Max 3 fix attempts per finding. If a fix increases total change scope by >25% relative to the original prompt, stop and ask the user before proceeding.
 4. **PR Submission**:
    - Check existing PR status: `gh pr view --json url,state`.
@@ -42,9 +41,7 @@ Select the highest matching level based on blast radius, reversibility, and arch
 
 ## 3. PR Description Template
 
-Inspect the repository's pull request template before drafting the PR body. Adapt the PR body to that template: preserve its existing sections, order, prompts, and checklists; include risk, Proof of Work, Contrarian review, and confidence in matching sections or add those sections to the PR body where needed. Keep every project-specific check. Never edit the repository template as part of creating or updating a PR unless the user explicitly requests a template change.
-
-If the repository has no pull request template, use this fallback format:
+Use this format for the PR body:
 
 ```markdown
 ## Summary of Changes
@@ -57,12 +54,11 @@ If the repository has no pull request template, use this fallback format:
 
 ## Proof of Work
 
-- [ ] Formatting, including documentation — `<command>`: <outcome or reason>
-- [ ] Unit and/or integration tests — `<command>`: <outcome or reason>
-- [ ] Production build — `<command>`: <outcome or reason>
-- [ ] DOM snapshots for presentational changes — `<command>`: <outcome or reason>
-- [ ] Contrarian review — <levels performed and outcome: code, edge cases, integration, real-browser/E2E>
-- [ ] Real-browser E2E — `<tool/command>`: <scenario and outcome or reason; required for cross-layer/breaking changes lacking other verification>
+- [ ] Type Checking & Formatting — `<command>`: <outcome or reason>
+- [ ] Unit & Integration Tests — `<command>`: <outcome or reason>
+- [ ] Production Build — `<command>`: <outcome or reason>
+- [ ] DOM Snapshots / Visuals — `<command>`: <outcome or reason>
+- [ ] Real-Browser E2E — `<tool/command>`: <scenario and outcome>
 - [ ] Manual E2E Gate — <outcome or reason; required for cross-layer/breaking changes lacking automated verification>
 - Fixed during Contrarian review — <one concise line per issue, or None>
 - Unresolved findings — <finding and impact, or None>
