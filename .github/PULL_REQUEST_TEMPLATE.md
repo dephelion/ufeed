@@ -14,6 +14,7 @@
 - [ ] Format checked
 - [ ] Tests passed
 - [ ] Automated or Manual functional verification performed
+
 <!-- Add any additional checks or notes for the reviewer. -->
 
 ## Screenshots
