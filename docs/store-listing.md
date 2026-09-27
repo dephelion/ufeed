@@ -30,15 +30,15 @@ Social networks are deciding what you see. uFeed lets you decide instead.
 
 🔒 Private and fast. Everything runs on your device. No account, no cloud, no analytics. Your feed is never uploaded, stored or logged.
 
-📝 Write your topics, one per line. Posts that don't match get blurred and collapsed, never
+🟢 Write your topics, one per line. Posts that don't match get blurred and collapsed, never
 deleted. One click shows them.
 
-🚫 Block words or phrases with the blacklist. Matching posts blur even when they are on topic.
+🔴 Block words or phrases with the blacklist. Matching posts blur even when they are on topic.
 
 🌍 Reads every language by default with Gemma. A smaller English-only model
 (33 MB) is available in the popup.
 
-👍 Optional thumbs let you correct it. Off by default, kept only on your device.
+🎯 Optional ratings let you correct it. Off by default, kept only on your device.
 
 💾 Backup and import your settings anywhere.
 
@@ -63,7 +63,7 @@ supports, and the only ones requested; it requests no wildcard host access.
 
 **`storage`**
 
-Stores the user's topics, blocked keywords, strictness and toggles, plus optional thumb ratings,
+Stores the user's topics, blocked keywords, strictness and toggles, plus optional ratings,
 in local extension storage. Nothing is synced or transmitted.
 
 **Remote code — none**

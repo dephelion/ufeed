@@ -84,7 +84,7 @@
       ],
       [
         "🎚️ Make it feel right",
-        "Adjust how much uFeed filters, peek at close calls, and optionally use thumbs to tune its suggestions on your device."
+        "Adjust how much uFeed filters, peek at close calls, and optionally rate posts to tune its suggestions on your device."
       ],
       [
         "↩️ You stay in control",
@@ -147,7 +147,7 @@
       ],
       [
         "What stays on your device",
-        "Your topics and settings are saved in your browser’s local extension storage. If you turn on “Learn from my thumbs,” uFeed also saves number-based representations of posts you rate. These can retain some information about the original post, so they are treated as personal data. They stay on your device, with up to 50 positive and 50 negative ratings per topic."
+        "Your topics and settings are saved in your browser’s local extension storage. If you turn on “Learn from my ratings,” uFeed also saves number-based representations of posts you rate. These can retain some information about the original post, so they are treated as personal data. They stay on your device, with up to 50 positive and 50 negative ratings per topic."
       ],
       [
         "",

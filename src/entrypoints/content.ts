@@ -129,6 +129,7 @@ async function start(adapter: SiteAdapter): Promise<void> {
 
   const feedbackBar = mountFeedbackBar({
     t,
+    containers: () => document.querySelectorAll<HTMLElement>(adapter.containerSelector),
     postAt: (target) => filter.ratable(target),
     onFeedback: (post, liked) => filter.feedback(post, liked),
   });

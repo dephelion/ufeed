@@ -97,16 +97,16 @@
     }
   },
   "thumbUp": {
-    "message": "On topic",
-    "description": "Tooltip of the thumbs-up button."
+    "message": "uFeed rating: on topic",
+    "description": "Tooltip of the keep (arrow) rating button."
   },
   "thumbDown": {
-    "message": "Off topic",
-    "description": "Tooltip of the thumbs-down button."
+    "message": "uFeed rating: off topic",
+    "description": "Tooltip of the remove (bin) rating button."
   },
   "thumbBusy": {
-    "message": "Checking posts, one moment",
-    "description": "Tooltip of both thumbs while the engine is busy."
+    "message": "uFeed rating: checking posts, one moment",
+    "description": "Tooltip of both rating buttons while the engine is busy."
   },
   "chipInitial": {
     "message": "Idle",
@@ -223,7 +223,7 @@
     }
   },
   "topicsLabel": {
-    "message": "Topics I want to see (whitelist)"
+    "message": "Topics I want to see (🟢 whitelist)"
   },
   "topicsPlaceholder": {
     "message": "software engineering, programming\nmachine learning research\nvideo games, game design",
@@ -233,7 +233,7 @@
     "message": "One topic per line, a few words each. Posts about anything else get blurred out. You can always click a blurred post to read it."
   },
   "blacklistLabel": {
-    "message": "Hide posts mentioning (blacklist)"
+    "message": "Hide posts mentioning (🔴 blacklist)"
   },
   "blacklistPlaceholder": {
     "message": "crypto, AI, sponsored, hot take",
@@ -304,7 +304,7 @@
     "message": "Stricter hides more, including some posts you'd want. Blurred posts stay one click away."
   },
   "modelLabel": {
-    "message": "Model"
+    "message": "Local model to use"
   },
   "modelOptionEnglish": {
     "message": "🇬🇧 English · Fast — 33 MB",
@@ -339,7 +339,7 @@
     "message": "Reads every language and sorts your feed more accurately, even in English. It is more forgiving of how a topic is worded. The cost is a 197 MB one-time download and more work on every post."
   },
   "modelDetailsKept": {
-    "message": "Your topics, strictness and thumb ratings are all kept when you switch. Ratings are stored per model, so each model keeps its own and switching back restores them."
+    "message": "Your topics, strictness and ratings are all kept when you switch. Ratings are stored per model, so each model keeps its own and switching back restores them."
   },
   "blurMediaLabel": {
     "message": "Blur images and videos with no text"
@@ -374,33 +374,33 @@
     "description": "The label itself is a diagnostic and stays in English in every locale."
   },
   "thumbsLabel": {
-    "message": "Learn from my thumbs"
+    "message": "Learn from my ratings"
   },
   "thumbsIntro": {
-    "message": "Hover over a post to give it a thumb up or down."
+    "message": "Every post you can rate shows two buttons on its right edge."
   },
   "thumbsUpMeans": {
-    "message": "👍 means this content belongs in the topic."
+    "message": "The arrow means this content belongs in the topic."
   },
   "thumbsDownMeans": {
-    "message": "👎 means this content does not belong in the topic."
+    "message": "The bin means this content does not belong in the topic."
   },
   "thumbsCorrect": {
     "message": "A correct call — blurred or shown — needs no correction."
   },
   "thumbsScope": {
-    "message": "A thumb only changes posts that are almost the same as the one you rated, such as a repost or a quote. Everything else is judged by your topics as usual, so a thumb never hides a good post by accident."
+    "message": "A rating only changes posts that are almost the same as the one you rated, such as a repost or a quote. Everything else is judged by your topics as usual, so a rating never hides a good post by accident."
   },
   "thumbsPrivacy": {
     "message": "Your ratings stay on this device. One catch: it only compares the words in a post. If the real content is in the image or video and the words are forgettable, skip it. Leave this off and the buttons stay hidden."
   },
   "statKept": {
-    "message": "👍 Kept",
-    "description": "Count of posts rated thumbs-up."
+    "message": "Kept",
+    "description": "Count of posts rated on topic (arrow icon)."
   },
   "statBlurred": {
-    "message": "👎 Blurred",
-    "description": "Count of posts rated thumbs-down."
+    "message": "Blurred",
+    "description": "Count of posts rated off topic (bin icon)."
   },
   "statRated": {
     "message": "Rated",
@@ -423,7 +423,7 @@
     "message": "Import"
   },
   "backupHint": {
-    "message": "Saves your settings and thumb ratings to a file. Importing replaces what is here now."
+    "message": "Saves your settings and ratings to a file. Importing replaces what is here now."
   },
   "exportFailed": {
     "message": "Export failed",
@@ -476,7 +476,7 @@
     "message": "Reset"
   },
   "resetHint": {
-    "message": "Restores the defaults and deletes your thumb ratings. Your topics and language are kept."
+    "message": "Restores the defaults and deletes your ratings. Your topics and language are kept."
   },
   "reportIssue": {
     "message": "📥 Report an issue or share an idea"

@@ -78,13 +78,13 @@
     }
   },
   "thumbUp": {
-    "message": "Dentro do tema"
+    "message": "Avaliação do uFeed: dentro do tema"
   },
   "thumbDown": {
-    "message": "Fora do tema"
+    "message": "Avaliação do uFeed: fora do tema"
   },
   "thumbBusy": {
-    "message": "Verificando publicações, um momento"
+    "message": "Avaliação do uFeed: verificando publicações, um momento"
   },
   "chipInitial": {
     "message": "Inativo"
@@ -189,7 +189,7 @@
     }
   },
   "topicsLabel": {
-    "message": "Tópicos que quero ver (lista branca)"
+    "message": "Tópicos que quero ver (🟢 lista branca)"
   },
   "topicsPlaceholder": {
     "message": "engenharia de software, programação\npesquisa em aprendizado de máquina\nvideogames, design de jogos"
@@ -198,7 +198,7 @@
     "message": "Um tópico por linha, com poucas palavras. Publicações sobre qualquer outra coisa ficam desfocadas. Você sempre pode clicar em uma publicação desfocada para lê-la."
   },
   "blacklistLabel": {
-    "message": "Ocultar se mencionar (lista negra)"
+    "message": "Ocultar se mencionar (🔴 lista negra)"
   },
   "blacklistPlaceholder": {
     "message": "cripto, IA, patrocinado, inteligência artificial"
@@ -261,7 +261,7 @@
     "message": "Mais rigor oculta mais, inclusive algumas publicações que você gostaria de ver. As desfocadas ficam a um clique de distância."
   },
   "modelLabel": {
-    "message": "Modelo"
+    "message": "Modelo local a usar"
   },
   "modelOptionEnglish": {
     "message": "🇬🇧 Inglês · Rápido — 33 MB"
@@ -291,7 +291,7 @@
     "message": "Lê todos os idiomas e classifica seu feed com mais precisão, até em inglês. É mais tolerante quanto à forma de escrever um tópico. O custo é um download único de 197 MB e mais trabalho em cada publicação."
   },
   "modelDetailsKept": {
-    "message": "Seus tópicos, o rigor e suas avaliações com polegares são mantidos quando você troca. As avaliações são guardadas por modelo, então cada modelo mantém as suas e, ao voltar, elas são restauradas."
+    "message": "Seus tópicos, o rigor e suas avaliações são mantidos quando você troca. As avaliações são guardadas por modelo, então cada modelo mantém as suas e, ao voltar, elas são restauradas."
   },
   "blurMediaLabel": {
     "message": "Desfocar imagens e vídeos sem texto"
@@ -324,31 +324,31 @@
     "message": "Adiciona um pequeno rótulo a cada publicação com a pontuação obtida, a pontuação necessária para continuar visível e o tamanho dela. Útil para entender por que algo foi desfocado. O rótulo é sempre exibido em inglês."
   },
   "thumbsLabel": {
-    "message": "Aprender com meus polegares"
+    "message": "Aprender com minhas avaliações"
   },
   "thumbsIntro": {
-    "message": "Passe o mouse sobre uma publicação para dar um polegar para cima ou para baixo."
+    "message": "Cada publicação que você pode avaliar mostra dois botões na borda direita."
   },
   "thumbsUpMeans": {
-    "message": "👍 significa que este conteúdo pertence ao tópico."
+    "message": "A seta significa que este conteúdo pertence ao tópico."
   },
   "thumbsDownMeans": {
-    "message": "👎 significa que este conteúdo não pertence ao tópico."
+    "message": "A lixeira significa que este conteúdo não pertence ao tópico."
   },
   "thumbsCorrect": {
     "message": "Uma decisão correta — desfocada ou exibida — não precisa de correção."
   },
   "thumbsScope": {
-    "message": "Um polegar só altera publicações quase idênticas à que você avaliou, como um repost ou uma citação. Todo o resto é julgado pelos seus tópicos como sempre, então um polegar nunca oculta uma boa publicação por acidente."
+    "message": "Uma avaliação só altera publicações quase idênticas à que você avaliou, como um repost ou uma citação. Todo o resto é julgado pelos seus tópicos como sempre, então uma avaliação nunca oculta uma boa publicação por acidente."
   },
   "thumbsPrivacy": {
     "message": "Suas avaliações ficam neste dispositivo. Uma ressalva: ele só compara as palavras de uma publicação. Se o conteúdo real está na imagem ou no vídeo e as palavras são irrelevantes, pule. Deixe isto desativado e os botões ficam ocultos."
   },
   "statKept": {
-    "message": "👍 Mantidas"
+    "message": "Mantidas"
   },
   "statBlurred": {
-    "message": "👎 Desfocadas"
+    "message": "Desfocadas"
   },
   "statRated": {
     "message": "Avaliadas"
@@ -369,7 +369,7 @@
     "message": "Importar"
   },
   "backupHint": {
-    "message": "Salva suas configurações e avaliações com polegares em um arquivo. Importar substitui o que há aqui agora."
+    "message": "Salva suas configurações e avaliações em um arquivo. Importar substitui o que há aqui agora."
   },
   "exportFailed": {
     "message": "Falha ao exportar"
@@ -415,7 +415,7 @@
     "message": "Redefinir"
   },
   "resetHint": {
-    "message": "Restaura os padrões e apaga suas avaliações com polegares. Seus tópicos e o idioma são mantidos."
+    "message": "Restaura os padrões e apaga suas avaliações. Seus tópicos e o idioma são mantidos."
   },
   "reportIssue": {
     "message": "📥 Relatar um problema ou compartilhar uma ideia"

@@ -78,13 +78,13 @@
     }
   },
   "thumbUp": {
-    "message": "Dentro del tema"
+    "message": "Valoración de uFeed: dentro del tema"
   },
   "thumbDown": {
-    "message": "Fuera de tema"
+    "message": "Valoración de uFeed: fuera de tema"
   },
   "thumbBusy": {
-    "message": "Comprobando publicaciones, un momento"
+    "message": "Valoración de uFeed: comprobando publicaciones, un momento"
   },
   "chipInitial": {
     "message": "Inactivo"
@@ -189,7 +189,7 @@
     }
   },
   "topicsLabel": {
-    "message": "Temas que quiero ver (lista blanca)"
+    "message": "Temas que quiero ver (🟢 lista blanca)"
   },
   "topicsPlaceholder": {
     "message": "ingeniería de software, programación\ninvestigación en aprendizaje automático\nvideojuegos, diseño de juegos"
@@ -198,7 +198,7 @@
     "message": "Un tema por línea, de pocas palabras. Las publicaciones sobre cualquier otra cosa se difuminan. Siempre puedes hacer clic en una publicación difuminada para leerla."
   },
   "blacklistLabel": {
-    "message": "Ocultar si mencionan (lista negra)"
+    "message": "Ocultar si mencionan (🔴 lista negra)"
   },
   "blacklistPlaceholder": {
     "message": "cripto, IA, patrocinado, inteligencia artificial"
@@ -261,7 +261,7 @@
     "message": "Más exigencia oculta más, incluidas algunas publicaciones que querrías ver. Las difuminadas siguen a un clic de distancia."
   },
   "modelLabel": {
-    "message": "Modelo"
+    "message": "Modelo local a usar"
   },
   "modelOptionEnglish": {
     "message": "🇬🇧 Inglés · Rápido — 33 MB"
@@ -291,7 +291,7 @@
     "message": "Lee todos los idiomas y clasifica tu feed con más precisión, incluso en inglés. Es más tolerante con cómo se redacta un tema. El coste es una descarga única de 197 MB y más trabajo con cada publicación."
   },
   "modelDetailsKept": {
-    "message": "Tus temas, la exigencia y tus valoraciones con pulgares se conservan al cambiar. Las valoraciones se guardan por modelo, así que cada modelo conserva las suyas y al volver se restauran."
+    "message": "Tus temas, la exigencia y tus valoraciones se conservan al cambiar. Las valoraciones se guardan por modelo, así que cada modelo conserva las suyas y al volver se restauran."
   },
   "blurMediaLabel": {
     "message": "Difuminar imágenes y vídeos sin texto"
@@ -324,31 +324,31 @@
     "message": "Añade una pequeña etiqueta a cada publicación con la puntuación obtenida, la que necesitaba para seguir visible y su longitud. Útil para entender por qué algo se difuminó. La etiqueta se muestra siempre en inglés."
   },
   "thumbsLabel": {
-    "message": "Aprender de mis pulgares"
+    "message": "Aprender de mis valoraciones"
   },
   "thumbsIntro": {
-    "message": "Pasa el cursor sobre una publicación para darle un pulgar arriba o abajo."
+    "message": "Cada publicación que puedes valorar muestra dos botones en su borde derecho."
   },
   "thumbsUpMeans": {
-    "message": "👍 significa que este contenido pertenece al tema."
+    "message": "La flecha significa que este contenido pertenece al tema."
   },
   "thumbsDownMeans": {
-    "message": "👎 significa que este contenido no pertenece al tema."
+    "message": "La papelera significa que este contenido no pertenece al tema."
   },
   "thumbsCorrect": {
     "message": "Un acierto — difuminada o visible — no necesita corrección."
   },
   "thumbsScope": {
-    "message": "Un pulgar solo cambia las publicaciones casi idénticas a la que valoraste, como un repost o una cita. Todo lo demás se juzga por tus temas como siempre, así que un pulgar nunca oculta una buena publicación por accidente."
+    "message": "Una valoración solo cambia las publicaciones casi idénticas a la que valoraste, como un repost o una cita. Todo lo demás se juzga por tus temas como siempre, así que una valoración nunca oculta una buena publicación por accidente."
   },
   "thumbsPrivacy": {
     "message": "Tus valoraciones se quedan en este dispositivo. Un inconveniente: solo compara las palabras de una publicación. Si el contenido real está en la imagen o el vídeo y las palabras son irrelevantes, sáltatela. Si lo dejas desactivado, los botones permanecen ocultos."
   },
   "statKept": {
-    "message": "👍 Conservadas"
+    "message": "Conservadas"
   },
   "statBlurred": {
-    "message": "👎 Difuminadas"
+    "message": "Difuminadas"
   },
   "statRated": {
     "message": "Valoradas"
@@ -415,7 +415,7 @@
     "message": "Restablecer"
   },
   "resetHint": {
-    "message": "Restaura los valores por defecto y borra tus valoraciones con pulgares. Tus temas y el idioma se conservan."
+    "message": "Restaura los valores por defecto y borra tus valoraciones. Tus temas y el idioma se conservan."
   },
   "reportIssue": {
     "message": "📥 Informar de un problema o compartir una idea"

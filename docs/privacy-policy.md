@@ -37,9 +37,9 @@ not synced to other devices, and is never transmitted.
 | What          | Details                                                                                                          |
 | :------------ | :--------------------------------------------------------------------------------------------------------------- |
 | Your settings | Topics, blocked keywords, strictness, which model you chose, your language, and the on/off toggles in the popup. |
-| Thumb ratings | Only if you turn on "Learn from my thumbs", which is **off** unless you turn it on. See below.                   |
+| Ratings       | Only if you turn on "Learn from my ratings", which is **off** unless you turn it on. See below.                  |
 
-**About thumb ratings.** When that option is on and you rate a post, uFeed
+**About ratings.** When that option is on and you rate a post, uFeed
 stores a list of numbers describing that post's meaning (an "embedding"), a
 one-way hash of its text, and whether you rated it up or down. It does not store
 the post itself. We want to be precise rather than reassuring: an embedding is
@@ -51,7 +51,7 @@ fall off first. Each model keeps its own ratings: ones made with one model are
 never read by the other, and they are kept when you switch.
 
 **Exporting and importing.** The Backup row in the popup writes your settings
-and your thumb ratings (for every model that has any) to a file you choose, and
+and your ratings (for every model that has any) to a file you choose, and
 reads one back. That file
 contains the same embeddings described above, so treat it as personal: anyone
 who opens it sees your topics, and holds a lossy trace of the posts you rated.
@@ -90,7 +90,7 @@ welcome page is a public website visit, separate from feed filtering.
 | Permission                                             | Why                                                                                                                                                            |
 | :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Access to x.com, twitter.com, linkedin.com, reddit.com | To read post text in the page and apply the blur. These are the only sites uFeed runs on.                                                                      |
-| `storage`                                              | To keep your settings and, if you turn it on, your thumb ratings on your device.                                                                               |
+| `storage`                                              | To keep your settings and, if you turn it on, your ratings on your device.                                                                                     |
 | `offscreen` (Chrome only)                              | To keep a hidden extension page open for the shared Gemma model worker. The page receives post text from uFeed for scoring; it cannot read the website itself. |
 
 The offscreen permission does not give uFeed access to other websites or
@@ -99,9 +99,9 @@ see your browsing history, your bookmarks, your passwords, or your identity.
 
 ## Deleting your data
 
-- **Clear tuning**, under "Learn from my thumbs" in the popup, deletes the thumb
+- **Clear tuning**, under "Learn from my ratings" in the popup, deletes the
   ratings made with the model you are using.
-- **Reset**, under "Start over" in the popup, deletes every thumb rating, for
+- **Reset**, under "Start over" in the popup, deletes every rating, for
   every model, and restores default settings.
 - **Uninstalling uFeed** deletes everything it stored, including your topics.
 

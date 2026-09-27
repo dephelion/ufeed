@@ -78,13 +78,13 @@
     }
   },
   "thumbUp": {
-    "message": "符合主題"
+    "message": "uFeed 評價：符合主題"
   },
   "thumbDown": {
-    "message": "偏離主題"
+    "message": "uFeed 評價：偏離主題"
   },
   "thumbBusy": {
-    "message": "正在檢查貼文，請稍候"
+    "message": "uFeed 評價：正在檢查貼文，請稍候"
   },
   "chipInitial": {
     "message": "閒置"
@@ -189,7 +189,7 @@
     }
   },
   "topicsLabel": {
-    "message": "我想看的主題（白名單）"
+    "message": "我想看的主題（🟢白名單）"
   },
   "topicsPlaceholder": {
     "message": "軟體工程, 程式設計\n機器學習研究\n電玩遊戲, 遊戲設計"
@@ -198,7 +198,7 @@
     "message": "每行一個主題，幾個詞即可。其他內容的貼文會被模糊處理。你隨時可以點擊被模糊的貼文來查看。"
   },
   "blacklistLabel": {
-    "message": "隱藏提及以下詞的貼文（黑名單）"
+    "message": "隱藏提及以下詞的貼文（🔴黑名單）"
   },
   "blacklistPlaceholder": {
     "message": "加密貨幣，AI，廣告，人工智慧"
@@ -261,7 +261,7 @@
     "message": "越嚴格，隱藏得越多，其中包括一些你想看的貼文。被模糊的貼文仍然只需點擊一下即可查看。"
   },
   "modelLabel": {
-    "message": "模型"
+    "message": "要使用的本機模型"
   },
   "modelOptionEnglish": {
     "message": "🇬🇧 英文 · 快速 — 33 MB"
@@ -291,7 +291,7 @@
     "message": "支援所有語言，對動態消息的分類更精準，即使是英文也是如此。它對主題措辭較寬容。代價是需要一次性下載 197 MB，且處理每則貼文的運算量較大。"
   },
   "modelDetailsKept": {
-    "message": "切換時，你的主題、嚴格程度和讚／倒讚評分都會保留。評分依模型分別儲存，每個模型保留各自的評分，切換回來時會恢復。"
+    "message": "切換時，你的主題、嚴格程度和評價都會保留。評價依模型分別儲存，每個模型保留各自的評價，切換回來時會恢復。"
   },
   "blurMediaLabel": {
     "message": "模糊沒有文字的圖片和影片"
@@ -324,31 +324,31 @@
     "message": "在每則貼文上加入一個小標籤，顯示它獲得的分數、保持可見所需的分數以及貼文長度。可用於弄清某則內容為什麼被模糊。標籤一律為英文。"
   },
   "thumbsLabel": {
-    "message": "從我的讚／倒讚中學習"
+    "message": "從我的評價中學習"
   },
   "thumbsIntro": {
-    "message": "將滑鼠游標移到貼文上，即可按讚或倒讚。"
+    "message": "每則可評價的貼文右側邊緣會顯示兩個按鈕。"
   },
   "thumbsUpMeans": {
-    "message": "👍 表示這則內容屬於該主題。"
+    "message": "箭頭表示這則內容屬於該主題。"
   },
   "thumbsDownMeans": {
-    "message": "👎 表示這則內容不屬於該主題。"
+    "message": "垃圾桶表示這則內容不屬於該主題。"
   },
   "thumbsCorrect": {
     "message": "判斷正確 — 無論是被模糊還是被顯示 — 都不需要修正。"
   },
   "thumbsScope": {
-    "message": "讚或倒讚只會影響與你評分的貼文幾乎相同的貼文，例如轉貼或引用。其他內容仍依你的主題判斷，所以一次評分不會意外隱藏好貼文。"
+    "message": "評價只會影響與你評價的貼文幾乎相同的貼文，例如轉貼或引用。其他內容仍依你的主題判斷，所以一次評價不會意外隱藏好貼文。"
   },
   "thumbsPrivacy": {
     "message": "你的評分只儲存在這台裝置上。有一點需要注意：它只比對貼文中的文字。如果真正的內容在圖片或影片裡，而文字沒什麼特色，請略過。保持關閉時，按鈕不會顯示。"
   },
   "statKept": {
-    "message": "👍 保留"
+    "message": "保留"
   },
   "statBlurred": {
-    "message": "👎 已模糊"
+    "message": "已模糊"
   },
   "statRated": {
     "message": "已評分"
@@ -369,7 +369,7 @@
     "message": "匯入"
   },
   "backupHint": {
-    "message": "將你的設定和讚／倒讚評分儲存到檔案。匯入會取代目前的內容。"
+    "message": "將你的設定和評價儲存到檔案。匯入會取代目前的內容。"
   },
   "exportFailed": {
     "message": "匯出失敗"
@@ -415,7 +415,7 @@
     "message": "重設"
   },
   "resetHint": {
-    "message": "還原預設值，並刪除你的讚／倒讚評分。你的主題和語言會保留。"
+    "message": "還原預設值，並刪除你的評價。你的主題和語言會保留。"
   },
   "reportIssue": {
     "message": "📥 回報問題或分享想法"

@@ -5,6 +5,8 @@
   --line: #e7e5e4;
   --card: #fff;
   --accent: #15803d;
+  --keep: #16a34a;
+  --drop: #dc2626;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +17,8 @@
     --line: #44403c;
     --card: #292524;
     --accent: #4ade80;
+    --keep: #22c55e;
+    --drop: #ef4444;
   }
 }
 
@@ -188,13 +192,52 @@ input[type='range'] {
   color: var(--fg);
   background-color: var(--card);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 0;
   resize: vertical;
+}
+
+/* Always-visible scrollbar: macOS overlay bars hid that a list had more lines.
+   Styling ::-webkit-scrollbar is what makes Chrome draw a classic, permanent one. */
+#topics,
+#blacklist {
+  overflow-y: scroll;
+}
+
+#topics::-webkit-scrollbar,
+#blacklist::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#topics::-webkit-scrollbar-thumb,
+#blacklist::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+  background-clip: content-box;
+  border: 2px solid transparent;
+  border-radius: 999px;
+}
+
+#topics::-webkit-scrollbar-track,
+#blacklist::-webkit-scrollbar-track,
+#topics::-webkit-scrollbar-corner,
+#blacklist::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox has no ::-webkit-scrollbar. Chrome must not get this: scrollbar-color
+   switches off its ::-webkit-scrollbar styling, and the bar goes back to overlay. */
+@supports not selector(::-webkit-scrollbar) {
+  #topics,
+  #blacklist {
+    scrollbar-color: color-mix(in srgb, var(--muted) 35%, transparent) transparent;
+  }
 }
 
 /* One band per line, because a line is a topic. No wrapping: a wrapped topic
    would span two bands and read as two topics. */
+/* Green and red glow: the list colours from their 🟢/🔴 titles. */
 #topics {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--keep) 65%, transparent);
   --row: 26px;
   line-height: var(--row);
   background-image: repeating-linear-gradient(
@@ -209,6 +252,7 @@ input[type='range'] {
 
 /* Comma-separated, so it wraps like prose: no bands, no sideways scroll. */
 #blacklist {
+  box-shadow: 0 0 6px color-mix(in srgb, var(--drop) 65%, transparent);
   line-height: 1.5;
   overflow-wrap: anywhere;
   overflow-x: hidden;
@@ -435,9 +479,8 @@ footer {
    The GitHub mark shares the row so the popup gets no taller. */
 .contact {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 6px;
   margin: 2px 0 0;
   padding-top: 8px;
   border-top: 1px solid var(--line);
@@ -455,6 +498,13 @@ footer {
 .contact p a:hover,
 .contact p a:focus-visible {
   text-decoration: underline;
+}
+
+.contact-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .github {
@@ -524,9 +574,42 @@ a {
 }
 
 .stats dt {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 13px;
   white-space: nowrap;
+}
+
+.stats .rate-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.rate-icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rate-keep {
+  color: var(--keep);
+}
+
+.rate-drop {
+  color: var(--drop);
+}
+
+/* Inline, not flex: a flex item loses its list bullet, and the next line keeps one. */
+.rate-line .rate-icon {
+  margin-right: 4px;
+  vertical-align: -2px;
 }
 
 .stats dd {
@@ -581,4 +664,18 @@ a {
 
 .transfer[data-state='ok'] .transfer-tail {
   color: var(--accent);
+}
+
+/* Section markers, from the store listing. Outside the message so no locale repeats them. */
+.emoji {
+  margin-right: 6px;
+  font-style: normal;
+}
+
+/* `hidden` does not hide an inline <svg>, and display: none can break <use> in some engines. */
+.sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }

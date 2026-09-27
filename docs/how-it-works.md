@@ -198,14 +198,14 @@ nothing is held at all: the feed shows as normal rather than waiting on a downlo
 ## Tuning it yourself
 
 The model itself never changes. You do not retrain it, and no weights move.
-Every control except thumbs and the model picker changes one of two things:
+Every control except ratings and the model picker changes one of two things:
 
 - **The query vector:** what "on topic" means.
 - **The threshold:** how close a post has to be to count.
 
 **The model picker swaps the whole engine.** Choosing the other model starts a
 fresh engine and scores the page again. Your topics, strictness step and toggles
-carry over, and each model keeps its own thumb ratings.
+carry over, and each model keeps its own ratings.
 
 **Topic words change the query.** Each topic line is embedded as one `query:`.
 It is the only text you write, so it has the largest effect. E5 learned to match
@@ -235,8 +235,8 @@ strip where a post could still be wanted. Posts there stay blurred, but their
 first few words remain readable, so you can judge them without revealing them.
 The strip's width is fixed in score units, so it moves with the threshold.
 
-**Thumbs fix posts that are almost the same as one you rated.** This is off
-until you turn on _Learn from my thumbs_. A thumb never changes your topic: the
+**Ratings fix posts that are almost the same as one you rated.** This is off
+until you turn on _Learn from my ratings_. A rating never changes your topic: the
 score always comes from your topic words alone, so "shown means above the
 threshold" stays true. Instead, the rated post's vector is kept, and a new post
 that is nearly identical to it (a repost, a quote, the same story told the same
@@ -247,7 +247,7 @@ anything.
 "Nearly identical" is a high bar on purpose. Two unrelated posts already look
 fairly alike to this model, so the bar sits where, on a labelled sample, no
 post was ever that close to one with the opposite label. Most ratings therefore
-change nothing until a near-copy shows up. That is the trade: a thumb can never
+change nothing until a near-copy shows up. That is the trade: a rating can never
 push a good post out of view by accident.
 
 An earlier version moved the topic itself toward posts marked on topic and away
@@ -265,15 +265,15 @@ on the page, and clicking it opens the popup.
 
 To see all of this at work, turn on _Show each post's score_ in the popup. Each
 post then shows the score it got and the score it needed. Hover a post to see
-its score against every topic line, and a post decided by a thumb says
+its score against every topic line, and a post decided by a rating says
 "marked on topic" or "marked off topic".
 
-## What a thumb changes
+## What a rating changes
 
-A thumb is stored under **the topic line the post matched best**, and it applies
+A rating is stored under **the topic line the post matched best**, and it applies
 to any near-copy of that post, whichever line the copy lands on. Off-topic posts
 score almost the same on every line, so the "best" line is close to a coin flip
-for them. A thumb never changes any topic's scores, so it cannot shift how other
+for them. A rating never changes any topic's scores, so it cannot shift how other
 posts are judged. Rate the same post again and it un-rates; rate it the other
 way and it flips.
 
