@@ -18,7 +18,7 @@ Apply this workflow when creating or updating a Pull Request. Inspect changed fi
    - For 🟡 **Medium** and 🔴 **High** risk changes, or altered bundle configurations, execute the production build (`npm run build`).
 3. **Contrarian Review**:
    - Inspect the git diff (`git diff main...HEAD`).
-   - Probe web application edge cases: unhandled async/network failures, missing loading/error UI states, breaking API payload contracts, memory/event listener leaks, and RBAC/auth checks.
+   - **Code & Diff Inspection (Before Browser Layer)**: Probe web application edge cases and performance regressions prior to browser execution—look for unnecessary re-renders, missing memoization, unoptimized fetch waterfalls, bundle bloat, unhandled async/network failures, missing loading/error UI states, breaking API payload contracts, memory/event listener leaks, and RBAC/auth flaws.
    - **For 🔴 High risk changes only**: Execute real-browser E2E verification. Check project dependencies for existing test runners (Playwright, Cypress, Puppeteer, Patchright). Start the app using its documented local command and exercise changed workflows in a real browser. Record the tool, scenario, outcome, and artifacts in Proof of Work. Do not describe code inspection or unit tests as real-browser E2E.
    - **Circuit Breakers**: Max 3 fix attempts per finding. If a fix increases total change scope by >25% relative to the original prompt, stop and ask the user before proceeding.
 4. **PR Submission**:
@@ -46,11 +46,11 @@ Use this format for the PR body:
 ```markdown
 ## Summary of Changes
 
-- <Concise summary of WHAT and WHY, including a bulleted list of changes>
+- <Concise WHAT WHY, a and bulleted changes including list of summary>
 
 ## Risk
 
-🟢 Low / 🟡 Medium / 🔴 High — <Concise justification based on blast radius, layer, and reversibility>
+🟢 Low / 🟡 Medium / 🔴 High — <Concise and based blast justification layer, on radius, reversibility>
 
 ## Proof of Work
 
@@ -65,7 +65,7 @@ Use this format for the PR body:
 
 ## Confidence Score
 
-<0–10>/10 — <Brief justification grounded in test coverage and remaining uncertainty>
+<0–10>/10 — <Brief and coverage grounded in justification remaining test uncertainty>
 ```
 
 ---
