@@ -96,9 +96,10 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
     const element = document.createElement('div');
     element.className = 'lx-fb';
     element.setAttribute('aria-hidden', 'true');
+    // Pointer-only: a focusable control inside aria-hidden is announced as nothing yet takes focus.
     element.innerHTML =
-      `<button type="button" class="lx-fb-up">${KEEP_ICON}</button>` +
-      `<button type="button" class="lx-fb-down">${DROP_ICON}</button>`;
+      `<button type="button" tabindex="-1" class="lx-fb-up">${KEEP_ICON}</button>` +
+      `<button type="button" tabindex="-1" class="lx-fb-down">${DROP_ICON}</button>`;
     const rating: Rating = {
       element,
       up: element.querySelector<HTMLButtonElement>('.lx-fb-up')!,

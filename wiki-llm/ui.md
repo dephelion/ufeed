@@ -168,6 +168,8 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 
 Two always-visible buttons per visible ratable post: keep (document with up arrow) and drop (bin). Inline SVG in `currentColor`; size and colours are the `--lx-fb-*` properties on `.lx-fb`. Each is one floating `.lx-fb` appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
 
+**Pointer-only, out of the tab order.** Buttons are `tabindex="-1"` inside an `aria-hidden` column: always-visible, focusable controls there would be Tab stops screen readers cannot see, appended after the whole page. Keyboard and screen-reader rating needs each column tied to its post; not built.
+
 **Tooltips name uFeed** ("uFeed rating: on topic"): always-visible buttons sitting on a host post must not read as the host's own.
 
 **Always visible, not on hover.** Hover does not exist on touch, and a bar popping over the author line interrupted reading. Green keep, red drop, always; grey only while the engine is busy, so the colour itself says whether a click will land. Hover and the active rating add a tinted background. Both sit on a see-through chip: bare icons vanished on busy posts. The chip follows the feed, not the OS: dark on a dark post, light (`.lx-fb-light`, deeper green and red) on a light one, from the first opaque background up from the post, re-read every recheck because X switches theme live. A single dark chip turned muddy grey on white. Buttons are 30px, 44px under `(pointer: coarse)`, the smallest reliable finger target.

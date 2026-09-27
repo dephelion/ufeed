@@ -43,6 +43,9 @@ describe('the rating buttons', () => {
     });
 
     expect(document.querySelectorAll('.lx-fb')).toHaveLength(1);
+    for (const button of document.querySelectorAll<HTMLButtonElement>('.lx-fb button')) {
+      expect(button.tabIndex).toBe(-1);
+    }
     bar.unmount();
     expect(document.querySelectorAll('.lx-fb')).toHaveLength(0);
   });
