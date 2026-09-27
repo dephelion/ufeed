@@ -174,7 +174,7 @@ Two always-visible buttons per visible ratable post: keep (document with up arro
 
 **A vertical column at the post's right edge, centred on its height**, 3px inside the container. No per-site anchor: an action-row placement (`ratingSlot` per adapter) was tried and looked wrong on every feed, and cost three selectors to maintain.
 
-**Repositioned, not re-decided, on scroll.** Scroll (captured, so inner scrollers count) and resize reposition on the next frame. Ratability is re-read every 300ms (`RECHECK_MS`), which also catches X moving cells by transform with no scroll event. All rects are read before any button moves: interleaving forces a layout per post. A click re-reads the post first: X may have recycled the cell since the last check.
+**Repositioned, not re-decided, on scroll.** Scroll (captured, so inner scrollers count) and resize reposition on the next frame. Ratability is re-read every 300ms (`RECHECK_MS`), which also catches X moving cells by transform with no scroll event. All rects are read before any button moves: interleaving forces a layout per post. A click re-reads the post first: X may have recycled the cell since the last check. No ratable post under it drops the click and the buttons, never rates the cached post.
 
 Hidden on a post its conversation kept (`Conversation.keeps`): the opened post and replies to a kept lead post were never judged, so there is nothing to rate ([architecture.md](architecture.md) §Conversations).
 

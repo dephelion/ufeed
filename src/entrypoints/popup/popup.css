@@ -25,7 +25,8 @@
 body {
   width: 380px;
   margin: 0;
-  padding: 16px;
+  /* Wider sides: Firefox draws its scrollbar over the content's right edge. */
+  padding: 16px 22px;
   background: var(--bg);
   color: var(--fg);
   font:
@@ -279,7 +280,7 @@ select {
   background-size: 5px 5px;
   background-repeat: no-repeat;
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 0;
   appearance: none;
   cursor: pointer;
 }
@@ -314,7 +315,7 @@ button {
   color: var(--bg);
   background: var(--fg);
   border: 1px solid var(--fg);
-  border-radius: 7px;
+  border-radius: 0;
   cursor: pointer;
 }
 
@@ -413,7 +414,7 @@ input[type='number'] {
   color: var(--fg);
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 0;
 }
 
 .applied {
@@ -549,7 +550,7 @@ a {
   padding: 12px;
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 .block-head {

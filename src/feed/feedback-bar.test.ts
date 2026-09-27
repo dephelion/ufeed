@@ -93,6 +93,25 @@ describe('the rating buttons', () => {
     bar.unmount();
   });
 
+  it('drop a click, and themselves, once the post under them cannot be rated', () => {
+    const container = post();
+    const onFeedback = vi.fn();
+    let ratable = true;
+    const bar = mount([container], {
+      onFeedback,
+      postAt: (target) =>
+        ratable ? { container: target as HTMLElement, text: 'x' } : undefined,
+    });
+    ratable = false;
+    document
+      .querySelector<HTMLButtonElement>('.lx-fb-down')!
+      .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+    expect(onFeedback).not.toHaveBeenCalled();
+    expect(document.querySelector('.lx-fb')).toBeNull();
+    bar.unmount();
+  });
+
   it('write their titles again when the language changes, busy or not', () => {
     let current = t;
     const bar = mount([post()], {

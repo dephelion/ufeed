@@ -73,8 +73,15 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
 
   const rate = (rating: Rating, liked: boolean) => {
     if (busy) return;
-    // X recycles cells, so the post under these buttons may have changed since the last check.
-    const post = options.postAt(rating.post.container) ?? rating.post;
+    // X recycles cells: the post under these buttons may have changed, or turned unratable.
+    const container = rating.post.container;
+    const post = options.postAt(container);
+    if (!post) {
+      rating.element.remove();
+      ratings.delete(container);
+      verdicts.set(container, undefined);
+      return;
+    }
     const cleared = post.rating === liked;
     log.info('feedback given', { liked, cleared, chars: post.text.length });
     options.onFeedback(post, liked);
