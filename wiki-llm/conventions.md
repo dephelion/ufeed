@@ -16,6 +16,7 @@
 
 - **Wiki first.** Read [index.md](index.md) before any code, architecture, model, selector, UI, permission or testing task; open only the page it names.
 - **Branch, never `main`.** Every change lands on a branch and reaches `main` through a PR with CI green. A release bumps the minor version (`npm version minor --no-git-tag-version`); store zips are built from `main` ([development.md](../docs/development.md) §Release).
+- **Codex reviews every PR.** `.github/workflows/codex-review.yml` runs `gpt-luna-6` (medium effort) on each non-draft, same-repo push; it posts findings inline and a 🟢/🟡/🔴 confidence. Rules it applies live in `.github/codex/review.md`; needs the `OPENAI_API_KEY` secret. Advisory, never a required check.
 - **Explain plainly.** A human reads every explanation, summary, PR body and review. Point first, short sentences, define a term the first time it appears.
 - **Confirm costs the owner has not weighed** — model size, dependency weight, new permissions. Never ask before a `wiki-llm/` edit.
 - **Cheap validation first.** Prove the cheap version before proposing the expensive one, and quantify the expensive path.
