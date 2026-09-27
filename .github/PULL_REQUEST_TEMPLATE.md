@@ -1,22 +1,25 @@
-## Summary of Changes
+## Description | Summary of Changes
 
-- <Concise WHAT and WHY, including a bulleted list of changes>
+<!-- - <Concise WHAT and WHY, including a bulleted list of changes> -->
 
-## Risk
+<!-- If applicable, add story or issue link -->
 
-🟢 Low / 🟡 Medium / 🔴 High — <Concise justification based on blast radius, architectural layer, and reversibility>
+## How to Test
 
-## Proof of Work
+<!-- Step-by-step instructions for the reviewer to verify the change works. -->
 
-- [ ] Type Checking & Formatting — `<command>`: <outcome or reason>
-- [ ] Unit & Integration Tests — `<command>`: <outcome or reason>
-- [ ] Production Build — `<command>`: <outcome or reason>
-- [ ] DOM Snapshots / Visuals — `<command>`: <outcome or reason>
-- [ ] Real-Browser E2E — `<tool/command>`: <scenario and outcome>
-- [ ] Manual E2E Gate — <outcome or reason; required for multi-layer/breaking changes lacking automated verification>
-- Fixed during Contrarian review — <one concise line per issue, or None>
-- Unresolved findings — <finding and impact, or None>
+## Checklist
 
-## Confidence Score
+- [ ] Wiki updated
+- [ ] Version updated
 
-<0–10>/10 — <Brief justification grounded in test coverage and remaining uncertainty>
+- [ ] Format checked
+- [ ] Tests passed
+
+- [ ] Automated or Manual functional verification performed
+
+<!-- Add any additional checks or notes for the reviewer. -->
+
+## Screenshots
+
+<!-- If applicable, add screenshots or screen recordings. -->
