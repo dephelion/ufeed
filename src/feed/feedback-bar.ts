@@ -158,6 +158,9 @@ export function mountFeedbackBar(options: FeedbackBarOptions): FeedbackBar {
     if (!frame) frame = requestAnimationFrame(() => sync(false));
   };
 
+  // Firefox keeps a dead content script's buttons on reload (see ui.md §No-topics card).
+  for (const stale of document.querySelectorAll('.lx-fb')) stale.remove();
+
   // Capture: LinkedIn and Reddit can scroll an inner element, which never bubbles to window.
   document.addEventListener('scroll', schedule, { capture: true, passive: true });
   window.addEventListener('resize', schedule, { passive: true });

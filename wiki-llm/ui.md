@@ -168,6 +168,8 @@ Detection and inference take a moment, and for that long a post is legible. **Le
 
 Two always-visible buttons per visible ratable post: keep (document with up arrow) and drop (bin). Inline SVG in `currentColor`; size and colours are the `--lx-fb-*` properties on `.lx-fb`. Each is one floating `.lx-fb` appended to `documentElement`. **Never injected into a post** — a control inside the feed's DOM breaks Invariant 3 and dies on virtualized recycling.
 
+**Mount removes any existing `.lx-fb`**, for the same Firefox reason as the card: always visible, a dead set would sit beside the live one.
+
 **Pointer-only, out of the tab order.** Buttons are `tabindex="-1"` inside an `aria-hidden` column: always-visible, focusable controls there would be Tab stops screen readers cannot see, appended after the whole page. Keyboard and screen-reader rating needs each column tied to its post; not built.
 
 **Tooltips name uFeed** ("uFeed rating: on topic"): always-visible buttons sitting on a host post must not read as the host's own.

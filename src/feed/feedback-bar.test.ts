@@ -50,6 +50,17 @@ describe('the rating buttons', () => {
     expect(document.querySelectorAll('.lx-fb')).toHaveLength(0);
   });
 
+  it('replace the buttons an earlier content script left behind', () => {
+    const stale = document.createElement('div');
+    stale.className = 'lx-fb';
+    document.documentElement.appendChild(stale);
+    const bar = mount([post()]);
+
+    expect(stale.isConnected).toBe(false);
+    expect(document.querySelectorAll('.lx-fb')).toHaveLength(1);
+    bar.unmount();
+  });
+
   it("sit inside the post's right edge, centred vertically", () => {
     const bar = mount([post()]);
     const element = document.querySelector<HTMLElement>('.lx-fb')!;
