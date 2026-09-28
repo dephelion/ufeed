@@ -1,5 +1,6 @@
 import ChromeIcon from '../components/ChromeIcon';
 import FirefoxIcon from '../components/FirefoxIcon';
+import ReelCarousel from '../components/ReelCarousel';
 import {
   CHROME_STORE_URL,
   FIREFOX_STORE_URL,
@@ -17,30 +18,6 @@ const organizationJsonLd = {
   logo: `${SITE_URL}/icon.png`,
   sameAs: [REPOSITORY_URL],
 };
-
-function ReelPreview({ label }: { label: string }) {
-  return (
-    <div className="preview">
-      <div className="preview-top">
-        <i />
-        <i />
-        <i />
-        <span>{label}</span>
-      </div>
-      <video
-        className="preview-video"
-        src="/main-video.mp4"
-        aria-label={label}
-        autoPlay
-        controls
-        loop
-        muted
-        playsInline
-        preload="metadata"
-      />
-    </div>
-  );
-}
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -99,7 +76,13 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             </a>
           </div>
         </div>
-        <ReelPreview label={t('home.reel')} />
+        <ReelCarousel
+          label={t('home.reel')}
+          slides={[
+            { src: '/reel.mp4', label: t('home.reelSteps.0') },
+            { src: '/main-video.mp4', label: t('home.reelSteps.1') },
+          ]}
+        />
         <div className="quiet-note">
           <span>✳</span> {t('home.note')}
         </div>
