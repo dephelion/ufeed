@@ -429,6 +429,7 @@ h1 {
   transform: perspective(1100px) rotateY(-3deg) rotateX(1deg);
 }
 .preview-top {
+  position: relative;
   height: 39px;
   display: flex;
   align-items: center;
@@ -450,9 +451,76 @@ h1 {
 .preview-top i:nth-child(3) {
   background: #76c88a;
 }
-.preview-top span {
-  margin-left: auto;
-  margin-right: auto;
+.reel-tabs {
+  display: flex;
+  gap: 4px;
+  margin-inline: auto;
+}
+.reel-tab {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: #a4a8ae;
+  font: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.reel-tab span {
+  color: #6f747c;
+}
+.reel-tab:hover {
+  color: var(--text);
+}
+.reel-tab[aria-selected='true'] {
+  border-color: #454a53;
+  background: #1c1f25;
+  color: var(--text);
+}
+.reel-tab[aria-selected='true'] span {
+  color: var(--yellow);
+}
+.reel-tab:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 1px;
+}
+.reel-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--yellow);
+  opacity: 0.7;
+  transform-origin: left;
+  animation: reel-progress linear forwards;
+}
+@keyframes reel-progress {
+  from {
+    transform: scaleX(0);
+  }
+}
+.reel-stage {
+  position: relative;
+  aspect-ratio: 1280 / 1084;
+  background: #101216;
+}
+.reel-stage .preview-video {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 400ms ease,
+    visibility 0s 400ms;
+}
+.reel-stage .preview-video.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 400ms ease;
 }
 .preview-video {
   display: block;
@@ -756,6 +824,13 @@ h1 {
   .wrap {
     width: min(100% - 32px, 1080px);
   }
+  .preview-top i {
+    display: none;
+  }
+  .reel-tab {
+    padding: 3px 7px;
+    font-size: 10px;
+  }
   .header {
     height: 72px;
   }
@@ -892,6 +967,13 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .reel-stage .preview-video,
+  .reel-stage .preview-video.is-active {
+    transition: none;
+  }
+  .reel-progress {
+    display: none;
   }
   .button {
     transition: none;
