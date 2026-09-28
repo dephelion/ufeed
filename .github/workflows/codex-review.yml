@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Pinned to a reviewed commit: this job holds OPENAI_API_KEY and pull-requests write.
-      - uses: juliomatcom/gtp-reviewer@8c8f6b06a3c77d6d9f9b3fe0e7a506e42cede26c
+      - uses: juliomatcom/gtp-reviewer@2cf91e9d739cd9670559c93dc2dabcd8b5e4b0db
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           model: gpt-6-luna
