@@ -209,6 +209,54 @@
     "pinAnimationAlt": "Como fixar o uFeed no menu de extensões do Chrome.",
     "stepsKicker": "PRIMEIROS PASSOS",
     "stepsTitle": "Personalize seu feed",
+    "demo": {
+      "label": "Animação: adicionar tópicos e palavras bloqueadas no uFeed, recolher publicações desfocadas em linhas finas e avaliar publicações em um feed.",
+      "play": "Reproduzir animação",
+      "pause": "Pausar animação",
+      "chapters": [
+        {
+          "tag": "Lista branca e lista negra",
+          "title": "Fique com o que você curte. Desfoque o resto.",
+          "text": "Adicione tópicos que você quer ver e palavras que quer ocultar. Publicações fora dos seus tópicos, ou com uma palavra oculta, são desfocadas, nunca removidas."
+        },
+        {
+          "tag": "Recolher",
+          "title": "Tire o ruído do caminho",
+          "text": "Publicações desfocadas viram uma linha fina. Clique em qualquer linha para ler a publicação."
+        },
+        {
+          "tag": "Avaliações",
+          "title": "Avalie o que ele erra",
+          "text": "Ative o aprendizado e marque uma publicação como dentro ou fora do tema. O uFeed aplica isso a essa publicação e a cópias quase idênticas."
+        }
+      ],
+      "popup": {
+        "topicsLabel": "Tópicos que quero ver (🟢 lista branca)",
+        "topicsValue": "design, rust",
+        "blacklistLabel": "Ocultar se mencionar (🔴 lista negra)",
+        "blacklistValue": "cripto",
+        "save": "Salvar listas",
+        "collapse": "Recolher publicações desfocadas em uma linha fina",
+        "learn": "Aprender com minhas avaliações",
+        "strictness": "Rigor"
+      },
+      "feed": {
+        "labelTopic": "Fora do tema — clique para ler",
+        "labelBlacklist": "Palavra bloqueada — clique para ler",
+        "opened": "Fora do tema",
+        "scan": "NO SEU DISPOSITIVO",
+        "ago": "2 h",
+        "posts": [
+          "Fontes variáveis acabaram de chegar ao nosso design system.",
+          "Projeto de fim de semana: pintei à mão a placa de um café.",
+          "Você NÃO VAI ACREDITAR no que aconteceu depois.",
+          "Perfilando um serviço em Rust: 40% menos memória com arenas.",
+          "Essa cripto vai fazer 100× até sexta. Não é recomendação financeira.",
+          "Os 10 melhores memes de design da semana 😂",
+          "Um crate Rust minúsculo para gerar paletas de cores."
+        ]
+      }
+    },
     "steps": [
       {
         "title": "Escolha o que manter ou bloquear",

@@ -209,6 +209,54 @@
     "pinAnimationAlt": "Comment épingler uFeed depuis le menu des extensions de Chrome.",
     "stepsKicker": "PREMIERS PAS",
     "stepsTitle": "Personnalisez votre fil",
+    "demo": {
+      "label": "Animation : ajouter des sujets et des mots bloqués dans uFeed, réduire les publications floutées en lignes fines et évaluer des publications dans un fil.",
+      "play": "Lire l’animation",
+      "pause": "Mettre l’animation en pause",
+      "chapters": [
+        {
+          "tag": "Liste blanche et liste noire",
+          "title": "Gardez ce qui vous plaît. Floutez le reste.",
+          "text": "Ajoutez les sujets que vous voulez voir et les mots à masquer. Les publications hors de vos sujets, ou avec un mot masqué, sont floutées, jamais supprimées."
+        },
+        {
+          "tag": "Réduire",
+          "title": "Rangez le bruit",
+          "text": "Les publications floutées se réduisent à une ligne fine. Cliquez sur une ligne pour lire la publication."
+        },
+        {
+          "tag": "Évaluations",
+          "title": "Évaluez ce qu’il rate",
+          "text": "Activez l’apprentissage, puis indiquez si une publication est dans le sujet ou non. uFeed l’applique à cette publication et à ses quasi-copies."
+        }
+      ],
+      "popup": {
+        "topicsLabel": "Sujets que je veux voir (🟢 liste blanche)",
+        "topicsValue": "design, rust",
+        "blacklistLabel": "Masquer si ça mentionne (🔴 liste noire)",
+        "blacklistValue": "crypto",
+        "save": "Enregistrer les listes",
+        "collapse": "Réduire les publications floutées en une ligne fine",
+        "learn": "Apprendre de mes évaluations",
+        "strictness": "Sévérité"
+      },
+      "feed": {
+        "labelTopic": "Hors sujet — cliquez pour lire",
+        "labelBlacklist": "Mot-clé bloqué — cliquez pour lire",
+        "opened": "Hors sujet",
+        "scan": "SUR L’APPAREIL",
+        "ago": "2 h",
+        "posts": [
+          "Les polices variables arrivent dans notre design system.",
+          "Projet du week-end : j’ai peint à la main l’enseigne d’un café.",
+          "Vous n’allez PAS CROIRE ce qui s’est passé ensuite.",
+          "Profilage d’un service Rust : 40 % de mémoire en moins avec des arènes.",
+          "Cette crypto va faire ×100 d’ici vendredi. Pas un conseil financier.",
+          "Top 10 des mèmes de design de la semaine 😂",
+          "Un petit crate Rust pour générer des palettes de couleurs."
+        ]
+      }
+    },
     "steps": [
       {
         "title": "Choisissez ce que vous voulez garder ou bloquer",

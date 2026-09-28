@@ -209,6 +209,54 @@
     "pinAnimationAlt": "Cómo fijar uFeed desde el menú de extensiones de Chrome.",
     "stepsKicker": "PRIMEROS PASOS",
     "stepsTitle": "Personaliza tu feed",
+    "demo": {
+      "label": "Animación: añadir temas y palabras bloqueadas en uFeed, contraer las publicaciones difuminadas en filas finas y valorar publicaciones en un feed.",
+      "play": "Reproducir animación",
+      "pause": "Pausar animación",
+      "chapters": [
+        {
+          "tag": "Lista blanca y lista negra",
+          "title": "Quédate con lo que te gusta. Oculta lo demás.",
+          "text": "Añade temas que quieres ver y palabras que quieres ocultar. Las publicaciones fuera de tus temas, o con una palabra oculta, se difuminan, nunca se eliminan."
+        },
+        {
+          "tag": "Contraer",
+          "title": "Aparta el ruido",
+          "text": "Las publicaciones difuminadas se reducen a una fila fina. Haz clic en cualquier fila para leerla."
+        },
+        {
+          "tag": "Valoraciones",
+          "title": "Valora lo que falla",
+          "text": "Activa el aprendizaje y marca una publicación como dentro o fuera de tema. uFeed lo aplica a esa publicación y a sus copias casi idénticas."
+        }
+      ],
+      "popup": {
+        "topicsLabel": "Temas que quiero ver (🟢 lista blanca)",
+        "topicsValue": "diseño, rust",
+        "blacklistLabel": "Ocultar si mencionan (🔴 lista negra)",
+        "blacklistValue": "cripto",
+        "save": "Guardar listas",
+        "collapse": "Contraer las publicaciones difuminadas en una fila fina",
+        "learn": "Aprender de mis valoraciones",
+        "strictness": "Exigencia"
+      },
+      "feed": {
+        "labelTopic": "Fuera de tema — clic para leer",
+        "labelBlacklist": "Palabra bloqueada — clic para leer",
+        "opened": "Fuera de tema",
+        "scan": "EN TU DISPOSITIVO",
+        "ago": "2 h",
+        "posts": [
+          "Las fuentes variables ya están en nuestro sistema de diseño.",
+          "Proyecto de finde: rotulé a mano el cartel de un café.",
+          "No VAS A CREER lo que pasó después. Compártelo ya.",
+          "Perfilando un servicio en Rust: 40 % menos memoria con arenas.",
+          "Esta cripto hará 100× antes del viernes. No es consejo financiero.",
+          "Los 10 mejores memes de diseño de la semana 😂",
+          "Un crate de Rust diminuto para generar paletas de color."
+        ]
+      }
+    },
     "steps": [
       {
         "title": "Elige qué ver o bloquear",
