@@ -22,7 +22,8 @@ jobs:
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
-      - uses: juliomatcom/gtp-reviewer@main
+      # Pinned to a reviewed commit: this job holds OPENAI_API_KEY and pull-requests write.
+      - uses: juliomatcom/gtp-reviewer@3991c3196527c9e4a3086bef137cd0dfae57847b
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           model: gpt-6-luna
