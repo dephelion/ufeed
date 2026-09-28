@@ -209,6 +209,54 @@
     "pinAnimationAlt": "So pinnst du uFeed im Erweiterungsmenü von Chrome an.",
     "stepsKicker": "ERSTE SCHRITTE",
     "stepsTitle": "Gestalte deinen Feed",
+    "demo": {
+      "label": "Animation: Themen und gesperrte Wörter in uFeed hinzufügen, verwischte Beiträge zu dünnen Zeilen einklappen und Beiträge in einem Feed bewerten.",
+      "play": "Animation abspielen",
+      "pause": "Animation pausieren",
+      "chapters": [
+        {
+          "tag": "Whitelist & Blacklist",
+          "title": "Behalte, was dich interessiert. Verwische den Rest.",
+          "text": "Füge Themen hinzu, die du sehen willst, und Wörter, die du ausblenden willst. Beiträge außerhalb deiner Themen oder mit einem gesperrten Wort werden verwischt, nie gelöscht."
+        },
+        {
+          "tag": "Einklappen",
+          "title": "Weg mit dem Rauschen",
+          "text": "Verwischte Beiträge schrumpfen zu einer dünnen Zeile. Klicke auf eine Zeile, um den Beitrag zu lesen."
+        },
+        {
+          "tag": "Bewertungen",
+          "title": "Bewerte, was danebenliegt",
+          "text": "Schalte das Lernen ein und markiere einen Beitrag als zum Thema oder nicht. uFeed wendet das auf diesen Beitrag und fast identische Kopien an."
+        }
+      ],
+      "popup": {
+        "topicsLabel": "Themen, die ich sehen möchte (🟢 Whitelist)",
+        "topicsValue": "Design, Rust",
+        "blacklistLabel": "Beiträge ausblenden mit (🔴 Blacklist)",
+        "blacklistValue": "Krypto",
+        "save": "Listen speichern",
+        "collapse": "Verwischte Beiträge zu einer dünnen Zeile einklappen",
+        "learn": "Aus meinen Bewertungen lernen",
+        "strictness": "Strenge"
+      },
+      "feed": {
+        "labelTopic": "Themenfremd — zum Lesen klicken",
+        "labelBlacklist": "Gesperrtes Stichwort — zum Lesen klicken",
+        "opened": "Themenfremd",
+        "scan": "AUF DEM GERÄT",
+        "ago": "2 Std.",
+        "posts": [
+          "Variable Fonts sind jetzt in unserem Designsystem.",
+          "Wochenendprojekt: Ich habe ein Café-Schild von Hand beschriftet.",
+          "Du wirst NICHT GLAUBEN, was dann passierte.",
+          "Profiling eines Rust-Dienstes: 40 % weniger Speicher mit Arenas.",
+          "Diese Krypto macht bis Freitag 100×. Keine Anlageberatung.",
+          "Die 10 besten Design-Memes der Woche 😂",
+          "Ein winziges Rust-Crate, das Farbpaletten erzeugt."
+        ]
+      }
+    },
     "steps": [
       {
         "title": "Wähle, was bleiben oder ausgeblendet werden soll",

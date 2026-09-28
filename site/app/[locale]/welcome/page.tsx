@@ -3,6 +3,8 @@ import { pageMetadata } from '../../lib/seo';
 import { translate } from '../../i18n/config';
 import type { Locale } from '../../i18n/resources';
 import PinTip from '../../components/PinTip';
+import WelcomeDemo from '../../components/welcome-demo/WelcomeDemo';
+import type { DemoCopy } from '../../components/welcome-demo/scene';
 
 export async function generateMetadata({
   params,
@@ -43,17 +45,10 @@ export default async function WelcomePage({
         <p className="welcome-lead">{t('welcome.lead')}</p>
       </section>
 
-      <PinTip
-        titleId="welcome-pin-title"
-        kicker={t('welcome.pinKicker')}
-        title={t('welcome.pinTitle')}
-        description={t('welcome.pinDescription')}
-        imageAlt={t('welcome.pinAnimationAlt')}
-      />
-
       <section className="welcome-start" aria-labelledby="welcome-start-title">
         <p className="welcome-kicker">{t('welcome.stepsKicker')}</p>
         <h2 id="welcome-start-title">{t('welcome.stepsTitle')}</h2>
+        <WelcomeDemo copy={t('welcome.demo', { returnObjects: true }) as DemoCopy} />
         <div className="welcome-steps">
           {[0, 1, 2].map((step) => (
             <article className="welcome-step" key={step}>
@@ -65,6 +60,15 @@ export default async function WelcomePage({
         </div>
         <p className="welcome-note">{t('welcome.note')}</p>
       </section>
+
+      <PinTip
+        titleId="welcome-pin-title"
+        kicker={t('welcome.pinKicker')}
+        title={t('welcome.pinTitle')}
+        description={t('welcome.pinDescription')}
+        imageAlt={t('welcome.pinAnimationAlt')}
+        className="welcome-pin-after"
+      />
 
       <p className="welcome-more">
         <span>{t('welcome.more')}</span>

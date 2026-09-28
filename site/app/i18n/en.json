@@ -209,6 +209,54 @@
     "pinAnimationAlt": "Pinning uFeed in the Chrome extensions menu.",
     "stepsKicker": "GET STARTED",
     "stepsTitle": "Make your feed your own",
+    "demo": {
+      "label": "Animation: adding topics and blocked words in uFeed, collapsing blurred posts into thin rows, and rating posts on a feed.",
+      "play": "Play animation",
+      "pause": "Pause animation",
+      "chapters": [
+        {
+          "tag": "Whitelist & blacklist",
+          "title": "Keep what you like. Hide what you don’t.",
+          "text": "Add topics you want to see and words you want to hide. Posts off your topics, or with a hidden word, get blurred, never removed."
+        },
+        {
+          "tag": "Collapse",
+          "title": "Fold the noise away",
+          "text": "Blurred posts shrink into a thin row. Click any row to read the post."
+        },
+        {
+          "tag": "Rating",
+          "title": "Rate what it gets wrong",
+          "text": "Turn on learning, then mark a post on or off topic. uFeed applies it to that post and near-copies of it."
+        }
+      ],
+      "popup": {
+        "topicsLabel": "Topics I want to see (🟢 whitelist)",
+        "topicsValue": "design, rust",
+        "blacklistLabel": "Hide posts mentioning (🔴 blacklist)",
+        "blacklistValue": "crypto",
+        "save": "Save lists",
+        "collapse": "Collapse blurred posts into a thin row",
+        "learn": "Learn from my ratings",
+        "strictness": "Strictness"
+      },
+      "feed": {
+        "labelTopic": "Out of topic — click to read",
+        "labelBlacklist": "Blocked keyword — click to read",
+        "opened": "Out of topic",
+        "scan": "ON-DEVICE",
+        "ago": "2h",
+        "posts": [
+          "Variable fonts just landed in our design system.",
+          "Weekend project: I hand-lettered a sign for a café.",
+          "You won’t BELIEVE what happened next. Ratio this.",
+          "Profiling a Rust service: 40% less memory with arenas.",
+          "This crypto will 100× by Friday. Not financial advice.",
+          "Top 10 design memes this week 😂",
+          "A tiny Rust crate for generating color palettes."
+        ]
+      }
+    },
     "steps": [
       {
         "title": "Choose what to keep or block",
