@@ -296,6 +296,7 @@ a:hover {
   background: rgba(18, 20, 23, 0.8);
   color: #fff;
   font-size: 12px;
+  line-height: 1.4;
   font-variant-numeric: tabular-nums;
   pointer-events: none;
 }

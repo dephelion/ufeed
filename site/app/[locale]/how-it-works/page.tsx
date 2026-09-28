@@ -4,6 +4,8 @@ import { breadcrumbLd, pageMetadata } from '../../lib/seo';
 import { translate } from '../../i18n/config';
 import type { Locale } from '../../i18n/resources';
 import PinTip from '../../components/PinTip';
+import WelcomeDemo from '../../components/welcome-demo/WelcomeDemo';
+import type { DemoCopy } from '../../components/welcome-demo/scene';
 
 export async function generateMetadata({
   params,
@@ -59,6 +61,7 @@ export default async function HowItWorksPage({
       </Link>
       <h1>{t('how.title')}</h1>
       <p className="legal-lead">{t('how.lead')}</p>
+      <WelcomeDemo copy={t('welcome.demo', { returnObjects: true }) as DemoCopy} />
 
       <ol className="how-steps">
         <li>
