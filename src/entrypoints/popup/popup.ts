@@ -67,6 +67,7 @@ const blurOtherLanguages = el<HTMLInputElement>('blur-other-languages');
 const languageHint = el<HTMLParagraphElement>('language-hint');
 const collapseBlurred = el<HTMLInputElement>('collapse-blurred');
 const tuneFeedback = el<HTMLInputElement>('tune-feedback');
+const showRatingButtons = el<HTMLInputElement>('show-rating-buttons');
 const clearTuning = el<HTMLButtonElement>('clear-tuning');
 const tuningNote = el<HTMLSpanElement>('tuning-note');
 const statUp = el<HTMLElement>('stat-up');
@@ -151,6 +152,12 @@ function render(settings: Settings): void {
   blurThinMedia.checked = settings.blurThinMedia;
   collapseBlurred.checked = settings.collapseBlurred;
   tuneFeedback.checked = settings.tuneFromFeedback;
+  showRatingButtons.checked = settings.showRatingButtons;
+  showRatingButtons.disabled = !settings.tuneFromFeedback;
+  showRatingButtons.parentElement?.classList.toggle(
+    'disabled',
+    !settings.tuneFromFeedback,
+  );
   const shown = resolveLanguage(settings.language, browserLanguage);
   languagePicker.value = shown;
   languageFlag.textContent = LANGUAGES.find((item) => item.code === shown)?.flag ?? '';
@@ -330,6 +337,11 @@ void renderTuning();
 tuneFeedback.addEventListener(
   'change',
   () => void update({ tuneFromFeedback: tuneFeedback.checked }),
+);
+
+showRatingButtons.addEventListener(
+  'change',
+  () => void update({ showRatingButtons: showRatingButtons.checked }),
 );
 
 clearTuning.addEventListener('click', () => {

@@ -326,6 +326,9 @@
   "thumbsLabel": {
     "message": "Aprender de mis valoraciones"
   },
+  "ratingButtonsLabel": {
+    "message": "Mostrar botones de valoración en las publicaciones"
+  },
   "thumbsIntro": {
     "message": "Cada publicación que puedes valorar muestra dos botones en su borde derecho."
   },

@@ -518,6 +518,15 @@ describe('FeedFilter', () => {
     expect(post('cake').dataset.lxScore).toBeUndefined();
   });
 
+  it('offers no post to the thumbs bar while the rating buttons are hidden', async () => {
+    const { filter } = await run(
+      { ...SETTINGS, tuneFromFeedback: true, showRatingButtons: false },
+      ['rust ships a new borrow checker'],
+    );
+
+    expect(filter.ratable(post('rust'))).toBeUndefined();
+  });
+
   it('stops offering a post to the thumbs bar once the tab is turned off', async () => {
     const { filter } = await run({ ...SETTINGS, tuneFromFeedback: true }, [
       'rust ships a new borrow checker',

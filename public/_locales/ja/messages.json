@@ -326,6 +326,9 @@
   "thumbsLabel": {
     "message": "自分の評価から学習する"
   },
+  "ratingButtonsLabel": {
+    "message": "投稿に評価ボタンを表示する"
+  },
   "thumbsIntro": {
     "message": "評価できる投稿には、右端に 2 つのボタンが表示されます。"
   },

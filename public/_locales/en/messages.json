@@ -376,6 +376,9 @@
   "thumbsLabel": {
     "message": "Learn from my ratings"
   },
+  "ratingButtonsLabel": {
+    "message": "Show rating buttons on posts"
+  },
   "thumbsIntro": {
     "message": "Every post you can rate shows two buttons on its right edge."
   },
