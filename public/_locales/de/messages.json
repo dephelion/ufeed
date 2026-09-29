@@ -326,6 +326,9 @@
   "thumbsLabel": {
     "message": "Aus meinen Bewertungen lernen"
   },
+  "ratingButtonsLabel": {
+    "message": "Bewertungsbuttons an Beiträgen anzeigen"
+  },
   "thumbsIntro": {
     "message": "Jeder Beitrag, den du bewerten kannst, zeigt zwei Schaltflächen an seinem rechten Rand."
   },

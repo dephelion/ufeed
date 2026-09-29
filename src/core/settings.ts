@@ -17,6 +17,8 @@ export interface Settings {
   blurThinMedia: boolean;
   /** Let thumbed posts decide their near-copies. Off leaves scoring untouched. */
   tuneFromFeedback: boolean;
+  /** Show the rating buttons on posts. Off still learns from imported ratings. Needs `tuneFromFeedback`. */
+  showRatingButtons: boolean;
   /** Blur posts the model cannot read. Off skips detection entirely. */
   blurOtherLanguages: boolean;
   /** Shrink a blurred post to a thin row instead of leaving it full height. */
@@ -33,6 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showScores: false,
   blurThinMedia: false,
   tuneFromFeedback: false,
+  showRatingButtons: true,
   blurOtherLanguages: true,
   collapseBlurred: true,
   language: 'auto',
