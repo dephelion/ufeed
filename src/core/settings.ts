@@ -4,6 +4,8 @@ import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './
 import { clampStrictness } from './scoring';
 
 export interface Settings {
+  /** The popup's On switch: the state a newly opened or reloaded feed tab starts in. */
+  enabled: boolean;
   /** The whitelist: posts must be about one of these to show. */
   topics: string[];
   /** Literal blocked words and phrases, checked before topic scoring. */
@@ -28,6 +30,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  enabled: true,
   topics: [],
   blacklist: [],
   model: DEFAULT_MODEL,
@@ -86,17 +89,25 @@ export function needsTopics(settings: Settings, on: boolean): boolean {
  * tab has nothing to reconnect or re-score.
  */
 export function onlyLanguageChanged(before: Settings, after: Settings): boolean {
-  if (before.language === after.language) return false;
-  const rest = (Object.keys(after) as (keyof Settings)[]).filter(
-    (key) => key !== 'language',
-  );
-  return rest.every((key) => {
-    const [a, b] = [before[key], after[key]];
-    return Array.isArray(a) && Array.isArray(b) ? topicsEqual(a, b) : a === b;
-  });
+  return onlyChanged(before, after, 'language');
 }
 
-/** `on` is the tab's own switch, never stored: turning one tab off leaves the others. */
+/** The stored switch only seeds new tabs; an open tab keeps its own, so nothing re-runs. */
+export function onlyEnabledChanged(before: Settings, after: Settings): boolean {
+  return onlyChanged(before, after, 'enabled');
+}
+
+function onlyChanged(before: Settings, after: Settings, key: keyof Settings): boolean {
+  if (before[key] === after[key]) return false;
+  return (Object.keys(after) as (keyof Settings)[])
+    .filter((other) => other !== key)
+    .every((other) => {
+      const [a, b] = [before[other], after[other]];
+      return Array.isArray(a) && Array.isArray(b) ? topicsEqual(a, b) : a === b;
+    });
+}
+
+/** `on` is the tab's own switch, seeded from `settings.enabled`: turning one tab off leaves the open ones. */
 export function isActive(settings: Settings, on: boolean): boolean {
   return on && (settings.topics.length > 0 || settings.blacklist.length > 0);
 }

@@ -137,7 +137,7 @@ popup   → content  { type: 'ufeed:on', on }             flip it
 content → popup    boolean (the reply to both)          what the tab now holds
 ```
 
-**Held by the tab, never stored.** `FeedFilter` owns it; `isActive(settings, on)` gates everything the switch did when it was a `settings.enabled` field. `withDefaults()` drops a stored `enabled`, so an install that was off globally comes back on.
+**Held by the tab, seeded from storage.** `FeedFilter` owns it; `isActive(settings, on)` gates everything. The popup also writes `settings.enabled`; a new or reloaded tab starts from it. Open tabs ignore storage changes to it.
 
 **No reply disables the switch.** Same reading as the status channel: no content script, nothing to switch.
 

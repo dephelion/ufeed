@@ -109,6 +109,15 @@ describe('FeedFilter', () => {
     vi.unstubAllGlobals();
   });
 
+  it('starts a tab off when the stored switch is off, and blurs nothing', async () => {
+    const { engine, filter: off } = await run({ ...SETTINGS, enabled: false }, [
+      'a chocolate cake recipe',
+    ]);
+    expect(off.on).toBe(false);
+    expect(isBlurred(post('cake'))).toBe(false);
+    expect(engine.score).not.toHaveBeenCalled();
+  });
+
   it('blurs what the engine scores off topic and leaves the rest', async () => {
     await run(SETTINGS, ['rust ships a new borrow checker', 'a chocolate cake recipe']);
     expect(isBlurred(post('cake'))).toBe(true);

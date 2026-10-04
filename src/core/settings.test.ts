@@ -3,6 +3,7 @@ import {
   DEFAULT_SETTINGS,
   isActive,
   needsTopics,
+  onlyEnabledChanged,
   onlyLanguageChanged,
   parseTopics,
   topicsEqual,
@@ -130,8 +131,9 @@ describe('a settings value of the wrong type', () => {
     expect(read.showScores).toBe(false);
   });
 
-  it('drops the old global switch, so no install is left stuck off', () => {
-    expect(withDefaults({ enabled: false } as never)).toEqual(DEFAULT_SETTINGS);
+  it('keeps a stored off switch and defaults a malformed one to on', () => {
+    expect(withDefaults({ enabled: false }).enabled).toBe(false);
+    expect(withDefaults({ enabled: 'no' } as never).enabled).toBe(true);
   });
 
   it('drops a topic list holding anything but strings', () => {
@@ -176,5 +178,17 @@ describe('onlyLanguageChanged', () => {
 
   it('is false when the language did not change at all', () => {
     expect(onlyLanguageChanged(withTopics, { ...withTopics })).toBe(false);
+  });
+});
+
+describe('onlyEnabledChanged', () => {
+  it('is true when the stored switch is all that differs', () => {
+    expect(onlyEnabledChanged(withTopics, { ...withTopics, enabled: false })).toBe(true);
+  });
+
+  it('is false when anything else changed with it, or nothing did', () => {
+    const after = { ...withTopics, enabled: false };
+    expect(onlyEnabledChanged(withTopics, { ...after, strictness: 2 })).toBe(false);
+    expect(onlyEnabledChanged(withTopics, { ...withTopics })).toBe(false);
   });
 });

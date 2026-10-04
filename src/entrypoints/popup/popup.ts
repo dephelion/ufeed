@@ -278,6 +278,7 @@ enabled.addEventListener('change', () => {
   if (activeTab === undefined) return;
   renderEnabled(enabled.checked);
   describeStatus(saved);
+  void update({ enabled: enabled.checked });
   void setTabSwitch(activeTab, enabled.checked).then((on) => {
     renderEnabled(on);
     describeStatus(saved);
