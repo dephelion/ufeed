@@ -251,7 +251,7 @@ Apply is disabled until either textarea differs from what is saved.
 
 **Say the download size on the option itself**, not only in the details. 197MB is the whole cost of the choice, and a reader deciding between two options should not have to open anything to see it.
 
-**The On switch belongs to the tab, not the install.** A global switch turned every open feed off at once. The state lives in the tab's content script (`FeedFilter.on`), is never stored, and a reload turns the tab back on — a stored per-tab value would outlive the tab id it names. The popup asks the active tab at open ([architecture.md](architecture.md) §Tab switch).
+**The On switch acts on the tab, and its last position is remembered.** A global switch turned every open feed off at once, so a flip reaches only the active tab (`FeedFilter.on`). The popup also stores it as `settings.enabled`; a new or reloaded tab starts from that, so an off switch stays off. Open tabs never follow the stored value — a per-tab value would outlive the tab id it names. The popup asks the active tab at open ([architecture.md](architecture.md) §Tab switch).
 
 **A switch keeps everything.** Topics, strictness and every checkbox survive; ratings are kept per model and come back on a switch back ([architecture.md](architecture.md)). The details text says so, because "switching models" otherwise reads as a thing that might cost the reader their work.
 

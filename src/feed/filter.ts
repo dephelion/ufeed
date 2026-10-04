@@ -65,8 +65,8 @@ export class FeedFilter {
   readonly #engine: Engine;
   readonly #tuner: Tuning;
   #settings: Settings;
-  /** This tab's switch. Never stored: turning one tab off leaves every other tab filtering. */
-  #on = true;
+  /** This tab's switch, seeded from `settings.enabled`; flipping it leaves every other open tab alone. */
+  #on: boolean;
   readonly #cache = new ScoreCache();
   readonly #languages: LanguageCache;
   readonly #conversation: Conversation | undefined;
@@ -94,6 +94,7 @@ export class FeedFilter {
     this.#engine = engine;
     this.#tuner = tuner;
     this.#settings = settings;
+    this.#on = settings.enabled;
     this.#languages = new LanguageCache(detectLanguage);
     this.#conversation = Conversation.for(adapter);
     this.#queue = new ScoreQueue(

@@ -1,8 +1,8 @@
 /**
  * The popup's on/off switch belongs to the tab on screen, like an ad blocker's:
  * turning one tab off leaves every other tab filtering. The state lives in that
- * tab's content script and nowhere else, so nothing is stored and a reload
- * turns the tab back on.
+ * tab's content script and nowhere else, so other open tabs are untouched. The popup
+ * also stores the choice (`settings.enabled`), which a new or reloaded tab starts from.
  */
 import browser from 'webextension-polyfill';
 

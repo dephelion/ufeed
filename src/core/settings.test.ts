@@ -130,8 +130,9 @@ describe('a settings value of the wrong type', () => {
     expect(read.showScores).toBe(false);
   });
 
-  it('drops the old global switch, so no install is left stuck off', () => {
-    expect(withDefaults({ enabled: false } as never)).toEqual(DEFAULT_SETTINGS);
+  it('keeps a stored off switch and defaults a malformed one to on', () => {
+    expect(withDefaults({ enabled: false }).enabled).toBe(false);
+    expect(withDefaults({ enabled: 'no' } as never).enabled).toBe(true);
   });
 
   it('drops a topic list holding anything but strings', () => {

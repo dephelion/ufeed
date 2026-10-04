@@ -4,6 +4,8 @@ import { DEFAULT_MODEL, DEFAULT_STRICTNESS, isModelKey, type ModelKey } from './
 import { clampStrictness } from './scoring';
 
 export interface Settings {
+  /** The popup's On switch: the state a newly opened or reloaded feed tab starts in. */
+  enabled: boolean;
   /** The whitelist: posts must be about one of these to show. */
   topics: string[];
   /** Literal blocked words and phrases, checked before topic scoring. */
@@ -28,6 +30,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
+  enabled: true,
   topics: [],
   blacklist: [],
   model: DEFAULT_MODEL,
@@ -96,7 +99,7 @@ export function onlyLanguageChanged(before: Settings, after: Settings): boolean 
   });
 }
 
-/** `on` is the tab's own switch, never stored: turning one tab off leaves the others. */
+/** `on` is the tab's own switch, seeded from `settings.enabled`: turning one tab off leaves the open ones. */
 export function isActive(settings: Settings, on: boolean): boolean {
   return on && (settings.topics.length > 0 || settings.blacklist.length > 0);
 }
