@@ -186,6 +186,8 @@ Appears on shown and revealed posts, never on a blurred one (`postAt` skips it; 
 
 **Hidden unless `tuneFromFeedback` is on.** The checkbox gates the buttons and the scoring together, so a rating never has an invisible effect.
 
+**`showRatingButtons` (default on) hides only the buttons.** Mobile has no room for them, and a reader may still want imported ratings to apply. Off, `ratable` returns nothing and scoring keeps using every stored rating. The popup checkbox sits under the main one and is disabled while `tuneFromFeedback` is off.
+
 **A rating is only as good as the post text.** A rating overrides only posts whose text embedding is near-identical to the rated one ([model.md](model.md) §Relevance feedback) — it never sees images or video. Rating a post whose meaning lives in the media, over a neutral caption, matches other posts on words that were never the point. The popup hint asks for text-carrying posts only; nothing enforces it, same as `blurThinMedia` trusting caption length (`MIN_BACKING_CHARS`) rather than reading the frame.
 
 **A post is rated once.** Ratings are keyed by `hashText`, so the same thumb again un-rates it and the other thumb flips it. Both re-clicks reuse the stored vector and never reach the engine. Without this a held click stores copies of one post, and a mind-change leaves it rated both ways at once. The active thumb is marked, so a repeat click reads as a toggle rather than a no-op.

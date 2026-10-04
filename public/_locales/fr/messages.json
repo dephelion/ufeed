@@ -326,6 +326,9 @@
   "thumbsLabel": {
     "message": "Apprendre de mes évaluations"
   },
+  "ratingButtonsLabel": {
+    "message": "Afficher les boutons d’évaluation sur les publications"
+  },
   "thumbsIntro": {
     "message": "Chaque publication que vous pouvez évaluer affiche deux boutons sur son bord droit."
   },

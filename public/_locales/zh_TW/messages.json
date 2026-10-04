@@ -326,6 +326,9 @@
   "thumbsLabel": {
     "message": "從我的評價中學習"
   },
+  "ratingButtonsLabel": {
+    "message": "在貼文上顯示評價按鈕"
+  },
   "thumbsIntro": {
     "message": "每則可評價的貼文右側邊緣會顯示兩個按鈕。"
   },
