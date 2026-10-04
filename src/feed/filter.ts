@@ -7,6 +7,7 @@ import { modelFor } from '../core/models';
 import type { EngineState } from '../core/protocol';
 import {
   isActive,
+  onlyEnabledChanged,
   onlyLanguageChanged,
   topicsEqual,
   type Settings,
@@ -162,7 +163,10 @@ export class FeedFilter {
   }
 
   applySettings(next: Settings): void {
-    if (onlyLanguageChanged(this.#settings, next)) {
+    if (
+      onlyLanguageChanged(this.#settings, next) ||
+      onlyEnabledChanged(this.#settings, next)
+    ) {
       this.#settings = next;
       return;
     }

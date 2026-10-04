@@ -3,6 +3,7 @@ import {
   DEFAULT_SETTINGS,
   isActive,
   needsTopics,
+  onlyEnabledChanged,
   onlyLanguageChanged,
   parseTopics,
   topicsEqual,
@@ -177,5 +178,17 @@ describe('onlyLanguageChanged', () => {
 
   it('is false when the language did not change at all', () => {
     expect(onlyLanguageChanged(withTopics, { ...withTopics })).toBe(false);
+  });
+});
+
+describe('onlyEnabledChanged', () => {
+  it('is true when the stored switch is all that differs', () => {
+    expect(onlyEnabledChanged(withTopics, { ...withTopics, enabled: false })).toBe(true);
+  });
+
+  it('is false when anything else changed with it, or nothing did', () => {
+    const after = { ...withTopics, enabled: false };
+    expect(onlyEnabledChanged(withTopics, { ...after, strictness: 2 })).toBe(false);
+    expect(onlyEnabledChanged(withTopics, { ...withTopics })).toBe(false);
   });
 });

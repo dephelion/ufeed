@@ -89,14 +89,22 @@ export function needsTopics(settings: Settings, on: boolean): boolean {
  * tab has nothing to reconnect or re-score.
  */
 export function onlyLanguageChanged(before: Settings, after: Settings): boolean {
-  if (before.language === after.language) return false;
-  const rest = (Object.keys(after) as (keyof Settings)[]).filter(
-    (key) => key !== 'language',
-  );
-  return rest.every((key) => {
-    const [a, b] = [before[key], after[key]];
-    return Array.isArray(a) && Array.isArray(b) ? topicsEqual(a, b) : a === b;
-  });
+  return onlyChanged(before, after, 'language');
+}
+
+/** The stored switch only seeds new tabs; an open tab keeps its own, so nothing re-runs. */
+export function onlyEnabledChanged(before: Settings, after: Settings): boolean {
+  return onlyChanged(before, after, 'enabled');
+}
+
+function onlyChanged(before: Settings, after: Settings, key: keyof Settings): boolean {
+  if (before[key] === after[key]) return false;
+  return (Object.keys(after) as (keyof Settings)[])
+    .filter((other) => other !== key)
+    .every((other) => {
+      const [a, b] = [before[other], after[other]];
+      return Array.isArray(a) && Array.isArray(b) ? topicsEqual(a, b) : a === b;
+    });
 }
 
 /** `on` is the tab's own switch, seeded from `settings.enabled`: turning one tab off leaves the open ones. */
