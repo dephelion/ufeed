@@ -267,7 +267,7 @@
     "message": "🇬🇧 Anglais · Rapide — 33 Mo"
   },
   "modelOptionMultilingual": {
-    "message": "🌍 Multilingue · Précis — 197 Mo"
+    "message": "🌍 Multilingue · Précis — 190 Mo"
   },
   "modelHintEnglish": {
     "message": "Ne lit que l'anglais. Petit, et rapide sur chaque publication."
@@ -288,7 +288,7 @@
     "message": "Multilingue · Précis."
   },
   "modelDetailsMultilingualBody": {
-    "message": "Lit toutes les langues et trie votre fil plus précisément, même en anglais. Il est plus tolérant sur la formulation d'un sujet. En contrepartie : un téléchargement unique de 197 Mo et plus de calcul sur chaque publication."
+    "message": "Lit toutes les langues et trie votre fil plus précisément, même en anglais. Il est plus tolérant sur la formulation d'un sujet. En contrepartie : un téléchargement unique de 190 Mo et plus de calcul sur chaque publication."
   },
   "modelDetailsKept": {
     "message": "Vos sujets, votre sévérité et vos évaluations sont conservés quand vous changez. Les évaluations sont stockées par modèle : chacun garde les siennes, et revenir en arrière les restaure."

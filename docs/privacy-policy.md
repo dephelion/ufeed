@@ -70,7 +70,7 @@ contains no feed text, topics or extension settings.
 
 The first time uFeed needs to score a feed, your browser downloads the model that does
 the comparison from Hugging Face at `huggingface.co`, which redirects the larger
-files to its storage CDN at `hf.co`. That is about 197 MB for the default multilingual
+files to its storage CDN at `hf.co`. That is about 190 MB for the default multilingual
 model. If you choose the English-only model in the popup, it downloads that one
 instead, about 33 MB, the first time you use it. Only the model you have chosen
 is ever requested. Your browser then caches it, and later sessions use the cached

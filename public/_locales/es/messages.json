@@ -267,7 +267,7 @@
     "message": "🇬🇧 Inglés · Rápido — 33 MB"
   },
   "modelOptionMultilingual": {
-    "message": "🌍 Multilingüe · Preciso — 197 MB"
+    "message": "🌍 Multilingüe · Preciso — 190 MB"
   },
   "modelHintEnglish": {
     "message": "Solo lee inglés. Pequeño y rápido con cada publicación."
@@ -288,7 +288,7 @@
     "message": "Multilingüe · Preciso."
   },
   "modelDetailsMultilingualBody": {
-    "message": "Lee todos los idiomas y clasifica tu feed con más precisión, incluso en inglés. Es más tolerante con cómo se redacta un tema. El coste es una descarga única de 197 MB y más trabajo con cada publicación."
+    "message": "Lee todos los idiomas y clasifica tu feed con más precisión, incluso en inglés. Es más tolerante con cómo se redacta un tema. El coste es una descarga única de 190 MB y más trabajo con cada publicación."
   },
   "modelDetailsKept": {
     "message": "Tus temas, la exigencia y tus valoraciones se conservan al cambiar. Las valoraciones se guardan por modelo, así que cada modelo conserva las suyas y al volver se restauran."

@@ -38,7 +38,7 @@ posts without a match stay visible. One click (or Enter) reveals a blurred post.
 - **Choose what to filter.** Use topics to keep posts about subjects you care
   about, a keyword blacklist to blur posts containing words or phrases you
   choose, or both.
-- **Your feed stays on your device.** An on-device model (197 MB by default) runs inside
+- **Your feed stays on your device.** An on-device model (190 MB by default) runs inside
   your browser. Feed text and settings are never sent. On a first install in Chrome or Firefox, the browser opens a welcome page on ufeed.es; the normal page request reveals your
   IP address and language path to the site host. The model is downloaded once
   from Hugging Face, and the source is here so you can check how it works.
@@ -81,7 +81,7 @@ time, so a wrong call can be explained and corrected.
 **Firefox** — build from source for now (below).
 
 Then open the toolbar popup, add a topic, and visit x.com, linkedin.com or
-reddit.com. The model downloads once (~197 MB by default) and is cached by the
+reddit.com. The model downloads once (~190 MB by default) and is cached by the
 browser. Nothing blurs until it has loaded. If you prefer the smaller English-only
 model, choose it under _Model_ in the popup instead (a one-time ~33 MB download).
 

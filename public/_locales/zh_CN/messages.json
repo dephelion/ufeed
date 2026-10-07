@@ -267,7 +267,7 @@
     "message": "🇬🇧 英语 · 快速 — 33 MB"
   },
   "modelOptionMultilingual": {
-    "message": "🌍 多语言 · 精准 — 197 MB"
+    "message": "🌍 多语言 · 精准 — 190 MB"
   },
   "modelHintEnglish": {
     "message": "仅支持英语。体积小，处理每条帖子都很快。"
@@ -288,7 +288,7 @@
     "message": "多语言 · 精准。"
   },
   "modelDetailsMultilingualBody": {
-    "message": "支持所有语言，对信息流的分类更精准，即使是英语也是如此。它对主题措辞更宽容。代价是需要一次性下载 197 MB，并且处理每条帖子的计算量更大。"
+    "message": "支持所有语言，对信息流的分类更精准，即使是英语也是如此。它对主题措辞更宽容。代价是需要一次性下载 190 MB，并且处理每条帖子的计算量更大。"
   },
   "modelDetailsKept": {
     "message": "切换时，你的主题、严格程度和评价都会保留。评价按模型分别存储，每个模型保留各自的评价，切换回来时会恢复。"

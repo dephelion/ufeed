@@ -7,10 +7,10 @@
 
 Two, and the reader picks. Both are downloaded once and cached by the browser (Cache API, evictable).
 
-| Key        | Model                                     | dtype | Size   | Reads          | Default |
-| :--------- | :---------------------------------------- | :---- | :----- | :------------- | :------ |
-| `gemma`    | `onnx-community/embeddinggemma-300m-ONNX` | q4    | ~197MB | Every language | **yes** |
-| `e5-small` | `Xenova/e5-small-v2`                      | q8    | ~33MB  | English only   | no      |
+| Key        | Model                                  | dtype | Size   | Reads          | Default |
+| :--------- | :------------------------------------- | :---- | :----- | :------------- | :------ |
+| `gemma`    | `onnx-community/embeddinggemma-2-ONNX` | q4    | ~190MB | Every language | **yes** |
+| `e5-small` | `Xenova/e5-small-v2`                   | q8    | ~33MB  | English only   | no      |
 
 **Retrieval models, not similarity models.** The task is a short topic against a longer post — asymmetric. Prefixes are mandatory, asymmetric, and **per model**:
 
@@ -23,7 +23,9 @@ gemma     topic → "task: search result | query: ..."    post → "title: none 
 
 **A registry was rejected while there was one model**, and that held for as long as the product read one language. The second model is not a runtime branch for its own sake: it is the only way to filter a feed that is not in English, which the gate below can otherwise only blur wholesale.
 
-**`google/embeddinggemma-300m` is gated** (HTTP 401 unauthenticated). The `onnx-community` mirror is not, and is what ships. If it is ever gated the model fails to load, the engine reports `error`, and the feed fails open. EmbeddingGemma is under the **Gemma Terms of Use**, not an OSI licence; the weights are fetched by the browser and never redistributed here.
+**Gemma is EmbeddingGemma 2, loaded text-only.** It has one encoder per modality (text 270M, vision 170M, audio 300M); `Embedder` strikes `vision_config` and `audio_config` from the config, so transformers.js (≥ 4.3.1) never fetches or holds those encoders. It replaced `onnx-community/embeddinggemma-300m-ONNX` (v1) under the same key, so the setting survives. v1 sits in `retiredIds`: its stored ratings are pruned on read (`normalizeStore`), a v1 backup restores settings and drops ratings (`importConfig`), and its cached weights are evicted on load. Both widths are 768, so the stamp, not the width, is what tells the two apart.
+
+**Google's own repository is gated** (HTTP 401 unauthenticated). The `onnx-community` mirror is not, and is what ships. If it is ever gated the model fails to load, the engine reports `error`, and the feed fails open. EmbeddingGemma is under the **Gemma Terms of Use**, not an OSI licence; the weights are fetched by the browser and never redistributed here.
 
 **The step means the same thing on both scales.** Every model's strictness table has 11 steps spending the same share of feed, so a stored step survives a switch. Enforced by `scoring.test.ts`.
 
@@ -156,7 +158,13 @@ Base rate 13%: that is the precision a filter has to beat to be worth anything.
 
 Default **step 7**: best F1 (0.55) on the labelled set.
 
-### EmbeddingGemma's scale — PROVISIONAL
+### EmbeddingGemma 2's scale — UNMEASURED
+
+**Every Gemma number in `models.ts` is a placeholder until re-run against v2.** No harness has scored v2 yet. Its table is v1's carried through the probe pair: each v1 threshold kept its position `k = (t − far) / (near − far)` against v1's WASM probe (`near=0.597 far=0.138`), and was placed at the same `k` against v2's assumed probe (`near≈0.78 far≈0.50`, read off the transformers.js 4.3.1 release examples, where related text scores 0.75 – 0.85 and unrelated 0.46 – 0.51). `peekBand` and `ratingNear` were scaled the same way. `probeMinNear` 0.55 and `probeMinGap` 0.10 are loose on purpose: a probe tuned to a guess would reject a healthy model.
+
+**Before quoting any v2 number:** read `near`/`far` from the `model loaded` log line, re-run `calibrate.mjs` and `near-probe.mjs` against v2, and replace the table, probe bounds, `peekBand` and `ratingNear`. `npm run test:model` asserts the default threshold still splits the fixture posts.
+
+### EmbeddingGemma v1's scale — PROVISIONAL, retired
 
 Derived 2026-09-20 by the same method (`.local/spikes/multilingual/calibrate.mjs`), over the same 615 observations, so a switched feed looks sane. **Not measured the way e5-small-v2's was, and not to be quoted as if it were.**
 
@@ -255,7 +263,7 @@ No opposite-label pair on the sample reaches 0.92 (max 0.916); 13 same-label pai
 
 A backend can load, report ready, run fast, and return confident nonsense. ORT's **WebGPU backend miscomputes the q8 model**: a Spanish political post scored 0.32 against `tech` where CPU gives 0.001. Nothing errors.
 
-**WASM is the only backend, for both models.** e5's q8 failed the probe on WebGPU on every load (`near=0.901 far=0.898`, against a required gap of 0.06), and so did Gemma's q4 (`near=0.353 far=0.375`, against `0.597` and `0.138` on WASM) — see `tryWebGPU` below. Every feed tab that tried paid for a WebGPU session it then threw away.
+**WASM is the only backend, for both models.** v2 inherits v1's `tryWebGPU: false` untested. e5's q8 failed the probe on WebGPU on every load (`near=0.901 far=0.898`, against a required gap of 0.06), and so did Gemma's q4 (`near=0.353 far=0.375`, against `0.597` and `0.138` on WASM) — see `tryWebGPU` below. Every feed tab that tried paid for a WebGPU session it then threw away.
 
 **The iframe stays single-threaded**, because an injected iframe cannot be cross-origin isolated ([manifest.md](manifest.md) §WASM threads). Chrome's isolated offscreen Gemma worker starts with two WASM threads in one model session; Firefox keeps its iframe. Two independent workers would load two sessions and are not used.
 
@@ -276,7 +284,7 @@ WASM is the only backend either model gets, so its cost is the product's cost. M
 | Smaller batch    | 0% throughput                | none                       | **Adopted**, `spec.batchSize`.             |
 | 2 workers        | 45%                          | a second model session     | Rejected in favor of threads.              |
 
-**Two-thread browser probe, 2026-09-23:** Chrome for Testing 152 on Apple M2, 60 labelled posts, same Gemma q4 model and bundled ORT WASM. One thread took 19.8–20.0s; two took 11.0s (**1.81×**). All 60 vectors matched exactly across all 768 dimensions; max score difference was zero and no decision changed at threshold 0.188. Both modes classified 40/60 correctly. The all-415-post comparison, resident-memory measurement and end-to-end visible-tab latency remain open. The 197MB model figure is download size, not measured resident memory.
+**Two-thread browser probe, 2026-09-23:** Chrome for Testing 152 on Apple M2, 60 labelled posts, same Gemma q4 model and bundled ORT WASM. One thread took 19.8–20.0s; two took 11.0s (**1.81×**). All 60 vectors matched exactly across all 768 dimensions; max score difference was zero and no decision changed at threshold 0.188. Both modes classified 40/60 correctly. The all-415-post comparison, resident-memory measurement and end-to-end visible-tab latency remain open. The 190MB model figure is download size, not measured resident memory.
 
 **Truncation looked far better than it is.** The per-post figures (80 chars runs at 0.40× the cost of 320) are for the _longest_ posts. Across the real length distribution — mean 174 chars, median 182, max 325 — a cap at 240 touches 125 of 415 posts and saves under 4%. Short posts cannot be made shorter, and `MAX_CHARS = 1200` never binds on a feed at all.
 

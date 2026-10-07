@@ -95,6 +95,29 @@ describe('a file that cannot be trusted', () => {
   });
 });
 
+describe('a backup from a retired model', () => {
+  const V1 = 'onnx-community/embeddinggemma-300m-ONNX';
+  const fromV1 = () => {
+    const file = JSON.parse(
+      exportConfig({ ...settings, model: 'e5-small' }, feedback, APP),
+    );
+    return importConfig(JSON.stringify({ ...file, model: { id: V1, dim: 768 } }));
+  };
+
+  it('restores the settings under the key that replaced it', () => {
+    const result = fromV1();
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.settings).toEqual({ ...settings, model: 'gemma' });
+  });
+
+  it('drops the ratings, which are vectors in a space no model reads', () => {
+    const result = fromV1();
+    if (!result.ok) throw new Error(result.reason);
+    expect(result.feedback.byTopic).toEqual({});
+    expect(result.feedback.model).toBe(modelFor('gemma').id);
+  });
+});
+
 describe('a file that is trusted but wrong in places', () => {
   it('drops a rating whose vector is the wrong width', () => {
     const file = JSON.parse(exportConfig(settings, feedback, APP));

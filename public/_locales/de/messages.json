@@ -267,7 +267,7 @@
     "message": "🇬🇧 Englisch · Schnell — 33 MB"
   },
   "modelOptionMultilingual": {
-    "message": "🌍 Mehrsprachig · Genau — 197 MB"
+    "message": "🌍 Mehrsprachig · Genau — 190 MB"
   },
   "modelHintEnglish": {
     "message": "Liest nur Englisch. Klein und bei jedem Beitrag schnell."
@@ -288,7 +288,7 @@
     "message": "Mehrsprachig · Genau."
   },
   "modelDetailsMultilingualBody": {
-    "message": "Liest alle Sprachen und sortiert deinen Feed genauer, auch auf Englisch. Es ist toleranter bei der Formulierung eines Themas. Der Preis: ein einmaliger Download von 197 MB und mehr Rechenarbeit bei jedem Beitrag."
+    "message": "Liest alle Sprachen und sortiert deinen Feed genauer, auch auf Englisch. Es ist toleranter bei der Formulierung eines Themas. Der Preis: ein einmaliger Download von 190 MB und mehr Rechenarbeit bei jedem Beitrag."
   },
   "modelDetailsKept": {
     "message": "Deine Themen, die Strenge und deine Bewertungen bleiben beim Wechseln erhalten. Bewertungen werden pro Modell gespeichert: Jedes Modell behält seine eigenen, und beim Zurückwechseln sind sie wieder da."

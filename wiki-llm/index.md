@@ -28,7 +28,7 @@ Chrome and Firefox, MV3, built with WXT. Feeds: X, LinkedIn, Reddit.
 
 Resolved by measurement, see [model.md](model.md): e5-small-v2 beats MiniLM and bge; length compensation unnecessary; ORT WebGPU miscomputes the q8 model, so WASM is the only backend.
 
-Two models, picked in the popup: EmbeddingGemma-300m (197MB, every language, default) and `e5-small-v2` (33MB, English only). Gemma is now fast enough for the default first-run experience; its strictness scale remains provisional.
+Two models, picked in the popup: EmbeddingGemma 2, text-only (~190MB, every language, default) and `e5-small-v2` (33MB, English only). Gemma's strictness scale is unmeasured on v2 and must be recalibrated.
 
 The UI speaks English, Spanish, German, French, Brazilian Portuguese, Japanese and Chinese (Simplified and Traditional); the browser's language picks one until the reader picks another in the popup, see [i18n.md](i18n.md).
 
