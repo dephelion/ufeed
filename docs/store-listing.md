@@ -113,7 +113,7 @@ BUILD FROM THE ATTACHED SOURCES ZIP
 The production build is minified by Vite (WXT). The source under src/ is unminified TypeScript.
 
 THIRD-PARTY BINARIES
-public/ort/ort-wasm-simd-threaded.asyncify.wasm and .mjs are the unmodified ONNX Runtime Web files from the onnxruntime-web package pinned in package-lock.json (1.31.0-dev.20260914-8d85527a0). scripts/sync-ort.mjs copies them from node_modules/onnxruntime-web/dist/ on npm install, so they can be compared byte for byte. They are bundled and loaded from the extension; nothing is fetched from a CDN.
+public/ort/ort-wasm-simd-threaded.jsep.wasm and .mjs are the unmodified ONNX Runtime Web files from the onnxruntime-web package pinned in package-lock.json (1.31.0-dev.20260914-8d85527a0). scripts/sync-ort.mjs copies them from node_modules/onnxruntime-web/dist/ on npm install, so they can be compared byte for byte. They are bundled and loaded from the extension; nothing is fetched from a CDN.
 
 CONTENT SECURITY POLICY
 'wasm-unsafe-eval' on extension pages is needed only to compile that bundled ONNX Runtime WebAssembly. No remote code is executed and nothing uses eval.

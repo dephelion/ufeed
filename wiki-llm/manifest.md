@@ -58,11 +58,11 @@ node -e "const s=require('sharp'),f=require('fs').readFileSync('assets/logo.svg'
 
 ## ONNX Runtime
 
-`public/ort/` holds `ort-wasm-simd-threaded.asyncify.{wasm,mjs}`, synced from `node_modules` by `scripts/sync-ort.mjs` on `postinstall`. `env.backends.onnx.wasm.wasmPaths = '/ort/'`.
+`public/ort/` holds `ort-wasm-simd-threaded.jsep.{wasm,mjs}`, synced from `node_modules` by `scripts/sync-ort.mjs` on `postinstall`. Set explicit `wasmPaths.wasm` and `wasmPaths.mjs` to those extension-local files.
 
-**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. asyncify only, because the `onnxruntime-web/webgpu` entry that transformers.js 4 imports asks for the asyncify files by name.
+**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. Use JSEP: asyncify fails Gemma 2 q4 session creation on `GatherBlockQuantized`. A directory-only `wasmPaths` selects asyncify in transformers.js 4; override both filenames. Disable `env.useWasmCache`: bundled files already persist; its blob-module loader violates extension CSP.
 
-Package size ~22.5MB, almost entirely that binary.
+Package size ~30MB, almost entirely that binary.
 
 ## WASM threads
 

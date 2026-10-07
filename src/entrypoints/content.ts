@@ -37,7 +37,7 @@ export default defineContentScript({
   ],
   runAt: 'document_start',
   cssInjectionMode: 'manifest',
-  main: () => {
+  main: (ctx) => {
     const adapter = adapterFor(location.hostname);
     if (!adapter) {
       log.info('no adapter for host, standing down', { host: location.hostname });
@@ -45,12 +45,14 @@ export default defineContentScript({
     }
     // Answer even if startup fails before the engine exists.
     serveEngineStatus(() => engineStatus);
-    addEventListener('error', (event) => {
-      if (!event.filename.startsWith(browser.runtime.getURL('/'))) return;
+    const extensionOrigin = browser.runtime.getURL('/');
+    ctx.addEventListener(window, 'error', (event) => {
+      if (ctx.isInvalid || !event.filename.startsWith(extensionOrigin)) return;
       event.preventDefault();
       reportEngineFailure(event.error ?? event.message);
     });
     start(adapter).catch((error: unknown) => {
+      if (ctx.isInvalid) return;
       reportEngineFailure(error);
     });
   },
