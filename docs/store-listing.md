@@ -76,7 +76,7 @@ the selected model **weights** (data files, not code) from Hugging Face
 (`huggingface.co`, redirecting to its `hf.co` CDN), which reveals the IP
 address and requested model to Hugging Face. Neither request includes feed
 content or extension settings. The browser then caches model weights; the
-default model is about 197 MB and the optional English-only model is about 33 MB.
+default model is about 190 MB and the optional English-only model is about 33 MB.
 
 ## Data usage disclosure
 
@@ -113,13 +113,13 @@ BUILD FROM THE ATTACHED SOURCES ZIP
 The production build is minified by Vite (WXT). The source under src/ is unminified TypeScript.
 
 THIRD-PARTY BINARIES
-public/ort/ort-wasm-simd-threaded.jsep.wasm and .mjs are the unmodified ONNX Runtime Web files from the onnxruntime-web package pinned in package-lock.json (1.22.0-dev.20250409-89f8206ba4). scripts/sync-ort.mjs copies them from node_modules/onnxruntime-web/dist/ on npm install, so they can be compared byte for byte. They are bundled and loaded from the extension; nothing is fetched from a CDN.
+public/ort/ort-wasm-simd-threaded.asyncify.wasm and .mjs are the unmodified ONNX Runtime Web files from the onnxruntime-web package pinned in package-lock.json (1.31.0-dev.20260914-8d85527a0). scripts/sync-ort.mjs copies them from node_modules/onnxruntime-web/dist/ on npm install, so they can be compared byte for byte. They are bundled and loaded from the extension; nothing is fetched from a CDN.
 
 CONTENT SECURITY POLICY
 'wasm-unsafe-eval' on extension pages is needed only to compile that bundled ONNX Runtime WebAssembly. No remote code is executed and nothing uses eval.
 
 NETWORK
-On a first installation in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is onnx-community/embeddinggemma-300m-ONNX (about 197 MB). The optional English-only model, Xenova/e5-small-v2 (about 33 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
+On a first installation in Chrome or Firefox, uFeed opens its welcome page at ufeed.es. This normal page request reveals the IP address, standard browser request details and language path to the site host. When a model is first needed, the browser downloads its weights from huggingface.co, which reveals the IP address and requested model to that service. Neither request includes feed content or extension settings. The default model is onnx-community/embeddinggemma-2-ONNX (about 190 MB). The optional English-only model, Xenova/e5-small-v2 (about 33 MB), is fetched only if the user picks it. No analytics or accounts; the extension does not collect feed content or settings (data_collection_permissions: none).
 
 WHY THE HIDDEN IFRAME
 The content script keeps access to feed text and the page DOM. Chrome's default Gemma model uses a shared offscreen extension page and worker across feed tabs; Chrome's optional English model and Firefox use a per-tab hidden engine.html iframe and worker. Both transports send text to the extension worker and return scores. The engine never reads the host page.

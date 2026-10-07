@@ -119,7 +119,7 @@ describe('scoring real feed text', { timeout: 120_000 }, () => {
 /**
  * The second model, through the shipped Embedder rather than a spike harness:
  * a different graph, different prefixes, and its own pooled output. Downloads
- * ~197MB the first time, which is why this suite is never part of `npm test`.
+ * ~190MB the first time, which is why this suite is never part of `npm test`.
  */
 describe('EmbeddingGemma, the multilingual model', { timeout: 600_000 }, () => {
   const GEMMA = modelFor('gemma');
@@ -140,10 +140,10 @@ describe('EmbeddingGemma, the multilingual model', { timeout: 600_000 }, () => {
     expect(probe.near - probe.far).toBeGreaterThan(GEMMA.probeMinGap);
   });
 
-  it("returns vectors of its own width, not the default model's", async () => {
+  it("returns vectors of its own width, not e5's", async () => {
     const [v] = await vectors([gd(TECH)]);
     expect(v).toHaveLength(GEMMA.dim);
-    expect(GEMMA.dim).not.toBe(MODEL.dim);
+    expect(GEMMA.dim).not.toBe(modelFor('e5-small').dim);
   });
 
   it('reads a Spanish post against a Spanish topic, which is the whole point', async () => {
@@ -174,12 +174,9 @@ describe('EmbeddingGemma, the multilingual model', { timeout: 600_000 }, () => {
     expect(cosine(topic!, tech!)).toBeGreaterThan(cosine(topic!, politics!));
   });
 
-  it("scores in its own calibrated band, nowhere near the default model's", async () => {
+  it('keeps an on-topic post above the default threshold', async () => {
     const [tech, topic] = await vectors([gd(TECH), gq('tech, software, ai')]);
-    const score = cosine(topic!, tech!);
-    expect(score).toBeGreaterThan(thresholdForStrictness(0, GEMMA));
-    // e5's loosest step; a Gemma score reaching it would mean the tables were swapped.
-    expect(score).toBeLessThan(thresholdForStrictness(0, MODEL));
+    expect(cosine(topic!, tech!)).toBeGreaterThan(GEMMA_THRESHOLD);
   });
 
   it('scores a post the same alone and among other posts', async () => {

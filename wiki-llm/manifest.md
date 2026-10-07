@@ -58,9 +58,9 @@ node -e "const s=require('sharp'),f=require('fs').readFileSync('assets/logo.svg'
 
 ## ONNX Runtime
 
-`public/ort/` holds `ort-wasm-simd-threaded.jsep.{wasm,mjs}`, synced from `node_modules` by `scripts/sync-ort.mjs` on `postinstall`. `env.backends.onnx.wasm.wasmPaths = '/ort/'`.
+`public/ort/` holds `ort-wasm-simd-threaded.asyncify.{wasm,mjs}`, synced from `node_modules` by `scripts/sync-ort.mjs` on `postinstall`. `env.backends.onnx.wasm.wasmPaths = '/ort/'`.
 
-**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. jsep only, because the default `onnxruntime-web` entry that transformers.js imports asks for the jsep files by name.
+**Bundled, never CDN-fetched.** Remote WASM is reviewed as remote code execution. asyncify only, because the `onnxruntime-web/webgpu` entry that transformers.js 4 imports asks for the asyncify files by name.
 
 Package size ~22.5MB, almost entirely that binary.
 

@@ -228,6 +228,15 @@ describe('ratings kept per model', () => {
     expect(count(feedbackFor(normalizeStore(store), gemma))).toBe(1);
   });
 
+  it("prunes a retired model's ratings and keeps the rest", () => {
+    const e5Store = withFeedback({}, e5, rate(emptyFor(e5), 't', 'a', v(1), true));
+    const v1 = { model: 'onnx-community/embeddinggemma-300m-ONNX', dim: gemma.dim };
+    const old = { ...rate(emptyFor(gemma), 't', 'b', v(2), true), ...v1 };
+    const store = normalizeStore({ ...e5Store, [v1.model]: old });
+    expect(Object.keys(store)).toEqual([e5.id]);
+    expect(count(feedbackFor(store, gemma))).toBe(0);
+  });
+
   it('reads junk as no ratings rather than trusting it', () => {
     expect(feedbackFor(normalizeStore(null), e5).byTopic).toEqual({});
     expect(feedbackFor(normalizeStore({ 'x/y': 7 }), e5).byTopic).toEqual({});

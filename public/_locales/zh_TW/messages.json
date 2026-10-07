@@ -267,7 +267,7 @@
     "message": "🇬🇧 英文 · 快速 — 33 MB"
   },
   "modelOptionMultilingual": {
-    "message": "🌍 多語言 · 精準 — 197 MB"
+    "message": "🌍 多語言 · 精準 — 190 MB"
   },
   "modelHintEnglish": {
     "message": "僅支援英文。體積小，處理每則貼文都很快。"
@@ -288,7 +288,7 @@
     "message": "多語言 · 精準。"
   },
   "modelDetailsMultilingualBody": {
-    "message": "支援所有語言，對動態消息的分類更精準，即使是英文也是如此。它對主題措辭較寬容。代價是需要一次性下載 197 MB，且處理每則貼文的運算量較大。"
+    "message": "支援所有語言，對動態消息的分類更精準，即使是英文也是如此。它對主題措辭較寬容。代價是需要一次性下載 190 MB，且處理每則貼文的運算量較大。"
   },
   "modelDetailsKept": {
     "message": "切換時，你的主題、嚴格程度和評價都會保留。評價依模型分別儲存，每個模型保留各自的評價，切換回來時會恢復。"

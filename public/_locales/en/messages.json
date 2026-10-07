@@ -311,7 +311,7 @@
     "description": "Dropdown option. The download size is part of the choice."
   },
   "modelOptionMultilingual": {
-    "message": "🌍 Multilingual · Accurate — 197 MB",
+    "message": "🌍 Multilingual · Accurate — 190 MB",
     "description": "Dropdown option. The download size is part of the choice."
   },
   "modelHintEnglish": {
@@ -336,7 +336,7 @@
     "description": "Bold lead-in; modelDetailsMultilingualBody follows it."
   },
   "modelDetailsMultilingualBody": {
-    "message": "Reads every language and sorts your feed more accurately, even in English. It is more forgiving of how a topic is worded. The cost is a 197 MB one-time download and more work on every post."
+    "message": "Reads every language and sorts your feed more accurately, even in English. It is more forgiving of how a topic is worded. The cost is a 190 MB one-time download and more work on every post."
   },
   "modelDetailsKept": {
     "message": "Your topics, strictness and ratings are all kept when you switch. Ratings are stored per model, so each model keeps its own and switching back restores them."

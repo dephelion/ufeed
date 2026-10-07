@@ -42,6 +42,11 @@ export interface ModelSpec {
    * in cosine, because cosine is not evenly spaced.
    */
   strictness: readonly StrictnessStep[];
+  /**
+   * Ids this key shipped under before. Their vectors are another model's, so a
+   * backup stamped with one keeps its settings and loses its ratings.
+   */
+  retiredIds?: readonly string[];
   /** Try WebGPU before WASM. Only a model whose probe passes there may. */
   tryWebGPU: boolean;
   /**
@@ -89,41 +94,40 @@ const E5_SMALL: ModelSpec = {
 };
 
 /**
- * Reads every language, and separates better than e5-small-v2 even in English.
- * It is the default because it handles every language and is now fast enough
- * for a good first-run experience.
+ * Reads every language. EmbeddingGemma 2, loaded text-only: its vision and audio
+ * encoders are never fetched. The default because it handles every language.
  *
- * Its thresholds, probe bounds and ratingNear are PROVISIONAL — derived so a
- * feed looks sane, not measured the way e5-small-v2's were. See wiki-llm/model.md.
+ * Its thresholds, probe bounds and ratingNear are PROVISIONAL and UNMEASURED —
+ * carried over from v1's table through the probe pair. See wiki-llm/model.md.
  */
 const GEMMA: ModelSpec = {
   key: 'gemma',
-  id: 'onnx-community/embeddinggemma-300m-ONNX',
-  label: 'EmbeddingGemma-300m',
+  id: 'onnx-community/embeddinggemma-2-ONNX',
+  label: 'EmbeddingGemma 2',
   dim: 768,
   dtype: 'q4',
-  megabytes: 197,
+  megabytes: 190,
   topicPrefix: 'task: search result | query: ',
   postPrefix: 'title: none | text: ',
-  probeMinNear: 0.49,
-  probeMinGap: 0.23,
-  ratingNear: 0.66,
-  peekBand: 0.02,
+  probeMinNear: 0.55,
+  probeMinGap: 0.1,
+  ratingNear: 0.82,
+  peekBand: 0.012,
   strictness: [
-    { threshold: -0.047, shown: 1.0 },
-    { threshold: 0.051, shown: 0.9 },
-    { threshold: 0.078, shown: 0.8 },
-    { threshold: 0.1, shown: 0.7 },
-    { threshold: 0.12, shown: 0.6 },
-    { threshold: 0.141, shown: 0.5 },
-    { threshold: 0.163, shown: 0.4 },
-    { threshold: 0.188, shown: 0.3 },
-    { threshold: 0.218, shown: 0.2 },
-    { threshold: 0.253, shown: 0.1 },
-    { threshold: 0.299, shown: 0.05 },
+    { threshold: 0.387, shown: 1.0 },
+    { threshold: 0.447, shown: 0.9 },
+    { threshold: 0.463, shown: 0.8 },
+    { threshold: 0.477, shown: 0.7 },
+    { threshold: 0.489, shown: 0.6 },
+    { threshold: 0.502, shown: 0.5 },
+    { threshold: 0.515, shown: 0.4 },
+    { threshold: 0.531, shown: 0.3 },
+    { threshold: 0.549, shown: 0.2 },
+    { threshold: 0.57, shown: 0.1 },
+    { threshold: 0.598, shown: 0.05 },
   ],
-  // Measured to miscompute q4 on WebGPU too (near 0.353, far 0.375, against 0.597 and
-  // 0.138 on WASM), unchanged by onnxruntime-web 1.30 or by turning the optimizer off.
+  retiredIds: ['onnx-community/embeddinggemma-300m-ONNX'],
+  // v1 miscomputed q4 on WebGPU; v2 has not been measured there, so WASM only.
   tryWebGPU: false,
   batchSize: 1,
 };
@@ -147,6 +151,11 @@ export function modelFor(key: unknown): ModelSpec {
 /** The model that made a stored vector, by id, or undefined if nothing matches. */
 export function modelById(id: unknown): ModelSpec | undefined {
   return Object.values(MODELS).find((spec) => spec.id === id);
+}
+
+/** The key a retired id shipped under, whose vectors no current model can read. */
+export function modelByRetiredId(id: unknown): ModelSpec | undefined {
+  return Object.values(MODELS).find((spec) => spec.retiredIds?.some((old) => old === id));
 }
 
 /**

@@ -1,4 +1,4 @@
-import type { ModelSpec } from './models';
+import { modelByRetiredId, type ModelSpec } from './models';
 
 /**
  * Corrections the user made to the model's verdicts, as embeddings, kept per
@@ -62,6 +62,8 @@ export function normalizeStore(value: unknown): FeedbackByModel {
   }
   const store: FeedbackByModel = {};
   for (const [id, stored] of Object.entries(value)) {
+    // No model reads a retired id's vectors again; dropped here, the next save prunes them.
+    if (modelByRetiredId(id)) continue;
     const found = normalizeFeedback(stored);
     if (Object.keys(found.byTopic).length > 0) store[id] = { ...found, model: id };
   }

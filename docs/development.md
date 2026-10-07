@@ -48,13 +48,13 @@ logged — counts, scores, states and errors only.
 [ufeed:content] content script started host=x.com adapter=x topics=1 active=true
 [ufeed:client]  injecting engine iframe src=chrome-extension://.../engine.html
 [ufeed:engine]  engine starting origin=chrome-extension://...
-[ufeed:embedder] loading model device=wasm model=onnx-community/embeddinggemma-300m-ONNX
+[ufeed:embedder] loading model device=wasm model=onnx-community/embeddinggemma-2-ONNX
 [ufeed:worker]  ready
 [ufeed:worker]  scored posts=5 msPerPost=12 max=0.812 rated=0
 [ufeed:content] batch applied posts=5 blurred=3 rated=0 threshold=0.790
 ```
 
-The `embedder` line names the model: `onnx-community/embeddinggemma-300m-ONNX` by
+The `embedder` line names the model: `onnx-community/embeddinggemma-2-ONNX` by
 default, or `Xenova/e5-small-v2` after you pick the smaller English model in the
 popup.
 
@@ -95,7 +95,7 @@ means the embedder retries with one thread and logs `count=1`. Open
 
 ### First run
 
-The default model is ~197MB and the English-only one ~33MB; whichever you pick
+The default model is ~190MB and the English-only one ~33MB; whichever you pick
 downloads once, then lives in the browser's cache. Nothing blurs until it is
 loaded: a broken or slow engine always reveals rather than leaving you with a
 blurred wall. Loading from the cache takes a few seconds, and posts wait under a
@@ -111,7 +111,7 @@ npm run compile          # tsc --noEmit
 npm run test:model       # both real models on real feed text, ~6s
 ```
 
-The first `test:model` run downloads both models, ~197MB for Gemma and ~33MB for
+The first `test:model` run downloads both models, ~190MB for Gemma and ~33MB for
 e5-small. `npm run check` never does.
 
 Full check before committing:

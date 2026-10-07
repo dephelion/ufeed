@@ -68,13 +68,14 @@ model, and you pick which one under _Model_ in the popup:
 
 | Model                            | Reads          | Download | Work per post             |
 | :------------------------------- | :------------- | :------- | :------------------------ |
-| **EmbeddingGemma** (the default) | Every language | 197 MB   | fast enough for first use |
+| **EmbeddingGemma** (the default) | Every language | 190 MB   | fast enough for first use |
 | **e5-small-v2**                  | English only   | 33 MB    | smaller                   |
 
 e5-small-v2 comes from Microsoft ([E5 paper](https://arxiv.org/abs/2212.03533); v2 is
 a later release by the same authors, using the same method). EmbeddingGemma is
-Google's 300-million-parameter retrieval model, run at 4-bit precision. An
-embedding turns text into a vector, a fixed list of numbers (384 for e5, 768 for
+Google's EmbeddingGemma 2, run at 4-bit precision. Only its
+270-million-parameter text encoder is loaded; its image and audio encoders are
+not. An embedding turns text into a vector, a fixed list of numbers (384 for e5, 768 for
 EmbeddingGemma), so that texts about the same thing end up close together.
 
 Scoring a post takes three steps:
@@ -109,7 +110,7 @@ not for spreading scores out. As a result, almost any English text scores well
 above zero against almost any topic, and on-topic and off-topic posts are only a
 few hundredths apart. That is why strictness is a step on a measured scale rather
 than a raw cosine, and why this model's scores mean nothing to a different model.
-EmbeddingGemma lands on a different, lower range altogether, so each model has its
+EmbeddingGemma lands on a different range altogether, so each model has its
 own scale.
 
 **What it cannot do.**
@@ -226,8 +227,8 @@ moved the cosine evenly would do nothing for half its travel. Each of the 11
 steps is a threshold measured, on one sample feed, to hide about another tenth
 of it. Your feed will differ. Each model has its own 11 steps, set so a step
 spends about the same share of the feed on either, which is why your step survives
-a switch. EmbeddingGemma's were derived the same way but not measured as
-carefully, so treat them as approximate.
+a switch. EmbeddingGemma 2's are carried over from the first EmbeddingGemma's and
+not yet measured, so treat them as approximate.
 Higher steps hide more noise, and also more of what you wanted.
 
 **The peek strip marks the close calls.** Just below the threshold is a thin
@@ -290,4 +291,4 @@ Full reasoning in [`wiki-llm/architecture.md`](../wiki-llm/architecture.md), mod
 detail in [`wiki-llm/model.md`](../wiki-llm/model.md), terms in
 [`wiki-llm/glossary.md`](../wiki-llm/glossary.md). The default model's origin is the
 [E5 paper](https://arxiv.org/abs/2212.03533); the multilingual one is
-[EmbeddingGemma](https://huggingface.co/onnx-community/embeddinggemma-300m-ONNX).
+[EmbeddingGemma](https://huggingface.co/onnx-community/embeddinggemma-2-ONNX).
