@@ -6,17 +6,11 @@
  */
 import { describe, expect, it } from 'vitest';
 import { Embedder } from './embedder';
-import {
-  DEFAULT_MODEL,
-  DEFAULT_STRICTNESS,
-  formatPost,
-  formatTopic,
-  modelFor,
-} from '../core/models';
+import { DEFAULT_STRICTNESS, formatPost, formatTopic, modelFor } from '../core/models';
 
 import { bestMatch, cosine, thresholdForStrictness } from '../core/scoring';
 
-const MODEL = modelFor(DEFAULT_MODEL);
+const MODEL = modelFor('e5-small');
 
 const q = (t: string) => formatTopic(t, MODEL);
 const d = (t: string) => formatPost(t, MODEL);

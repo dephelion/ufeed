@@ -17,7 +17,13 @@ const log = logger('embedder');
 
 /** Model weights come from the CDN; the runtime itself ships with the extension. */
 env.allowLocalModels = false;
-if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
+env.useWasmCache = false;
+if (env.backends.onnx.wasm) {
+  env.backends.onnx.wasm.wasmPaths = {
+    wasm: '/ort/ort-wasm-simd-threaded.jsep.wasm',
+    mjs: '/ort/ort-wasm-simd-threaded.jsep.mjs',
+  };
+}
 
 /**
  * ORT logs at WARNING by default and pipes its stderr through `console.error`, so

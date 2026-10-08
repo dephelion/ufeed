@@ -28,7 +28,16 @@ describe('content error ownership', () => {
       value: { hostname: 'www.reddit.com' },
       configurable: true,
     });
-    script.main({} as NonNullable<Parameters<typeof script.main>[0]>);
+    const controller = new AbortController();
+    const ctx = {
+      get isInvalid() {
+        return controller.signal.aborted;
+      },
+      addEventListener(target: EventTarget, type: string, listener: EventListener) {
+        target.addEventListener(type, listener, { signal: controller.signal });
+      },
+    };
+    script.main(ctx as NonNullable<Parameters<typeof script.main>[0]>);
 
     const rejection = new Event('unhandledrejection', { cancelable: true });
     Object.defineProperty(rejection, 'reason', {
@@ -53,5 +62,21 @@ describe('content error ownership', () => {
       state: 'error',
       message: 'extension fault',
     });
+
+    state.publish.mockClear();
+    controller.abort();
+    const getURL = vi.spyOn(browser.runtime, 'getURL').mockImplementation(() => {
+      throw new Error('Extension context invalidated.');
+    });
+    const staleError = new ErrorEvent('error', {
+      filename: 'https://www.reddit.com/host.js',
+      error: new Error('host fault after extension reload'),
+      cancelable: true,
+    });
+    dispatchEvent(staleError);
+    expect(staleError.defaultPrevented).toBe(false);
+    expect(getURL).not.toHaveBeenCalled();
+    expect(state.publish).not.toHaveBeenCalled();
+    getURL.mockRestore();
   });
 });
