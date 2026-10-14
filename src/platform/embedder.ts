@@ -1,8 +1,6 @@
 import {
-  AutoConfig,
   AutoModel,
   AutoTokenizer,
-  LogLevel,
   env,
   pipeline,
   type FeatureExtractionPipeline,
@@ -10,7 +8,7 @@ import {
   type PreTrainedTokenizer,
 } from '@huggingface/transformers';
 import { logger } from '../core/log';
-import { MODELS, PROBE, formatPost, formatTopic, type ModelSpec } from '../core/models';
+import { PROBE, formatPost, formatTopic, type ModelSpec } from '../core/models';
 import { cosine, normalize, type Vector } from '../core/scoring';
 
 const log = logger('embedder');
@@ -25,7 +23,7 @@ if (env.backends.onnx.wasm) env.backends.onnx.wasm.wasmPaths = '/ort/';
  * ORT doing the right thing on purpose. Error and above is what we want to hear.
  * Set on the session too: the global env alone does not reach the session logger.
  */
-env.logLevel = LogLevel.ERROR;
+env.backends.onnx.logLevel = 'error';
 const SESSION_OPTIONS = { logSeverityLevel: 3 } as const;
 
 /**
@@ -79,7 +77,6 @@ export class Embedder {
         ? ['webgpu', 'wasm']
         : ['wasm'];
 
-    await this.#evictRetired();
     // Asked once, before any attempt: a fallback backend reloads the same weights.
     const cached = await this.#isCached(spec);
 
@@ -123,10 +120,6 @@ export class Embedder {
    * Two shapes of model, one interface. e5 is a plain feature-extraction
    * pipeline with mean pooling; EmbeddingGemma carries its own pooling and
    * returns `sentence_embedding`, so pooling it again would be wrong.
-   *
-   * EmbeddingGemma 2 loads an encoder per modality the config names. Feeds are
-   * text, so the vision and audio encoders are struck from the config and their
-   * weights are never downloaded or held in memory.
    */
   async #build(
     spec: ModelSpec,
@@ -155,13 +148,7 @@ export class Embedder {
         spec.id,
         { progress_callback },
       );
-      const config = await AutoConfig.from_pretrained(spec.id, { progress_callback });
-      Reflect.deleteProperty(config, 'vision_config');
-      Reflect.deleteProperty(config, 'audio_config');
-      const model: PreTrainedModel = await AutoModel.from_pretrained(spec.id, {
-        ...options,
-        config,
-      });
+      const model: PreTrainedModel = await AutoModel.from_pretrained(spec.id, options);
       return async (text: string) => {
         const inputs = await tokenizer([text], { padding: true });
         const output = (await model(inputs)) as {
@@ -202,27 +189,6 @@ export class Embedder {
         reason: error instanceof Error ? error.message : String(error),
       });
       return false;
-    }
-  }
-
-  /**
-   * A retired model's weights would otherwise sit in the cache for good: nothing
-   * loads them again, and the browser evicts only under storage pressure.
-   */
-  async #evictRetired(): Promise<void> {
-    const retired = Object.values(MODELS).flatMap((spec) => spec.retiredIds ?? []);
-    if (retired.length === 0 || typeof caches === 'undefined') return;
-    try {
-      const cache = await caches.open('transformers-cache');
-      const stale = (await cache.keys()).filter((request) =>
-        retired.some((id) => request.url.includes(id)),
-      );
-      await Promise.all(stale.map((request) => cache.delete(request)));
-      if (stale.length > 0) log.info('evicted retired weights', { files: stale.length });
-    } catch (error: unknown) {
-      log.warn('could not evict retired weights', {
-        reason: error instanceof Error ? error.message : String(error),
-      });
     }
   }
 
