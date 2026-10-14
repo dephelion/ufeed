@@ -1,4 +1,4 @@
-import { modelById, modelByRetiredId, modelFor, type ModelSpec } from './models';
+import { modelById, modelFor, type ModelSpec } from './models';
 import {
   capped,
   forTopics,
@@ -76,10 +76,8 @@ export function importConfig(text: string): ImportResult {
 
   const model = parsed['model'];
   const stamp = isRecord(model) ? model['id'] : undefined;
-  // A retired model's backup keeps its settings; its vectors are another space's.
-  const retired = modelByRetiredId(stamp);
-  const spec = retired ?? modelById(stamp);
-  if (!spec || (!retired && (isRecord(model) ? model['dim'] : undefined) !== spec.dim)) {
+  const spec = modelById(stamp);
+  if (!spec || (isRecord(model) ? model['dim'] : undefined) !== spec.dim) {
     return { ok: false, reason: 'other-model' };
   }
 
@@ -91,7 +89,7 @@ export function importConfig(text: string): ImportResult {
   });
   const byTopic: Record<string, Rating[]> = {};
   const stored = parsed['feedback'];
-  if (!retired && isRecord(stored)) {
+  if (isRecord(stored)) {
     for (const [topic, list] of Object.entries(stored)) {
       if (!Array.isArray(list)) continue;
       const ratings = list.flatMap((value) => decodeRating(value, spec));
