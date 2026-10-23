@@ -20,13 +20,12 @@ jobs:
     name: review
     # pull_request_target hands secrets to forks; never review them. Drafts are still moving.
     if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       # Pinned to a reviewed commit: this job holds OPENAI_API_KEY and pull-requests write.
-      - uses: juliomatcom/gtp-reviewer@v1.1.0
+      - uses: juliomatcom/gtp-reviewer@v0.1.0
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-          safety-strategy: unsafe
           model: gpt-6-luna
           effort: medium
           instructions-file: .github/codex/review.md
